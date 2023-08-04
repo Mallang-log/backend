@@ -57,7 +57,7 @@ class PostTest {
 
             // when
             assertThatThrownBy(() ->
-                    post.update(1L, "수정제목", "수정내용")
+                    post.update(writer.getId() + 1, "수정제목", "수정내용")
             ).isInstanceOf(NoAuthorityUpdatePost.class);
 
             // then
