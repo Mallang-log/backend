@@ -1,4 +1,4 @@
-package com.mallang.auth.config;
+package com.mallang.auth.infrastructure.oauth;
 
 import com.mallang.auth.infrastructure.oauth.github.client.GithubApiClient;
 import org.springframework.context.annotation.Bean;
