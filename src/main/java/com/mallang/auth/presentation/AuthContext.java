@@ -10,8 +10,12 @@ public class AuthContext {
 
     private Long memberId;
 
+    public boolean unAuthenticated() {
+        return memberId == null;
+    }
+
     public Long getMemberId() {
-        if (memberId == null) {
+        if (unAuthenticated()) {
             throw new IncorrectUseAuthAtException();
         }
         return memberId;
