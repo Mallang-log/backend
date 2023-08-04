@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @SpringBootApplication
 public class MallangLogApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MallangLogApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MallangLogApplication.class, args);
+    }
 }

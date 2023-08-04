@@ -1,6 +1,5 @@
 package com.mallang.auth.infrastructure.oauth.github.dto;
 
-
 import static com.mallang.member.domain.OauthServerType.GITHUB;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
