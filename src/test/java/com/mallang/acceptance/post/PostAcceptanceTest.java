@@ -4,6 +4,7 @@ import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
+import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.게시글_생성_요청_데이터;
@@ -13,6 +14,7 @@ import static com.mallang.acceptance.post.PostAcceptanceDatas.전체_조회_항�
 import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_단일_조회_요청을_보낸다;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_단일_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_생성_요청을_보낸다;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_수정_요청을_보낸다;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_전체_조회_요청을_보낸다;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_전체_조회_응답을_검증한다;
 
@@ -40,6 +42,23 @@ public class PostAcceptanceTest extends AcceptanceTest {
         응답_상태를_검증한다(응답, 생성됨);
         var 생성된_게시글_ID = ID를_추출한다(응답);
         값이_존재한다(생성된_게시글_ID);
+    }
+
+    @Test
+    void 게시글을_업데이트한다() {
+        // given
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+        var 게시글_생성_요청 = 게시글_생성_요청_데이터("첫 게시글", "첫 게시글이네요.");
+        var 생성된_게시글_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_생성_요청));
+
+        // when
+        var 응답 = 게시글_수정_요청을_보낸다(말랑_세션_ID, 생성된_게시글_ID, "업데이트 제목", "업데이트 내용");
+
+        // then
+        응답_상태를_검증한다(응답, 정상_처리);
+        var 예상_데이터 = 예상_게시글_단일_조회_응답(생성된_게시글_ID, "말랑", "업데이트 제목", "업데이트 내용");
+        var 조회_결과 = 게시글_단일_조회_요청을_보낸다(생성된_게시글_ID);
+        게시글_단일_조회_응답을_검증한다(조회_결과, 예상_데이터);
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.mallang.post.application.PostService;
 import com.mallang.post.application.query.PostDetailResponse;
 import com.mallang.post.application.query.PostSimpleResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.presentation.request.UpdatePostRequest;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +36,18 @@ public class PostController {
         return ResponseEntity.created(URI.create("/posts/" + id)).build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(
+            @PathVariable Long id,
+            @Auth Long memberId,
+            @RequestBody UpdatePostRequest request
+    ) {
+        postService.update(request.toCommand(id, memberId));
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}")
+
     public ResponseEntity<PostDetailResponse> getById(
             @PathVariable Long id
     ) {
