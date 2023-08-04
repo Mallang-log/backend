@@ -3,6 +3,7 @@ package com.mallang.post.application;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
 import com.mallang.post.application.command.CreatePostCommand;
+import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,10 @@ public class PostService {
         Post post = command.toPost(member);
         Post saved = postRepository.save(post);
         return saved.getId();
+    }
+
+    public void update(UpdatePostCommand command) {
+        Post post = postRepository.getById(command.postId());
+        post.update(command.memberId(), command.title(), command.content());
     }
 }

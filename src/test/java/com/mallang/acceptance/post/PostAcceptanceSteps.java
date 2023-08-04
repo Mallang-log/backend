@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.mallang.post.application.query.PostDetailResponse;
 import com.mallang.post.application.query.PostSimpleResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.presentation.request.UpdatePostRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -19,6 +20,19 @@ public class PostAcceptanceSteps {
                 .body(createPostRequest)
                 .when()
                 .post("/posts")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 게시글_수정_요청을_보낸다(
+            String 세션_ID,
+            Long 게시글_ID,
+            String 업데이트_제목,
+            String 업데이트_내용
+    ) {
+        return given(세션_ID)
+                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용))
+                .put("/posts/{id}", 게시글_ID)
                 .then().log().all()
                 .extract();
     }

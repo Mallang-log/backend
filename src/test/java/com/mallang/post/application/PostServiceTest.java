@@ -2,11 +2,16 @@ package com.mallang.post.application;
 
 import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.member.MemberServiceHelper;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
 import com.mallang.member.domain.OauthId;
 import com.mallang.post.application.command.CreatePostCommand;
+import com.mallang.post.application.command.UpdatePostCommand;
+import com.mallang.post.domain.Post;
+import com.mallang.post.exception.NoAuthorityUpdatePost;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -22,6 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest
 class PostServiceTest {
+
+    @Autowired
+    private MemberServiceHelper memberServiceHelper;
+
+    @Autowired
+    private PostServiceTestHelper postServiceTestHelper;
 
     @Autowired
     private PostService postService;
@@ -51,5 +62,38 @@ class PostServiceTest {
 
         // then
         assertThat(id).isNotNull();
+    }
+
+    @Test
+    void 게시글_수정_성공() {
+        // given
+        Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+        Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "게시글", "내용");
+
+        // when
+        postService.update(new UpdatePostCommand(말랑_ID, 포스트_ID, "수정제목", "수정내용"));
+
+        // then
+        Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+        assertThat(post.getTitle()).isEqualTo("수정제목");
+        assertThat(post.getContent()).isEqualTo("수정내용");
+    }
+
+    @Test
+    void 게시글_수정_실패() {
+        // given
+        Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+        Long 동훈_ID = memberServiceHelper.회원을_저장한다("동훈");
+        Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "게시글", "내용");
+
+        // when
+        assertThatThrownBy(() ->
+                postService.update(new UpdatePostCommand(동훈_ID, 포스트_ID, "수정제목", "수정내용"))
+        ).isInstanceOf(NoAuthorityUpdatePost.class);
+
+        // then
+        Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+        assertThat(post.getTitle()).isEqualTo("게시글");
+        assertThat(post.getContent()).isEqualTo("내용");
     }
 }
