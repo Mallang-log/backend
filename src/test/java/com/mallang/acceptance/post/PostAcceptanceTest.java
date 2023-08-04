@@ -1,0 +1,94 @@
+package com.mallang.acceptance.post;
+
+import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
+import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
+import static com.mallang.acceptance.AcceptanceSteps.생성됨;
+import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
+import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
+import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.게시글_생성_요청_데이터;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_게시글_단일_조회_응답;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_게시글_전체_조회_응답;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.전체_조회_항목들;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_단일_조회_요청을_보낸다;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_단일_조회_응답을_검증한다;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_생성_요청을_보낸다;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_전체_조회_요청을_보낸다;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.게시글_전체_조회_응답을_검증한다;
+
+import com.mallang.acceptance.AcceptanceTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.Test;
+
+@DisplayName("게시글 인수테스트")
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayNameGeneration(ReplaceUnderscores.class)
+public class PostAcceptanceTest extends AcceptanceTest {
+
+    @Test
+    void 게시글을_작성한다() {
+        // given
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+        var 게시글_생성_요청 = 게시글_생성_요청_데이터("첫 게시글", "첫 게시글이네요.");
+
+        // when
+        var 응답 = 게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_생성_요청);
+
+        // then
+        응답_상태를_검증한다(응답, 생성됨);
+        var 생성된_게시글_ID = ID를_추출한다(응답);
+        값이_존재한다(생성된_게시글_ID);
+    }
+
+    @Test
+    void 게시글_단일_조회() {
+        // given
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+        var 게시글_생성_요청 = 게시글_생성_요청_데이터("첫 게시글", "첫 게시글이네요.");
+        var 생성된_게시글_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_생성_요청));
+        var 예상_데이터 = 예상_게시글_단일_조회_응답(생성된_게시글_ID, "말랑", "첫 게시글", "첫 게시글이네요.");
+
+        // when
+        var 응답 = 게시글_단일_조회_요청을_보낸다(생성된_게시글_ID);
+
+        // then
+        게시글_단일_조회_응답을_검증한다(응답, 예상_데이터);
+    }
+
+    @Test
+    void 없는_게시글_단일_조회() {
+        // given
+        var 없는_ID = 100L;
+
+        // when
+        var 응답 = 게시글_단일_조회_요청을_보낸다(없는_ID);
+
+        // then
+        응답_상태를_검증한다(응답, 찾을수_없음);
+    }
+
+    @Test
+    void 게시글_전체_조회() {
+        // given
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+        var 게시글_데이터_1 = 게시글_생성_요청_데이터("게시글1", "이건 첫번째 게시글이네요.");
+        var 게시글_데이터_2 = 게시글_생성_요청_데이터("게시글2", "이번에는 이것 저것들에 대해 알아보아요");
+        var 게시글_데이터_3 = 게시글_생성_요청_데이터("게시글3", "잘 알아보았어요!");
+        var 게시글1_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_데이터_1));
+        var 게시글2_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_데이터_2));
+        var 게시글3_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_데이터_3));
+        var 예상_데이터 = 전체_조회_항목들(
+                예상_게시글_전체_조회_응답(게시글1_ID, "말랑", "게시글1", "이건 첫번째 게시글이네요."),
+                예상_게시글_전체_조회_응답(게시글2_ID, "말랑", "게시글2", "이번에는 이것 저것들에 대해 알아보아요"),
+                예상_게시글_전체_조회_응답(게시글3_ID, "말랑", "게시글3", "잘 알아보았어요!")
+        );
+
+        // when
+        var 응답 = 게시글_전체_조회_요청을_보낸다();
+
+        // then
+        게시글_전체_조회_응답을_검증한다(응답, 예상_데이터);
+    }
+}

@@ -9,8 +9,10 @@ import com.mallang.member.domain.OauthServerType;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+@Profile("!test")
 @Component
 public class OauthMemberClientComposite {
 
