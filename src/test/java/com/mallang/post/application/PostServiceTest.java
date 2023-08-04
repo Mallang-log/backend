@@ -11,7 +11,7 @@ import com.mallang.member.domain.OauthId;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
-import com.mallang.post.exception.NoAuthorityUpdatePost;
+import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -89,7 +89,7 @@ class PostServiceTest {
         // when
         assertThatThrownBy(() ->
                 postService.update(new UpdatePostCommand(동훈_ID, 포스트_ID, "수정제목", "수정내용"))
-        ).isInstanceOf(NoAuthorityUpdatePost.class);
+        ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
         // then
         Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);

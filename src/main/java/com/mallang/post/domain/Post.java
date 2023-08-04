@@ -5,7 +5,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.domain.Member;
-import com.mallang.post.exception.NoAuthorityUpdatePost;
+import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -46,7 +46,7 @@ public class Post extends CommonDomainModel {
 
     private void validateOwner(Long memberId) {
         if (!member.getId().equals(memberId)) {
-            throw new NoAuthorityUpdatePost();
+            throw new NoAuthorityUpdatePostException();
         }
     }
 }

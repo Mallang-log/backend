@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
-import com.mallang.post.exception.NoAuthorityUpdatePost;
+import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -58,7 +58,7 @@ class PostTest {
             // when
             assertThatThrownBy(() ->
                     post.update(writer.getId() + 1, "수정제목", "수정내용")
-            ).isInstanceOf(NoAuthorityUpdatePost.class);
+            ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then
             assertThat(post.getTitle()).isEqualTo("제목");

@@ -28,5 +28,5 @@ public class Category extends CommonDomainModel {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
-    private Category parents;
+    private Category parent;
 }
