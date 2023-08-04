@@ -18,6 +18,9 @@ auth:
       client_secret: ${GITHUB_CLIENT_SECRET}
       scope: ${GITHUB_SCOPE}
 
+  session:
+    ttl: 3600
+
 logging:
   level:
     org.hibernate.orm.jdbc.bind: TRACE
