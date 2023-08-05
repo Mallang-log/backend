@@ -5,8 +5,8 @@ import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.domain.Category;
+import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
@@ -41,7 +41,7 @@ class PostTest {
                     .build();
 
             // when
-            post.update(writer.getId(), "수정제목", "수정내용");
+            post.update(writer.getId(), "수정제목", "수정내용", null);
 
             // then
             assertThat(post.getTitle()).isEqualTo("수정제목");
@@ -59,7 +59,7 @@ class PostTest {
 
             // when
             assertThatThrownBy(() ->
-                    post.update(writer.getId() + 1, "수정제목", "수정내용")
+                    post.update(writer.getId() + 1, "수정제목", "수정내용", null)
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then

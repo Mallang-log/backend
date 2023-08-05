@@ -210,7 +210,7 @@ class PostServiceTest {
             Long otherMemberId = memberServiceHelper.회원을_저장한다("other");
             Long otherMemberSpringCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
 
-            // when & then
+            // when
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
                             memberId, 포스트_ID, "수정제목", "수정내용", 1000L
@@ -221,6 +221,10 @@ class PostServiceTest {
                             memberId, 포스트_ID, "수정제목", "수정내용", otherMemberSpringCategoryId
                     ))
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
+
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            assertThat(post.getTitle()).isEqualTo("포스트");
         }
     }
 }

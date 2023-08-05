@@ -53,9 +53,11 @@ public class Post extends CommonDomainModel {
     public void update(
             Long memberId,
             String title,
-            String content
+            String content,
+            Category category
     ) {
         validateOwner(memberId, new NoAuthorityUpdatePostException());
+        setCategory(category);
         this.title = title;
         this.content = content;
     }
