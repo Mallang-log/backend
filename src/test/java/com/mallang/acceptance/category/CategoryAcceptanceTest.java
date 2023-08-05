@@ -6,7 +6,7 @@ import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
-import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성_요청을_보낸다;
+import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성_요청;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
 
         // when
-        var 응답 = 카테고리_생성_요청을_보낸다(말랑_세션_ID, "Spring", 없음());
+        var 응답 = 카테고리_생성_요청(말랑_세션_ID, "Spring", 없음());
 
         // then
         응답_상태를_검증한다(응답, 생성됨);
@@ -36,11 +36,11 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     void 하위_카테고리를_생성한다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 상위_카테고리_생성_응답 = 카테고리_생성_요청을_보낸다(말랑_세션_ID, "Spring", 없음());
+        var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, "Spring", 없음());
         var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
 
         // when
-        var 응답 = 카테고리_생성_요청을_보낸다(말랑_세션_ID, "JPA", 상위_카테고리_ID);
+        var 응답 = 카테고리_생성_요청(말랑_세션_ID, "JPA", 상위_카테고리_ID);
 
         // then
         응답_상태를_검증한다(응답, 생성됨);

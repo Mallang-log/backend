@@ -15,7 +15,7 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 포스트_생성_요청을_보낸다(
+    public static ExtractableResponse<Response> 포스트_생성_요청(
             String 세션_ID,
             String 포스트_제목,
             String 포스트_내용,
@@ -29,7 +29,7 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 포스트_수정_요청을_보낸다(
+    public static ExtractableResponse<Response> 포스트_수정_요청(
             String 세션_ID,
             Long 포스트_ID,
             String 업데이트_제목,
@@ -43,7 +43,7 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 포스트_단일_조회_요청을_보낸다(Long 포스트_ID) {
+    public static ExtractableResponse<Response> 포스트_단일_조회_요청(Long 포스트_ID) {
         return given()
                 .get("/posts/{id}", 포스트_ID)
                 .then().log().all()
@@ -57,7 +57,7 @@ public class PostAcceptanceSteps {
                 .isEqualTo(예상_데이터);
     }
 
-    public static ExtractableResponse<Response> 포스트_전체_조회_요청을_보낸다() {
+    public static ExtractableResponse<Response> 포스트_전체_조회_요청() {
         return given()
                 .get("/posts")
                 .then().log().all()

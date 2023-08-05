@@ -9,7 +9,7 @@ import io.restassured.response.Response;
 @SuppressWarnings("NonAsciiCharacters")
 public class CategoryAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 카테고리_생성_요청을_보낸다(
+    public static ExtractableResponse<Response> 카테고리_생성_요청(
             String 세션_ID,
             String 카테고리_이름,
             Long 부모_카테고리_ID
