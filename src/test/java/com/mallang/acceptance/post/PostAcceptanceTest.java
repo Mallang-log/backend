@@ -7,7 +7,6 @@ import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한�
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
-import static com.mallang.acceptance.post.PostAcceptanceDatas.게시글_생성_요청_데이터;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_게시글_단일_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_게시글_전체_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.전체_조회_항목들;
@@ -32,11 +31,10 @@ public class PostAcceptanceTest extends AcceptanceTest {
     @Test
     void 게시글을_작성한다() {
         // given
-        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 게시글_생성_요청 = 게시글_생성_요청_데이터("첫 게시글", "첫 게시글이네요.");
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑"); // TODO 카테고리 설정까지
 
         // when
-        var 응답 = 게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_생성_요청);
+        var 응답 = 게시글_생성_요청을_보낸다(말랑_세션_ID, "첫 게시글", "첫 게시글이네요.");
 
         // then
         응답_상태를_검증한다(응답, 생성됨);
@@ -48,8 +46,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     void 게시글을_업데이트한다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 게시글_생성_요청 = 게시글_생성_요청_데이터("첫 게시글", "첫 게시글이네요.");
-        var 생성된_게시글_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_생성_요청));
+        var 생성된_게시글_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, "첫 게시글", "첫 게시글이네요."));
 
         // when
         var 응답 = 게시글_수정_요청을_보낸다(말랑_세션_ID, 생성된_게시글_ID, "업데이트 제목", "업데이트 내용");
@@ -65,8 +62,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     void 게시글_단일_조회() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 게시글_생성_요청 = 게시글_생성_요청_데이터("첫 게시글", "첫 게시글이네요.");
-        var 생성된_게시글_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_생성_요청));
+        var 생성된_게시글_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, "첫 게시글", "첫 게시글이네요."));
         var 예상_데이터 = 예상_게시글_단일_조회_응답(생성된_게시글_ID, "말랑", "첫 게시글", "첫 게시글이네요.");
 
         // when
@@ -92,12 +88,9 @@ public class PostAcceptanceTest extends AcceptanceTest {
     void 게시글_전체_조회() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 게시글_데이터_1 = 게시글_생성_요청_데이터("게시글1", "이건 첫번째 게시글이네요.");
-        var 게시글_데이터_2 = 게시글_생성_요청_데이터("게시글2", "이번에는 이것 저것들에 대해 알아보아요");
-        var 게시글_데이터_3 = 게시글_생성_요청_데이터("게시글3", "잘 알아보았어요!");
-        var 게시글1_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_데이터_1));
-        var 게시글2_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_데이터_2));
-        var 게시글3_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, 게시글_데이터_3));
+        var 게시글1_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, "게시글1", "이건 첫번째 게시글이네요."));
+        var 게시글2_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, "게시글2", "이번에는 이것 저것들에 대해 알아보아요"));
+        var 게시글3_ID = ID를_추출한다(게시글_생성_요청을_보낸다(말랑_세션_ID, "게시글3", "잘 알아보았어요!"));
         var 예상_데이터 = 전체_조회_항목들(
                 예상_게시글_전체_조회_응답(게시글1_ID, "말랑", "게시글1", "이건 첫번째 게시글이네요."),
                 예상_게시글_전체_조회_응답(게시글2_ID, "말랑", "게시글2", "이번에는 이것 저것들에 대해 알아보아요"),

@@ -9,10 +9,6 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostAcceptanceDatas {
 
-    public static CreatePostRequest 게시글_생성_요청_데이터(String 제목, String 내용) {
-        return new CreatePostRequest(제목, 내용);
-    }
-
     public static PostDetailResponse 예상_게시글_단일_조회_응답(
             Long 게시글_ID,
             String 작성자_닉네임,

@@ -15,9 +15,13 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 게시글_생성_요청을_보낸다(String 세션_ID, CreatePostRequest createPostRequest) {
+    public static ExtractableResponse<Response> 게시글_생성_요청을_보낸다(
+            String 세션_ID,
+            String 게시글_제목,
+            String 게시글_내용
+    ) {
         return given(세션_ID)
-                .body(createPostRequest)
+                .body(new CreatePostRequest(게시글_제목, 게시글_내용))
                 .when()
                 .post("/posts")
                 .then().log().all()
