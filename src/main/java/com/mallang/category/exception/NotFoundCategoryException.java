@@ -1,4 +1,4 @@
-package com.mallang.category.application.exception;
+package com.mallang.category.exception;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 

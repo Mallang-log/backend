@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.category.application.command.CreateCategoryCommand;
-import com.mallang.category.application.exception.NoAuthorityUseCategory;
-import com.mallang.category.application.exception.NotFoundCategoryException;
+import com.mallang.category.exception.NoAuthorityUseCategoryException;
+import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.category.domain.Category;
 import com.mallang.member.MemberServiceHelper;
 import org.junit.jupiter.api.DisplayName;
@@ -90,7 +90,7 @@ class CategoryServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     categoryService.create(command)
-            ).isInstanceOf(NoAuthorityUseCategory.class);
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
         }
     }
 }

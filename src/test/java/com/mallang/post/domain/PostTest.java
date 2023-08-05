@@ -5,7 +5,7 @@ import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.category.application.exception.NoAuthorityUseCategory;
+import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
@@ -106,7 +106,7 @@ class PostTest {
             // when
             assertThatThrownBy(() ->
                     post.setCategory(category)
-            ).isInstanceOf(NoAuthorityUseCategory.class);
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
 
             // then
             assertThat(post.getCategory()).isNull();

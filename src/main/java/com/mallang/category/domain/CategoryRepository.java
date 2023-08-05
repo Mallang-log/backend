@@ -1,6 +1,6 @@
 package com.mallang.category.domain;
 
-import com.mallang.category.application.exception.NotFoundCategoryException;
+import com.mallang.category.exception.NotFoundCategoryException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {

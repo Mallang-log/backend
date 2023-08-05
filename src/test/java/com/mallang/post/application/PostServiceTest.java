@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.category.application.CategoryServiceTestHelper;
-import com.mallang.category.application.exception.NoAuthorityUseCategory;
-import com.mallang.category.application.exception.NotFoundCategoryException;
+import com.mallang.category.exception.NoAuthorityUseCategoryException;
+import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.member.MemberServiceHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -116,7 +116,7 @@ class PostServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postService.create(command)
-            ).isInstanceOf(NoAuthorityUseCategory.class);
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
         }
     }
 
@@ -220,7 +220,7 @@ class PostServiceTest {
                     postService.update(new UpdatePostCommand(
                             memberId, 포스트_ID, "수정제목", "수정내용", otherMemberSpringCategoryId
                     ))
-            ).isInstanceOf(NoAuthorityUseCategory.class);
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
         }
     }
 }
