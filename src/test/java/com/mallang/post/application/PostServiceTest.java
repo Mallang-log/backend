@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.member.MemberServiceHelper;
+import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 class PostServiceTest {
 
     @Autowired
-    private MemberServiceHelper memberServiceHelper;
+    private MemberServiceTestHelper memberServiceTestHelper;
 
     @Autowired
     private PostServiceTestHelper postServiceTestHelper;
@@ -44,7 +44,7 @@ class PostServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceHelper.회원을_저장한다("말랑");
+        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
     }
 
     @Nested
@@ -104,7 +104,7 @@ class PostServiceTest {
         @Test
         void 자신이_만든_카테고리가_아니면_예외() {
             // given
-            Long otherMemberId = memberServiceHelper.회원을_저장한다("다른");
+            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("다른");
             Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
@@ -140,7 +140,7 @@ class PostServiceTest {
         @Test
         void 다른_사람의_포스트은_수정할_수_없다() {
             // given
-            Long otherMemberId = memberServiceHelper.회원을_저장한다("동훈");
+            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("동훈");
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용");
 
             // when
@@ -207,7 +207,7 @@ class PostServiceTest {
         void 다른_사람의_카테고리거나_없는_카테고리로는_변경할_수_없다() {
             // given
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", null);
-            Long otherMemberId = memberServiceHelper.회원을_저장한다("other");
+            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
             Long otherMemberSpringCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
 
             // when

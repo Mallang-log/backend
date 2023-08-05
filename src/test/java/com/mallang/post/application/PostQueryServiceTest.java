@@ -2,7 +2,7 @@ package com.mallang.post.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.member.MemberServiceHelper;
+import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.query.PostDetailResponse;
 import com.mallang.post.application.query.PostDetailResponse.WriterDetailInfo;
 import com.mallang.post.application.query.PostSimpleResponse;
@@ -28,7 +28,7 @@ class PostQueryServiceTest {
     private PostServiceTestHelper postServiceTestHelper;
 
     @Autowired
-    private MemberServiceHelper memberServiceHelper;
+    private MemberServiceTestHelper memberServiceTestHelper;
 
     @Autowired
     private PostQueryService postQueryService;
@@ -37,7 +37,7 @@ class PostQueryServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceHelper.회원을_저장한다("말랑");
+        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
     }
 
     @Test
