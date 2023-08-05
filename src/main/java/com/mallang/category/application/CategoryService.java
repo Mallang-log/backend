@@ -1,6 +1,7 @@
 package com.mallang.category.application;
 
 import com.mallang.category.application.command.CreateCategoryCommand;
+import com.mallang.category.application.command.UpdateCategoryCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.member.domain.Member;
@@ -25,5 +26,13 @@ public class CategoryService {
                 .map(categoryRepository::getById)
                 .ifPresent(category::setParent);
         return categoryRepository.save(category).getId();
+    }
+
+    public void update(UpdateCategoryCommand command) {
+        Category category = categoryRepository.getById(command.categoryId());
+        Category parentCategory = Optional.ofNullable(command.parentCategoryId())
+                .map(categoryRepository::getById)
+                .orElse(null);
+        category.update(command.memberId(), command.name(), parentCategory);
     }
 }

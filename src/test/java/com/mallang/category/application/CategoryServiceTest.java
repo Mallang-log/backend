@@ -4,9 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.category.application.command.CreateCategoryCommand;
+import com.mallang.category.application.command.UpdateCategoryCommand;
+import com.mallang.category.domain.Category;
+import com.mallang.category.exception.CategoryHierarchyViolationException;
+import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.category.domain.Category;
+import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.MemberServiceHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -91,6 +95,125 @@ class CategoryServiceTest {
             assertThatThrownBy(() ->
                     categoryService.create(command)
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
+        }
+    }
+
+    @Nested
+    class 수정_시 {
+
+        @Test
+        void 자신의_카테고리라면_수정_가능() {
+            // given
+            Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위", categoryId);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, 말랑_ID, "수정", categoryId);
+
+            // when
+            categoryService.update(command);
+
+            // then
+            Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
+            assertThat(category.getName()).isEqualTo("수정");
+            assertThat(category.getParent().getId()).isEqualTo(categoryId);
+        }
+
+        @Test
+        void 부모_카테고리를_제거함으로써_최상위_카테고리로_만들_수_있다() {
+            // given
+            Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위", categoryId);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, 말랑_ID, "수정", null);
+
+            // when
+            categoryService.update(command);
+
+            // then
+            Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
+            assertThat(category.getName()).isEqualTo("수정");
+            assertThat(category.getParent()).isNull();
+        }
+
+        @Test
+        void 부모_카테고리를_변경할_수_있다() {
+            // given
+            Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long otherRootCategory = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위2");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위", categoryId);
+            Long childChildCategoryId1 = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "더하위1", childCategoryId);
+            Long childChildCategoryId2 = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "더하위2", childCategoryId);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, 말랑_ID, "수정", otherRootCategory);
+
+            // when
+            categoryService.update(command);
+
+            // then
+            Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
+            assertThat(category.getName()).isEqualTo("수정");
+            assertThat(category.getParent().getId()).isEqualTo(otherRootCategory);
+            assertThat(category.getChildren())
+                    .extracting(CommonDomainModel::getId)
+                    .containsExactly(childChildCategoryId1, childChildCategoryId2);
+        }
+
+        @Test
+        void 자신의_하위_카테고리를_부모로_만들_수_없다() {
+            // given
+            Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위", categoryId);
+            Long childChildCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "더하위1", childCategoryId);
+            UpdateCategoryCommand command1 = new UpdateCategoryCommand(categoryId, 말랑_ID, "수정", childCategoryId);
+            UpdateCategoryCommand command2 = new UpdateCategoryCommand(categoryId, 말랑_ID, "수정", childChildCategoryId);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    categoryService.update(command1)
+            ).isInstanceOf(CategoryHierarchyViolationException.class);
+            assertThatThrownBy(() ->
+                    categoryService.update(command2)
+            ).isInstanceOf(CategoryHierarchyViolationException.class);
+        }
+
+        @Test
+        void 자신의_카테고리가_아니면_오류() {
+            // given
+            Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+            Long otherMemberId = memberServiceHelper.회원을_저장한다("동훈");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            UpdateCategoryCommand command = new UpdateCategoryCommand(categoryId, otherMemberId, "수정", null);
+
+            // when
+            assertThatThrownBy(() ->
+                    categoryService.update(command)
+            ).isInstanceOf(NoAuthorityUpdateCategoryException.class);
+
+            // then
+            Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
+            assertThat(category.getName()).isEqualTo("최상위");
+            assertThat(category.getParent()).isNull();
+        }
+
+        @Test
+        void 다른_사람의_카테고리의_하위_카테고리로_변경할_수_없다() {
+            // given
+            Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
+            Long otherMemberId = memberServiceHelper.회원을_저장한다("동훈");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long otherCategory = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "최상위");
+            UpdateCategoryCommand command = new UpdateCategoryCommand(categoryId, 말랑_ID, "수정", otherCategory);
+
+            // when
+            assertThatThrownBy(() ->
+                    categoryService.update(command)
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
+
+            // then
+            Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
+            assertThat(category.getName()).isEqualTo("최상위");
+            assertThat(category.getParent()).isNull();
         }
     }
 }

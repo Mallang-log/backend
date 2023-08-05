@@ -46,8 +46,8 @@ public class Category extends CommonDomainModel {
 
     public void update(Long memberId, String name, Category parent) {
         validateOwner(memberId, new NoAuthorityUpdateCategoryException());
-        this.name = name;
         setParent(parent);
+        this.name = name;
     }
 
     private void validateOwner(Long memberId, MallangLogException e) {
