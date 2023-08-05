@@ -3,7 +3,7 @@ package com.mallang.category.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.category.application.exception.InvalidParentCategory;
+import com.mallang.category.application.exception.NoAuthorityUseCategory;
 import com.mallang.member.MemberFixture;
 import com.mallang.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ class CategoryTest {
         // when
         assertThatThrownBy(() ->
                 하위.setParent(최상위)
-        ).isInstanceOf(InvalidParentCategory.class);
+        ).isInstanceOf(NoAuthorityUseCategory.class);
 
         // then
         assertThat(하위.getParent()).isNull();

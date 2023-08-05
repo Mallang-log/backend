@@ -3,7 +3,7 @@ package com.mallang.category.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.mallang.category.application.exception.InvalidParentCategory;
+import com.mallang.category.application.exception.NoAuthorityUseCategory;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.domain.Member;
 import jakarta.persistence.Entity;
@@ -41,7 +41,7 @@ public class Category extends CommonDomainModel {
 
     private void validateSameMember(Category parent) {
         if (!parent.getMember().getId().equals(member.getId())) {
-            throw new InvalidParentCategory();
+            throw new NoAuthorityUseCategory();
         }
     }
 }

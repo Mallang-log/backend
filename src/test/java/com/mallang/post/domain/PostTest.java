@@ -5,6 +5,8 @@ import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.category.application.exception.NoAuthorityUseCategory;
+import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
@@ -63,6 +65,51 @@ class PostTest {
             // then
             assertThat(post.getTitle()).isEqualTo("제목");
             assertThat(post.getContent()).isEqualTo("내용");
+        }
+    }
+
+    @Nested
+    class 카테고리_설정_시 {
+
+        private final Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(writer)
+                .build();
+
+        @Test
+        void 카테고리가_설정된다() {
+            // given
+            Category category = Category.builder()
+                    .member(writer)
+                    .name("카테고리")
+                    .build();
+
+            // when
+            post.setCategory(category);
+
+            // then
+            assertThat(post.getCategory().getName()).isEqualTo("카테고리");
+        }
+
+        @Test
+        void 작성자가_생성한_카테고리가_아닌_경우_예외() {
+            // given
+            Member other = memberBuilder()
+                    .id(2L)
+                    .build();
+            Category category = Category.builder()
+                    .member(other)
+                    .name("카테고리")
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    post.setCategory(category)
+            ).isInstanceOf(NoAuthorityUseCategory.class);
+
+            // then
+            assertThat(post.getCategory()).isNull();
         }
     }
 }

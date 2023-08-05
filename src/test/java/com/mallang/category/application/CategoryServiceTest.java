@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.category.application.command.CreateCategoryCommand;
-import com.mallang.category.application.exception.InvalidParentCategory;
+import com.mallang.category.application.exception.NoAuthorityUseCategory;
 import com.mallang.category.application.exception.NotFoundCategoryException;
 import com.mallang.category.domain.Category;
 import com.mallang.member.MemberServiceHelper;
@@ -90,7 +90,7 @@ class CategoryServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     categoryService.create(command)
-            ).isInstanceOf(InvalidParentCategory.class);
+            ).isInstanceOf(NoAuthorityUseCategory.class);
         }
     }
 }

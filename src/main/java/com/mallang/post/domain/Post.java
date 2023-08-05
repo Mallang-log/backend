@@ -3,7 +3,10 @@ package com.mallang.post.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.category.application.exception.NoAuthorityUseCategory;
+import com.mallang.category.domain.Category;
 import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import jakarta.persistence.Column;
@@ -34,19 +37,28 @@ public class Post extends CommonDomainModel {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "category_id", nullable = true)
+    private Category category;
+
+    public void setCategory(Category category) {
+        validateOwner(category.getMember().getId(), new NoAuthorityUseCategory());
+        this.category = category;
+    }
+
     public void update(
             Long memberId,
             String title,
             String content
     ) {
-        validateOwner(memberId);
+        validateOwner(memberId, new NoAuthorityUpdatePostException());
         this.title = title;
         this.content = content;
     }
 
-    private void validateOwner(Long memberId) {
+    private void validateOwner(Long memberId, MallangLogException e) {
         if (!member.getId().equals(memberId)) {
-            throw new NoAuthorityUpdatePostException();
+            throw e;
         }
     }
 }
