@@ -4,8 +4,10 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.category.exception.CategoryHierarchyViolationException;
+import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -13,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,18 +44,29 @@ public class Category extends CommonDomainModel {
         this.member = member;
     }
 
+    public void update(Long memberId, String name, Category parent) {
+        validateOwner(memberId, new NoAuthorityUpdateCategoryException());
+        this.name = name;
+        setParent(parent);
+    }
+
+    private void validateOwner(Long memberId, MallangLogException e) {
+        if (!member.getId().equals(memberId)) {
+            throw e;
+        }
+    }
+
     public void setParent(Category parent) {
-        validateSameMember(parent);
+        if (parent == null) {
+            Optional.ofNullable(this.parent)
+                    .ifPresent(it -> it.removeChild(this));
+            this.parent = null;
+            return;
+        }
+        validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
         validateHierarchy(parent);
         this.parent = parent;
         parent.addChild(this);
-    }
-
-
-    private void validateSameMember(Category parent) {
-        if (!parent.getMember().getId().equals(member.getId())) {
-            throw new NoAuthorityUseCategoryException();
-        }
     }
 
     private void validateHierarchy(Category parent) {
@@ -66,5 +80,9 @@ public class Category extends CommonDomainModel {
 
     private void addChild(Category child) {
         this.children.add(child);
+    }
+
+    private void removeChild(Category child) {
+        this.children.remove(child);
     }
 }
