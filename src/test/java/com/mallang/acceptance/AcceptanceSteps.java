@@ -8,6 +8,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -22,6 +24,10 @@ public final class AcceptanceSteps {
 
     public static <T> T 없음() {
         return null;
+    }
+
+    public static <T> List<T> 비어있음() {
+        return Collections.emptyList();
     }
 
     public static RequestSpecification given() {

@@ -2,18 +2,22 @@ package com.mallang.acceptance.category;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
+import static com.mallang.acceptance.AcceptanceSteps.비어있음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
+import static com.mallang.acceptance.category.CategoryAcceptanceDatas.전체_조회_항목들;
+import static com.mallang.acceptance.category.CategoryAcceptanceDatas.카테고리_조회_응답_데이터;
+import static com.mallang.acceptance.category.CategoryAcceptanceDatas.하위_카테고리들;
+import static com.mallang.acceptance.category.CategoryAcceptanceSteps.내_카테고리_조회_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_수정_요청;
+import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
 import static com.mallang.acceptance.category.CategoryAcceptanceTestHelper.카테고리_생성;
 
 import com.mallang.acceptance.AcceptanceTest;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -60,10 +64,52 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, "JPA", Spring_카테고리_ID);
 
         // when
-        ExtractableResponse<Response> extract = 카테고리_수정_요청(말랑_세션_ID, JPA_카테고리_ID, "Node", 없음());
+        var extract = 카테고리_수정_요청(말랑_세션_ID, JPA_카테고리_ID, "Node", 없음());
 
         // then
         응답_상태를_검증한다(extract, 정상_처리);
-        // TODO 조회 메서드 만든 뒤 확인
+        var 예상_응답 = 전체_조회_항목들(
+                카테고리_조회_응답_데이터(Spring_카테고리_ID, "Spring", 비어있음()),
+                카테고리_조회_응답_데이터(JPA_카테고리_ID, "Node", 비어있음())
+        );
+        var 응답 = 내_카테고리_조회_요청(말랑_세션_ID);
+        카테고리_조회_응답을_검증한다(응답, 예상_응답);
+    }
+
+    @Test
+    void 자신의_카테고리를_조회한다() {
+        // given
+        var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+        카테고리_생성(동훈_세션_ID, "Node", 없음());
+
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+        var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, "Spring", 없음());
+        var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, "JPA", Spring_카테고리_ID);
+        var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, "N + 1", JPA_카테고리_ID);
+        var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, "Security", Spring_카테고리_ID);
+        var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, "OAuth", Security_카테고리_ID);
+        var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, "CSRF", Security_카테고리_ID);
+        var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, "Algorithm", 없음());
+        var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, "DFS", Algorithm_카테고리_ID);
+        var 예상_응답 = 전체_조회_항목들(
+                카테고리_조회_응답_데이터(Spring_카테고리_ID, "Spring", 하위_카테고리들(
+                        카테고리_조회_응답_데이터(JPA_카테고리_ID, "JPA", 하위_카테고리들(
+                                카테고리_조회_응답_데이터(N1_카테고리_ID, "N + 1", 비어있음())
+                        )),
+                        카테고리_조회_응답_데이터(Security_카테고리_ID, "Security", 하위_카테고리들(
+                                카테고리_조회_응답_데이터(OAuth_카테고리_ID, "OAuth", 비어있음()),
+                                카테고리_조회_응답_데이터(CSRF_카테고리_ID, "CSRF", 비어있음())
+                        ))
+                )),
+                카테고리_조회_응답_데이터(Algorithm_카테고리_ID, "Algorithm", 하위_카테고리들(
+                        카테고리_조회_응답_데이터(DFS_카테고리_ID, "DFS", 비어있음())
+                ))
+        );
+
+        // when
+        var 응답 = 내_카테고리_조회_요청(말랑_세션_ID);
+
+        // then
+        카테고리_조회_응답을_검증한다(응답, 예상_응답);
     }
 }
