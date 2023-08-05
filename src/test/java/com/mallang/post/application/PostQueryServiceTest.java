@@ -1,12 +1,8 @@
 package com.mallang.post.application;
 
-import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
-import com.mallang.member.domain.OauthId;
-import com.mallang.post.application.command.CreatePostCommand;
+import com.mallang.member.MemberServiceHelper;
 import com.mallang.post.application.query.PostDetailResponse;
 import com.mallang.post.application.query.PostSimpleResponse;
 import java.util.List;
@@ -27,31 +23,25 @@ import org.springframework.transaction.annotation.Transactional;
 class PostQueryServiceTest {
 
     @Autowired
+    private PostServiceTestHelper postServiceTestHelper;
+
+    @Autowired
+    private MemberServiceHelper memberServiceHelper;
+
+    @Autowired
     private PostQueryService postQueryService;
-
-    @Autowired
-    private PostService postService;
-
-    @Autowired
-    private MemberRepository memberRepository;
 
     private Long memberId;
 
     @BeforeEach
     void setUp() {
-        memberId = memberRepository.save(Member.builder()
-                .oauthId(new OauthId("1", GITHUB))
-                .nickname("말랑")
-                .profileImageUrl("https://mallang.com")
-                .build()
-        ).getId();
+        memberId = memberServiceHelper.회원을_저장한다("말랑");
     }
 
     @Test
     void 게시글을_조회한다() {
         // given
-        CreatePostCommand command = new CreatePostCommand(memberId, "게시글 1", "content");
-        Long id = postService.create(command);
+        Long id = postServiceTestHelper.포스트를_저장한다(memberId, "게시글 1", "content");
 
         // when
         PostDetailResponse response = postQueryService.getById(id);
@@ -68,10 +58,8 @@ class PostQueryServiceTest {
     @Test
     void 게시글을_전체_조회한다() {
         // given
-        CreatePostCommand request1 = new CreatePostCommand(memberId, "게시글1", "content1");
-        CreatePostCommand request2 = new CreatePostCommand(memberId, "게시글2", "content2");
-        Long post1Id = postService.create(request1);
-        Long post2Id = postService.create(request2);
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "게시글1", "content1");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "게시글2", "content2");
 
         // when
         List<PostSimpleResponse> responses = postQueryService.findAll();
