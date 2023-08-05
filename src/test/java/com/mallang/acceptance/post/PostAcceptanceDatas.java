@@ -1,8 +1,11 @@
 package com.mallang.acceptance.post;
 
 import com.mallang.post.application.query.PostDetailResponse;
+import com.mallang.post.application.query.PostDetailResponse.CategoryDetailInfo;
+import com.mallang.post.application.query.PostDetailResponse.WriterDetailInfo;
 import com.mallang.post.application.query.PostSimpleResponse;
-import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.application.query.PostSimpleResponse.CategorySimpleInfo;
+import com.mallang.post.application.query.PostSimpleResponse.WriterSimpleInfo;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,12 +15,15 @@ public class PostAcceptanceDatas {
     public static PostDetailResponse 예상_게시글_단일_조회_응답(
             Long 게시글_ID,
             String 작성자_닉네임,
+            Long 카테고리_ID,
+            String 카테고리_이름,
             String 제목,
             String 내용
     ) {
         return PostDetailResponse.builder()
                 .id(게시글_ID)
-                .writerNickname(작성자_닉네임)
+                .writerInfo(new WriterDetailInfo(null, 작성자_닉네임, null))
+                .categoryInfo(new CategoryDetailInfo(카테고리_ID, 카테고리_이름))
                 .title(제목)
                 .content(내용)
                 .build();
@@ -26,12 +32,15 @@ public class PostAcceptanceDatas {
     public static PostSimpleResponse 예상_게시글_전체_조회_응답(
             Long 게시글_ID,
             String 작성자_닉네임,
+            Long 카테고리_ID,
+            String 카테고리_이름,
             String 제목,
             String 내용
     ) {
         return PostSimpleResponse.builder()
                 .id(게시글_ID)
-                .writerNickname(작성자_닉네임)
+                .writerInfo(new WriterSimpleInfo(null, 작성자_닉네임, null))
+                .categoryInfo(new CategorySimpleInfo(카테고리_ID, 카테고리_이름))
                 .title(제목)
                 .content(내용)
                 .build();

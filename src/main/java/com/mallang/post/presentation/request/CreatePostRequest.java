@@ -4,7 +4,8 @@ import com.mallang.post.application.command.CreatePostCommand;
 
 public record CreatePostRequest(
         String title,
-        String content
+        String content,
+        Long categoryId
 ) {
 
     public CreatePostCommand toCommand(Long memberId) {
@@ -12,6 +13,7 @@ public record CreatePostRequest(
                 .memberId(memberId)
                 .title(title)
                 .content(content)
+                .categoryId(categoryId)
                 .build();
     }
 }

@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.member.MemberServiceHelper;
 import com.mallang.post.application.query.PostDetailResponse;
+import com.mallang.post.application.query.PostDetailResponse.WriterDetailInfo;
 import com.mallang.post.application.query.PostSimpleResponse;
+import com.mallang.post.application.query.PostSimpleResponse.WriterSimpleInfo;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,8 +50,7 @@ class PostQueryServiceTest {
 
         // then
         assertThat(response.id()).isEqualTo(id);
-        assertThat(response.writerId()).isEqualTo(memberId);
-        assertThat(response.writerNickname()).isEqualTo("말랑");
+        assertThat(response.writerInfo()).isEqualTo(new WriterDetailInfo(memberId, "말랑", "말랑"));
         assertThat(response.title()).isEqualTo("게시글 1");
         assertThat(response.content()).isEqualTo("content");
         assertThat(response.createdDate()).isNotNull();
@@ -70,15 +71,13 @@ class PostQueryServiceTest {
                 .isEqualTo(List.of(
                                 PostSimpleResponse.builder()
                                         .id(post1Id)
-                                        .writerId(memberId)
-                                        .writerNickname("말랑")
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
                                         .title("게시글1")
                                         .content("content1")
                                         .build(),
                                 PostSimpleResponse.builder()
                                         .id(post2Id)
-                                        .writerId(memberId)
-                                        .writerNickname("말랑")
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
                                         .title("게시글2")
                                         .content("content2")
                                         .build()

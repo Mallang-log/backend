@@ -47,7 +47,6 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-
     public ResponseEntity<PostDetailResponse> getById(
             @PathVariable Long id
     ) {
