@@ -41,9 +41,9 @@ class PostQueryServiceTest {
     }
 
     @Test
-    void 게시글을_조회한다() {
+    void 포스트를_조회한다() {
         // given
-        Long id = postServiceTestHelper.포스트를_저장한다(memberId, "게시글 1", "content");
+        Long id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트 1", "content");
 
         // when
         PostDetailResponse response = postQueryService.getById(id);
@@ -51,16 +51,16 @@ class PostQueryServiceTest {
         // then
         assertThat(response.id()).isEqualTo(id);
         assertThat(response.writerInfo()).isEqualTo(new WriterDetailInfo(memberId, "말랑", "말랑"));
-        assertThat(response.title()).isEqualTo("게시글 1");
+        assertThat(response.title()).isEqualTo("포스트 1");
         assertThat(response.content()).isEqualTo("content");
         assertThat(response.createdDate()).isNotNull();
     }
 
     @Test
-    void 게시글을_전체_조회한다() {
+    void 포스트를_전체_조회한다() {
         // given
-        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "게시글1", "content1");
-        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "게시글2", "content2");
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "content1");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2");
 
         // when
         List<PostSimpleResponse> responses = postQueryService.findAll();
@@ -72,13 +72,13 @@ class PostQueryServiceTest {
                                 PostSimpleResponse.builder()
                                         .id(post1Id)
                                         .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                        .title("게시글1")
+                                        .title("포스트1")
                                         .content("content1")
                                         .build(),
                                 PostSimpleResponse.builder()
                                         .id(post2Id)
                                         .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                        .title("게시글2")
+                                        .title("포스트2")
                                         .content("content2")
                                         .build()
                         )

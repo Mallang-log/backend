@@ -48,14 +48,14 @@ class PostServiceTest {
     }
 
     @Nested
-    class 게시글_저장_시 {
+    class 포스트_저장_시 {
 
         @Test
-        void 카테고리_없는_게시글을_저장한다() {
+        void 카테고리_없는_포스트를_저장한다() {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .title("게시글 1")
+                    .title("포스트 1")
                     .content("content")
                     .build();
 
@@ -72,7 +72,7 @@ class PostServiceTest {
             Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .title("게시글 1")
+                    .title("포스트 1")
                     .content("content")
                     .categoryId(categoryId)
                     .build();
@@ -90,7 +90,7 @@ class PostServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .title("게시글 1")
+                    .title("포스트 1")
                     .content("content")
                     .categoryId(1000L)
                     .build();
@@ -108,7 +108,7 @@ class PostServiceTest {
             Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .title("게시글 1")
+                    .title("포스트 1")
                     .content("content")
                     .categoryId(categoryId)
                     .build();
@@ -121,12 +121,12 @@ class PostServiceTest {
     }
 
     @Nested
-    class 게시글_수정_시 {
+    class 포스트_수정_시 {
 
         @Test
-        void 내가_쓴_게시글을_수정할_수_있다() {
+        void 내가_쓴_포스트를_수정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용");
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null));
@@ -138,10 +138,10 @@ class PostServiceTest {
         }
 
         @Test
-        void 다른_사람의_게시글은_수정할_수_없다() {
+        void 다른_사람의_포스트은_수정할_수_없다() {
             // given
             Long otherMemberId = memberServiceHelper.회원을_저장한다("동훈");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용");
 
             // when
             assertThatThrownBy(() ->
@@ -150,15 +150,15 @@ class PostServiceTest {
 
             // then
             Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-            assertThat(post.getTitle()).isEqualTo("게시글");
+            assertThat(post.getTitle()).isEqualTo("포스트");
             assertThat(post.getContent()).isEqualTo("내용");
         }
 
         @Test
-        void 게시글_수정_시_있던_카테고리릴_없앨_수_있다() {
+        void 포스트_수정_시_있던_카테고리릴_없앨_수_있다() {
             // given
             Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", springCategoryId);
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", springCategoryId);
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null));
@@ -171,9 +171,9 @@ class PostServiceTest {
         }
 
         @Test
-        void 게시글_수정_시_없던_카테고리를_설정할_수_있다() {
+        void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", null);
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", null);
             Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
 
             // when
@@ -190,7 +190,7 @@ class PostServiceTest {
         void 기존_카테고리를_다른_카테고리로_변경할_수_있다() {
             // given
             Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", springCategoryId);
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", springCategoryId);
             Long nodeCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Node");
 
             // when
@@ -206,7 +206,7 @@ class PostServiceTest {
         @Test
         void 다른_사람의_카테고리거나_없는_카테고리로는_변경할_수_없다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", null);
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", null);
             Long otherMemberId = memberServiceHelper.회원을_저장한다("other");
             Long otherMemberSpringCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
 

@@ -12,8 +12,8 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostAcceptanceDatas {
 
-    public static PostDetailResponse 예상_게시글_단일_조회_응답(
-            Long 게시글_ID,
+    public static PostDetailResponse 예상_포스트_단일_조회_응답(
+            Long 포스트_ID,
             String 작성자_닉네임,
             Long 카테고리_ID,
             String 카테고리_이름,
@@ -21,7 +21,7 @@ public class PostAcceptanceDatas {
             String 내용
     ) {
         return PostDetailResponse.builder()
-                .id(게시글_ID)
+                .id(포스트_ID)
                 .writerInfo(new WriterDetailInfo(null, 작성자_닉네임, null))
                 .categoryInfo(new CategoryDetailInfo(카테고리_ID, 카테고리_이름))
                 .title(제목)
@@ -29,8 +29,8 @@ public class PostAcceptanceDatas {
                 .build();
     }
 
-    public static PostSimpleResponse 예상_게시글_전체_조회_응답(
-            Long 게시글_ID,
+    public static PostSimpleResponse 예상_포스트_전체_조회_응답(
+            Long 포스트_ID,
             String 작성자_닉네임,
             Long 카테고리_ID,
             String 카테고리_이름,
@@ -38,7 +38,7 @@ public class PostAcceptanceDatas {
             String 내용
     ) {
         return PostSimpleResponse.builder()
-                .id(게시글_ID)
+                .id(포스트_ID)
                 .writerInfo(new WriterSimpleInfo(null, 작성자_닉네임, null))
                 .categoryInfo(new CategorySimpleInfo(카테고리_ID, 카테고리_이름))
                 .title(제목)
