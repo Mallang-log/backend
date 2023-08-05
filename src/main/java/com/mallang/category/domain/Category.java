@@ -9,15 +9,12 @@ import com.mallang.member.domain.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 public class Category extends CommonDomainModel {
 
@@ -30,6 +27,12 @@ public class Category extends CommonDomainModel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
+
+    @Builder
+    public Category(String name, Member member) {
+        this.name = name;
+        this.member = member;
+    }
 
     public void setParent(Category parent) {
         validateSameMember(parent);
