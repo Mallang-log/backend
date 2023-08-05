@@ -111,5 +111,21 @@ class PostTest {
             // then
             assertThat(post.getCategory()).isNull();
         }
+
+        @Test
+        void 카테고리를_없앨_수_있다() {
+            // given
+            Category category = Category.builder()
+                    .member(writer)
+                    .name("카테고리")
+                    .build();
+            post.setCategory(category);
+
+            // when
+            post.setCategory(null);
+
+            // then
+            assertThat(post.getCategory()).isNull();
+        }
     }
 }

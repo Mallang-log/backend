@@ -1,5 +1,6 @@
 package com.mallang.post.application;
 
+import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
@@ -34,5 +35,9 @@ public class PostService {
     public void update(UpdatePostCommand command) {
         Post post = postRepository.getById(command.postId());
         post.update(command.memberId(), command.title(), command.content());
+        Category category = Optional.ofNullable(command.categoryId())
+                .map(categoryRepository::getById)
+                .orElse(null);
+        post.setCategory(category);
     }
 }

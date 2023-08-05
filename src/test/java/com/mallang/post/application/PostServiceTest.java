@@ -120,36 +120,107 @@ class PostServiceTest {
         }
     }
 
-    @Test
-    void 게시글_수정_성공() {
-        // given
-        Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
-        Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "게시글", "내용");
+    @Nested
+    class 게시글_수정_시 {
 
-        // when
-        postService.update(new UpdatePostCommand(말랑_ID, 포스트_ID, "수정제목", "수정내용"));
+        @Test
+        void 내가_쓴_게시글을_수정할_수_있다() {
+            // given
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용");
 
-        // then
-        Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-        assertThat(post.getTitle()).isEqualTo("수정제목");
-        assertThat(post.getContent()).isEqualTo("수정내용");
-    }
+            // when
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null));
 
-    @Test
-    void 게시글_수정_실패() {
-        // given
-        Long 말랑_ID = memberServiceHelper.회원을_저장한다("말랑");
-        Long 동훈_ID = memberServiceHelper.회원을_저장한다("동훈");
-        Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "게시글", "내용");
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            assertThat(post.getTitle()).isEqualTo("수정제목");
+            assertThat(post.getContent()).isEqualTo("수정내용");
+        }
 
-        // when
-        assertThatThrownBy(() ->
-                postService.update(new UpdatePostCommand(동훈_ID, 포스트_ID, "수정제목", "수정내용"))
-        ).isInstanceOf(NoAuthorityUpdatePostException.class);
+        @Test
+        void 다른_사람의_게시글은_수정할_수_없다() {
+            // given
+            Long otherMemberId = memberServiceHelper.회원을_저장한다("동훈");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용");
 
-        // then
-        Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-        assertThat(post.getTitle()).isEqualTo("게시글");
-        assertThat(post.getContent()).isEqualTo("내용");
+            // when
+            assertThatThrownBy(() ->
+                    postService.update(new UpdatePostCommand(otherMemberId, 포스트_ID, "수정제목", "수정내용", null))
+            ).isInstanceOf(NoAuthorityUpdatePostException.class);
+
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            assertThat(post.getTitle()).isEqualTo("게시글");
+            assertThat(post.getContent()).isEqualTo("내용");
+        }
+
+        @Test
+        void 게시글_수정_시_있던_카테고리릴_없앨_수_있다() {
+            // given
+            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", springCategoryId);
+
+            // when
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null));
+
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            assertThat(post.getTitle()).isEqualTo("수정제목");
+            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getCategory()).isNull();
+        }
+
+        @Test
+        void 게시글_수정_시_없던_카테고리를_설정할_수_있다() {
+            // given
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", null);
+            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
+
+            // when
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", springCategoryId));
+
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            assertThat(post.getTitle()).isEqualTo("수정제목");
+            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getCategory().getName()).isEqualTo("Spring");
+        }
+
+        @Test
+        void 기존_카테고리를_다른_카테고리로_변경할_수_있다() {
+            // given
+            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", springCategoryId);
+            Long nodeCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Node");
+
+            // when
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", nodeCategoryId));
+
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            assertThat(post.getTitle()).isEqualTo("수정제목");
+            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getCategory().getName()).isEqualTo("Node");
+        }
+
+        @Test
+        void 다른_사람의_카테고리거나_없는_카테고리로는_변경할_수_없다() {
+            // given
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "게시글", "내용", null);
+            Long otherMemberId = memberServiceHelper.회원을_저장한다("other");
+            Long otherMemberSpringCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postService.update(new UpdatePostCommand(
+                            memberId, 포스트_ID, "수정제목", "수정내용", 1000L
+                    ))
+            ).isInstanceOf(NotFoundCategoryException.class);
+            assertThatThrownBy(() ->
+                    postService.update(new UpdatePostCommand(
+                            memberId, 포스트_ID, "수정제목", "수정내용", otherMemberSpringCategoryId
+                    ))
+            ).isInstanceOf(NoAuthorityUseCategory.class);
+        }
     }
 }

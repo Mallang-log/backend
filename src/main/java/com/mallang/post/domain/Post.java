@@ -42,6 +42,10 @@ public class Post extends CommonDomainModel {
     private Category category;
 
     public void setCategory(Category category) {
+        if (category == null) {
+            this.category = null;
+            return;
+        }
         validateOwner(category.getMember().getId(), new NoAuthorityUseCategory());
         this.category = category;
     }
