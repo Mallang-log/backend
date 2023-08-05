@@ -3,8 +3,8 @@ package com.mallang.post.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.domain.Category;
+import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;

@@ -8,7 +8,6 @@ import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한�
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
-import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceTestHelper.카테고리_생성;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_단일_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_전체_조회_응답;
