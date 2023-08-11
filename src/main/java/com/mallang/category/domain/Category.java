@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
@@ -84,5 +85,15 @@ public class Category extends CommonDomainModel {
 
     private void removeChild(Category child) {
         this.children.remove(child);
+    }
+
+    public boolean equalIdOrContainsIdInParent(Long id) {
+        if (id.equals(getId())) {
+            return true;
+        }
+        if (Objects.isNull(parent)) {
+            return false;
+        }
+        return parent.equalIdOrContainsIdInParent(id);
     }
 }
