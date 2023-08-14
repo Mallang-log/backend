@@ -22,10 +22,10 @@ public class CategoryService {
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Category category = command.toCategory(member);
-        Optional.ofNullable(command.parentCategoryId())
+        Category parent = Optional.ofNullable(command.parentCategoryId())
                 .map(categoryRepository::getById)
-                .ifPresent(category::setParent);
+                .orElse(null);
+        Category category = command.toCategory(member, parent);
         return categoryRepository.save(category).getId();
     }
 

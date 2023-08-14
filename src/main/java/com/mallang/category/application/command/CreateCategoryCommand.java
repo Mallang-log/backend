@@ -10,10 +10,11 @@ public record CreateCategoryCommand(
         String name,
         Long parentCategoryId
 ) {
-    public Category toCategory(Member member) {
+    public Category toCategory(Member member, Category parent) {
         return Category.builder()
                 .name(name)
                 .member(member)
+                .parent(parent)
                 .build();
     }
 }

@@ -41,9 +41,10 @@ public class Category extends CommonDomainModel {
     private final List<Category> children = new ArrayList<>();
 
     @Builder
-    public Category(String name, Member member) {
+    public Category(String name, Member member, Category parent) {
         this.name = name;
         this.member = member;
+        setParent(parent);
     }
 
     public void update(Long memberId, String name, Category parent) {
@@ -58,7 +59,7 @@ public class Category extends CommonDomainModel {
         }
     }
 
-    public void setParent(Category parent) {
+    private void setParent(Category parent) {
         if (willBeRoot(parent)) {
             beRoot();
             return;

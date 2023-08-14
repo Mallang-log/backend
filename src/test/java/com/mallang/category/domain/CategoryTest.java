@@ -1,6 +1,5 @@
 package com.mallang.category.domain;
 
-import static com.mallang.member.MemberFixture.memberBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -36,13 +35,13 @@ class CategoryTest {
                     .name("최상위")
                     .member(member)
                     .build();
+
+            // when
             Category 하위 = Category.builder()
                     .name("하위")
                     .member(member)
+                    .parent(최상위)
                     .build();
-
-            // when
-            하위.setParent(최상위);
 
             // then
             assertThat(하위.getParent()).isEqualTo(최상위);
@@ -51,23 +50,23 @@ class CategoryTest {
         @Test
         void 하위_카테고리를_생성한_회원은_상위_카테고리를_생성한_회원과_같아야한다() {
             // given
+            Member member2 = MemberFixture.회원(2L, "mallang");
             Category 최상위 = Category.builder()
                     .name("최상위")
                     .member(member)
                     .build();
-            Member member2 = memberBuilder().id(2L).nickname("mallang").build();
-            Category 하위 = Category.builder()
-                    .name("하위")
-                    .member(member2)
-                    .build();
 
             // when
             assertThatThrownBy(() ->
-                    하위.setParent(최상위)
+                    Category.builder()
+                            .name("하위")
+                            .member(member2)
+                            .parent(최상위)
+                            .build()
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
 
             // then
-            assertThat(하위.getParent()).isNull();
+            assertThat(최상위.getChildren()).isEmpty();
         }
 
         @Test
@@ -80,18 +79,37 @@ class CategoryTest {
             Category 하위 = Category.builder()
                     .name("하위")
                     .member(member)
+                    .parent(최상위)
                     .build();
+
+            // when
             Category 더하위 = Category.builder()
                     .name("더하위")
                     .member(member)
+                    .parent(하위)
                     .build();
-            하위.setParent(최상위);
-
-            // when
-            더하위.setParent(하위);
 
             // then
             assertThat(하위.getParent()).isEqualTo(최상위);
+            assertThat(더하위.getParent()).isEqualTo(하위);
+        }
+
+    }
+
+    @Nested
+    class 수정_시 {
+
+        @Test
+        void 자기_자신이_부모여서는_안된다() {
+            // given
+            Category 최상위 = Category.builder()
+                    .name("최상위")
+                    .member(member)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() -> 최상위.update(member.getId(), "name", 최상위))
+                    .isInstanceOf(CategoryHierarchyViolationException.class);
         }
 
         @Test
@@ -104,39 +122,18 @@ class CategoryTest {
             Category 하위 = Category.builder()
                     .name("하위")
                     .member(member)
+                    .parent(최상위)
                     .build();
             Category 더하위 = Category.builder()
                     .name("더하위")
                     .member(member)
-                    .build();
-            하위.setParent(최상위);
-            더하위.setParent(하위);
-
-            // when & then
-            assertThatThrownBy(() -> 최상위.setParent(하위))
-                    .isInstanceOf(CategoryHierarchyViolationException.class);
-            assertThatThrownBy(() -> 최상위.setParent(더하위))
-                    .isInstanceOf(CategoryHierarchyViolationException.class);
-            assertThatThrownBy(() -> 하위.setParent(더하위))
-                    .isInstanceOf(CategoryHierarchyViolationException.class);
-        }
-
-        @Test
-        void 자기_자신이_부모여서는_안된다() {
-            // given
-            Category 최상위 = Category.builder()
-                    .name("최상위")
-                    .member(member)
+                    .parent(하위)
                     .build();
 
             // when & then
-            assertThatThrownBy(() -> 최상위.setParent(최상위))
+            assertThatThrownBy(() -> 최상위.update(member.getId(), "name", 하위))
                     .isInstanceOf(CategoryHierarchyViolationException.class);
         }
-    }
-
-    @Nested
-    class 수정_시 {
 
         @Test
         void 이름을_변경할_수_있다() {
@@ -200,8 +197,8 @@ class CategoryTest {
             Category childCategory = Category.builder()
                     .name("하위")
                     .member(member)
+                    .parent(category)
                     .build();
-            childCategory.setParent(category);
 
             // when & then
             assertThatThrownBy(() ->
@@ -219,8 +216,8 @@ class CategoryTest {
             Category childCategory = Category.builder()
                     .name("하위")
                     .member(member)
+                    .parent(category)
                     .build();
-            childCategory.setParent(category);
 
             // when
             childCategory.delete(member.getId());
@@ -257,15 +254,15 @@ class CategoryTest {
         Category 하위 = Category.builder()
                 .name("하위")
                 .member(member)
+                .parent(최상위)
                 .build();
         ReflectionTestUtils.setField(하위, "id", 2L);
         Category 더하위 = Category.builder()
                 .name("더하위")
                 .member(member)
+                .parent(하위)
                 .build();
         ReflectionTestUtils.setField(더하위, "id", 3L);
-        하위.setParent(최상위);
-        더하위.setParent(하위);
 
         // when & then
         assertThat(더하위.equalIdOrContainsIdInParent(3L)).isTrue();
