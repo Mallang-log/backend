@@ -4,7 +4,10 @@ import static com.mallang.member.MemberFixture.memberBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
+import com.mallang.category.exception.ChildCategoryExistException;
+import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
 import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.MemberFixture;
@@ -91,22 +94,6 @@ class CategoryTest {
             assertThat(하위.getParent()).isEqualTo(최상위);
         }
 
-    @Test
-    void 자신보다_낮은_Category_를_부모로_둘_수_없다() {
-        Category 최상위 = Category.builder()
-                .name("최상위")
-                .member(member)
-                .build();
-        Category 하위 = Category.builder()
-                .name("하위")
-                .member(member)
-                .build();
-        Category 더하위 = Category.builder()
-                .name("더하위")
-                .member(member)
-                .build();
-        하위.setParent(최상위);
-        더하위.setParent(하위);
         @Test
         void 자신보다_낮은_Category_를_부모로_둘_수_없다() {
             // given
@@ -180,13 +167,83 @@ class CategoryTest {
                     category.update(member2.getId(), "말랑", null)
             ).isInstanceOf(NoAuthorityUpdateCategoryException.class);
 
-        // then
-        assertThat(category.getName()).isEqualTo("최상위");
             // then
             assertThat(category.getName()).isEqualTo("최상위");
         }
     }
 
+    @Nested
+    class 제거_시 {
+
+        @Test
+        void 자신의_카테고리가_아니면_제거할_수_없다() {
+            // given
+            Member member2 = MemberFixture.회원(2L, "dong");
+            Category category = Category.builder()
+                    .name("최상위")
+                    .member(member)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    category.delete(member2.getId())
+            ).isInstanceOf(NoAuthorityDeleteCategoryException.class);
+        }
+
+        @Test
+        void 하위_카테고리가_존재하면_제거할_수_없다() {
+            // given
+            Category category = Category.builder()
+                    .name("최상위")
+                    .member(member)
+                    .build();
+            Category childCategory = Category.builder()
+                    .name("하위")
+                    .member(member)
+                    .build();
+            childCategory.setParent(category);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    category.delete(member.getId())
+            ).isInstanceOf(ChildCategoryExistException.class);
+        }
+
+        @Test
+        void 부모_카테고리의_하위_카테고리에서도_제거된다() {
+            // given
+            Category category = Category.builder()
+                    .name("최상위")
+                    .member(member)
+                    .build();
+            Category childCategory = Category.builder()
+                    .name("하위")
+                    .member(member)
+                    .build();
+            childCategory.setParent(category);
+
+            // when
+            childCategory.delete(member.getId());
+
+            // then
+            assertThat(category.getChildren()).isEmpty();
+        }
+
+        @Test
+        void 제거_이벤트가_발핼된다() {
+            // given
+            Category category = Category.builder()
+                    .name("최상위")
+                    .member(member)
+                    .build();
+
+            // when
+            category.delete(member.getId());
+
+            // then
+            assertThat(category.domainEvents().get(0))
+                    .isInstanceOf(CategoryDeletedEvent.class);
+        }
     }
 
     @Test

@@ -101,6 +101,21 @@ public class Category extends CommonDomainModel {
         this.children.remove(child);
     }
 
+    public void delete(Long memberId) {
+        validateOwner(memberId, new NoAuthorityDeleteCategoryException());
+        validateNoChildren();
+        if (parent != null) {
+            parent.removeChild(this);
+        }
+        registerEvent(new CategoryDeletedEvent(getId()));
+    }
+
+    private void validateNoChildren() {
+        if (!children.isEmpty()) {
+            throw new ChildCategoryExistException();
+        }
+    }
+
     public boolean equalIdOrContainsIdInParent(Long id) {
         if (id.equals(getId())) {
             return true;
