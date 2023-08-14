@@ -1,6 +1,7 @@
 package com.mallang.category.application;
 
 import com.mallang.category.application.command.CreateCategoryCommand;
+import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.application.command.UpdateCategoryCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
@@ -34,5 +35,11 @@ public class CategoryService {
                 .map(categoryRepository::getById)
                 .orElse(null);
         category.update(command.memberId(), command.name(), parentCategory);
+    }
+
+    public void delete(DeleteCategoryCommand command) {
+        Category category = categoryRepository.getById(command.categoryId());
+        category.delete(command.memberId());
+        categoryRepository.delete(category);
     }
 }
