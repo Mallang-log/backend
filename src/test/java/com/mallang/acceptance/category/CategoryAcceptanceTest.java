@@ -2,10 +2,12 @@ package com.mallang.acceptance.category;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
+import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.비어있음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
+import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.category.CategoryAcceptanceDatas.전체_조회_항목들;
@@ -16,11 +18,16 @@ import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고�
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_수정_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
 import static com.mallang.acceptance.category.CategoryAcceptanceTestHelper.카테고리_생성;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_단일_조회_응답;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_제거_요청;
+import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_내용_검증;
+import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("카테고리 인수테스트")
@@ -111,5 +118,53 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
 
         // then
         카테고리_조회_응답을_검증한다(응답, 예상_응답);
+    }
+
+    @Nested
+    class 카테고리_제거_시 extends AcceptanceTest {
+
+        @Test
+        void 카테고리를_제거한다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, "Spring", 없음());
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, "JPA", Spring_카테고리_ID);
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", JPA_카테고리_ID);
+
+            // when
+            var 응답 = 포스트_제거_요청(말랑_세션_ID, JPA_카테고리_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+            포스트_내용_검증(포스트_ID, 예상_포스트_단일_조회_응답(포스트_ID, "말랑", 없음(), 없음(), "제목", "내용"));
+        }
+
+        @Test
+        void 하위_카테고리가_있다면_제거할_수_없다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, "Spring", 없음());
+            카테고리_생성(말랑_세션_ID, "JPA", Spring_카테고리_ID);
+
+            // when
+            var 응답 = 포스트_제거_요청(말랑_세션_ID, Spring_카테고리_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 잘못된_요청);
+        }
+
+        @Test
+        void 자신의_카테고리가_아니라면_제거할_수_없다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, "Spring", 없음());
+
+            // when
+            var 응답 = 포스트_제거_요청(동훈_세션_ID, Spring_카테고리_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
     }
 }

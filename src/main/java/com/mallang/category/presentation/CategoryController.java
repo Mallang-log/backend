@@ -2,6 +2,7 @@ package com.mallang.category.presentation;
 
 import com.mallang.category.application.CategoryQueryService;
 import com.mallang.category.application.CategoryService;
+import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.application.query.CategoryResponse;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
@@ -10,6 +11,7 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +44,15 @@ public class CategoryController {
             @RequestBody UpdateCategoryRequest request
     ) {
         categoryService.update(request.toCommand(categoryId, memberId));
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long categoryId,
+            @Auth Long memberId
+    ) {
+        categoryService.delete(new DeleteCategoryCommand(memberId, categoryId));
         return ResponseEntity.ok().build();
     }
 

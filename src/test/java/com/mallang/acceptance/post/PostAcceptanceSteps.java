@@ -72,4 +72,11 @@ public class PostAcceptanceSteps {
                 .ignoringFields("writerInfo.writerId", "writerInfo.writerProfileImageUrl", "createdDate")
                 .isEqualTo(예상_데이터);
     }
+
+    public static ExtractableResponse<Response> 포스트_제거_요청(String 세션_ID, Long 카테고리_ID) {
+        return given(세션_ID)
+                .delete("/categories/{id}", 카테고리_ID)
+                .then().log().all()
+                .extract();
+    }
 }
