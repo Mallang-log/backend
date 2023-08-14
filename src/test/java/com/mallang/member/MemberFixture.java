@@ -6,6 +6,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class MemberFixture {
 
+    public static Member 회원(Long id, String nickname) {
+        return memberBuilder()
+                .id(id)
+                .nickname(nickname)
+                .build();
+    }
+
     public static TestMemberBuilder memberBuilder() {
         return new TestMemberBuilder();
     }

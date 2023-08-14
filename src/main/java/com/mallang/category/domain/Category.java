@@ -3,7 +3,10 @@ package com.mallang.category.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
+import com.mallang.category.exception.ChildCategoryExistException;
+import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
 import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
@@ -15,8 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,10 +59,8 @@ public class Category extends CommonDomainModel {
     }
 
     public void setParent(Category parent) {
-        if (parent == null) {
-            Optional.ofNullable(this.parent)
-                    .ifPresent(it -> it.removeChild(this));
-            this.parent = null;
+        if (willBeRoot(parent)) {
+            beRoot();
             return;
         }
         validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
@@ -70,7 +69,22 @@ public class Category extends CommonDomainModel {
         parent.addChild(this);
     }
 
+    private boolean willBeRoot(Category parent) {
+        return parent == null;
+    }
+
+    private void beRoot() {
+        if (parent != null) {
+            parent.removeChild(this);
+        }
+        parent = null;
+    }
+
     private void validateHierarchy(Category parent) {
+        if (this.equals(parent)) {
+            throw new CategoryHierarchyViolationException();
+        }
+
         if (children.contains(parent)) {
             throw new CategoryHierarchyViolationException();
         }
@@ -91,7 +105,7 @@ public class Category extends CommonDomainModel {
         if (id.equals(getId())) {
             return true;
         }
-        if (Objects.isNull(parent)) {
+        if (parent == null) {
             return false;
         }
         return parent.equalIdOrContainsIdInParent(id);
