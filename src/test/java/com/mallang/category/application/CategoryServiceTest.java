@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("카테고리 서비스(CategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -224,7 +223,6 @@ class CategoryServiceTest {
         }
 
         @Test
-        @Transactional
         void 다른_사람의_카테고리의_하위_카테고리로_변경할_수_없다() {
             // given
             Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
@@ -239,9 +237,11 @@ class CategoryServiceTest {
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
 
             // then
-            Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
-            assertThat(category.getName()).isEqualTo("최상위");
-            assertThat(category.getParent()).isNull();
+            transactionHelper.doAssert(() -> {
+                Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
+                assertThat(category.getName()).isEqualTo("최상위");
+                assertThat(category.getParent()).isNull();
+            });
         }
 
         @Test

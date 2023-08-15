@@ -24,10 +24,10 @@ public class PostService {
 
     public Long create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Post post = command.toPost(member);
-        Optional.ofNullable(command.categoryId())
+        Category category = Optional.ofNullable(command.categoryId())
                 .map(categoryRepository::getById)
-                .ifPresent(post::setCategory);
+                .orElse(null);
+        Post post = command.toPost(member, category);
         Post saved = postRepository.save(post);
         return saved.getId();
     }

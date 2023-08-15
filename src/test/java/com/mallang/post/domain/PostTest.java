@@ -75,15 +75,14 @@ class PostTest {
     @Nested
     class 카테고리_설정_시 {
 
-        private final Post post = Post.builder()
-                .title("제목")
-                .content("내용")
-                .member(writer)
-                .build();
-
         @Test
         void 카테고리가_설정된다() {
             // given
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .member(writer)
+                    .build();
             Category category = Category.create("카테고리", writer, null, categoryValidator);
 
             // when
@@ -98,8 +97,21 @@ class PostTest {
             // given
             Member other = MemberFixture.회원(2L, "other");
             Category category = Category.create("other", other, null, categoryValidator);
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .member(writer)
+                    .build();
 
             // when
+            assertThatThrownBy(() ->
+                    Post.builder()
+                            .title("제목")
+                            .content("내용")
+                            .member(writer)
+                            .category(category)
+                            .build()
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
             assertThatThrownBy(() ->
                     post.setCategory(category)
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
@@ -112,7 +124,12 @@ class PostTest {
         void 카테고리를_없앨_수_있다() {
             // given
             Category category = Category.create("카테고리", writer, null, categoryValidator);
-            post.setCategory(category);
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .member(writer)
+                    .category(category)
+                    .build();
 
             // when
             post.setCategory(null);

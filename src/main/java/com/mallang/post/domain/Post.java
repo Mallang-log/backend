@@ -14,15 +14,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 public class Post extends CommonDomainModel {
 
@@ -40,6 +37,14 @@ public class Post extends CommonDomainModel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
+
+    @Builder
+    public Post(String title, String content, Member member, Category category) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+        setCategory(category);
+    }
 
     public void setCategory(Category category) {
         if (category == null) {
