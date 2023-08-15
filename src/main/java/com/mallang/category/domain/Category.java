@@ -6,6 +6,7 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
+import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
 import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
@@ -18,7 +19,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,34 +40,31 @@ public class Category extends CommonDomainModel {
     @OneToMany(fetch = LAZY, mappedBy = "parent")
     private final List<Category> children = new ArrayList<>();
 
-    @Builder
-    public Category(String name, Member member, Category parent) {
+    private Category(String name, Member member) {
         this.name = name;
         this.member = member;
-        setParent(parent);
     }
 
-    public void update(Long memberId, String name, Category parent) {
-        validateOwner(memberId, new NoAuthorityUpdateCategoryException());
-        setParent(parent);
-        this.name = name;
+    public static Category create(String name, Member member, Category parent, CategoryValidator validator) {
+        Category category = new Category(name, member);
+        category.setParent(parent, validator);
+        return category;
     }
 
-    private void validateOwner(Long memberId, MallangLogException e) {
-        if (!member.getId().equals(memberId)) {
-            throw e;
-        }
-    }
-
-    private void setParent(Category parent) {
+    private void setParent(Category parent, CategoryValidator validator) {
         if (willBeRoot(parent)) {
+            validator.validateDuplicateRootName(member.getId(), name);
             beRoot();
             return;
         }
         validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
         validateHierarchy(parent);
+        if (this.parent != null) {
+            this.parent.removeChild(this);
+        }
         this.parent = parent;
-        parent.addChild(this);
+        this.parent.addChild(this);
+        validateDuplicatedNameInChildren(name);
     }
 
     private boolean willBeRoot(Category parent) {
@@ -81,25 +78,46 @@ public class Category extends CommonDomainModel {
         parent = null;
     }
 
+    private void validateOwner(Long memberId, MallangLogException e) {
+        if (!member.getId().equals(memberId)) {
+            throw e;
+        }
+    }
+
     private void validateHierarchy(Category parent) {
         if (this.equals(parent)) {
             throw new CategoryHierarchyViolationException();
         }
 
-        if (children.contains(parent)) {
+        if (getChildren().contains(parent)) {
             throw new CategoryHierarchyViolationException();
         }
-        for (Category child : children) {
+        for (Category child : getChildren()) {
             child.validateHierarchy(parent);
         }
     }
 
+    private void validateDuplicatedNameInChildren(String name) {
+        long duplicatedNameCount = parent.getChildren().stream()
+                .filter(it -> it.getName().equals(name))
+                .count();
+        if (duplicatedNameCount > 1) {
+            throw new DuplicateCategoryNameException();
+        }
+    }
+
     private void addChild(Category child) {
-        this.children.add(child);
+        children.add(child);
     }
 
     private void removeChild(Category child) {
-        this.children.remove(child);
+        children.remove(child);
+    }
+
+    public void update(Long memberId, String name, Category parent, CategoryValidator validator) {
+        validateOwner(memberId, new NoAuthorityUpdateCategoryException());
+        this.name = name;
+        setParent(parent, validator);
     }
 
     public void delete(Long memberId) {

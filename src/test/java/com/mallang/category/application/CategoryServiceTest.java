@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("카테고리 서비스(CategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -223,6 +224,7 @@ class CategoryServiceTest {
         }
 
         @Test
+        @Transactional
         void 다른_사람의_카테고리의_하위_카테고리로_변경할_수_없다() {
             // given
             Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
@@ -240,6 +242,35 @@ class CategoryServiceTest {
             Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
             assertThat(category.getName()).isEqualTo("최상위");
             assertThat(category.getParent()).isNull();
+        }
+
+        @Test
+        void 같은_부모를_가진_직계_자식끼리는_이름이_겹쳐서는_안된다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long 자식1 = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위1", 최상위);
+            Long 자식2 = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위2", 최상위);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(자식2, 말랑_ID, "하위1", 최상위);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    categoryService.update(command)
+            ).isInstanceOf(DuplicateCategoryNameException.class);
+        }
+
+        @Test
+        void 루트끼리는_이름이_같을_수_없다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            Long 자식 = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "하위", 최상위);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(자식, 말랑_ID, "최상위", null);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    categoryService.update(command)
+            ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
 

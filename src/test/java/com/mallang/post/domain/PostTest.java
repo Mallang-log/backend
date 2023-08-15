@@ -4,9 +4,12 @@ import static com.mallang.member.MemberFixture.memberBuilder;
 import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 import com.mallang.category.domain.Category;
+import com.mallang.category.domain.CategoryValidator;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
+import com.mallang.member.MemberFixture;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostTest {
 
+    private final CategoryValidator categoryValidator = mock(CategoryValidator.class);
     private final Member writer = memberBuilder()
             .id(1L)
             .oauthId(new OauthId("1", GITHUB))
@@ -80,10 +84,7 @@ class PostTest {
         @Test
         void 카테고리가_설정된다() {
             // given
-            Category category = Category.builder()
-                    .member(writer)
-                    .name("카테고리")
-                    .build();
+            Category category = Category.create("카테고리", writer, null, categoryValidator);
 
             // when
             post.setCategory(category);
@@ -95,13 +96,8 @@ class PostTest {
         @Test
         void 작성자가_생성한_카테고리가_아닌_경우_예외() {
             // given
-            Member other = memberBuilder()
-                    .id(2L)
-                    .build();
-            Category category = Category.builder()
-                    .member(other)
-                    .name("카테고리")
-                    .build();
+            Member other = MemberFixture.회원(2L, "other");
+            Category category = Category.create("other", other, null, categoryValidator);
 
             // when
             assertThatThrownBy(() ->
@@ -115,10 +111,7 @@ class PostTest {
         @Test
         void 카테고리를_없앨_수_있다() {
             // given
-            Category category = Category.builder()
-                    .member(writer)
-                    .name("카테고리")
-                    .build();
+            Category category = Category.create("카테고리", writer, null, categoryValidator);
             post.setCategory(category);
 
             // when

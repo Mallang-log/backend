@@ -5,6 +5,7 @@ import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.application.command.UpdateCategoryCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
+import com.mallang.category.domain.CategoryValidator;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
 import java.util.Optional;
@@ -19,13 +20,14 @@ public class CategoryService {
 
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
+    private final CategoryValidator categoryValidator;
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Category parent = Optional.ofNullable(command.parentCategoryId())
                 .map(categoryRepository::getById)
                 .orElse(null);
-        Category category = command.toCategory(member, parent);
+        Category category = command.toCategory(member, parent, categoryValidator);
         return categoryRepository.save(category).getId();
     }
 
@@ -34,7 +36,7 @@ public class CategoryService {
         Category parentCategory = Optional.ofNullable(command.parentCategoryId())
                 .map(categoryRepository::getById)
                 .orElse(null);
-        category.update(command.memberId(), command.name(), parentCategory);
+        category.update(command.memberId(), command.name(), parentCategory, categoryValidator);
     }
 
     public void delete(DeleteCategoryCommand command) {
