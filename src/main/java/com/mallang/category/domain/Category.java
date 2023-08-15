@@ -88,7 +88,6 @@ public class Category extends CommonDomainModel {
         if (this.equals(parent)) {
             throw new CategoryHierarchyViolationException();
         }
-
         if (getChildren().contains(parent)) {
             throw new CategoryHierarchyViolationException();
         }
