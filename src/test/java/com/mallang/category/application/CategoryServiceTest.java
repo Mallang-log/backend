@@ -10,14 +10,15 @@ import com.mallang.category.domain.Category;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
+import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
 import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.commoin.EventTestHelper;
+import com.mallang.commoin.TransactionHelper;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.MemberServiceTestHelper;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -25,12 +26,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("카테고리 서비스(CategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@Transactional
 @SpringBootTest
 class CategoryServiceTest {
 
@@ -47,7 +46,7 @@ class CategoryServiceTest {
     private EventTestHelper eventTestHelper;
 
     @Autowired
-    private EntityManager em;
+    private TransactionHelper transactionHelper;
 
     @Nested
     class 저장_시 {
@@ -60,7 +59,6 @@ class CategoryServiceTest {
 
             // when
             Long 최상위_카테고리 = categoryService.create(command);
-            flushAndClear();
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(최상위_카테고리);
@@ -77,7 +75,6 @@ class CategoryServiceTest {
 
             // when
             Long id = categoryService.create(command);
-            flushAndClear();
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(id);
@@ -110,6 +107,19 @@ class CategoryServiceTest {
                     categoryService.create(command)
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
         }
+
+        @Test
+        void 루트끼리는_이름이_같을_수_없다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "최상위");
+            CreateCategoryCommand command = new CreateCategoryCommand(말랑_ID, "최상위", null);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    categoryService.create(command)
+            ).isInstanceOf(DuplicateCategoryNameException.class);
+        }
     }
 
     @Nested
@@ -125,7 +135,6 @@ class CategoryServiceTest {
 
             // when
             categoryService.update(command);
-            flushAndClear();
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
@@ -143,7 +152,6 @@ class CategoryServiceTest {
 
             // when
             categoryService.update(command);
-            flushAndClear();
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
@@ -164,15 +172,16 @@ class CategoryServiceTest {
 
             // when
             categoryService.update(command);
-            flushAndClear();
 
             // then
-            Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
-            assertThat(category.getName()).isEqualTo("수정");
-            assertThat(category.getParent().getId()).isEqualTo(otherRootCategory);
-            assertThat(category.getChildren())
-                    .extracting(CommonDomainModel::getId)
-                    .containsExactly(childChildCategoryId1, childChildCategoryId2);
+            transactionHelper.doAssert(() -> {
+                Category category = categoryServiceTestHelper.카테고리를_조회한다(childCategoryId);
+                assertThat(category.getName()).isEqualTo("수정");
+                assertThat(category.getParent().getId()).isEqualTo(otherRootCategory);
+                assertThat(category.getChildren())
+                        .extracting(CommonDomainModel::getId)
+                        .containsExactly(childChildCategoryId1, childChildCategoryId2);
+            });
         }
 
         @Test
@@ -206,7 +215,6 @@ class CategoryServiceTest {
             assertThatThrownBy(() ->
                     categoryService.update(command)
             ).isInstanceOf(NoAuthorityUpdateCategoryException.class);
-            flushAndClear();
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
@@ -227,7 +235,6 @@ class CategoryServiceTest {
             assertThatThrownBy(() ->
                     categoryService.update(command)
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
-            flushAndClear();
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
@@ -251,7 +258,6 @@ class CategoryServiceTest {
             assertThatThrownBy(() ->
                     categoryService.delete(command)
             ).isInstanceOf(ChildCategoryExistException.class);
-            flushAndClear();
 
             // then
             assertThat(categoryServiceTestHelper.카테고리를_조회한다(categoryId)).isNotNull();
@@ -270,7 +276,6 @@ class CategoryServiceTest {
             assertThatThrownBy(() ->
                     categoryService.delete(command)
             ).isInstanceOf(NoAuthorityDeleteCategoryException.class);
-            flushAndClear();
 
             // then
             assertThat(categoryServiceTestHelper.카테고리를_조회한다(categoryId)).isNotNull();
@@ -286,14 +291,14 @@ class CategoryServiceTest {
 
             // when
             categoryService.delete(command);
-            flushAndClear();
 
             // then
             assertThatThrownBy(() ->
                     categoryServiceTestHelper.카테고리를_조회한다(childCategoryId)
             ).isInstanceOf(NotFoundCategoryException.class);
-            assertThat(categoryServiceTestHelper.카테고리를_조회한다(categoryId).getChildren())
-                    .isEmpty();
+            transactionHelper.doAssert(() ->
+                    assertThat(categoryServiceTestHelper.카테고리를_조회한다(categoryId).getChildren()).isEmpty()
+            );
         }
 
         @Test
@@ -310,10 +315,5 @@ class CategoryServiceTest {
             int count = eventTestHelper.이벤트_발생_횟수(CategoryDeletedEvent.class);
             assertThat(count).isEqualTo(1);
         }
-    }
-
-    private void flushAndClear() {
-        em.flush();
-        em.clear();
     }
 }
