@@ -53,29 +53,33 @@ public class Category extends CommonDomainModel {
 
     private void setParent(Category parent, CategoryValidator validator) {
         if (willBeRoot(parent)) {
-            validator.validateDuplicateRootName(member.getId(), name);
-            beRoot();
+            beRoot(validator);
             return;
         }
-        validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
-        validateHierarchy(parent);
-        if (this.parent != null) {
-            this.parent.removeChild(this);
-        }
-        this.parent = parent;
-        this.parent.addChild(this);
-        validateDuplicatedNameInChildren(name);
+        beChild(parent);
     }
 
     private boolean willBeRoot(Category parent) {
         return parent == null;
     }
 
-    private void beRoot() {
-        if (parent != null) {
-            parent.removeChild(this);
-        }
+    private void beRoot(CategoryValidator validator) {
+        validator.validateDuplicateRootName(member.getId(), name);
+        unlinkExistParent();
         parent = null;
+    }
+
+    private void unlinkExistParent() {
+        if (this.parent != null) {
+            this.parent.removeChild(this);
+        }
+    }
+
+    private void beChild(Category parent) {
+        validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
+        validateHierarchy(parent);
+        unlinkExistParent();
+        link(parent);
     }
 
     private void validateOwner(Long memberId, MallangLogException e) {
@@ -94,6 +98,12 @@ public class Category extends CommonDomainModel {
         for (Category child : getChildren()) {
             child.validateHierarchy(parent);
         }
+    }
+
+    private void link(Category parent) {
+        this.parent = parent;
+        this.parent.addChild(this);
+        validateDuplicatedNameInChildren(name);
     }
 
     private void validateDuplicatedNameInChildren(String name) {
@@ -122,9 +132,7 @@ public class Category extends CommonDomainModel {
     public void delete(Long memberId) {
         validateOwner(memberId, new NoAuthorityDeleteCategoryException());
         validateNoChildren();
-        if (parent != null) {
-            parent.removeChild(this);
-        }
+        unlinkExistParent();
         registerEvent(new CategoryDeletedEvent(getId()));
     }
 

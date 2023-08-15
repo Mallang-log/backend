@@ -24,19 +24,21 @@ public class CategoryService {
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Category parent = Optional.ofNullable(command.parentCategoryId())
-                .map(categoryRepository::getById)
-                .orElse(null);
-        Category category = command.toCategory(member, parent, categoryValidator);
+        Category parentCategory = getParentCategory(command.parentCategoryId());
+        Category category = Category.create(command.name(), member, parentCategory, categoryValidator);
         return categoryRepository.save(category).getId();
     }
 
     public void update(UpdateCategoryCommand command) {
         Category category = categoryRepository.getById(command.categoryId());
-        Category parentCategory = Optional.ofNullable(command.parentCategoryId())
+        Category parentCategory = getParentCategory(command.parentCategoryId());
+        category.update(command.memberId(), command.name(), parentCategory, categoryValidator);
+    }
+
+    private Category getParentCategory(Long parentCategoryId) {
+        return Optional.ofNullable(parentCategoryId)
                 .map(categoryRepository::getById)
                 .orElse(null);
-        category.update(command.memberId(), command.name(), parentCategory, categoryValidator);
     }
 
     public void delete(DeleteCategoryCommand command) {
