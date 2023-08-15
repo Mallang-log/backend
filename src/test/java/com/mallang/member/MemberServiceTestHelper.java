@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 @RequiredArgsConstructor
 @ActiveProfiles("test")
 @Component
-public class MemberServiceHelper {
+public class MemberServiceTestHelper {
 
     private final MemberRepository memberRepository;
 

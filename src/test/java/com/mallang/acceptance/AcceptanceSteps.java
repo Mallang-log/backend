@@ -8,18 +8,27 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
 public final class AcceptanceSteps {
 
-    public static final Object 없음 = null;
     public static final HttpStatus 정상_처리 = HttpStatus.OK;
     public static final HttpStatus 생성됨 = HttpStatus.CREATED;
     public static final HttpStatus 잘못된_요청 = HttpStatus.BAD_REQUEST;
     public static final HttpStatus 권한_없음 = HttpStatus.FORBIDDEN;
     public static final HttpStatus 찾을수_없음 = HttpStatus.NOT_FOUND;
     public static final HttpStatus 중복됨 = HttpStatus.CONFLICT;
+
+    public static <T> T 없음() {
+        return null;
+    }
+
+    public static <T> List<T> 비어있음() {
+        return Collections.emptyList();
+    }
 
     public static RequestSpecification given() {
         return RestAssured

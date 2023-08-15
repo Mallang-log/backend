@@ -7,6 +7,7 @@ public record UpdatePostCommand(
         Long memberId,
         Long postId,
         String title,
-        String content
+        String content,
+        Long categoryId
 ) {
 }

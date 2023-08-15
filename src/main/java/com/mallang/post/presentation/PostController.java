@@ -4,6 +4,7 @@ import com.mallang.common.auth.Auth;
 import com.mallang.post.application.PostQueryService;
 import com.mallang.post.application.PostService;
 import com.mallang.post.application.query.PostDetailResponse;
+import com.mallang.post.application.query.PostSearchCond;
 import com.mallang.post.application.query.PostSimpleResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -12,6 +13,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -47,7 +49,6 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-
     public ResponseEntity<PostDetailResponse> getById(
             @PathVariable Long id
     ) {
@@ -55,7 +56,9 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostSimpleResponse>> findAll() {
-        return ResponseEntity.ok(postQueryService.findAll());
+    public ResponseEntity<List<PostSimpleResponse>> search(
+            @ModelAttribute PostSearchCond postSearchCond
+    ) {
+        return ResponseEntity.ok(postQueryService.search(postSearchCond));
     }
 }

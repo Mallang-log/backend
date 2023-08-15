@@ -8,16 +8,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @MappedSuperclass
 @NoArgsConstructor(access = PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class CommonDomainModel {
+public class CommonDomainModel extends AbstractAggregateRoot<CommonDomainModel> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -25,4 +28,9 @@ public class CommonDomainModel {
 
     @CreatedDate
     private LocalDateTime createdDate;
+
+    @Override
+    public List<Object> domainEvents() {
+        return new ArrayList<>(super.domainEvents());
+    }
 }

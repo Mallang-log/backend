@@ -8,7 +8,8 @@ import lombok.Builder;
 public record CreatePostCommand(
         Long memberId,
         String title,
-        String content
+        String content,
+        Long categoryId
 ) {
     public Post toPost(Member member) {
         return Post.builder()

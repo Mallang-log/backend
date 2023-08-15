@@ -4,7 +4,8 @@ import com.mallang.post.application.command.UpdatePostCommand;
 
 public record UpdatePostRequest(
         String title,
-        String content
+        String content,
+        Long categoryId
 ) {
     public UpdatePostCommand toCommand(Long memberId, Long postId) {
         return UpdatePostCommand.builder()
@@ -12,6 +13,7 @@ public record UpdatePostRequest(
                 .postId(postId)
                 .title(title)
                 .content(content)
+                .categoryId(categoryId)
                 .build();
     }
 }
