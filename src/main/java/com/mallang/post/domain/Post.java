@@ -1,5 +1,7 @@
 package com.mallang.post.domain;
 
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -14,6 +16,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,12 +43,24 @@ public class Post extends CommonDomainModel {
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
+    @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE})
+    private List<Tag> tags = new ArrayList<>();
+
     @Builder
-    public Post(String title, String content, Member member, Category category) {
+    public Post(
+            String title,
+            String content,
+            Member member,
+            Category category,
+            List<Tag> tags
+    ) {
         this.title = title;
         this.content = content;
         this.member = member;
         setCategory(category);
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
     }
 
     public void setCategory(Category category) {
