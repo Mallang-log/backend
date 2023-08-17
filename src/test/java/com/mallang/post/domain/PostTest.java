@@ -78,6 +78,40 @@ class PostTest {
                             .build()
             ).isInstanceOf(DuplicatedTagsInPostException.class);
         }
+
+        @Test
+        void 카테고리를_설정할_수_있다() {
+            // given
+            Category category = Category.create("카테고리", writer, null, categoryValidator);
+
+            // when
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .member(writer)
+                    .category(category)
+                    .build();
+
+            // then
+            assertThat(post.getCategory().getName()).isEqualTo("카테고리");
+        }
+
+        @Test
+        void 작성자가_생성한_카테고리가_아닌_경우_예외() {
+            // given
+            Member other = MemberFixture.회원(2L, "other");
+            Category category = Category.create("other", other, null, categoryValidator);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    Post.builder()
+                            .title("제목")
+                            .content("내용")
+                            .member(writer)
+                            .category(category)
+                            .build()
+            ).isInstanceOf(NoAuthorityUseCategoryException.class);
+        }
     }
 
     @Nested
@@ -120,70 +154,21 @@ class PostTest {
         }
     }
 
-    @Nested
-    class 카테고리_설정_시 {
+    @Test
+    void 카테고리를_없앨_수_있다() {
+        // given
+        Category category = Category.create("카테고리", writer, null, categoryValidator);
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(writer)
+                .category(category)
+                .build();
 
-        @Test
-        void 카테고리가_설정된다() {
-            // given
-            Post post = Post.builder()
-                    .title("제목")
-                    .content("내용")
-                    .member(writer)
-                    .build();
-            Category category = Category.create("카테고리", writer, null, categoryValidator);
+        // when
+        post.removeCategory();
 
-            // when
-            post.setCategory(category);
-
-            // then
-            assertThat(post.getCategory().getName()).isEqualTo("카테고리");
-        }
-
-        @Test
-        void 작성자가_생성한_카테고리가_아닌_경우_예외() {
-            // given
-            Member other = MemberFixture.회원(2L, "other");
-            Category category = Category.create("other", other, null, categoryValidator);
-            Post post = Post.builder()
-                    .title("제목")
-                    .content("내용")
-                    .member(writer)
-                    .build();
-
-            // when
-            assertThatThrownBy(() ->
-                    Post.builder()
-                            .title("제목")
-                            .content("내용")
-                            .member(writer)
-                            .category(category)
-                            .build()
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
-            assertThatThrownBy(() ->
-                    post.setCategory(category)
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
-
-            // then
-            assertThat(post.getCategory()).isNull();
-        }
-
-        @Test
-        void 카테고리를_없앨_수_있다() {
-            // given
-            Category category = Category.create("카테고리", writer, null, categoryValidator);
-            Post post = Post.builder()
-                    .title("제목")
-                    .content("내용")
-                    .member(writer)
-                    .category(category)
-                    .build();
-
-            // when
-            post.setCategory(null);
-
-            // then
-            assertThat(post.getCategory()).isNull();
-        }
+        // then
+        assertThat(post.getCategory()).isNull();
     }
 }

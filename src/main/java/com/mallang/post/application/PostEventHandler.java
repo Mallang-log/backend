@@ -20,7 +20,7 @@ public class PostEventHandler {
     void deleteCategoryFromPost(CategoryDeletedEvent event) {
         List<Post> posts = postRepository.findAllByCategoryId(event.categoryId());
         for (Post post : posts) {
-            post.setCategory(null);
+            post.removeCategory();
         }
     }
 }

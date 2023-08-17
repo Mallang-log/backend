@@ -81,15 +81,6 @@ public class Post extends CommonDomainModel {
         }
     }
 
-    public void setCategory(Category category) {
-        if (category == null) {
-            this.category = null;
-            return;
-        }
-        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
-        this.category = category;
-    }
-
     public void update(
             Long memberId,
             String title,
@@ -106,5 +97,18 @@ public class Post extends CommonDomainModel {
         if (!member.getId().equals(memberId)) {
             throw e;
         }
+    }
+
+    private void setCategory(Category category) {
+        if (category == null) {
+            removeCategory();
+            return;
+        }
+        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
+        this.category = category;
+    }
+
+    public void removeCategory() {
+        this.category = null;
     }
 }
