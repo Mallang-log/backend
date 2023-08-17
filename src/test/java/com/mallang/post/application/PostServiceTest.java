@@ -10,7 +10,9 @@ import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.Tag;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -117,6 +119,26 @@ class PostServiceTest {
             assertThatThrownBy(() ->
                     postService.create(command)
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
+        }
+
+        @Test
+        void 태그를_함께_저장한다() {
+            // given
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .title("포스트 1")
+                    .content("content")
+                    .tags(List.of("tag1", "tag2", "tag3"))
+                    .build();
+
+            // when
+            Long id = postService.create(command);
+
+            // then
+            Post post = postServiceTestHelper.포스트를_조회한다(id);
+            assertThat(post.getTags())
+                    .extracting(Tag::getContent)
+                    .containsExactly("tag1", "tag2", "tag3");
         }
     }
 
