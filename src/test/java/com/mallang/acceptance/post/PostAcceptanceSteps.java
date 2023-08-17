@@ -10,6 +10,7 @@ import com.mallang.post.presentation.request.UpdatePostRequest;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -19,10 +20,12 @@ public class PostAcceptanceSteps {
             String 세션_ID,
             String 포스트_제목,
             String 포스트_내용,
-            Long 카테고리_ID
+            Long 카테고리_ID,
+            String... 태그들
     ) {
+        CreatePostRequest request = new CreatePostRequest(포스트_제목, 포스트_내용, 카테고리_ID, Arrays.asList(태그들));
         return given(세션_ID)
-                .body(new CreatePostRequest(포스트_제목, 포스트_내용, 카테고리_ID))
+                .body(request)
                 .when()
                 .post("/posts")
                 .then().log().all()

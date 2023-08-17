@@ -3,7 +3,9 @@ package com.mallang.post.application.query;
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.Tag;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -13,7 +15,8 @@ public record PostSimpleResponse(
         String content,
         LocalDateTime createdDate,
         WriterSimpleInfo writerInfo,
-        CategorySimpleInfo categoryInfo
+        CategorySimpleInfo categoryInfo,
+        TagSimpleInfos tagSimpleInfos
 ) {
 
     public static PostSimpleResponse from(Post post) {
@@ -24,6 +27,7 @@ public record PostSimpleResponse(
                 .createdDate(post.getCreatedDate())
                 .writerInfo(WriterSimpleInfo.from(post))
                 .categoryInfo(CategorySimpleInfo.from(post))
+                .tagSimpleInfos(TagSimpleInfos.from(post))
                 .build();
     }
 
@@ -52,6 +56,16 @@ public record PostSimpleResponse(
                 return new CategorySimpleInfo(null, null);
             }
             return new CategorySimpleInfo(category.getId(), category.getName());
+        }
+    }
+
+    public record TagSimpleInfos(
+            List<String> tagContents
+    ) {
+        private static TagSimpleInfos from(Post post) {
+            return new TagSimpleInfos(post.getTags().stream()
+                    .map(Tag::getContent)
+                    .toList());
         }
     }
 }

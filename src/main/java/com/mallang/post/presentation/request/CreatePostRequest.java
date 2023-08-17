@@ -1,11 +1,13 @@
 package com.mallang.post.presentation.request;
 
 import com.mallang.post.application.command.CreatePostCommand;
+import java.util.List;
 
 public record CreatePostRequest(
         String title,
         String content,
-        Long categoryId
+        Long categoryId,
+        List<String> tags
 ) {
 
     public CreatePostCommand toCommand(Long memberId) {
@@ -14,6 +16,7 @@ public record CreatePostRequest(
                 .title(title)
                 .content(content)
                 .categoryId(categoryId)
+                .tags(tags)
                 .build();
     }
 }
