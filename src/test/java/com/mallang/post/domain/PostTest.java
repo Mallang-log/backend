@@ -13,6 +13,7 @@ import com.mallang.member.MemberFixture;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -31,6 +32,39 @@ class PostTest {
             .nickname("말랑")
             .profileImageUrl("https://mallang.com")
             .build();
+
+    @Nested
+    class 저장_시 {
+
+        @Test
+        void 태그들도_함께_세팅되어_생성된다() {
+            // given
+            Post taggedPost = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .member(writer)
+                    .tags(List.of("tag1", "tag2"))
+                    .build();
+
+            // when & then
+            assertThat(taggedPost.getTags())
+                    .extracting(Tag::getContent)
+                    .containsExactly("tag1", "tag2");
+        }
+
+        @Test
+        void 태그가_없어도_된다() {
+            // given
+            Post taggedPost = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .member(writer)
+                    .build();
+
+            // when & then
+            assertThat(taggedPost.getTags()).isEmpty();
+        }
+    }
 
     @Nested
     class 수정_시 {

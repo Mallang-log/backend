@@ -18,6 +18,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,15 +53,23 @@ public class Post extends CommonDomainModel {
             String content,
             Member member,
             Category category,
-            List<Tag> tags
+            List<String> tags
     ) {
         this.title = title;
         this.content = content;
         this.member = member;
         setCategory(category);
-        if (tags != null) {
-            this.tags.addAll(tags);
+        setTags(tags);
+    }
+
+    private void setTags(List<String> tags) {
+        this.tags.clear();
+        if (tags == null) {
+            tags = Collections.emptyList();
         }
+        tags.stream()
+                .map(it -> new Tag(it, this))
+                .forEach(it -> this.tags.add(it));
     }
 
     public void setCategory(Category category) {

@@ -173,7 +173,7 @@ class PostServiceTest {
         @Test
         void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", null);
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용");
             Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
 
             // when
@@ -206,7 +206,7 @@ class PostServiceTest {
         @Test
         void 다른_사람의_카테고리거나_없는_카테고리로는_변경할_수_없다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", null);
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용");
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
             Long otherMemberSpringCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, "Spring");
 
