@@ -19,7 +19,6 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import lombok.Builder;
@@ -67,7 +66,7 @@ public class Post extends CommonDomainModel {
     private void setTags(List<String> tags) {
         this.tags.clear();
         if (tags == null) {
-            tags = Collections.emptyList();
+            return;
         }
         validateDuplicateTags(tags);
         tags.stream()

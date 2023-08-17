@@ -38,6 +38,11 @@ class PostEventHandlerTest {
     @Autowired
     private EntityManager em;
 
+    private void flushAndClear() {
+        em.flush();
+        em.clear();
+    }
+
     @Nested
     class 카테고리_삭제_이벤트를_받아 {
 
@@ -60,10 +65,5 @@ class PostEventHandlerTest {
             assertThat(postServiceTestHelper.포스트를_조회한다(postId2).getCategory()).isNull();
             assertThat(postServiceTestHelper.포스트를_조회한다(postId3).getCategory()).isNotNull();
         }
-    }
-
-    private void flushAndClear() {
-        em.flush();
-        em.clear();
     }
 }
