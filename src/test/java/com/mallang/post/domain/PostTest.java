@@ -12,6 +12,7 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.MemberFixture;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.OauthId;
+import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +64,19 @@ class PostTest {
 
             // when & then
             assertThat(taggedPost.getTags()).isEmpty();
+        }
+
+        @Test
+        void 한_포스트에_동일한_태그가_붙을_수_없다() {
+            // when & then
+            assertThatThrownBy(() ->
+                    Post.builder()
+                            .title("제목")
+                            .content("내용")
+                            .member(writer)
+                            .tags(List.of("태그1", "태그1"))
+                            .build()
+            ).isInstanceOf(DuplicatedTagsInPostException.class);
         }
     }
 

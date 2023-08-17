@@ -10,6 +10,7 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
+import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,9 +69,17 @@ public class Post extends CommonDomainModel {
         if (tags == null) {
             tags = Collections.emptyList();
         }
+        validateDuplicateTags(tags);
         tags.stream()
                 .map(it -> new Tag(it, this))
                 .forEach(it -> this.tags.add(it));
+    }
+
+    private void validateDuplicateTags(List<String> list) {
+        HashSet<String> distinct = new HashSet<>(list);
+        if (distinct.size() != list.size()) {
+            throw new DuplicatedTagsInPostException();
+        }
     }
 
     public void setCategory(Category category) {
