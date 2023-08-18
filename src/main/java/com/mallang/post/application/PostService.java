@@ -37,6 +37,6 @@ public class PostService {
         Category category = Optional.ofNullable(command.categoryId())
                 .map(categoryRepository::getById)
                 .orElse(null);
-        post.update(command.memberId(), command.title(), command.content(), category);
+        post.update(command.memberId(), command.title(), command.content(), category, command.tags());
     }
 }

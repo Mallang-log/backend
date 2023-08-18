@@ -1,11 +1,13 @@
 package com.mallang.post.application;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
+import com.mallang.commoin.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -21,12 +23,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("포스트 서비스(PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@Transactional
 @SpringBootTest
 class PostServiceTest {
 
@@ -41,6 +41,9 @@ class PostServiceTest {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private TransactionHelper transactionHelper;
 
     private Long memberId;
 
@@ -83,8 +86,10 @@ class PostServiceTest {
             Long id = postService.create(command);
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(id);
-            assertThat(post.getCategory().getName()).isEqualTo("Spring");
+            transactionHelper.doAssert(() -> {
+                Post post = postServiceTestHelper.포스트를_조회한다(id);
+                assertThat(post.getCategory().getName()).isEqualTo("Spring");
+            });
         }
 
         @Test
@@ -135,10 +140,12 @@ class PostServiceTest {
             Long id = postService.create(command);
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(id);
-            assertThat(post.getTags())
-                    .extracting(Tag::getContent)
-                    .containsExactly("tag1", "tag2", "tag3");
+            transactionHelper.doAssert(() -> {
+                Post post = postServiceTestHelper.포스트를_조회한다(id);
+                assertThat(post.getTags())
+                        .extracting(Tag::getContent)
+                        .containsExactly("tag1", "tag2", "tag3");
+            });
         }
     }
 
@@ -148,15 +155,19 @@ class PostServiceTest {
         @Test
         void 내가_쓴_포스트를_수정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", "태그1");
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null));
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null, List.of("태그2")));
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-            assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
+            transactionHelper.doAssert(() -> {
+                Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+                assertThat(post.getTitle()).isEqualTo("수정제목");
+                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getTags()).extracting(Tag::getContent)
+                        .containsExactly("태그2");
+            });
         }
 
         @Test
@@ -167,7 +178,7 @@ class PostServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    postService.update(new UpdatePostCommand(otherMemberId, 포스트_ID, "수정제목", "수정내용", null))
+                    postService.update(new UpdatePostCommand(otherMemberId, 포스트_ID, "수정제목", "수정내용", null, emptyList()))
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then
@@ -183,7 +194,7 @@ class PostServiceTest {
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, "포스트", "내용", springCategoryId);
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null));
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null, emptyList()));
 
             // then
             Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
@@ -199,13 +210,15 @@ class PostServiceTest {
             Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Spring");
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", springCategoryId));
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", springCategoryId, emptyList()));
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-            assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
-            assertThat(post.getCategory().getName()).isEqualTo("Spring");
+            transactionHelper.doAssert(() -> {
+                Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+                assertThat(post.getTitle()).isEqualTo("수정제목");
+                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getCategory().getName()).isEqualTo("Spring");
+            });
         }
 
         @Test
@@ -216,13 +229,15 @@ class PostServiceTest {
             Long nodeCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "Node");
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", nodeCategoryId));
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", nodeCategoryId, emptyList()));
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-            assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
-            assertThat(post.getCategory().getName()).isEqualTo("Node");
+            transactionHelper.doAssert(() -> {
+                Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+                assertThat(post.getTitle()).isEqualTo("수정제목");
+                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getCategory().getName()).isEqualTo("Node");
+            });
         }
 
         @Test
@@ -235,12 +250,12 @@ class PostServiceTest {
             // when
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
-                            memberId, 포스트_ID, "수정제목", "수정내용", 1000L
+                            memberId, 포스트_ID, "수정제목", "수정내용", 1000L, emptyList()
                     ))
             ).isInstanceOf(NotFoundCategoryException.class);
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
-                            memberId, 포스트_ID, "수정제목", "수정내용", otherMemberSpringCategoryId
+                            memberId, 포스트_ID, "수정제목", "수정내용", otherMemberSpringCategoryId, emptyList()
                     ))
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
 

@@ -45,7 +45,7 @@ public class Post extends CommonDomainModel {
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
-    @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE})
+    @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
 
     @Builder
@@ -85,10 +85,12 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
-            Category category
+            Category category,
+            List<String> tags
     ) {
         validateOwner(memberId, new NoAuthorityUpdatePostException());
         setCategory(category);
+        setTags(tags);
         this.title = title;
         this.content = content;
     }

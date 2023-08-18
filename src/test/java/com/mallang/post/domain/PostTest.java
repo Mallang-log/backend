@@ -2,6 +2,7 @@ package com.mallang.post.domain;
 
 import static com.mallang.member.MemberFixture.memberBuilder;
 import static com.mallang.member.domain.OauthServerType.GITHUB;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -142,14 +143,18 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .member(writer)
+                    .tags(List.of("태그1"))
                     .build();
 
             // when
-            post.update(writer.getId(), "수정제목", "수정내용", null);
+            post.update(writer.getId(), "수정제목", "수정내용", null, List.of("태그2"));
 
             // then
             assertThat(post.getTitle()).isEqualTo("수정제목");
             assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getTags())
+                    .extracting(Tag::getContent)
+                    .containsExactly("태그2");
         }
 
         @Test
@@ -163,7 +168,7 @@ class PostTest {
 
             // when
             assertThatThrownBy(() ->
-                    post.update(writer.getId() + 1, "수정제목", "수정내용", null)
+                    post.update(writer.getId() + 1, "수정제목", "수정내용", null, emptyList())
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then
