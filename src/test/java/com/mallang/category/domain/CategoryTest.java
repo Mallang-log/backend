@@ -19,7 +19,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("카테고리(Category) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -234,31 +233,5 @@ class CategoryTest {
             assertThat(category.domainEvents().get(0))
                     .isInstanceOf(CategoryDeletedEvent.class);
         }
-    }
-
-    @Test
-    void 자신과_자신의_하위_카테고리_중_특정_ID가_포함되는지_확인한다() {
-        // given
-        Category 최상위 = Category.create("최상위", member, null, categoryValidator);
-        ReflectionTestUtils.setField(최상위, "id", 1L);
-
-        Category 하위 = Category.create("하위", member, 최상위, categoryValidator);
-        ReflectionTestUtils.setField(하위, "id", 2L);
-
-        Category 더하위 = Category.create("더하위", member, 하위, categoryValidator);
-        ReflectionTestUtils.setField(더하위, "id", 3L);
-
-        // when & then
-        assertThat(더하위.equalIdOrContainsIdInParent(3L)).isTrue();
-        assertThat(더하위.equalIdOrContainsIdInParent(2L)).isTrue();
-        assertThat(더하위.equalIdOrContainsIdInParent(1L)).isTrue();
-
-        assertThat(하위.equalIdOrContainsIdInParent(3L)).isFalse();
-        assertThat(하위.equalIdOrContainsIdInParent(2L)).isTrue();
-        assertThat(하위.equalIdOrContainsIdInParent(1L)).isTrue();
-
-        assertThat(최상위.equalIdOrContainsIdInParent(3L)).isFalse();
-        assertThat(최상위.equalIdOrContainsIdInParent(2L)).isFalse();
-        assertThat(최상위.equalIdOrContainsIdInParent(1L)).isTrue();
     }
 }

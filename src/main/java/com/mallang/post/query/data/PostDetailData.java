@@ -1,29 +1,33 @@
-package com.mallang.post.application.query;
+package com.mallang.post.query.data;
 
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.Tag;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record PostDetailResponse(
+public record PostDetailData(
         Long id,
         String title,
         String content,
         LocalDateTime createdDate,
         WriterDetailInfo writerInfo,
-        CategoryDetailInfo categoryInfo
+        CategoryDetailInfo categoryInfo,
+        TagDetailInfos tagDetailInfos
 ) {
 
-    public static PostDetailResponse from(Post post) {
-        return PostDetailResponse.builder()
+    public static PostDetailData from(Post post) {
+        return PostDetailData.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .createdDate(post.getCreatedDate())
                 .writerInfo(WriterDetailInfo.from(post))
                 .categoryInfo(CategoryDetailInfo.from(post))
+                .tagDetailInfos(TagDetailInfos.from(post))
                 .build();
     }
 
@@ -52,6 +56,16 @@ public record PostDetailResponse(
                 return new CategoryDetailInfo(null, null);
             }
             return new CategoryDetailInfo(category.getId(), category.getName());
+        }
+    }
+
+    public record TagDetailInfos(
+            List<String> tagContents
+    ) {
+        private static TagDetailInfos from(Post post) {
+            return new TagDetailInfos(post.getTags().stream()
+                    .map(Tag::getContent)
+                    .toList());
         }
     }
 }

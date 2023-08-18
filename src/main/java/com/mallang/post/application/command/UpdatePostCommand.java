@@ -1,5 +1,6 @@
 package com.mallang.post.application.command;
 
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -8,6 +9,7 @@ public record UpdatePostCommand(
         Long postId,
         String title,
         String content,
-        Long categoryId
+        Long categoryId,
+        List<String> tags
 ) {
 }
