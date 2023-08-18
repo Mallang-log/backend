@@ -1,4 +1,4 @@
-package com.mallang.post.application.query;
+package com.mallang.post.query.data;
 
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record PostSimpleResponse(
+public record PostSimpleData(
         Long id,
         String title,
         String content,
@@ -19,8 +19,8 @@ public record PostSimpleResponse(
         TagSimpleInfos tagSimpleInfos
 ) {
 
-    public static PostSimpleResponse from(Post post) {
-        return PostSimpleResponse.builder()
+    public static PostSimpleData from(Post post) {
+        return PostSimpleData.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

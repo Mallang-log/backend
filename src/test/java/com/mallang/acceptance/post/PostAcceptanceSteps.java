@@ -3,10 +3,10 @@ package com.mallang.acceptance.post;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.post.application.query.PostDetailResponse;
-import com.mallang.post.application.query.PostSimpleResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
+import com.mallang.post.query.data.PostDetailData;
+import com.mallang.post.query.data.PostSimpleData;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -53,9 +53,9 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static void 포스트_단일_조회_응답을_검증한다(ExtractableResponse<Response> 응답, PostDetailResponse 예상_데이터) {
-        PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
-        assertThat(postDetailResponse).usingRecursiveComparison()
+    public static void 포스트_단일_조회_응답을_검증한다(ExtractableResponse<Response> 응답, PostDetailData 예상_데이터) {
+        PostDetailData postDetailData = 응답.as(PostDetailData.class);
+        assertThat(postDetailData).usingRecursiveComparison()
                 .ignoringFields("writerInfo.writerId", "writerInfo.writerProfileImageUrl", "createdDate")
                 .isEqualTo(예상_데이터);
     }
@@ -68,8 +68,8 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static void 포스트_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostSimpleResponse> 예상_데이터) {
-        List<PostSimpleResponse> responses = 응답.as(new TypeRef<>() {
+    public static void 포스트_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostSimpleData> 예상_데이터) {
+        List<PostSimpleData> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields("writerInfo.writerId", "writerInfo.writerProfileImageUrl", "createdDate")

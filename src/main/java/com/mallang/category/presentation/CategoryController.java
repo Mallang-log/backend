@@ -1,11 +1,11 @@
 package com.mallang.category.presentation;
 
-import com.mallang.category.application.CategoryQueryService;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.application.command.DeleteCategoryCommand;
-import com.mallang.category.application.query.CategoryResponse;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
+import com.mallang.category.query.CategoryQueryService;
+import com.mallang.category.query.data.CategoryData;
 import com.mallang.common.auth.Auth;
 import java.net.URI;
 import java.util.List;
@@ -57,10 +57,10 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> findAllByMember(
+    public ResponseEntity<List<CategoryData>> findAllByMember(
             @Auth Long memberId
     ) {
-        List<CategoryResponse> result = categoryQueryService.findAllByMemberId(memberId);
+        List<CategoryData> result = categoryQueryService.findAllByMemberId(memberId);
         return ResponseEntity.ok(result);
     }
 }

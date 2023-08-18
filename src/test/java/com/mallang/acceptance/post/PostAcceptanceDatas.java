@@ -1,20 +1,20 @@
 package com.mallang.acceptance.post;
 
-import com.mallang.post.application.query.PostDetailResponse;
-import com.mallang.post.application.query.PostDetailResponse.CategoryDetailInfo;
-import com.mallang.post.application.query.PostDetailResponse.TagDetailInfos;
-import com.mallang.post.application.query.PostDetailResponse.WriterDetailInfo;
-import com.mallang.post.application.query.PostSimpleResponse;
-import com.mallang.post.application.query.PostSimpleResponse.CategorySimpleInfo;
-import com.mallang.post.application.query.PostSimpleResponse.TagSimpleInfos;
-import com.mallang.post.application.query.PostSimpleResponse.WriterSimpleInfo;
+import com.mallang.post.query.data.PostDetailData;
+import com.mallang.post.query.data.PostDetailData.CategoryDetailInfo;
+import com.mallang.post.query.data.PostDetailData.TagDetailInfos;
+import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
+import com.mallang.post.query.data.PostSimpleData;
+import com.mallang.post.query.data.PostSimpleData.CategorySimpleInfo;
+import com.mallang.post.query.data.PostSimpleData.TagSimpleInfos;
+import com.mallang.post.query.data.PostSimpleData.WriterSimpleInfo;
 import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class PostAcceptanceDatas {
 
-    public static PostDetailResponse 예상_포스트_단일_조회_응답(
+    public static PostDetailData 예상_포스트_단일_조회_응답(
             Long 포스트_ID,
             String 작성자_닉네임,
             Long 카테고리_ID,
@@ -23,7 +23,7 @@ public class PostAcceptanceDatas {
             String 내용,
             String... 태그들
     ) {
-        return PostDetailResponse.builder()
+        return PostDetailData.builder()
                 .id(포스트_ID)
                 .writerInfo(new WriterDetailInfo(null, 작성자_닉네임, null))
                 .categoryInfo(new CategoryDetailInfo(카테고리_ID, 카테고리_이름))
@@ -33,7 +33,7 @@ public class PostAcceptanceDatas {
                 .build();
     }
 
-    public static PostSimpleResponse 예상_포스트_전체_조회_응답(
+    public static PostSimpleData 예상_포스트_전체_조회_응답(
             Long 포스트_ID,
             String 작성자_닉네임,
             Long 카테고리_ID,
@@ -42,7 +42,7 @@ public class PostAcceptanceDatas {
             String 내용,
             String... 태그들
     ) {
-        return PostSimpleResponse.builder()
+        return PostSimpleData.builder()
                 .id(포스트_ID)
                 .writerInfo(new WriterSimpleInfo(null, 작성자_닉네임, null))
                 .categoryInfo(new CategorySimpleInfo(카테고리_ID, 카테고리_이름))
@@ -52,8 +52,8 @@ public class PostAcceptanceDatas {
                 .build();
     }
 
-    public static List<PostSimpleResponse> 전체_조회_항목들(
-            PostSimpleResponse... 항목들
+    public static List<PostSimpleData> 전체_조회_항목들(
+            PostSimpleData... 항목들
     ) {
         return Arrays.asList(항목들);
     }

@@ -38,7 +38,7 @@ public class Category extends CommonDomainModel {
     private Category parent;
 
     @OneToMany(fetch = LAZY, mappedBy = "parent")
-    private final List<Category> children = new ArrayList<>();
+    private List<Category> children = new ArrayList<>();
 
     private Category(String name, Member member) {
         this.name = name;
@@ -140,15 +140,5 @@ public class Category extends CommonDomainModel {
         if (!children.isEmpty()) {
             throw new ChildCategoryExistException();
         }
-    }
-
-    public boolean equalIdOrContainsIdInParent(Long id) {
-        if (id.equals(getId())) {
-            return true;
-        }
-        if (parent == null) {
-            return false;
-        }
-        return parent.equalIdOrContainsIdInParent(id);
     }
 }

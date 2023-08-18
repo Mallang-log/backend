@@ -34,6 +34,24 @@ class PostTest {
             .profileImageUrl("https://mallang.com")
             .build();
 
+    @Test
+    void 카테고리를_없앨_수_있다() {
+        // given
+        Category category = Category.create("카테고리", writer, null, categoryValidator);
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(writer)
+                .category(category)
+                .build();
+
+        // when
+        post.removeCategory();
+
+        // then
+        assertThat(post.getCategory()).isNull();
+    }
+
     @Nested
     class 저장_시 {
 
@@ -152,23 +170,5 @@ class PostTest {
             assertThat(post.getTitle()).isEqualTo("제목");
             assertThat(post.getContent()).isEqualTo("내용");
         }
-    }
-
-    @Test
-    void 카테고리를_없앨_수_있다() {
-        // given
-        Category category = Category.create("카테고리", writer, null, categoryValidator);
-        Post post = Post.builder()
-                .title("제목")
-                .content("내용")
-                .member(writer)
-                .category(category)
-                .build();
-
-        // when
-        post.removeCategory();
-
-        // then
-        assertThat(post.getCategory()).isNull();
     }
 }

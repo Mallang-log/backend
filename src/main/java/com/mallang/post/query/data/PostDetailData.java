@@ -1,4 +1,4 @@
-package com.mallang.post.application.query;
+package com.mallang.post.query.data;
 
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record PostDetailResponse(
+public record PostDetailData(
         Long id,
         String title,
         String content,
@@ -19,8 +19,8 @@ public record PostDetailResponse(
         TagDetailInfos tagDetailInfos
 ) {
 
-    public static PostDetailResponse from(Post post) {
-        return PostDetailResponse.builder()
+    public static PostDetailData from(Post post) {
+        return PostDetailData.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

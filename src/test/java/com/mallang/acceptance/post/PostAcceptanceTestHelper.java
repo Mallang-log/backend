@@ -5,8 +5,8 @@ import static com.mallang.acceptance.AcceptanceSteps.given;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_응답을_검증한다;
 
-import com.mallang.post.application.query.PostDetailResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.query.data.PostDetailData;
 import java.util.Arrays;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -27,7 +27,7 @@ public class PostAcceptanceTestHelper {
                 .extract());
     }
 
-    public static void 포스트_내용_검증(Long 포스트_ID, PostDetailResponse 예상_데이터) {
+    public static void 포스트_내용_검증(Long 포스트_ID, PostDetailData 예상_데이터) {
         var 포스트_조회_응답 = 포스트_단일_조회_요청(포스트_ID);
         포스트_단일_조회_응답을_검증한다(포스트_조회_응답, 예상_데이터);
     }

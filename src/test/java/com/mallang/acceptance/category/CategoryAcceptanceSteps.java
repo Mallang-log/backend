@@ -3,9 +3,9 @@ package com.mallang.acceptance.category;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.application.query.CategoryResponse;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
+import com.mallang.category.query.data.CategoryData;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -46,8 +46,8 @@ public class CategoryAcceptanceSteps {
                 .extract();
     }
 
-    public static void 카테고리_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CategoryResponse> 예상_응답) {
-        List<CategoryResponse> actual = 응답.as(new TypeRef<>() {
+    public static void 카테고리_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CategoryData> 예상_응답) {
+        List<CategoryData> actual = 응답.as(new TypeRef<>() {
         });
         assertThat(actual).usingRecursiveComparison()
                 .isEqualTo(예상_응답);

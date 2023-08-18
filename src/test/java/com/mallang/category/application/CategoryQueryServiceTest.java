@@ -2,7 +2,8 @@ package com.mallang.category.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.application.query.CategoryResponse;
+import com.mallang.category.query.CategoryQueryService;
+import com.mallang.category.query.data.CategoryData;
 import com.mallang.member.MemberServiceTestHelper;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -44,23 +45,23 @@ class CategoryQueryServiceTest {
         Long csrfId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "CSRF", securityId);
         Long algorithmId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, "Algorithm");
         Long dfsId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, "DFS", algorithmId);
-        List<CategoryResponse> expected = List.of(
-                new CategoryResponse(springId, "Spring", List.of(
-                        new CategoryResponse(jpaId, "JPA", List.of(
-                                new CategoryResponse(n1Id, "N + 1", List.of())
+        List<CategoryData> expected = List.of(
+                new CategoryData(springId, "Spring", List.of(
+                        new CategoryData(jpaId, "JPA", List.of(
+                                new CategoryData(n1Id, "N + 1", List.of())
                         )),
-                        new CategoryResponse(securityId, "Security", List.of(
-                                new CategoryResponse(oAuthId, "OAuth", List.of()),
-                                new CategoryResponse(csrfId, "CSRF", List.of())
+                        new CategoryData(securityId, "Security", List.of(
+                                new CategoryData(oAuthId, "OAuth", List.of()),
+                                new CategoryData(csrfId, "CSRF", List.of())
                         ))
                 )),
-                new CategoryResponse(algorithmId, "Algorithm", List.of(
-                        new CategoryResponse(dfsId, "DFS", List.of())
+                new CategoryData(algorithmId, "Algorithm", List.of(
+                        new CategoryData(dfsId, "DFS", List.of())
                 ))
         );
 
         // when
-        List<CategoryResponse> allByMemberId = categoryQueryService.findAllByMemberId(말랑_ID);
+        List<CategoryData> allByMemberId = categoryQueryService.findAllByMemberId(말랑_ID);
 
         // then
         assertThat(allByMemberId).usingRecursiveComparison()

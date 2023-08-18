@@ -1,13 +1,13 @@
 package com.mallang.post.presentation;
 
 import com.mallang.common.auth.Auth;
-import com.mallang.post.application.PostQueryService;
 import com.mallang.post.application.PostService;
-import com.mallang.post.application.query.PostDetailResponse;
-import com.mallang.post.application.query.PostSearchCond;
-import com.mallang.post.application.query.PostSimpleResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
+import com.mallang.post.query.PostQueryService;
+import com.mallang.post.query.data.PostDetailData;
+import com.mallang.post.query.data.PostSearchCond;
+import com.mallang.post.query.data.PostSimpleData;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -49,14 +49,14 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDetailResponse> getById(
+    public ResponseEntity<PostDetailData> getById(
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(postQueryService.getById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<PostSimpleResponse>> search(
+    public ResponseEntity<List<PostSimpleData>> search(
             @ModelAttribute PostSearchCond postSearchCond
     ) {
         return ResponseEntity.ok(postQueryService.search(postSearchCond));
