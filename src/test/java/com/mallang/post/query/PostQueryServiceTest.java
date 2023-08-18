@@ -1,15 +1,16 @@
-package com.mallang.post.application;
+package com.mallang.post.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.member.MemberServiceTestHelper;
-import com.mallang.post.query.PostQueryService;
+import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import com.mallang.post.query.data.PostSearchCond;
 import com.mallang.post.query.data.PostSimpleData;
 import com.mallang.post.query.data.PostSimpleData.CategorySimpleInfo;
+import com.mallang.post.query.data.PostSimpleData.TagSimpleInfos;
 import com.mallang.post.query.data.PostSimpleData.WriterSimpleInfo;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @Transactional
 @SpringBootTest
-class PostPostQueryServiceTest {
+class PostQueryServiceTest {
 
     @Autowired
     private PostServiceTestHelper postServiceTestHelper;
@@ -70,7 +71,7 @@ class PostPostQueryServiceTest {
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2");
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -101,7 +102,7 @@ class PostPostQueryServiceTest {
         postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", 노드);
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -127,7 +128,7 @@ class PostPostQueryServiceTest {
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", JPA);
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -146,6 +147,30 @@ class PostPostQueryServiceTest {
                                         .title("포스트2")
                                         .content("content2")
                                         .categoryInfo(new CategorySimpleInfo(JPA, "JPA"))
+                                        .build()
+                        )
+                );
+    }
+
+    @Test
+    void 특정_태그의_포스트만_조회한다() {
+        // given
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "content1", "tag1");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", "tag1", "tag2");
+
+        // when
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, "tag2"));
+
+        // then
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(List.of(
+                                PostSimpleData.builder()
+                                        .id(post2Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("포스트2")
+                                        .content("content2")
+                                        .tagSimpleInfos(new TagSimpleInfos(List.of("tag1", "tag2")))
                                         .build()
                         )
                 );

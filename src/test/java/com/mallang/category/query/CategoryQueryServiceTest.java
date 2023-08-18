@@ -1,8 +1,8 @@
-package com.mallang.category.application;
+package com.mallang.category.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.query.CategoryQueryService;
+import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.query.data.CategoryData;
 import com.mallang.member.MemberServiceTestHelper;
 import java.util.List;

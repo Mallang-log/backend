@@ -2,6 +2,7 @@ package com.mallang.post.query.dao;
 
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.Tag;
 import com.mallang.post.query.data.PostSearchCond;
 import com.mallang.post.query.data.PostSimpleData;
 import com.mallang.post.query.repository.PostQueryRepository;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,6 +24,7 @@ public class PostSimpleDataDao {
         return postQueryRepository.findAll()
                 .stream()
                 .filter(it -> categoryFilter(cond.categoryId(), it))
+                .filter(it -> tagFilter(cond.tag(), it))
                 .map(PostSimpleData::from)
                 .toList();
     }
@@ -44,5 +47,14 @@ public class PostSimpleDataDao {
             return false;
         }
         return equalIdOrContainsIdInParent(category.getParent(), categoryId);
+    }
+
+    private boolean tagFilter(String tag, Post post) {
+        if (ObjectUtils.isEmpty(tag)) {
+            return true;
+        }
+        return post.getTags().stream()
+                .map(Tag::getContent)
+                .anyMatch(it -> it.equals(tag));
     }
 }
