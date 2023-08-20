@@ -29,7 +29,8 @@ public class PostQueryRepositoryImpl implements PostQueryDslRepository {
                 .leftJoin(post.tags, tag)
                 .where(
                         hasCategory(cond.categoryId()),
-                        hasTag(cond.tag())
+                        hasTag(cond.tag()),
+                        writerIdEq(cond.writerId())
                 )
                 .fetch();
     }
@@ -62,5 +63,11 @@ public class PostQueryRepositoryImpl implements PostQueryDslRepository {
             return null;
         }
         return tag.content.eq(tagName);
+    }
+
+    private Predicate writerIdEq(Long writerId) {
+        return writerId == null
+                ? null
+                : post.member.id.eq(writerId);
     }
 }

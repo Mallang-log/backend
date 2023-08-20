@@ -156,5 +156,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
             // then
             포스트_전체_조회_응답을_검증한다(응답, 예상_데이터);
         }
+
+        // TODO 회원 정보 조회 기능 생성 이후 작성자 필터링 테스트 추가
     }
 }

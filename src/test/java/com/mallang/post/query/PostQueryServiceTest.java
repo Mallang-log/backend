@@ -74,7 +74,7 @@ class PostQueryServiceTest {
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2");
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, null));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, null, null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -105,7 +105,7 @@ class PostQueryServiceTest {
         postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", 노드);
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null, null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -131,7 +131,7 @@ class PostQueryServiceTest {
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", JPA);
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null, null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -162,7 +162,7 @@ class PostQueryServiceTest {
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", "tag1", "tag2");
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, "tag2"));
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, "tag2", null));
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -174,6 +174,31 @@ class PostQueryServiceTest {
                                         .title("포스트2")
                                         .content("content2")
                                         .tagSimpleInfos(new TagSimpleInfos(List.of("tag1", "tag2")))
+                                        .build()
+                        )
+                );
+    }
+
+    @Test
+    void 특정_작성자의_포스트만_조회한다() {
+        // given
+        Long findWriterId = memberServiceTestHelper.회원을_저장한다("말랑말랑");
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(findWriterId, "포스트1", "content1", "tag1");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", "tag1", "tag2");
+
+        // when
+        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, null, findWriterId));
+
+        // then
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(List.of(
+                                PostSimpleData.builder()
+                                        .id(post1Id)
+                                        .writerInfo(new WriterSimpleInfo(findWriterId, "말랑말랑", "말랑말랑"))
+                                        .title("포스트1")
+                                        .content("content1")
+                                        .tagSimpleInfos(new TagSimpleInfos(List.of("tag1")))
                                         .build()
                         )
                 );
