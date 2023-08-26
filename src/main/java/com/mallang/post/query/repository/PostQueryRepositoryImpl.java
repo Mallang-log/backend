@@ -80,14 +80,14 @@ public class PostQueryRepositoryImpl implements PostQueryDslRepository {
             }
         }
         if (!ObjectUtils.isEmpty(title)) {
-            return post.title.contains(title);
+            return post.title.containsIgnoreCase(title);
         }
         if (!ObjectUtils.isEmpty(content)) {
-            return post.content.contains(content);
+            return post.content.containsIgnoreCase(content);
         }
         if (!ObjectUtils.isEmpty(titleOrContent)) {
-            return post.title.contains(titleOrContent)
-                    .or(post.content.contains(titleOrContent));
+            return post.title.containsIgnoreCase(titleOrContent)
+                    .or(post.content.containsIgnoreCase(titleOrContent));
         }
         return null;
     }
