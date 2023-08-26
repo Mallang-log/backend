@@ -1,4 +1,4 @@
-package com.mallang.commoin;
+package com.mallang.common;
 
 import java.util.HashMap;
 import java.util.Map;

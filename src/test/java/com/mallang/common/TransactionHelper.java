@@ -1,4 +1,4 @@
-package com.mallang.commoin;
+package com.mallang.common;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TransactionHelper {
 
     @Transactional(readOnly = true)
-    public void doAssert(final TransactionalAssert transactionalAssert) {
+    public void doAssert(TransactionalAssert transactionalAssert) {
         transactionalAssert.execute();
     }
 }
