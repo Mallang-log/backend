@@ -26,8 +26,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Post extends CommonDomainModel {
 
     @Column(nullable = false)

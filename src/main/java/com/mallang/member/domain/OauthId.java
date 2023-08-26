@@ -9,9 +9,9 @@ import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-@Embeddable
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
+@Embeddable
 public class OauthId {
 
     @Column(nullable = false, name = "oauth_server_id")

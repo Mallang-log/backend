@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class ExtractAuthenticationInterceptor implements HandlerInterceptor {
 
     private final AuthContext authContext;

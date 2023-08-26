@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class GithubAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
 
     private final GithubOauthConfig githubOauthConfig;

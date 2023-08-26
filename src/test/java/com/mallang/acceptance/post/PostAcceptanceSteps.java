@@ -61,10 +61,21 @@ public class PostAcceptanceSteps {
                 .isEqualTo(예상_데이터);
     }
 
-    public static ExtractableResponse<Response> 포스트_전체_조회_요청(Long 카테고리_ID, String 태그) {
+    public static ExtractableResponse<Response> 포스트_전체_조회_요청(
+            Long 카테고리_ID,
+            String 태그,
+            Long 작성자_ID,
+            String 제목,
+            String 내용,
+            String 제목_또는_내용
+    ) {
         return given()
                 .queryParam("categoryId", 카테고리_ID)
                 .queryParam("tag", 태그)
+                .queryParam("writerId", 작성자_ID)
+                .queryParam("title", 제목)
+                .queryParam("content", 내용)
+                .queryParam("titleOrContent", 제목_또는_내용)
                 .get("/posts")
                 .then().log().all()
                 .extract();

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.member.MemberServiceTestHelper;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -14,12 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("포스트 이벤트 핸들러(PostEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@Transactional
 @SpringBootTest
 class PostEventHandlerTest {
 
@@ -34,14 +31,6 @@ class PostEventHandlerTest {
 
     @Autowired
     private ApplicationEventPublisher publisher;
-
-    @Autowired
-    private EntityManager em;
-
-    private void flushAndClear() {
-        em.flush();
-        em.clear();
-    }
 
     @Nested
     class 카테고리_삭제_이벤트를_받아 {
@@ -58,7 +47,6 @@ class PostEventHandlerTest {
 
             // when
             publisher.publishEvent(new CategoryDeletedEvent(categoryId1));
-            flushAndClear();
 
             // then
             assertThat(postServiceTestHelper.포스트를_조회한다(postId1).getCategory()).isNull();

@@ -17,8 +17,8 @@ import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
-@MappedSuperclass
 @NoArgsConstructor(access = PROTECTED)
+@MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class CommonDomainModel extends AbstractAggregateRoot<CommonDomainModel> {
 

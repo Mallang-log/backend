@@ -1,4 +1,4 @@
-package com.mallang.commoin;
+package com.mallang.common;
 
 @FunctionalInterface
 public interface TransactionalAssert {

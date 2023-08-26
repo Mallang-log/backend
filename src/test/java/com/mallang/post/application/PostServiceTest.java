@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.commoin.TransactionHelper;
+import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
