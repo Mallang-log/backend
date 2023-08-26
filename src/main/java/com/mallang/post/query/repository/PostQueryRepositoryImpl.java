@@ -7,8 +7,9 @@ import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.post.domain.Post;
+import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.query.data.PostSearchCond;
-import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,13 @@ public class PostQueryRepositoryImpl implements PostQueryDslRepository {
                 .where(
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
-                        writerIdEq(cond.writerId())
+                        writerIdEq(cond.writerId()),
+                        titleAndContent(cond.title(), cond.content(), cond.titleOrContent())
                 )
                 .fetch();
     }
 
-    private Predicate hasCategory(Long categoryId) {
+    private BooleanExpression hasCategory(Long categoryId) {
         if (categoryId == null) {
             return null;
         }
@@ -58,16 +60,35 @@ public class PostQueryRepositoryImpl implements PostQueryDslRepository {
         return children;
     }
 
-    private Predicate hasTag(String tagName) {
+    private BooleanExpression hasTag(String tagName) {
         if (ObjectUtils.isEmpty(tagName)) {
             return null;
         }
         return tag.content.eq(tagName);
     }
 
-    private Predicate writerIdEq(Long writerId) {
+    private BooleanExpression writerIdEq(Long writerId) {
         return writerId == null
                 ? null
                 : post.member.id.eq(writerId);
+    }
+
+    private BooleanExpression titleAndContent(String title, String content, String titleOrContent) {
+        if (!ObjectUtils.isEmpty(title) || !ObjectUtils.isEmpty(content)) {
+            if (!ObjectUtils.isEmpty(titleOrContent)) {
+                throw new BadPostSearchCondException("제목이나 내용을 검색하는 경우 제목 + 내용으로는 검색할 수 없습니다");
+            }
+        }
+        if (!ObjectUtils.isEmpty(title)) {
+            return post.title.contains(title);
+        }
+        if (!ObjectUtils.isEmpty(content)) {
+            return post.content.contains(content);
+        }
+        if (!ObjectUtils.isEmpty(titleOrContent)) {
+            return post.title.contains(titleOrContent)
+                    .or(post.content.contains(titleOrContent));
+        }
+        return null;
     }
 }

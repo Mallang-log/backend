@@ -1,10 +1,12 @@
 package com.mallang.post.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
+import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import com.mallang.post.query.data.PostSearchCond;
@@ -72,9 +74,10 @@ class PostQueryServiceTest {
         // given
         Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "content1");
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2");
+        PostSearchCond cond = PostSearchCond.builder().build();
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, null, null));
+        List<PostSimpleData> responses = postQueryService.search(cond);
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -103,9 +106,12 @@ class PostQueryServiceTest {
         Long 노드 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, "노드");
         Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "content1", 스프링);
         postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", 노드);
+        PostSearchCond cond = PostSearchCond.builder()
+                .categoryId(스프링)
+                .build();
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null, null));
+        List<PostSimpleData> responses = postQueryService.search(cond);
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -129,9 +135,12 @@ class PostQueryServiceTest {
         Long JPA = categoryServiceTestHelper.하위_카테고리를_저장한다(memberId, "JPA", 스프링);
         Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "content1", 스프링);
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", JPA);
+        PostSearchCond cond = PostSearchCond.builder()
+                .categoryId(스프링)
+                .build();
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(스프링, null, null));
+        List<PostSimpleData> responses = postQueryService.search(cond);
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -160,9 +169,12 @@ class PostQueryServiceTest {
         // given
         Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "content1", "tag1");
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", "tag1", "tag2");
+        PostSearchCond cond = PostSearchCond.builder()
+                .tag("tag2")
+                .build();
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, "tag2", null));
+        List<PostSimpleData> responses = postQueryService.search(cond);
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -185,9 +197,12 @@ class PostQueryServiceTest {
         Long findWriterId = memberServiceTestHelper.회원을_저장한다("말랑말랑");
         Long post1Id = postServiceTestHelper.포스트를_저장한다(findWriterId, "포스트1", "content1", "tag1");
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "content2", "tag1", "tag2");
+        PostSearchCond cond = PostSearchCond.builder()
+                .writerId(findWriterId)
+                .build();
 
         // when
-        List<PostSimpleData> responses = postQueryService.search(new PostSearchCond(null, null, findWriterId));
+        List<PostSimpleData> responses = postQueryService.search(cond);
 
         // then
         assertThat(responses).usingRecursiveComparison()
@@ -202,5 +217,120 @@ class PostQueryServiceTest {
                                         .build()
                         )
                 );
+    }
+
+    @Test
+    void 제목으로_조회() {
+        // given
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "안녕");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "안녕하세요");
+        Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, "안녕", "히히");
+        PostSearchCond cond = PostSearchCond.builder()
+                .title("안녕")
+                .build();
+
+        // when
+        List<PostSimpleData> responses = postQueryService.search(cond);
+
+        // then
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(List.of(
+                                PostSimpleData.builder()
+                                        .id(post3Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("안녕")
+                                        .content("히히")
+                                        .build()
+                        )
+                );
+    }
+
+    @Test
+    void 내용으로_조회() {
+        // given
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "안녕");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "안녕하세요");
+        Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, "안녕", "히히");
+        PostSearchCond cond = PostSearchCond.builder()
+                .content("안녕")
+                .build();
+
+        // when
+        List<PostSimpleData> responses = postQueryService.search(cond);
+
+        // then
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(List.of(
+                                PostSimpleData.builder()
+                                        .id(post1Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("포스트1")
+                                        .content("안녕")
+                                        .build(),
+                                PostSimpleData.builder()
+                                        .id(post2Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("포스트2")
+                                        .content("안녕하세요")
+                                        .build()
+                        )
+                );
+    }
+
+    @DisplayName("내용 + 제목으로 조회")
+    @Test
+    void 내용_and_제목으로_조회() {
+        // given
+        Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트1", "안녕");
+        Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, "포스트2", "안녕하세요");
+        Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, "안녕히", "히히");
+        PostSearchCond cond = PostSearchCond.builder()
+                .titleOrContent("안녕")
+                .build();
+
+        // when
+        List<PostSimpleData> responses = postQueryService.search(cond);
+
+        // then
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringExpectedNullFields()
+                .isEqualTo(List.of(
+                                PostSimpleData.builder()
+                                        .id(post1Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("포스트1")
+                                        .content("안녕")
+                                        .build(),
+                                PostSimpleData.builder()
+                                        .id(post2Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("포스트2")
+                                        .content("안녕하세요")
+                                        .build(),
+                                PostSimpleData.builder()
+                                        .id(post3Id)
+                                        .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                        .title("안녕히")
+                                        .content("히히")
+                                        .build()
+                        )
+                );
+    }
+
+    @DisplayName("제목이나 내용이 있는데 제목 + 내용도 있다면 오류")
+    @Test
+    void 제목이나_내용이_있는데_제목_and_내용도_있다면_오류() {
+        // given
+        PostSearchCond cond = PostSearchCond.builder()
+                .title("1")
+                .titleOrContent("안녕")
+                .build();
+
+        // when & then
+        assertThatThrownBy(() ->
+                postQueryService.search(cond)
+        ).isInstanceOf(BadPostSearchCondException.class);
     }
 }
