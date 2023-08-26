@@ -22,9 +22,9 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = PROTECTED)
 @Getter
 @Entity
-@NoArgsConstructor(access = PROTECTED)
 public class Category extends CommonDomainModel {
 
     private String name;

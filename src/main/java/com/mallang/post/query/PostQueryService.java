@@ -9,8 +9,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class PostQueryService {
 
     private final PostDetailDataDao postDetailDataDao;

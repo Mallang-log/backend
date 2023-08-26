@@ -15,9 +15,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
 @Builder
 @NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Tag extends CommonDomainModel {
 
     @Column(nullable = false, length = 30)

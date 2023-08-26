@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class AuthInterceptor implements HandlerInterceptor {
 
     private final ObjectProvider<PathMatcher> pathMatcher;

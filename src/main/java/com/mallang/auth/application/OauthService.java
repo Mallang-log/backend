@@ -8,8 +8,8 @@ import com.mallang.member.domain.OauthServerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class OauthService {
 
     private final MemberRepository memberRepository;

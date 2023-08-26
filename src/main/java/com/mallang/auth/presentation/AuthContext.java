@@ -4,8 +4,8 @@ import com.mallang.auth.exception.IncorrectUseAuthAtException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-@Component
 @RequestScope
+@Component
 public class AuthContext {
 
     private Long memberId;

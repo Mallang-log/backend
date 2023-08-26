@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
@@ -28,6 +27,7 @@ import lombok.NoArgsConstructor;
                 ),
         }
 )
+@Entity
 public class Member extends CommonDomainModel {
 
     @Embedded

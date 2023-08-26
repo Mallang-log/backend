@@ -10,8 +10,8 @@ import com.mallang.member.domain.OauthServerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class GithubMemberClient implements OauthMemberClient {
 
     private final GithubApiClient githubApiClient;
