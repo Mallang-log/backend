@@ -28,8 +28,8 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .order(0);
         registry.addInterceptor(setUpAuthInterceptor())
-                .excludePathPatterns("/oauth/**")
                 .addPathPatterns("/**")
+                .excludePathPatterns("/oauth/**", "/comments/anonymous")
                 .order(1);
     }
 
