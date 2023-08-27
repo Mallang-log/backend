@@ -13,10 +13,11 @@ public class CommentAcceptanceSteps {
     public static ExtractableResponse<Response> 댓글_작성_요청(
             String 세션_ID,
             Long 포스트_ID,
-            String 내용
+            String 내용,
+            boolean 비밀_여부
     ) {
         return given(세션_ID)
-                .body(new WriteAuthenticatedCommentRequest(포스트_ID, 내용))
+                .body(new WriteAuthenticatedCommentRequest(포스트_ID, 내용, 비밀_여부))
                 .post("/comments")
                 .then()
                 .log().all()

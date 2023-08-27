@@ -17,6 +17,7 @@ public record WriteAnonymousCommentRequest(
                 .content(content)
                 .nickname(nickname)
                 .password(password)
+                .secret(false)
                 .build();
     }
 }
