@@ -21,8 +21,8 @@ public class PostServiceTestHelper {
         return postService.create(new CreatePostCommand(회원_ID, 제목, 내용, null, Arrays.asList(태그들)));
     }
 
-    public Long 포스트를_저장한다(Long 회원_ID, String 제목, String 내용, Long categoryId, String... 태그들) {
-        return postService.create(new CreatePostCommand(회원_ID, 제목, 내용, categoryId, Arrays.asList(태그들)));
+    public Long 포스트를_저장한다(Long 회원_ID, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
+        return postService.create(new CreatePostCommand(회원_ID, 제목, 내용, 카테고리_ID, Arrays.asList(태그들)));
     }
 
     public Post 포스트를_조회한다(Long 포스트_ID) {
