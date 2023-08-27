@@ -5,20 +5,18 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.post.domain.Post;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class Comment extends CommonDomainModel {
@@ -33,4 +31,28 @@ public class Comment extends CommonDomainModel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    private boolean secret;
+
+    @Builder
+    public Comment(String content, CommentWriter commentWriter, Post post, boolean secret) {
+        this.content = content;
+        this.commentWriter = commentWriter;
+        this.post = post;
+        setSecret(secret);
+    }
+
+    public void setSecret(boolean secret) {
+        validateSecret(secret);
+        this.secret = secret;
+    }
+
+    private void validateSecret(boolean secret) {
+        if (!secret) {
+            return;
+        }
+        if (commentWriter instanceof AnonymousWriter) {
+            throw new CannotWriteSecretCommentException();
+        }
+    }
 }
