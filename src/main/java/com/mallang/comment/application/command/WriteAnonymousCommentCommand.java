@@ -13,10 +13,11 @@ public class WriteAnonymousCommentCommand extends WriteCommentCommand {
     public WriteAnonymousCommentCommand(
             Long postId,
             String content,
+            boolean secret,
             String nickname,
             String password
     ) {
-        super(postId, content);
+        super(postId, content, secret);
         this.nickname = nickname;
         this.password = password;
     }

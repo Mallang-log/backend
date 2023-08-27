@@ -8,10 +8,12 @@ public abstract class WriteCommentCommand {
 
     protected final Long postId;
     protected final String content;
+    protected final boolean secret;
 
-    protected WriteCommentCommand(Long postId, String content) {
+    protected WriteCommentCommand(Long postId, String content, boolean secret) {
         this.postId = postId;
         this.content = content;
+        this.secret = secret;
     }
 
     public Comment toComment(Post post) {
@@ -19,6 +21,7 @@ public abstract class WriteCommentCommand {
                 .post(post)
                 .content(content)
                 .commentWriter(commentWriter())
+                .secret(secret)
                 .build();
     }
 

@@ -9,8 +9,8 @@ public class WriteAuthenticatedCommentCommand extends WriteCommentCommand {
     private final Long memberId;
 
     @Builder
-    public WriteAuthenticatedCommentCommand(Long postId, String content, Long memberId) {
-        super(postId, content);
+    public WriteAuthenticatedCommentCommand(Long postId, String content, boolean secret, Long memberId) {
+        super(postId, content, secret);
         this.memberId = memberId;
     }
 
