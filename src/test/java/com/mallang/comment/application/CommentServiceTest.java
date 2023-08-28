@@ -2,6 +2,7 @@ package com.mallang.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
@@ -69,6 +70,25 @@ class CommentServiceTest {
 
             // when
             Long 댓글_ID = commentService.write(command);
+
+            // then
+            assertThat(댓글_ID).isNotNull();
+        }
+
+        @Test
+        void 로그인하지_않은_사용자도_댓글을_달_수_있다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
+            WriteAnonymousCommentCommand command = WriteAnonymousCommentCommand.builder()
+                    .postId(포스트_ID)
+                    .content("댓글입니다.")
+                    .nickname("익명1")
+                    .password("1234")
+                    .build();
+
+            // when
+            Long 댓글_ID = commentService.anonymousWrite(command);
 
             // then
             assertThat(댓글_ID).isNotNull();

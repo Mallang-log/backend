@@ -1,6 +1,5 @@
 package com.mallang.comment.presentation;
 
-import com.mallang.comment.application.AnonymousCommentService;
 import com.mallang.comment.application.CommentService;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
     private final CommentService commentService;
-    private final AnonymousCommentService anonymousCommentService;
 
     @PostMapping
     public ResponseEntity<Void> write(
@@ -34,7 +32,7 @@ public class CommentController {
     public ResponseEntity<Void> anonymousWrite(
             @RequestBody WriteAnonymousCommentRequest request
     ) {
-        Long id = anonymousCommentService.write(request.toCommand());
+        Long id = commentService.anonymousWrite(request.toCommand());
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 }
