@@ -6,6 +6,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
+import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.post.domain.Post;
 import jakarta.persistence.Column;
@@ -29,7 +30,7 @@ public class Comment extends CommonDomainModel {
     private CommentWriter commentWriter;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     private boolean secret;
@@ -53,6 +54,22 @@ public class Comment extends CommonDomainModel {
         }
         if (commentWriter instanceof AnonymousWriter) {
             throw new CannotWriteSecretCommentException();
+        }
+    }
+
+    public void update(
+            CommentWriter commentWriter,
+            String content,
+            boolean secret
+    ) {
+        validateWriter(commentWriter);
+        this.content = content;
+        setSecret(secret);
+    }
+
+    private void validateWriter(CommentWriter commentWriter) {
+        if (!this.commentWriter.equals(commentWriter)) {
+            throw new NoAuthorityForCommentException();
         }
     }
 }
