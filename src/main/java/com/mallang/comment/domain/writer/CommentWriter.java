@@ -1,6 +1,5 @@
-package com.mallang.comment.domain;
+package com.mallang.comment.domain.writer;
 
-import com.mallang.comment.domain.credential.WriterCredential;
 import com.mallang.common.domain.CommonDomainModel;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;

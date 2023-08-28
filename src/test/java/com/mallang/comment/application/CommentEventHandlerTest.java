@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 
 import com.mallang.auth.domain.event.MemberSignUpEvent;
-import com.mallang.comment.domain.AuthenticatedWriter;
-import com.mallang.comment.domain.CommentWriter;
+import com.mallang.comment.domain.writer.AuthenticatedWriter;
+import com.mallang.comment.domain.writer.CommentWriter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

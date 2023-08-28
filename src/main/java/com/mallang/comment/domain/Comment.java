@@ -5,7 +5,9 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.mallang.comment.domain.credential.WriterCredential;
+import com.mallang.comment.domain.writer.AnonymousWriter;
+import com.mallang.comment.domain.writer.CommentWriter;
+import com.mallang.comment.domain.writer.WriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.common.domain.CommonDomainModel;

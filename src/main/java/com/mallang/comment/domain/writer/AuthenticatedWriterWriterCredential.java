@@ -1,4 +1,4 @@
-package com.mallang.comment.domain.credential;
+package com.mallang.comment.domain.writer;
 
 public record AuthenticatedWriterWriterCredential(
         Long memberId

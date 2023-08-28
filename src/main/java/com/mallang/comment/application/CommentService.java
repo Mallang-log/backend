@@ -1,10 +1,10 @@
 package com.mallang.comment.application;
 
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
-import com.mallang.comment.domain.AuthenticatedWriter;
-import com.mallang.comment.domain.AuthenticatedWriterRepository;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
+import com.mallang.comment.domain.writer.AuthenticatedWriter;
+import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import lombok.RequiredArgsConstructor;

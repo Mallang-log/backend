@@ -1,7 +1,7 @@
 package com.mallang.comment.application.command;
 
-import com.mallang.comment.domain.AuthenticatedWriter;
 import com.mallang.comment.domain.Comment;
+import com.mallang.comment.domain.writer.AuthenticatedWriter;
 import com.mallang.post.domain.Post;
 import lombok.Builder;
 

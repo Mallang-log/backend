@@ -1,7 +1,7 @@
 package com.mallang.comment.application;
 
-import com.mallang.comment.domain.AuthenticatedWriterRepository;
-import com.mallang.comment.domain.CommentWriter;
+import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
+import com.mallang.comment.domain.writer.CommentWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;

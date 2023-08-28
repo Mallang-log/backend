@@ -1,9 +1,7 @@
-package com.mallang.comment.domain;
+package com.mallang.comment.domain.writer;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import com.mallang.comment.domain.credential.AnonymousWriterCredential;
-import com.mallang.comment.domain.credential.WriterCredential;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

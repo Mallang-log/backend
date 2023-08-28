@@ -1,9 +1,7 @@
-package com.mallang.comment.domain;
+package com.mallang.comment.domain.writer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.comment.domain.credential.AnonymousWriterCredential;
-import com.mallang.comment.domain.credential.AuthenticatedWriterWriterCredential;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

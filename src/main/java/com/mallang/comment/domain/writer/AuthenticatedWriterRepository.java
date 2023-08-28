@@ -1,4 +1,4 @@
-package com.mallang.comment.domain;
+package com.mallang.comment.domain.writer;
 
 import com.mallang.comment.exception.NotFoundCommentWriterException;
 import java.util.Optional;

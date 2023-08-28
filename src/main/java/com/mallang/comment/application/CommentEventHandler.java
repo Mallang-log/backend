@@ -1,8 +1,8 @@
 package com.mallang.comment.application;
 
 import com.mallang.auth.domain.event.MemberSignUpEvent;
-import com.mallang.comment.domain.AuthenticatedWriter;
-import com.mallang.comment.domain.AuthenticatedWriterRepository;
+import com.mallang.comment.domain.writer.AuthenticatedWriter;
+import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;

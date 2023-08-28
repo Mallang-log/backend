@@ -5,8 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.comment.domain.credential.AnonymousWriterCredential;
-import com.mallang.comment.domain.credential.AuthenticatedWriterWriterCredential;
+import com.mallang.comment.domain.writer.AnonymousWriter;
+import com.mallang.comment.domain.writer.AnonymousWriterCredential;
+import com.mallang.comment.domain.writer.AuthenticatedWriter;
+import com.mallang.comment.domain.writer.AuthenticatedWriterWriterCredential;
+import com.mallang.comment.domain.writer.CommentWriter;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
