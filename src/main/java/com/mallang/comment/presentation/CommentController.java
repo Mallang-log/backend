@@ -32,7 +32,7 @@ public class CommentController {
     public ResponseEntity<Void> anonymousWrite(
             @RequestBody WriteAnonymousCommentRequest request
     ) {
-        Long id = commentService.write(request.toCommand());
+        Long id = commentService.anonymousWrite(request.toCommand());
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 }

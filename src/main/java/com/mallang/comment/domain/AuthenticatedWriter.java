@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @Entity
 public class AuthenticatedWriter extends CommentWriter {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long memberId;
 }

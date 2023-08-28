@@ -1,6 +1,7 @@
 package com.mallang.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 
 import com.mallang.auth.domain.event.MemberSignUpEvent;
 import com.mallang.comment.domain.AuthenticatedWriter;
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.annotation.DirtiesContext;
 
 @DisplayName("댓글 이벤트 핸들러(CommentEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
+@DirtiesContext(classMode = BEFORE_CLASS)
 @SpringBootTest
 class CommentEventHandlerTest {
 

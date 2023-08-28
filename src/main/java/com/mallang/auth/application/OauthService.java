@@ -22,14 +22,14 @@ public class OauthService {
 
     public Long login(OauthServerType oauthServerType, String authCode) {
         Member member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-        Member saved = memberRepository.findByOauthId(member.getOauthId())
+        Member find = memberRepository.findByOauthId(member.getOauthId())
                 .orElseGet(() -> signUp(member));
-        return saved.getId();
+        return find.getId();
     }
 
     private Member signUp(Member member) {
         Member saved = memberRepository.save(member);
         saved.signUp();
-        return saved;
+        return memberRepository.save(saved);
     }
 }
