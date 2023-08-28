@@ -5,6 +5,7 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.comment.domain.credential.WriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.common.domain.CommonDomainModel;
@@ -58,23 +59,23 @@ public class Comment extends CommonDomainModel {
     }
 
     public void update(
-            CommentWriter commentWriter,
+            WriterCredential writerCredential,
             String content,
             boolean secret
     ) {
-        validateWriter(commentWriter);
+        validateWriter(writerCredential);
         this.content = content;
         setSecret(secret);
     }
 
-    private void validateWriter(CommentWriter commentWriter) {
-        if (!this.commentWriter.equals(commentWriter)) {
+    private void validateWriter(WriterCredential writerCredential) {
+        if (!commentWriter.hasAuthority(writerCredential)) {
             throw new NoAuthorityForCommentException();
         }
     }
 
-    public void delete(CommentWriter commentWriter) {
-        validateWriter(commentWriter);
+    public void delete(WriterCredential writerCredential) {
+        validateWriter(writerCredential);
     }
 
     public void deleteFromPostOwner(Long memberId) {
