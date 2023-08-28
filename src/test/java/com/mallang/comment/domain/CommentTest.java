@@ -1,10 +1,13 @@
 package com.mallang.comment.domain;
 
+import static com.mallang.member.MemberFixture.memberBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
+import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -19,7 +22,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class CommentTest {
 
-    private final Post post = Post.builder().build();
+    private final Member postWriter = memberBuilder().id(1L).build();
+    private final Post post = Post.builder().member(postWriter).build();
 
     @Nested
     class 생성_시 {
@@ -170,6 +174,101 @@ class CommentTest {
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
             assertThat(comment.isSecret()).isEqualTo(after);
+        }
+    }
+
+    @Nested
+    class 삭제_시 {
+
+        @Test
+        void 자신의_댓글이_아닌_경우_예외_case_로그인_유저() {
+            // given
+            CommentWriter writer = new AuthenticatedWriter(1L);
+            CommentWriter other = new AnonymousWriter("익명", "1234");
+            Comment comment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .secret(false)
+                    .commentWriter(writer)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    comment.delete(other)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+        }
+
+        @Test
+        void 자신의_댓글이_아닌_경우_예외_case_익명_유저() {
+            // given
+            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter other = new AuthenticatedWriter(1L);
+            Comment comment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .secret(false)
+                    .commentWriter(writer)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    comment.delete(other)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+        }
+
+        @Test
+        void 자신의_댓글인_경우_제거할_수_있다() {
+            // given
+            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            Comment comment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .secret(false)
+                    .commentWriter(writer)
+                    .build();
+
+            // when & then
+            assertDoesNotThrow(() ->
+                    comment.delete(writer)
+            );
+        }
+    }
+
+    @Nested
+    class 포스트_작성자가_댓글_삭제_시 {
+
+        @Test
+        void 삭제_가능() {
+            // given
+            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            Comment comment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .secret(false)
+                    .commentWriter(writer)
+                    .build();
+
+            // when & then
+            assertDoesNotThrow(() ->
+                    comment.deleteFromPostOwner(postWriter.getId())
+            );
+        }
+
+        @Test
+        void 포스트_작성자가_아니라면_예외() {
+            // given
+            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            Comment comment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .secret(false)
+                    .commentWriter(writer)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    comment.deleteFromPostOwner(postWriter.getId() + 1)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
         }
     }
 }

@@ -72,4 +72,18 @@ public class Comment extends CommonDomainModel {
             throw new NoAuthorityForCommentException();
         }
     }
+
+    public void delete(CommentWriter commentWriter) {
+        validateWriter(commentWriter);
+    }
+
+    public void deleteFromPostOwner(Long memberId) {
+        validatePostOwner(memberId);
+    }
+
+    private void validatePostOwner(Long memberId) {
+        if (!post.getMember().getId().equals(memberId)) {
+            throw new NoAuthorityForCommentException();
+        }
+    }
 }
