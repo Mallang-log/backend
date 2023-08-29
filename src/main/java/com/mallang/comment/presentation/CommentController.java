@@ -8,16 +8,23 @@ import com.mallang.comment.presentation.request.UpdateAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
+import com.mallang.comment.query.CommentQueryService;
+import com.mallang.comment.query.data.CommentData;
 import com.mallang.common.auth.Auth;
+import com.mallang.common.auth.OptionalAuth;
+import jakarta.annotation.Nullable;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -26,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
     private final CommentService commentService;
+    private final CommentQueryService commentQueryService;
 
     @PostMapping
     public ResponseEntity<Void> write(
@@ -83,5 +91,14 @@ public class CommentController {
     ) {
         commentService.delete(request.toCommand(commentId));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CommentData>> findAll(
+            @Nullable @OptionalAuth Long memberId,
+            @RequestParam(value = "postId", required = true) Long postId
+    ) {
+        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId);
+        return ResponseEntity.ok(result);
     }
 }

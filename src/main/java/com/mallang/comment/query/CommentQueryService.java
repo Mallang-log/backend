@@ -39,6 +39,6 @@ public class CommentQueryService {
             return true;
         }
         AuthenticatedWriterData authenticatedWriterData = (AuthenticatedWriterData) data.commentWriterData();
-        return Objects.equals(authenticatedWriterData.memberId(), memberId);
+        return Objects.equals(authenticatedWriterData.getMemberId(), memberId);
     }
 }

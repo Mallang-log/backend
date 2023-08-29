@@ -1,14 +1,18 @@
 package com.mallang.acceptance.comment;
 
 import static com.mallang.acceptance.AcceptanceSteps.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.comment.presentation.request.DeleteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
+import com.mallang.comment.query.data.CommentData;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class CommentAcceptanceSteps {
@@ -42,10 +46,10 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 댓글_수정_요청(String 세션_ID, Long 댓글_ID, String 수정_내용) {
+    public static ExtractableResponse<Response> 댓글_수정_요청(String 세션_ID, Long 댓글_ID, String 수정_내용, boolean 비공개_여부) {
 
         return given(세션_ID)
-                .body(new UpdateAuthenticatedCommentRequest(수정_내용, false))
+                .body(new UpdateAuthenticatedCommentRequest(수정_내용, 비공개_여부))
                 .put("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
@@ -74,5 +78,29 @@ public class CommentAcceptanceSteps {
                 .delete("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
+    }
+
+    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(String 세션_ID, Long 포스트_ID) {
+        return given(세션_ID)
+                .queryParam("postId", 포스트_ID)
+                .get("/comments")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(Long 포스트_ID) {
+        return given()
+                .queryParam("postId", 포스트_ID)
+                .get("/comments")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 특정_포스트의_댓글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CommentData> 예상_데이터) {
+        List<CommentData> responses = 응답.as(new TypeRef<>() {
+        });
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringFields("createdDate", "commentWriterData.memberId")
+                .isEqualTo(예상_데이터);
     }
 }

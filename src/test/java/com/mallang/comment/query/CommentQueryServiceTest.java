@@ -36,7 +36,7 @@ class CommentQueryServiceTest {
     private CommentQueryService commentQueryService;
 
     @Test
-    void 비밀_댓글을_제외한_모든_댓글_조회() {
+    void 인증되지_않은_요청인_경우_비밀_댓글을_제외한_모든_댓글_조회() {
         // given
         Long mallang = memberServiceTestHelper.회원을_저장한다("말랑");
         Long postId = postServiceTestHelper.포스트를_저장한다(mallang, "포스트", "내용");
@@ -45,7 +45,7 @@ class CommentQueryServiceTest {
         commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
         // when
-        List<CommentData> result = commentQueryService.findCommentsExcludeSecretByPostId(postId);
+        List<CommentData> result = commentQueryService.findAllByPostId(postId, null);
 
         // then
         assertThat(result)

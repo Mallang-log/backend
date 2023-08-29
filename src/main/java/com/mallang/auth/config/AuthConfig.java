@@ -9,6 +9,7 @@ import com.mallang.auth.presentation.AuthArgumentResolver;
 import com.mallang.auth.presentation.AuthInterceptor;
 import com.mallang.auth.presentation.AuthInterceptor.UriAndMethodCondition;
 import com.mallang.auth.presentation.ExtractAuthenticationInterceptor;
+import com.mallang.auth.presentation.OptionalAuthArgumentResolver;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ public class AuthConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final ExtractAuthenticationInterceptor extractAuthenticationInterceptor;
     private final AuthArgumentResolver authArgumentResolver;
+    private final OptionalAuthArgumentResolver optionalAuthArgumentResolver;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -47,6 +49,10 @@ public class AuthConfig implements WebMvcConfigurer {
                         .uriPatterns(Set.of("/comments/**"))
                         .httpMethods(Set.of(POST, PUT, DELETE))
                         .params(Map.of("unauthenticated", "true"))
+                        .build(),
+                UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/comments"))
+                        .httpMethods(Set.of(GET))
                         .build()
         );
         return authInterceptor;
@@ -55,5 +61,6 @@ public class AuthConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authArgumentResolver);
+        resolvers.add(optionalAuthArgumentResolver);
     }
 }
