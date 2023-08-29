@@ -1,7 +1,9 @@
 package com.mallang.auth.config;
 
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 import com.mallang.auth.presentation.AuthArgumentResolver;
 import com.mallang.auth.presentation.AuthInterceptor;
@@ -42,8 +44,8 @@ public class AuthConfig implements WebMvcConfigurer {
                         .httpMethods(Set.of(GET))
                         .build(),
                 UriAndMethodCondition.builder()
-                        .uriPatterns(Set.of("/comments"))
-                        .httpMethods(Set.of(POST))
+                        .uriPatterns(Set.of("/comments/**"))
+                        .httpMethods(Set.of(POST, PUT, DELETE))
                         .params(Map.of("anonymous", "true"))
                         .build()
         );
