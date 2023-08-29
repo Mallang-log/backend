@@ -233,13 +233,9 @@ class CommentTest {
                     comment.delete(new AnonymousWriterCredential("1234"))
             );
         }
-    }
-
-    @Nested
-    class 포스트_작성자가_댓글_삭제_시 {
 
         @Test
-        void 삭제_가능() {
+        void 포스트_작성자는_모든_댓글_삭제_가능하다() {
             // given
             CommentWriter writer = new AnonymousWriter("익명", "1234");
             Comment comment = Comment.builder()
@@ -251,25 +247,8 @@ class CommentTest {
 
             // when & then
             assertDoesNotThrow(() ->
-                    comment.deleteFromPostOwner(postWriter.getId())
+                    comment.delete(new AuthenticatedWriterCredential(postWriter.getId()))
             );
-        }
-
-        @Test
-        void 포스트_작성자가_아니라면_예외() {
-            // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
-            Comment comment = Comment.builder()
-                    .content("내용")
-                    .post(post)
-                    .secret(false)
-                    .commentWriter(writer)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() ->
-                    comment.deleteFromPostOwner(postWriter.getId() + 1)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
         }
     }
 }

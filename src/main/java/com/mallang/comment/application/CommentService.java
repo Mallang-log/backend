@@ -1,5 +1,6 @@
 package com.mallang.comment.application;
 
+import com.mallang.comment.application.command.DeleteCommentCommand;
 import com.mallang.comment.application.command.UpdateCommentCommand;
 import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
@@ -40,5 +41,11 @@ public class CommentService {
     public void update(UpdateCommentCommand command) {
         Comment comment = commentRepository.getById(command.commentId());
         comment.update(command.credential(), command.content(), command.secret());
+    }
+
+    public void delete(DeleteCommentCommand command) {
+        Comment comment = commentRepository.getById(command.commentId());
+        comment.delete(command.credential());
+        commentRepository.delete(comment);
     }
 }

@@ -3,6 +3,7 @@ package com.mallang.comment.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.comment.application.command.DeleteCommentCommand;
 import com.mallang.comment.application.command.UpdateCommentCommand;
 import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
@@ -11,6 +12,7 @@ import com.mallang.comment.domain.writer.AnonymousWriterCredential;
 import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
+import com.mallang.comment.exception.NotFoundCommentException;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -300,6 +302,137 @@ class CommentServiceTest {
             Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("댓글");
             assertThat(find.isSecret()).isFalse();
+        }
+    }
+
+    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+    @SpringBootTest
+    @Nested
+    class 댓글_제거_시 {
+
+        @Autowired
+        private MemberServiceTestHelper memberServiceTestHelper;
+
+        @Autowired
+        private PostServiceTestHelper postServiceTestHelper;
+
+        @Autowired
+        private CommentServiceTestHelper commentServiceTestHelper;
+
+        @Autowired
+        private CommentService commentService;
+
+        private Long postWriterId;
+        private Long postId;
+
+        @BeforeEach
+        void setUp() {
+            postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
+            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, "제목", "내용");
+        }
+
+        @Test
+        void 댓글_작성자는_자신의_댓글을_제거할_수_있다() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("mallang");
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            DeleteCommentCommand command = DeleteCommentCommand.builder()
+                    .commentId(commentId)
+                    .credential(new AuthenticatedWriterCredential(memberId))
+                    .build();
+
+            // when
+            commentService.delete(command);
+
+            // then
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.댓글을_조회한다(commentId)
+            ).isInstanceOf(NotFoundCommentException.class);
+        }
+
+        @Test
+        void 자신의_댓글이_아닌_경우_오류() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("mallang");
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            DeleteCommentCommand command = DeleteCommentCommand.builder()
+                    .commentId(commentId)
+                    .credential(new AuthenticatedWriterCredential(memberId + 1))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.delete(command)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find).isNotNull();
+        }
+
+        @Test
+        void 익명_댓글은_비밀번호가_일치하면_제거할_수_있다() {
+            // given
+            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            DeleteCommentCommand command = DeleteCommentCommand.builder()
+                    .commentId(commentId)
+                    .credential(new AnonymousWriterCredential("1234"))
+                    .build();
+
+            // when
+            commentService.delete(command);
+
+            // then
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.댓글을_조회한다(commentId)
+            ).isInstanceOf(NotFoundCommentException.class);
+        }
+
+        @Test
+        void 익명_댓글은_비밀번호가_일치하지_않다면_제거할_수_없다() {
+            // given
+            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            DeleteCommentCommand command = DeleteCommentCommand.builder()
+                    .commentId(commentId)
+                    .credential(new AnonymousWriterCredential("12"))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.delete(command)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find).isNotNull();
+        }
+
+        @Test
+        void 포스트_작성자는_모든_댓글을_제거할_수_있다() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("mallang");
+            Long comment1Id = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long comment2Id = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            DeleteCommentCommand command1 = DeleteCommentCommand.builder()
+                    .commentId(comment1Id)
+                    .credential(new AuthenticatedWriterCredential(postWriterId))
+                    .build();
+            DeleteCommentCommand command2 = DeleteCommentCommand.builder()
+                    .commentId(comment2Id)
+                    .credential(new AuthenticatedWriterCredential(postWriterId))
+                    .build();
+
+            // when
+            commentService.delete(command1);
+            commentService.delete(command2);
+
+            // then
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.댓글을_조회한다(comment1Id)
+            ).isInstanceOf(NotFoundCommentException.class);
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.댓글을_조회한다(comment2Id)
+            ).isInstanceOf(NotFoundCommentException.class);
         }
     }
 }
