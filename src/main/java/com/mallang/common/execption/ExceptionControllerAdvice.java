@@ -14,7 +14,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MallangLogException.class)
     public ResponseEntity<ErrorCode> handleException(MallangLogException e) {
         ErrorCode errorCode = e.getErrorCode();
-        log.info("잘못될 요청 들어옴: {}", e.getMessage());
+        log.info("잘못될 요청 들어옴: {}", e.getMessage(), e);
         return ResponseEntity.status(errorCode.status())
                 .body(errorCode);
     }

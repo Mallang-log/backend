@@ -1,12 +1,17 @@
 package com.mallang.auth.config;
 
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 import com.mallang.auth.presentation.AuthArgumentResolver;
 import com.mallang.auth.presentation.AuthInterceptor;
 import com.mallang.auth.presentation.AuthInterceptor.UriAndMethodCondition;
 import com.mallang.auth.presentation.ExtractAuthenticationInterceptor;
+import com.mallang.auth.presentation.OptionalAuthArgumentResolver;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +26,7 @@ public class AuthConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final ExtractAuthenticationInterceptor extractAuthenticationInterceptor;
     private final AuthArgumentResolver authArgumentResolver;
+    private final OptionalAuthArgumentResolver optionalAuthArgumentResolver;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -28,8 +34,8 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .order(0);
         registry.addInterceptor(setUpAuthInterceptor())
-                .excludePathPatterns("/oauth/**")
                 .addPathPatterns("/**")
+                .excludePathPatterns("/oauth/**")
                 .order(1);
     }
 
@@ -37,6 +43,15 @@ public class AuthConfig implements WebMvcConfigurer {
         authInterceptor.setNoAuthRequiredConditions(
                 UriAndMethodCondition.builder()
                         .uriPatterns(Set.of("/posts/**"))
+                        .httpMethods(Set.of(GET))
+                        .build(),
+                UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/comments/**"))
+                        .httpMethods(Set.of(POST, PUT, DELETE))
+                        .params(Map.of("unauthenticated", "true"))
+                        .build(),
+                UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/comments"))
                         .httpMethods(Set.of(GET))
                         .build()
         );
@@ -46,5 +61,6 @@ public class AuthConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(authArgumentResolver);
+        resolvers.add(optionalAuthArgumentResolver);
     }
 }

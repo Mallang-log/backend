@@ -65,20 +65,20 @@ public class Category extends CommonDomainModel {
 
     private void beRoot(CategoryValidator validator) {
         validator.validateDuplicateRootName(member.getId(), name);
-        unlinkExistParent();
-        parent = null;
+        unlinkFromParent();
     }
 
-    private void unlinkExistParent() {
+    private void unlinkFromParent() {
         if (this.parent != null) {
             this.parent.removeChild(this);
+            parent = null;
         }
     }
 
     private void beChild(Category parent) {
         validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
         validateHierarchy(parent);
-        unlinkExistParent();
+        unlinkFromParent();
         link(parent);
     }
 
@@ -132,7 +132,7 @@ public class Category extends CommonDomainModel {
     public void delete(Long memberId) {
         validateOwner(memberId, new NoAuthorityDeleteCategoryException());
         validateNoChildren();
-        unlinkExistParent();
+        unlinkFromParent();
         registerEvent(new CategoryDeletedEvent(getId()));
     }
 
