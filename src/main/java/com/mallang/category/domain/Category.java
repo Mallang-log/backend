@@ -66,12 +66,12 @@ public class Category extends CommonDomainModel {
     private void beRoot(CategoryValidator validator) {
         validator.validateDuplicateRootName(member.getId(), name);
         unlinkFromParent();
-        parent = null;
     }
 
     private void unlinkFromParent() {
         if (this.parent != null) {
             this.parent.removeChild(this);
+            parent = null;
         }
     }
 
