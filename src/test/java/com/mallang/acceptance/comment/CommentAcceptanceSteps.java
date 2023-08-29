@@ -27,7 +27,7 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 익명_댓글_작성_요청(
+    public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
             Long 포스트_ID,
             String 내용,
             String 이름,

@@ -30,7 +30,7 @@ public class CommentServiceTestHelper {
         return commentService.write(command);
     }
 
-    public Long 익명_댓글을_작성한다(Long postId, String content, String nickname, String password) {
+    public Long 비인증_댓글을_작성한다(Long postId, String content, String nickname, String password) {
         WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
                 .postId(postId)
                 .content(content)

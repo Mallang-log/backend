@@ -93,7 +93,7 @@ class CommentServiceTest {
             WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
                     .postId(포스트_ID)
                     .content("댓글입니다.")
-                    .nickname("익명1")
+                    .nickname("비인증1")
                     .password("1234")
                     .build();
 
@@ -196,9 +196,9 @@ class CommentServiceTest {
         }
 
         @Test
-        void 익명_댓글은_비밀번호가_일치하면_수정할_수_있다() {
+        void 비인증_댓글은_비밀번호가_일치하면_수정할_수_있다() {
             // given
-            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             UpdateCommentCommand command = UpdateCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
@@ -216,9 +216,9 @@ class CommentServiceTest {
         }
 
         @Test
-        void 익명_댓글을_비공개로_수정하려는_경우_오류이다() {
+        void 비인증_댓글을_비공개로_수정하려는_경우_오류이다() {
             // given
-            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             UpdateCommentCommand command = UpdateCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
@@ -238,9 +238,9 @@ class CommentServiceTest {
         }
 
         @Test
-        void 익명_댓글_수정_시_비밀번호가_틀리면_오류이다() {
+        void 비인증_댓글_수정_시_비밀번호가_틀리면_오류이다() {
             // given
-            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             UpdateCommentCommand command = UpdateCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
@@ -283,9 +283,9 @@ class CommentServiceTest {
         }
 
         @Test
-        void 포스트의_주인도_익명댓글을_수정할수는_없다() {
+        void 포스트의_주인도_비인증댓글을_수정할수는_없다() {
             // given
-            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             UpdateCommentCommand command = UpdateCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
@@ -371,9 +371,9 @@ class CommentServiceTest {
         }
 
         @Test
-        void 익명_댓글은_비밀번호가_일치하면_제거할_수_있다() {
+        void 비인증_댓글은_비밀번호가_일치하면_제거할_수_있다() {
             // given
-            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             DeleteCommentCommand command = DeleteCommentCommand.builder()
                     .commentId(commentId)
                     .credential(new UnAuthenticatedWriterCredential("1234"))
@@ -389,9 +389,9 @@ class CommentServiceTest {
         }
 
         @Test
-        void 익명_댓글은_비밀번호가_일치하지_않다면_제거할_수_없다() {
+        void 비인증_댓글은_비밀번호가_일치하지_않다면_제거할_수_없다() {
             // given
-            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             DeleteCommentCommand command = DeleteCommentCommand.builder()
                     .commentId(commentId)
                     .credential(new UnAuthenticatedWriterCredential("12"))
@@ -412,7 +412,7 @@ class CommentServiceTest {
             // given
             Long memberId = memberServiceTestHelper.회원을_저장한다("mallang");
             Long comment1Id = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
-            Long comment2Id = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            Long comment2Id = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             DeleteCommentCommand command1 = DeleteCommentCommand.builder()
                     .commentId(comment1Id)
                     .credential(new AuthenticatedWriterCredential(postWriterId))
