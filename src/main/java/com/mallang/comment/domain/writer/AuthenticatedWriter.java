@@ -1,9 +1,12 @@
 package com.mallang.comment.domain.writer;
 
+import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import jakarta.persistence.Column;
+import com.mallang.member.domain.Member;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,13 +17,14 @@ import lombok.NoArgsConstructor;
 @Entity
 public class AuthenticatedWriter extends CommentWriter {
 
-    @Column(nullable = false, unique = true)
-    private Long memberId;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "memberId")
+    private Member member;
 
     @Override
     public boolean hasAuthority(WriterCredential writerCredential) {
         if (writerCredential instanceof AuthenticatedWriterCredential authenticatedWriterCredential) {
-            return memberId.equals(authenticatedWriterCredential.memberId());
+            return member.getId().equals(authenticatedWriterCredential.memberId());
         }
         return false;
     }

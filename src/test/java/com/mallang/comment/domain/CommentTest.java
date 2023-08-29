@@ -36,10 +36,11 @@ class CommentTest {
         @Test
         void 비밀_댓글은_로그인한_사용자만_작성_가능하다() {
             // when
+            Member member = memberBuilder().id(1L).build();
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
-                    .commentWriter(new AuthenticatedWriter(1L))
+                    .commentWriter(new AuthenticatedWriter(member))
                     .secret(true)
                     .build();
 
@@ -63,10 +64,11 @@ class CommentTest {
         @Test
         void 공개_댓글은_로그인한_사용자와_익명_사용자_모두_작성_가능하다() {
             // when
+            Member member = memberBuilder().id(1L).build();
             Comment commentFromAuthenticated = Comment.builder()
                     .content("내용")
                     .post(post)
-                    .commentWriter(new AuthenticatedWriter(1L))
+                    .commentWriter(new AuthenticatedWriter(member))
                     .secret(false)
                     .build();
             Comment commentFromAnonymous = Comment.builder()
@@ -88,7 +90,8 @@ class CommentTest {
         @Test
         void 자신의_댓글이_아닌_경우_예외() {
             // given
-            CommentWriter writer = new AuthenticatedWriter(1L);
+            Member member = memberBuilder().id(1L).build();
+            CommentWriter writer = new AuthenticatedWriter(member);
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -163,7 +166,8 @@ class CommentTest {
                 }, delimiterString = " -> ")
         void 로그인한_유저는_비공개_여부도_변경할_수_있다(boolean before, boolean after) {
             // given
-            CommentWriter writer = new AuthenticatedWriter(1L);
+            Member member = memberBuilder().id(1L).build();
+            CommentWriter writer = new AuthenticatedWriter(member);
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -186,7 +190,8 @@ class CommentTest {
         @Test
         void 자신의_댓글이_아닌_경우_예외() {
             // given
-            CommentWriter writer = new AuthenticatedWriter(1L);
+            Member member = memberBuilder().id(1L).build();
+            CommentWriter writer = new AuthenticatedWriter(member);
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)

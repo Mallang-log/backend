@@ -1,7 +1,9 @@
 package com.mallang.comment.domain.writer;
 
+import static com.mallang.member.MemberFixture.memberBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -13,10 +15,12 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AuthenticatedWriterTest {
 
+    private final Member member = memberBuilder().id(1L).build();
+
     @Test
     void 비밀_댓글을_작성할_수_있다() {
         // given
-        AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
+        AuthenticatedWriter mallang = new AuthenticatedWriter(member);
 
         // when & then
         assertThat(mallang.canWriteSecret()).isTrue();
@@ -28,7 +32,7 @@ class AuthenticatedWriterTest {
         @Test
         void 회원_ID가_일치하면_권한이_있다() {
             // given
-            AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
+            AuthenticatedWriter mallang = new AuthenticatedWriter(member);
 
             // when
             boolean result = mallang.hasAuthority(new AuthenticatedWriterCredential(1L));
@@ -40,7 +44,7 @@ class AuthenticatedWriterTest {
         @Test
         void 회원_ID가_일치하지_않으면_권한이_없다() {
             // given
-            AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
+            AuthenticatedWriter mallang = new AuthenticatedWriter(member);
 
             // when
             boolean result = mallang.hasAuthority(new AuthenticatedWriterCredential(2L));
@@ -52,7 +56,7 @@ class AuthenticatedWriterTest {
         @Test
         void Credential_타입이_인증된_작성자를_위한_타입이_아니면_권한이_없다() {
             // given
-            AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
+            AuthenticatedWriter mallang = new AuthenticatedWriter(member);
 
             // when
             boolean result = mallang.hasAuthority(new UnAuthenticatedWriterCredential("123"));

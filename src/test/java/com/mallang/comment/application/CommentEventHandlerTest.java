@@ -1,11 +1,15 @@
 package com.mallang.comment.application;
 
+import static com.mallang.member.domain.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 
 import com.mallang.auth.domain.event.MemberSignUpEvent;
 import com.mallang.comment.domain.writer.AuthenticatedWriter;
 import com.mallang.comment.domain.writer.CommentWriter;
+import com.mallang.member.domain.Member;
+import com.mallang.member.domain.MemberRepository;
+import com.mallang.member.domain.OauthId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -29,21 +33,29 @@ class CommentEventHandlerTest {
     @Autowired
     private CommentServiceTestHelper commentServiceTestHelper;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Nested
     class 회원가입_이벤트를_받아 {
 
         @Test
         void 인증된_댓글_작성자를_생성한다() {
             // given
-            publisher.publishEvent(new MemberSignUpEvent(1L));
+            Member member = Member.builder()
+                    .nickname("말랑")
+                    .oauthId(new OauthId("123", GITHUB))
+                    .build();
+            Long memberId = memberRepository.save(member).getId();
+            publisher.publishEvent(new MemberSignUpEvent(memberId));
 
             // when
-            CommentWriter writer = commentServiceTestHelper.인증된_댓글_작성자를_조회한다(1L);
+            CommentWriter writer = commentServiceTestHelper.인증된_댓글_작성자를_조회한다(memberId);
 
             // then
             assertThat(writer).isInstanceOf(AuthenticatedWriter.class);
             assertThat(writer.getId()).isNotNull();
-            assertThat(((AuthenticatedWriter) writer).getMemberId()).isEqualTo(1L);
+            assertThat(((AuthenticatedWriter) writer).getMember().getId()).isEqualTo(memberId);
         }
     }
 }
