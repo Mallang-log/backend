@@ -5,7 +5,9 @@ import com.mallang.comment.query.data.AuthenticatedWriterData;
 import com.mallang.comment.query.data.CommentData;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import jakarta.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +20,7 @@ public class CommentQueryService {
     private final PostRepository postRepository;
     private final CommentDataDao commentDataDao;
 
-    public List<CommentData> findCommentsExcludeSecretByPostId(Long postId) {
-        return commentDataDao.findCommentsByPostId(postId).stream()
-                .filter(it -> !it.secret())
-                .toList();
-    }
-
-    public List<CommentData> findAllByPostId(Long postId, Long memberId) {
+    public List<CommentData> findAllByPostId(Long postId, @Nullable Long memberId) {
         if (isPostWriter(postId, memberId)) {
             return commentDataDao.findCommentsByPostId(postId);
         }
@@ -35,7 +31,7 @@ public class CommentQueryService {
 
     private boolean isPostWriter(Long postId, Long memberId) {
         Post post = postRepository.getById(postId);
-        return post.getMember().getId().equals(memberId);
+        return Objects.equals(post.getMember().getId(), memberId);
     }
 
     private boolean hasAuthorityToSecret(CommentData data, Long memberId) {
@@ -43,6 +39,6 @@ public class CommentQueryService {
             return true;
         }
         AuthenticatedWriterData authenticatedWriterData = (AuthenticatedWriterData) data.commentWriterData();
-        return memberId.equals(authenticatedWriterData.memberId());
+        return Objects.equals(authenticatedWriterData.memberId(), memberId);
     }
 }
