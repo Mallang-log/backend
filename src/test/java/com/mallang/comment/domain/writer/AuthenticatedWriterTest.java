@@ -13,6 +13,15 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AuthenticatedWriterTest {
 
+    @Test
+    void 비밀_댓글을_작성할_수_있다() {
+        // given
+        AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
+
+        // when & then
+        assertThat(mallang.canWriteSecret()).isTrue();
+    }
+
     @Nested
     class 권한_확인_시 {
 
@@ -22,7 +31,7 @@ class AuthenticatedWriterTest {
             AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
 
             // when
-            boolean result = mallang.hasAuthority(new AuthenticatedWriterWriterCredential(1L));
+            boolean result = mallang.hasAuthority(new AuthenticatedWriterCredential(1L));
 
             // then
             assertThat(result).isTrue();
@@ -34,7 +43,7 @@ class AuthenticatedWriterTest {
             AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
 
             // when
-            boolean result = mallang.hasAuthority(new AuthenticatedWriterWriterCredential(2L));
+            boolean result = mallang.hasAuthority(new AuthenticatedWriterCredential(2L));
 
             // then
             assertThat(result).isFalse();

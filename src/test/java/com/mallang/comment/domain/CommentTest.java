@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.mallang.comment.domain.writer.AnonymousWriter;
 import com.mallang.comment.domain.writer.AnonymousWriterCredential;
 import com.mallang.comment.domain.writer.AuthenticatedWriter;
-import com.mallang.comment.domain.writer.AuthenticatedWriterWriterCredential;
+import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
 import com.mallang.comment.domain.writer.CommentWriter;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
@@ -98,7 +98,7 @@ class CommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.update(new AuthenticatedWriterWriterCredential(2L), "변경", false)
+                    comment.update(new AuthenticatedWriterCredential(2L), "변경", false)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -172,7 +172,7 @@ class CommentTest {
                     .build();
 
             // when
-            comment.update(new AuthenticatedWriterWriterCredential(1L), "변경", after);
+            comment.update(new AuthenticatedWriterCredential(1L), "변경", after);
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");

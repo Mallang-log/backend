@@ -1,11 +1,19 @@
 package com.mallang.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.comment.application.command.UpdateCommentCommand;
 import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
+import com.mallang.comment.domain.Comment;
+import com.mallang.comment.domain.writer.AnonymousWriterCredential;
+import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
+import com.mallang.comment.exception.CannotWriteSecretCommentException;
+import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -88,10 +96,210 @@ class CommentServiceTest {
                     .build();
 
             // when
-            Long 댓글_ID = commentService.anonymousWrite(command);
+            Long 댓글_ID = commentService.write(command);
 
             // then
             assertThat(댓글_ID).isNotNull();
+        }
+    }
+
+    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
+    @SpringBootTest
+    @Nested
+    class 댓글_수정_시 {
+
+        @Autowired
+        private MemberServiceTestHelper memberServiceTestHelper;
+
+        @Autowired
+        private PostServiceTestHelper postServiceTestHelper;
+
+        @Autowired
+        private CommentServiceTestHelper commentServiceTestHelper;
+
+        @Autowired
+        private CommentService commentService;
+
+        private Long postWriterId;
+        private Long postId;
+
+        @BeforeEach
+        void setUp() {
+            postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
+            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, "제목", "내용");
+        }
+
+        @Test
+        void 댓글이_수정된다() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(false)
+                    .credential(new AuthenticatedWriterCredential(memberId))
+                    .build();
+
+            // when
+            commentService.update(command);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("수정");
+        }
+
+        @Test
+        void 인증된_사용자의_경우_비공개_여부도_수정할_수_있다() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(true)
+                    .credential(new AuthenticatedWriterCredential(memberId))
+                    .build();
+
+            // when
+            commentService.update(command);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("수정");
+            assertThat(find.isSecret()).isTrue();
+        }
+
+        @Test
+        void 자신의_댓글이_아닌_경우_오류이다() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(true)
+                    .credential(new AuthenticatedWriterCredential(memberId + 1))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.update(command)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("댓글");
+            assertThat(find.isSecret()).isFalse();
+        }
+
+        @Test
+        void 익명_댓글은_비밀번호가_일치하면_수정할_수_있다() {
+            // given
+            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(false)
+                    .credential(new AnonymousWriterCredential("1234"))
+                    .build();
+
+            // when
+            commentService.update(command);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("수정");
+            assertThat(find.isSecret()).isFalse();
+        }
+
+        @Test
+        void 익명_댓글을_비공개로_수정하려는_경우_오류이다() {
+            // given
+            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(true)
+                    .credential(new AnonymousWriterCredential("1234"))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.update(command)
+            ).isInstanceOf(CannotWriteSecretCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("댓글");
+            assertThat(find.isSecret()).isFalse();
+        }
+
+        @Test
+        void 익명_댓글_수정_시_비밀번호가_틀리면_오류이다() {
+            // given
+            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(true)
+                    .credential(new AnonymousWriterCredential("12"))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.update(command)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("댓글");
+            assertThat(find.isSecret()).isFalse();
+        }
+
+        @Test
+        void 포스트_주인도_댓글을_수정할수는_없다() {
+            // given
+            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(false)
+                    .credential(new AuthenticatedWriterCredential(postWriterId))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.update(command)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("댓글");
+            assertThat(find.isSecret()).isFalse();
+        }
+
+        @Test
+        void 포스트의_주인도_익명댓글을_수정할수는_없다() {
+            // given
+            Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
+            UpdateCommentCommand command = UpdateCommentCommand.builder()
+                    .commentId(commentId)
+                    .content("수정")
+                    .secret(false)
+                    .credential(new AuthenticatedWriterCredential(postWriterId))
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.update(command)
+            ).isInstanceOf(NoAuthorityForCommentException.class);
+
+            // then
+            Comment find = commentServiceTestHelper.댓글을_조회한다(commentId);
+            assertThat(find.getContent()).isEqualTo("댓글");
+            assertThat(find.isSecret()).isFalse();
         }
     }
 }

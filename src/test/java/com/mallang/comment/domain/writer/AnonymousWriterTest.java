@@ -13,6 +13,15 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AnonymousWriterTest {
 
+    @Test
+    void 비밀_댓글을_쓸_수_없다() {
+        // given
+        AnonymousWriter mallang = new AnonymousWriter("mallang", "123");
+
+        // when & then
+        assertThat(mallang.canWriteSecret()).isFalse();
+    }
+
     @Nested
     class 권한_확인_시 {
 
@@ -46,7 +55,7 @@ class AnonymousWriterTest {
             AnonymousWriter mallang = new AnonymousWriter("mallang", "123");
 
             // when
-            boolean result = mallang.hasAuthority(new AuthenticatedWriterWriterCredential(1L));
+            boolean result = mallang.hasAuthority(new AuthenticatedWriterCredential(1L));
 
             // then
             assertThat(result).isFalse();

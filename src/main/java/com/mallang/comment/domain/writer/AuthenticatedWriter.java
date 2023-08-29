@@ -19,9 +19,14 @@ public class AuthenticatedWriter extends CommentWriter {
 
     @Override
     public boolean hasAuthority(WriterCredential writerCredential) {
-        if (writerCredential instanceof AuthenticatedWriterWriterCredential authenticatedWriterCredential) {
+        if (writerCredential instanceof AuthenticatedWriterCredential authenticatedWriterCredential) {
             return memberId.equals(authenticatedWriterCredential.memberId());
         }
         return false;
+    }
+
+    @Override
+    public boolean canWriteSecret() {
+        return true;
     }
 }

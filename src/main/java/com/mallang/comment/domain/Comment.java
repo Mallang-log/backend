@@ -5,7 +5,6 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import com.mallang.comment.domain.writer.AnonymousWriter;
 import com.mallang.comment.domain.writer.CommentWriter;
 import com.mallang.comment.domain.writer.WriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
@@ -55,7 +54,7 @@ public class Comment extends CommonDomainModel {
         if (!secret) {
             return;
         }
-        if (commentWriter instanceof AnonymousWriter) {
+        if (!commentWriter.canWriteSecret()) {
             throw new CannotWriteSecretCommentException();
         }
     }

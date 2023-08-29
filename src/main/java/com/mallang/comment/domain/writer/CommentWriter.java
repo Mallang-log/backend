@@ -12,4 +12,6 @@ import jakarta.persistence.InheritanceType;
 public abstract class CommentWriter extends CommonDomainModel {
 
     public abstract boolean hasAuthority(WriterCredential writerCredential);
+
+    public abstract boolean canWriteSecret();
 }

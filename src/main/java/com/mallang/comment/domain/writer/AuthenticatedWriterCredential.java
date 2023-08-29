@@ -1,6 +1,6 @@
 package com.mallang.comment.domain.writer;
 
-public record AuthenticatedWriterWriterCredential(
+public record AuthenticatedWriterCredential(
         Long memberId
 ) implements WriterCredential {
 }

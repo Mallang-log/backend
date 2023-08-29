@@ -29,4 +29,9 @@ public class AnonymousWriter extends CommentWriter {
         }
         return false;
     }
+
+    @Override
+    public boolean canWriteSecret() {
+        return false;
+    }
 }
