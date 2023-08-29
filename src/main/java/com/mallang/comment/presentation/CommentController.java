@@ -28,7 +28,7 @@ public class CommentController {
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
-    @PostMapping("/anonymous")
+    @PostMapping(params = "anonymous=true")
     public ResponseEntity<Void> anonymousWrite(
             @RequestBody WriteAnonymousCommentRequest request
     ) {

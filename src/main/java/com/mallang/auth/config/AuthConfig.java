@@ -1,12 +1,14 @@
 package com.mallang.auth.config;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 import com.mallang.auth.presentation.AuthArgumentResolver;
 import com.mallang.auth.presentation.AuthInterceptor;
 import com.mallang.auth.presentation.AuthInterceptor.UriAndMethodCondition;
 import com.mallang.auth.presentation.ExtractAuthenticationInterceptor;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +31,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .order(0);
         registry.addInterceptor(setUpAuthInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/oauth/**", "/comments/anonymous")
+                .excludePathPatterns("/oauth/**")
                 .order(1);
     }
 
@@ -38,6 +40,11 @@ public class AuthConfig implements WebMvcConfigurer {
                 UriAndMethodCondition.builder()
                         .uriPatterns(Set.of("/posts/**"))
                         .httpMethods(Set.of(GET))
+                        .build(),
+                UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/comments"))
+                        .httpMethods(Set.of(POST))
+                        .params(Map.of("anonymous", "true"))
                         .build()
         );
         return authInterceptor;

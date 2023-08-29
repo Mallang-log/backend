@@ -32,7 +32,8 @@ public class CommentAcceptanceSteps {
     ) {
         return given()
                 .body(new WriteAnonymousCommentRequest(포스트_ID, 내용, 이름, 암호))
-                .post("/comments/anonymous")
+                .queryParam("anonymous", "true")
+                .post("/comments")
                 .then()
                 .log().all()
                 .extract();
