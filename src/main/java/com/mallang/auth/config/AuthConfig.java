@@ -46,7 +46,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 UriAndMethodCondition.builder()
                         .uriPatterns(Set.of("/comments/**"))
                         .httpMethods(Set.of(POST, PUT, DELETE))
-                        .params(Map.of("anonymous", "true"))
+                        .params(Map.of("unauthenticated", "true"))
                         .build()
         );
         return authInterceptor;

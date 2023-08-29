@@ -1,7 +1,7 @@
 package com.mallang.comment.application;
 
-import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
@@ -31,7 +31,7 @@ public class CommentServiceTestHelper {
     }
 
     public Long 익명_댓글을_작성한다(Long postId, String content, String nickname, String password) {
-        WriteAnonymousCommentCommand command = WriteAnonymousCommentCommand.builder()
+        WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
                 .postId(postId)
                 .content(content)
                 .nickname(nickname)

@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-@DiscriminatorValue("AnonymousWriter")
+@DiscriminatorValue("UnAuthenticatedWriter")
 @Entity
-public class AnonymousWriter extends CommentWriter {
+public class UnAuthenticatedWriter extends CommentWriter {
 
     @Column(nullable = false)
     private String nickname;
@@ -24,8 +24,8 @@ public class AnonymousWriter extends CommentWriter {
 
     @Override
     public boolean hasAuthority(WriterCredential writerCredential) {
-        if (writerCredential instanceof AnonymousWriterCredential anonymousWriterCredential) {
-            return password.equals(anonymousWriterCredential.password());
+        if (writerCredential instanceof UnAuthenticatedWriterCredential unAuthenticatedWriterCredential) {
+            return password.equals(unAuthenticatedWriterCredential.password());
         }
         return false;
     }

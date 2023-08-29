@@ -35,7 +35,7 @@ public class CommentAcceptanceSteps {
     ) {
         return given()
                 .body(new WriteAnonymousCommentRequest(포스트_ID, 내용, 이름, 암호))
-                .queryParam("anonymous", true)
+                .queryParam("unauthenticated", true)
                 .post("/comments")
                 .then()
                 .log().all()
@@ -54,7 +54,7 @@ public class CommentAcceptanceSteps {
     public static ExtractableResponse<Response> 댓글_수정_요청(Long 댓글_ID, String 암호, String 수정_내용) {
         return given()
                 .body(new UpdateAnonymousCommentRequest(수정_내용, 암호))
-                .queryParam("anonymous", true)
+                .queryParam("unauthenticated", true)
                 .put("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
@@ -69,7 +69,7 @@ public class CommentAcceptanceSteps {
 
     public static ExtractableResponse<Response> 댓글_삭제_요청(Long 댓글_ID, String 암호) {
         return given()
-                .queryParam("anonymous", "true")
+                .queryParam("unauthenticated", "true")
                 .body(new DeleteAnonymousCommentRequest(암호))
                 .delete("/comments/{id}", 댓글_ID)
                 .then().log().all()

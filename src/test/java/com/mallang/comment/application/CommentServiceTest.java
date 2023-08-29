@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.comment.application.command.DeleteCommentCommand;
 import com.mallang.comment.application.command.UpdateCommentCommand;
-import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.writer.AnonymousWriterCredential;
 import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
+import com.mallang.comment.domain.writer.UnAuthenticatedWriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
@@ -90,7 +90,7 @@ class CommentServiceTest {
             // given
             Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
-            WriteAnonymousCommentCommand command = WriteAnonymousCommentCommand.builder()
+            WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
                     .postId(포스트_ID)
                     .content("댓글입니다.")
                     .nickname("익명1")
@@ -203,7 +203,7 @@ class CommentServiceTest {
                     .commentId(commentId)
                     .content("수정")
                     .secret(false)
-                    .credential(new AnonymousWriterCredential("1234"))
+                    .credential(new UnAuthenticatedWriterCredential("1234"))
                     .build();
 
             // when
@@ -223,7 +223,7 @@ class CommentServiceTest {
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)
-                    .credential(new AnonymousWriterCredential("1234"))
+                    .credential(new UnAuthenticatedWriterCredential("1234"))
                     .build();
 
             // when
@@ -245,7 +245,7 @@ class CommentServiceTest {
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)
-                    .credential(new AnonymousWriterCredential("12"))
+                    .credential(new UnAuthenticatedWriterCredential("12"))
                     .build();
 
             // when
@@ -376,7 +376,7 @@ class CommentServiceTest {
             Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
             DeleteCommentCommand command = DeleteCommentCommand.builder()
                     .commentId(commentId)
-                    .credential(new AnonymousWriterCredential("1234"))
+                    .credential(new UnAuthenticatedWriterCredential("1234"))
                     .build();
 
             // when
@@ -394,7 +394,7 @@ class CommentServiceTest {
             Long commentId = commentServiceTestHelper.익명_댓글을_작성한다(postId, "댓글", "mal", "1234");
             DeleteCommentCommand command = DeleteCommentCommand.builder()
                     .commentId(commentId)
-                    .credential(new AnonymousWriterCredential("12"))
+                    .credential(new UnAuthenticatedWriterCredential("12"))
                     .build();
 
             // when

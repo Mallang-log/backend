@@ -55,7 +55,7 @@ class AuthenticatedWriterTest {
             AuthenticatedWriter mallang = new AuthenticatedWriter(1L);
 
             // when
-            boolean result = mallang.hasAuthority(new AnonymousWriterCredential("123"));
+            boolean result = mallang.hasAuthority(new UnAuthenticatedWriterCredential("123"));
 
             // then
             assertThat(result).isFalse();

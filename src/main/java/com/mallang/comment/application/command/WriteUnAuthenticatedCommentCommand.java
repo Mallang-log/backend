@@ -1,12 +1,12 @@
 package com.mallang.comment.application.command;
 
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.writer.AnonymousWriter;
+import com.mallang.comment.domain.writer.UnAuthenticatedWriter;
 import com.mallang.post.domain.Post;
 import lombok.Builder;
 
 @Builder
-public record WriteAnonymousCommentCommand(
+public record WriteUnAuthenticatedCommentCommand(
         Long postId,
         String content,
         String nickname,
@@ -16,7 +16,7 @@ public record WriteAnonymousCommentCommand(
         return Comment.builder()
                 .post(post)
                 .content(content)
-                .commentWriter(new AnonymousWriter(nickname, password))
+                .commentWriter(new UnAuthenticatedWriter(nickname, password))
                 .secret(false)
                 .build();
     }

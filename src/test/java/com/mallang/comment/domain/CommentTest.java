@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.comment.domain.writer.AnonymousWriter;
-import com.mallang.comment.domain.writer.AnonymousWriterCredential;
 import com.mallang.comment.domain.writer.AuthenticatedWriter;
 import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
 import com.mallang.comment.domain.writer.CommentWriter;
+import com.mallang.comment.domain.writer.UnAuthenticatedWriter;
+import com.mallang.comment.domain.writer.UnAuthenticatedWriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
@@ -54,7 +54,7 @@ class CommentTest {
                     Comment.builder()
                             .content("내용")
                             .post(post)
-                            .commentWriter(new AnonymousWriter("익명", "1234"))
+                            .commentWriter(new UnAuthenticatedWriter("익명", "1234"))
                             .secret(true)
                             .build()
             ).isInstanceOf(CannotWriteSecretCommentException.class);
@@ -72,7 +72,7 @@ class CommentTest {
             Comment commentFromAnonymous = Comment.builder()
                     .content("내용")
                     .post(post)
-                    .commentWriter(new AnonymousWriter("익명", "1234"))
+                    .commentWriter(new UnAuthenticatedWriter("익명", "1234"))
                     .secret(false)
                     .build();
 
@@ -105,7 +105,7 @@ class CommentTest {
         @Test
         void 익명_댓글에_대한_비밀번호가_다른_경우_예외() {
             // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter writer = new UnAuthenticatedWriter("익명", "1234");
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -115,14 +115,14 @@ class CommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.update(new AnonymousWriterCredential("123"), "변경", false)
+                    comment.update(new UnAuthenticatedWriterCredential("123"), "변경", false)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
         @Test
         void 익명_유저가_댓글_변경_시_댓글을_비공개로_바꿀_경우_예외() {
             // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter writer = new UnAuthenticatedWriter("익명", "1234");
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -132,14 +132,14 @@ class CommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.update(new AnonymousWriterCredential("1234"), "변경", true)
+                    comment.update(new UnAuthenticatedWriterCredential("1234"), "변경", true)
             ).isInstanceOf(CannotWriteSecretCommentException.class);
         }
 
         @Test
         void 댓글을_변경한다() {
             // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter writer = new UnAuthenticatedWriter("익명", "1234");
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -148,7 +148,7 @@ class CommentTest {
                     .build();
 
             // when
-            comment.update(new AnonymousWriterCredential("1234"), "변경", false);
+            comment.update(new UnAuthenticatedWriterCredential("1234"), "변경", false);
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
@@ -196,14 +196,14 @@ class CommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.delete(new AnonymousWriterCredential("123"))
+                    comment.delete(new UnAuthenticatedWriterCredential("123"))
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
         @Test
         void 익명_댓글에_대한_비밀번호가_다른_경우_예외() {
             // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter writer = new UnAuthenticatedWriter("익명", "1234");
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -213,14 +213,14 @@ class CommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.delete(new AnonymousWriterCredential("123"))
+                    comment.delete(new UnAuthenticatedWriterCredential("123"))
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
         @Test
         void 자신의_댓글인_경우_제거할_수_있다() {
             // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter writer = new UnAuthenticatedWriter("익명", "1234");
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)
@@ -230,14 +230,14 @@ class CommentTest {
 
             // when & then
             assertDoesNotThrow(() ->
-                    comment.delete(new AnonymousWriterCredential("1234"))
+                    comment.delete(new UnAuthenticatedWriterCredential("1234"))
             );
         }
 
         @Test
         void 포스트_작성자는_모든_댓글_삭제_가능하다() {
             // given
-            CommentWriter writer = new AnonymousWriter("익명", "1234");
+            CommentWriter writer = new UnAuthenticatedWriter("익명", "1234");
             Comment comment = Comment.builder()
                     .content("내용")
                     .post(post)

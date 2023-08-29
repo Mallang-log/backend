@@ -1,7 +1,7 @@
 package com.mallang.comment.presentation.request;
 
 import com.mallang.comment.application.command.UpdateCommentCommand;
-import com.mallang.comment.domain.writer.AnonymousWriterCredential;
+import com.mallang.comment.domain.writer.UnAuthenticatedWriterCredential;
 
 public record UpdateAnonymousCommentRequest(
         String content,
@@ -12,7 +12,7 @@ public record UpdateAnonymousCommentRequest(
                 .commentId(commentId)
                 .content(content)
                 .secret(false)
-                .credential(new AnonymousWriterCredential(password))
+                .credential(new UnAuthenticatedWriterCredential(password))
                 .build();
     }
 }

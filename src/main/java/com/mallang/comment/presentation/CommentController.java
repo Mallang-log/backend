@@ -36,7 +36,7 @@ public class CommentController {
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
-    @PostMapping(params = "anonymous=true")
+    @PostMapping(params = "unauthenticated=true")
     public ResponseEntity<Void> anonymousWrite(
             @RequestBody WriteAnonymousCommentRequest request
     ) {
@@ -54,7 +54,7 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/{id}", params = "anonymous=true")
+    @PutMapping(value = "/{id}", params = "unauthenticated=true")
     public ResponseEntity<Void> update(
             @PathVariable("id") Long commentId,
             @RequestBody UpdateAnonymousCommentRequest request
@@ -76,7 +76,7 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(value = "/{id}", params = "anonymous=true")
+    @DeleteMapping(value = "/{id}", params = "unauthenticated=true")
     public ResponseEntity<Void> delete(
             @PathVariable("id") Long commentId,
             @RequestBody DeleteAnonymousCommentRequest request

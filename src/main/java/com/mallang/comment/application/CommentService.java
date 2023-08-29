@@ -2,8 +2,8 @@ package com.mallang.comment.application;
 
 import com.mallang.comment.application.command.DeleteCommentCommand;
 import com.mallang.comment.application.command.UpdateCommentCommand;
-import com.mallang.comment.application.command.WriteAnonymousCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.writer.AuthenticatedWriter;
@@ -31,7 +31,7 @@ public class CommentService {
         return saved.getId();
     }
 
-    public Long write(WriteAnonymousCommentCommand command) {
+    public Long write(WriteUnAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Comment comment = command.toComment(post);
         Comment saved = commentRepository.save(comment);
