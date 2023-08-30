@@ -10,6 +10,9 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class CommentAcceptanceDatas {
 
+    public static final boolean 공개 = false;
+    public static final boolean 비공개 = true;
+
     public static CommentData 예상_댓글_조회_데이터(
             Long 댓글_ID,
             String 내용,
