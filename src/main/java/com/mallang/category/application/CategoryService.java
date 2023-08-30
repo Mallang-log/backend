@@ -8,7 +8,6 @@ import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.domain.CategoryValidator;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +28,17 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
+    private Category getParentCategory(Long parentCategoryId) {
+        if (parentCategoryId == null) {
+            return null;
+        }
+        return categoryRepository.getById(parentCategoryId);
+    }
+
     public void update(UpdateCategoryCommand command) {
         Category category = categoryRepository.getById(command.categoryId());
         Category parentCategory = getParentCategory(command.parentCategoryId());
         category.update(command.memberId(), command.name(), parentCategory, categoryValidator);
-    }
-
-    private Category getParentCategory(Long parentCategoryId) {
-        return Optional.ofNullable(parentCategoryId)
-                .map(categoryRepository::getById)
-                .orElse(null);
     }
 
     public void delete(DeleteCategoryCommand command) {
