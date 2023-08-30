@@ -40,6 +40,28 @@ public class CommentServiceTestHelper {
         return commentService.write(command);
     }
 
+    public Long 대댓글을_작성한다(Long postId, String content, boolean secret, Long memberId, Long parentCommentId) {
+        WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+                .postId(postId)
+                .content(content)
+                .secret(secret)
+                .memberId(memberId)
+                .parentCommentId(parentCommentId)
+                .build();
+        return commentService.write(command);
+    }
+
+    public Long 비인증_대댓글을_작성한다(Long postId, String content, String nickname, String password, Long parentCommentId) {
+        WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
+                .postId(postId)
+                .content(content)
+                .nickname(nickname)
+                .password(password)
+                .parentCommentId(parentCommentId)
+                .build();
+        return commentService.write(command);
+    }
+
     public Comment 댓글을_조회한다(Long 댓글_ID) {
         return commentRepository.getById(댓글_ID);
     }

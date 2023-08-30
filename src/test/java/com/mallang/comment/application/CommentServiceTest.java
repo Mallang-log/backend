@@ -11,8 +11,11 @@ import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
 import com.mallang.comment.domain.writer.UnAuthenticatedWriterCredential;
 import com.mallang.comment.exception.CannotWriteSecretCommentException;
+import com.mallang.comment.exception.CommentDepthConstraintViolationException;
+import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
+import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +46,13 @@ class CommentServiceTest {
         private PostServiceTestHelper postServiceTestHelper;
 
         @Autowired
+        private CommentServiceTestHelper commentServiceTestHelper;
+
+        @Autowired
         private CommentService commentService;
+
+        @Autowired
+        private TransactionHelper transactionHelper;
 
         @Test
         void 로그인한_사용자가_댓글을_작성한다() {
@@ -102,6 +111,112 @@ class CommentServiceTest {
 
             // then
             assertThat(댓글_ID).isNotNull();
+        }
+
+        @Test
+        void 대댓글을_작성할_수_있다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(포스트_ID, "말랑 댓글", false, 말랑_ID);
+            WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
+                    .postId(포스트_ID)
+                    .content("대댓글입니다.")
+                    .nickname("비인증1")
+                    .password("1234")
+                    .parentCommentId(말랑_댓글_ID)
+                    .build();
+
+            // when
+            Long 대댓글_ID = commentService.write(command);
+
+            // then
+            transactionHelper.doAssert(() -> {
+                assertThat(대댓글_ID).isNotNull();
+                Comment 대댓글 = commentServiceTestHelper.댓글을_조회한다(대댓글_ID);
+                Comment 말랑_댓글 = commentServiceTestHelper.댓글을_조회한다(말랑_댓글_ID);
+                assertThat(대댓글.getParent()).isEqualTo(말랑_댓글);
+                assertThat(말랑_댓글.getChildren().get(0)).isEqualTo(대댓글);
+            });
+        }
+
+        @Test
+        void 다른_사람의_댓글에_대댓글을_달_수_있다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(포스트_ID, "말랑 댓글", true, 말랑_ID);
+            Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
+            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+                    .postId(포스트_ID)
+                    .content("대댓글입니다.")
+                    .memberId(동훈_ID)
+                    .parentCommentId(말랑_댓글_ID)
+                    .build();
+
+            // when
+            Long 대댓글_ID = commentService.write(command);
+
+            // then
+            transactionHelper.doAssert(() -> {
+                assertThat(대댓글_ID).isNotNull();
+                Comment 대댓글 = commentServiceTestHelper.댓글을_조회한다(대댓글_ID);
+                Comment 말랑_댓글 = commentServiceTestHelper.댓글을_조회한다(말랑_댓글_ID);
+                assertThat(대댓글.getParent()).isEqualTo(말랑_댓글);
+                assertThat(말랑_댓글.getChildren().get(0)).isEqualTo(대댓글);
+            });
+        }
+
+        @Test
+        void 대댓글에_대해서는_댓글을_달_수_없다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(포스트_ID, "말랑 댓글", true, 말랑_ID);
+            Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(포스트_ID, "대댓글", false, 말랑_ID, 말랑_댓글_ID);
+            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+                    .postId(포스트_ID)
+                    .content("대댓글입니다.")
+                    .memberId(말랑_ID)
+                    .parentCommentId(대댓글_ID)
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.write(command)
+            ).isInstanceOf(CommentDepthConstraintViolationException.class);
+
+            // then
+            transactionHelper.doAssert(() -> {
+                Comment 대댓글 = commentServiceTestHelper.댓글을_조회한다(대댓글_ID);
+                assertThat(대댓글.getChildren()).isEmpty();
+            });
+        }
+
+        @Test
+        void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외이다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
+            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트2", "내용");
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(포스트_ID, "말랑 댓글", true, 말랑_ID);
+            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+                    .postId(포스트2_ID)
+                    .content("대댓글입니다.")
+                    .memberId(말랑_ID)
+                    .parentCommentId(말랑_댓글_ID)
+                    .build();
+
+            // when
+            assertThatThrownBy(() ->
+                    commentService.write(command)
+            ).isInstanceOf(DifferentPostFromParentCommentException.class);
+
+            // then
+            transactionHelper.doAssert(() -> {
+                Comment 대댓글 = commentServiceTestHelper.댓글을_조회한다(말랑_댓글_ID);
+                assertThat(대댓글.getChildren()).isEmpty();
+            });
         }
     }
 

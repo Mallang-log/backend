@@ -10,6 +10,7 @@ import com.mallang.comment.domain.writer.AuthenticatedWriter;
 import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,14 +27,23 @@ public class CommentService {
     public Long write(WriteAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         AuthenticatedWriter writer = authenticatedWriterRepository.getByMemberId(command.memberId());
-        Comment comment = command.toComment(post, writer);
+        Comment parent = getParentComment(command.parentCommentId());
+        Comment comment = command.toComment(post, writer, parent);
         Comment saved = commentRepository.save(comment);
         return saved.getId();
     }
 
+    private Comment getParentComment(@Nullable Long parentCommentId) {
+        if (parentCommentId == null) {
+            return null;
+        }
+        return commentRepository.getById(parentCommentId);
+    }
+
     public Long write(WriteUnAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
-        Comment comment = command.toComment(post);
+        Comment parent = getParentComment(command.parentCommentId());
+        Comment comment = command.toComment(post, parent);
         Comment saved = commentRepository.save(comment);
         return saved.getId();
     }
