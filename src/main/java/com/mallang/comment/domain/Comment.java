@@ -1,7 +1,6 @@
 package com.mallang.comment.domain;
 
 import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -14,6 +13,7 @@ import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.post.domain.Post;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -34,7 +34,7 @@ public class Comment extends CommonDomainModel {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne(fetch = LAZY, cascade = {PERSIST, REMOVE})
+    @ManyToOne(fetch = LAZY, cascade = {PERSIST})
     @JoinColumn(name = "comment_writer_id", nullable = false)
     private CommentWriter commentWriter;
 
@@ -59,7 +59,7 @@ public class Comment extends CommonDomainModel {
             CommentWriter commentWriter,
             Post post,
             boolean secret,
-            Comment parent
+            @Nullable Comment parent
     ) {
         this.content = content;
         this.commentWriter = commentWriter;
@@ -82,7 +82,7 @@ public class Comment extends CommonDomainModel {
         }
     }
 
-    private void setParent(Comment parent) {
+    private void setParent(@Nullable Comment parent) {
         if (willBeParent(parent)) {
             unlinkFromParent();
             return;
@@ -90,7 +90,7 @@ public class Comment extends CommonDomainModel {
         beChild(parent);
     }
 
-    private boolean willBeParent(Comment parent) {
+    private boolean willBeParent(@Nullable Comment parent) {
         return parent == null;
     }
 
@@ -161,7 +161,7 @@ public class Comment extends CommonDomainModel {
         return false;
     }
 
-    private boolean isChild() {
+    public boolean isChild() {
         return parent != null;
     }
 }
