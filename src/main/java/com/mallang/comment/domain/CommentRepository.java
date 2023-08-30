@@ -13,6 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     }
 
     @Override
-    @EntityGraph(attributePaths = "commentWriter")
+    @EntityGraph(attributePaths = {"commentWriter", "parent"})
     Optional<Comment> findById(Long id);
 }

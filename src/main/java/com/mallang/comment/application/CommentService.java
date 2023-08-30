@@ -6,6 +6,7 @@ import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
+import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.domain.writer.AuthenticatedWriter;
 import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
 import com.mallang.post.domain.Post;
@@ -23,6 +24,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final AuthenticatedWriterRepository authenticatedWriterRepository;
+    private final CommentDeleteService commentDeleteService;
 
     public Long write(WriteAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
@@ -55,7 +57,6 @@ public class CommentService {
 
     public void delete(DeleteCommentCommand command) {
         Comment comment = commentRepository.getById(command.commentId());
-        comment.delete(command.credential());
-        commentRepository.delete(comment);
+        commentDeleteService.delete(comment, command.credential());
     }
 }

@@ -398,7 +398,7 @@ class CommentTest {
         }
 
         @Test
-        void 자식_댓글이_존재한다면_제거된_상태이나_자식_댓글과_관계는_유지된다() {
+        void 댓글_제거_시_자식_댓글이_존재한다면_제거된_상태이나_자식_댓글과_관계는_유지된다() {
             // given
             Comment parentComment = Comment.builder()
                     .content("내용")
