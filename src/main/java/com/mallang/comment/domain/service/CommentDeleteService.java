@@ -6,7 +6,6 @@ import com.mallang.comment.domain.writer.UnAuthenticatedWriter;
 import com.mallang.comment.domain.writer.UnAuthenticatedWriterRepository;
 import com.mallang.comment.domain.writer.WriterCredential;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -39,7 +38,7 @@ public class CommentDeleteService {
 
     private void physicalDelete(Comment comment) {
         commentRepository.delete(comment);
-        if (Hibernate.unproxy(comment.getCommentWriter()) instanceof UnAuthenticatedWriter unAuthenticatedWriter) {
+        if (comment.getCommentWriter() instanceof UnAuthenticatedWriter unAuthenticatedWriter) {
             unAuthenticatedWriterRepository.delete(unAuthenticatedWriter);
         }
     }
