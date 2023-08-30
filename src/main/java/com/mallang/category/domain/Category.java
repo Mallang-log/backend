@@ -13,6 +13,7 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -45,13 +46,18 @@ public class Category extends CommonDomainModel {
         this.member = member;
     }
 
-    public static Category create(String name, Member member, Category parent, CategoryValidator validator) {
+    public static Category create(
+            String name,
+            Member member,
+            @Nullable Category parent,
+            CategoryValidator validator
+    ) {
         Category category = new Category(name, member);
         category.setParent(parent, validator);
         return category;
     }
 
-    private void setParent(Category parent, CategoryValidator validator) {
+    private void setParent(@Nullable Category parent, CategoryValidator validator) {
         if (willBeRoot(parent)) {
             beRoot(validator);
             return;
@@ -59,7 +65,7 @@ public class Category extends CommonDomainModel {
         beChild(parent);
     }
 
-    private boolean willBeRoot(Category parent) {
+    private boolean willBeRoot(@Nullable Category parent) {
         return parent == null;
     }
 

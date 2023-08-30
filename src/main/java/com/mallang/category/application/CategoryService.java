@@ -8,6 +8,7 @@ import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.domain.CategoryValidator;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
-    private Category getParentCategory(Long parentCategoryId) {
+    private Category getParentCategory(@Nullable Long parentCategoryId) {
         if (parentCategoryId == null) {
             return null;
         }
