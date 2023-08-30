@@ -370,5 +370,58 @@ class CommentTest {
                     comment.delete(new AuthenticatedWriterCredential(postWriter.getId()))
             );
         }
+
+        @Test
+        void 대댓글인_경우_부모_댓글과_관계가_끊어진다() {
+            // given
+            Comment parentComment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .commentWriter(new AuthenticatedWriter(postWriter))
+                    .secret(true)
+                    .build();
+            Comment childComment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .commentWriter(new AuthenticatedWriter(postWriter))
+                    .secret(true)
+                    .parent(parentComment)
+                    .build();
+
+            // when
+            childComment.delete(new AuthenticatedWriterCredential(postWriter.getId()));
+
+            // then
+            assertThat(childComment.isDeleted()).isTrue();
+            assertThat(childComment.getParent()).isNull();
+            assertThat(parentComment.getChildren()).isEmpty();
+        }
+
+        @Test
+        void 자식_댓글이_존재한다면_제거된_상태이나_자식_댓글과_관계는_유지된다() {
+            // given
+            Comment parentComment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .commentWriter(new AuthenticatedWriter(postWriter))
+                    .secret(true)
+                    .build();
+            Comment childComment = Comment.builder()
+                    .content("내용")
+                    .post(post)
+                    .commentWriter(new AuthenticatedWriter(postWriter))
+                    .secret(true)
+                    .parent(parentComment)
+                    .build();
+
+            // when
+            parentComment.delete(new AuthenticatedWriterCredential(postWriter.getId()));
+
+            // then
+            assertThat(parentComment.isDeleted()).isTrue();
+            assertThat(childComment.getParent()).isEqualTo(parentComment);
+            assertThat(parentComment.getChildren()).hasSize(1);
+            assertThat(parentComment.getChildren().get(0)).isEqualTo(childComment);
+        }
     }
 }

@@ -44,6 +44,8 @@ public class Comment extends CommonDomainModel {
 
     private boolean secret;
 
+    private boolean deleted;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parant_id")
     private Comment parent;
@@ -81,18 +83,18 @@ public class Comment extends CommonDomainModel {
     }
 
     private void setParent(Comment parent) {
-        if (willBeRoot(parent)) {
-            beRoot();
+        if (willBeParent(parent)) {
+            unlinkFromParent();
             return;
         }
         beChild(parent);
     }
 
-    private boolean willBeRoot(Comment parent) {
+    private boolean willBeParent(Comment parent) {
         return parent == null;
     }
 
-    private void beRoot() {
+    private void unlinkFromParent() {
         if (this.parent != null) {
             this.parent.removeChild(this);
             this.parent = null;
@@ -143,10 +145,13 @@ public class Comment extends CommonDomainModel {
     }
 
     public void delete(WriterCredential writerCredential) {
-        if (isPostOwner(writerCredential)) {
-            return;
+        if (!isPostOwner(writerCredential)) {
+            validateWriter(writerCredential);
         }
-        validateWriter(writerCredential);
+        if (isChild()) {
+            unlinkFromParent();
+        }
+        this.deleted = true;
     }
 
     private boolean isPostOwner(WriterCredential writerCredential) {
@@ -154,5 +159,9 @@ public class Comment extends CommonDomainModel {
             return authenticatedWriterCredential.memberId().equals(post.getMember().getId());
         }
         return false;
+    }
+
+    private boolean isChild() {
+        return parent != null;
     }
 }
