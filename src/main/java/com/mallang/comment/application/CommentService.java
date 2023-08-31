@@ -35,19 +35,19 @@ public class CommentService {
         return saved.getId();
     }
 
-    private Comment getParentComment(@Nullable Long parentCommentId) {
-        if (parentCommentId == null) {
-            return null;
-        }
-        return commentRepository.getById(parentCommentId);
-    }
-
     public Long write(WriteUnAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Comment parent = getParentComment(command.parentCommentId());
         Comment comment = command.toComment(post, parent);
         Comment saved = commentRepository.save(comment);
         return saved.getId();
+    }
+
+    private Comment getParentComment(@Nullable Long parentCommentId) {
+        if (parentCommentId == null) {
+            return null;
+        }
+        return commentRepository.getById(parentCommentId);
     }
 
     public void update(UpdateCommentCommand command) {

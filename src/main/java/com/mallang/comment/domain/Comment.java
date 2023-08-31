@@ -68,7 +68,7 @@ public class Comment extends CommonDomainModel {
         setParent(parent);
     }
 
-    public void setSecret(boolean secret) {
+    private void setSecret(boolean secret) {
         validateSecret(secret);
         this.secret = secret;
     }
