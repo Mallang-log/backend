@@ -7,6 +7,7 @@ import static com.mallang.acceptance.AcceptanceSteps.비어있음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
+import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.공개;
@@ -36,7 +37,6 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class CommentAcceptanceTest extends AcceptanceTest {
 
-    // TODO 조회를 통한 검증
     @Nested
     class 포스트에_댓글_작성_시 extends AcceptanceTest {
 
@@ -83,8 +83,41 @@ public class CommentAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
-            var 댓글_Id = ID를_추출한다(응답);
-            값이_존재한다(댓글_Id);
+            var 댓글_ID = ID를_추출한다(응답);
+            값이_존재한다(댓글_ID);
+        }
+
+        @Test
+        void 대댓글을_작성할_수_있다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
+            var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
+
+            // when
+            var 응답 = 댓글_작성_요청(동훈_세션_ID, 포스트_ID, "댓글", 비공개, 댓글_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 생성됨);
+            var 대댓글_ID = ID를_추출한다(응답);
+            값이_존재한다(대댓글_ID);
+        }
+
+        @Test
+        void 대댓글에_대해_댓글을_달_수_없다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
+            var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
+            var 대댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개, 댓글_ID);
+
+            // when
+            var 응답 = 댓글_작성_요청(동훈_세션_ID, 포스트_ID, "댓글", 비공개, 대댓글_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 잘못된_요청);
         }
     }
 
