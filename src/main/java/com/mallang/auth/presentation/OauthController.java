@@ -1,6 +1,6 @@
 package com.mallang.auth.presentation;
 
-import static com.mallang.common.auth.AuthConstant.JSESSION_ID;
+import static com.mallang.common.auth.AuthConstant.MEMBER_ID;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.mallang.auth.application.OauthService;
@@ -48,7 +48,7 @@ public class OauthController {
     ) {
         Long memberId = oauthService.login(oauthServerType, code);
         HttpSession session = request.getSession(true);
-        session.setAttribute(JSESSION_ID, memberId);
+        session.setAttribute(MEMBER_ID, memberId);
         session.setMaxInactiveInterval(authSessionTtl);
         return ResponseEntity.status(OK).build();
     }
