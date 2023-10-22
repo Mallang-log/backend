@@ -25,8 +25,10 @@ import static com.mallang.acceptance.comment.CommentAcceptanceSteps.특정_포�
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.댓글_작성;
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.비인증_댓글_작성;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
+import static com.mallang.comment.query.data.AuthenticatedWriterData.anonymous;
 
 import com.mallang.acceptance.AcceptanceTest;
+import com.mallang.comment.query.data.AuthenticatedWriterData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -323,7 +325,7 @@ public class CommentAcceptanceTest extends AcceptanceTest {
             댓글_삭제_요청(댓글_ID, "1234");
 
             // when
-            var 응답 =  댓글_삭제_요청(댓글_ID, "1234");
+            var 응답 = 댓글_삭제_요청(댓글_ID, "1234");
 
             // then
             응답_상태를_검증한다(응답, 정상_처리);
@@ -332,9 +334,9 @@ public class CommentAcceptanceTest extends AcceptanceTest {
                     전체_조회_항목들(
                             예상_댓글_조회_데이터(
                                     댓글_ID,
-                                    "좋은 글 감사합니다",
+                                    "삭제된 댓글입니다.",
                                     공개,
-                                    예상_댓글_작성자_데이터("비인증입니다"),
+                                    anonymous(),
                                     삭제됨,
                                     예상_댓글_조회_데이터(대댓글_ID,
                                             "대댓글입니다",
@@ -368,7 +370,7 @@ public class CommentAcceptanceTest extends AcceptanceTest {
     class 특정_포스트의_댓글_전체_조회_시 extends AcceptanceTest {
 
         @Test
-        void 로그인하지_않은_경우_비밀_댓글을_제외한_댓글들이_전체_조회된다() {
+        void 로그인하지_않은_경우_비밀_댓글은_비밀_댓글입니다로_처리되어_조회된다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
@@ -379,17 +381,19 @@ public class CommentAcceptanceTest extends AcceptanceTest {
             var 동훈_공개_댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "동훈 댓글", 공개
             );
             var 동훈_비밀_댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "[비밀] 동훈 댓글", 비공개);
-            var 예상_데이터 = 전체_조회_항목들(
-                    예상_댓글_조회_데이터(헤헤_댓글_ID, "헤헤 댓글", 공개
-                            , 예상_댓글_작성자_데이터("헤헤")),
-                    예상_댓글_조회_데이터(동훈_공개_댓글_ID, "동훈 댓글", 공개
-                            , 예상_댓글_작성자_데이터("동훈", "동훈"))
-            );
 
             // when
             var 응답 = 특정_포스팅의_댓글_전체_조회(포스트_ID);
 
             // then
+            var 예상_데이터 = 전체_조회_항목들(
+                    예상_댓글_조회_데이터(헤헤_댓글_ID, "헤헤 댓글", 공개
+                            , 예상_댓글_작성자_데이터("헤헤")),
+                    예상_댓글_조회_데이터(동훈_공개_댓글_ID, "동훈 댓글", 공개
+                            , 예상_댓글_작성자_데이터("동훈", "동훈")),
+                    예상_댓글_조회_데이터(동훈_비밀_댓글_ID, "비밀 댓글입니다.", 비공개
+                            , anonymous())
+            );
             특정_포스트의_댓글_전체_조회_응답을_검증한다(응답, 예상_데이터);
         }
 
@@ -411,6 +415,11 @@ public class CommentAcceptanceTest extends AcceptanceTest {
             );
             var 후후_비밀_댓글_ID = 댓글_작성(후후_세션_ID, 포스트_ID, "[비밀] 후후 댓글", 비공개);
 
+
+            // when
+            var 응답 = 특정_포스팅의_댓글_전체_조회(동훈_세션_ID, 포스트_ID);
+
+            // then
             var 예상_데이터 = 전체_조회_항목들(
                     예상_댓글_조회_데이터(헤헤_댓글_ID, "헤헤 댓글", 공개
                             , 예상_댓글_작성자_데이터("헤헤")),
@@ -418,13 +427,10 @@ public class CommentAcceptanceTest extends AcceptanceTest {
                             , 예상_댓글_작성자_데이터("동훈", "동훈")),
                     예상_댓글_조회_데이터(동훈_비밀_댓글_ID, "[비밀] 동훈 댓글", 비공개, 예상_댓글_작성자_데이터("동훈", "동훈")),
                     예상_댓글_조회_데이터(후후_공개_댓글_ID, "후후 댓글", 공개
-                            , 예상_댓글_작성자_데이터("후후", "후후"))
+                            , 예상_댓글_작성자_데이터("후후", "후후")),
+                    예상_댓글_조회_데이터(후후_비밀_댓글_ID, "비밀 댓글입니다.", 비공개
+                            , anonymous())
             );
-
-            // when
-            var 응답 = 특정_포스팅의_댓글_전체_조회(동훈_세션_ID, 포스트_ID);
-
-            // then
             특정_포스트의_댓글_전체_조회_응답을_검증한다(응답, 예상_데이터);
         }
 
@@ -462,6 +468,38 @@ public class CommentAcceptanceTest extends AcceptanceTest {
 
             // then
             특정_포스트의_댓글_전체_조회_응답을_검증한다(응답, 예상_데이터);
+        }
+
+        @Test
+        void 삭제된_댓글은_삭제된_댓글입니다로_처리되어_조회된다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
+            var 댓글_ID = 비인증_댓글_작성(포스트_ID, "좋은 글 감사합니다", "비인증입니다", "1234");
+            var 대댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글입니다", 공개, 댓글_ID);
+            댓글_삭제_요청(댓글_ID, "1234");
+
+            // when
+            var 응답 = 댓글_삭제_요청(댓글_ID, "1234");
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+            var 댓글_조회_응답 = 특정_포스팅의_댓글_전체_조회(포스트_ID);
+            특정_포스트의_댓글_전체_조회_응답을_검증한다(댓글_조회_응답,
+                    전체_조회_항목들(
+                            예상_댓글_조회_데이터(
+                                    댓글_ID,
+                                    "삭제된 댓글입니다.",
+                                    공개,
+                                    anonymous(),
+                                    삭제됨,
+                                    예상_댓글_조회_데이터(대댓글_ID,
+                                            "대댓글입니다",
+                                            공개,
+                                            예상_댓글_작성자_데이터("말랑", "말랑")
+                                    )
+                            )
+                    ));
         }
     }
 }

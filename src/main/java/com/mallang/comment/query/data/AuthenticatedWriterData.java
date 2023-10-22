@@ -23,6 +23,12 @@ public class AuthenticatedWriterData implements CommentWriterData {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public static AuthenticatedWriterData anonymous() {
+        return AuthenticatedWriterData.builder()
+                .nickname("익명")
+                .build();
+    }
+
     public static AuthenticatedWriterData from(Member member) {
         return AuthenticatedWriterData.builder()
                 .memberId(member.getId())
