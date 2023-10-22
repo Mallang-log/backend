@@ -14,6 +14,7 @@ import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.MemberFixture;
 import com.mallang.member.domain.Member;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -233,5 +234,25 @@ class CategoryTest {
             assertThat(category.domainEvents().get(0))
                     .isInstanceOf(CategoryDeletedEvent.class);
         }
+    }
+
+    @Test
+    void 모든_자손을_반환한다() {
+        // given
+        Category 최상위 = Category.create("최상위", member, null, categoryValidator);
+        Category 하위 = Category.create("하위", member, 최상위, categoryValidator);
+        Category 더하위1 = Category.create("더하위1", member, 하위, categoryValidator);
+        Category 더하위2 = Category.create("더하위2", member, 하위, categoryValidator);
+        Category 더더하위1 = Category.create("더더하위1", member, 더하위1, categoryValidator);
+
+        // when
+        List<Category> 최상위_descendants = 최상위.getDescendants();
+        List<Category> 하위_descendants = 하위.getDescendants();
+
+        // then
+        assertThat(최상위_descendants)
+                .containsExactlyInAnyOrder(하위, 더하위1, 더하위2, 더더하위1);
+        assertThat(하위_descendants)
+                .containsExactlyInAnyOrder(더하위1, 더하위2, 더더하위1);
     }
 }

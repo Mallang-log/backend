@@ -147,4 +147,16 @@ public class Category extends CommonDomainModel {
             throw new ChildCategoryExistException();
         }
     }
+
+    public List<Category> getDescendants() {
+        List<Category> children = new ArrayList<>();
+        if (getChildren().isEmpty()) {
+            return children;
+        }
+        for (Category child : getChildren()) {
+            children.add(child);
+            children.addAll(child.getDescendants());
+        }
+        return children;
+    }
 }

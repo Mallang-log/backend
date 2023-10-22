@@ -46,22 +46,12 @@ public class PostSimpleDataDao {
             return null;
         }
         Category category = categoryQuerySupport.getById(categoryId);
-        List<Long> categoryIds = childCategories(category).stream()
+        List<Category> descendants = category.getDescendants();
+        descendants.add(category);
+        List<Long> categoryIds = descendants.stream()
                 .map(CommonDomainModel::getId)
                 .toList();
         return post.category.id.in(categoryIds);
-    }
-
-    private List<Category> childCategories(Category category) {
-        List<Category> children = new ArrayList<>();
-        children.add(category);
-        if (category.getChildren().isEmpty()) {
-            return children;
-        }
-        for (Category child : category.getChildren()) {
-            children.addAll(childCategories(child));
-        }
-        return children;
     }
 
     private BooleanExpression hasTag(String tagName) {
