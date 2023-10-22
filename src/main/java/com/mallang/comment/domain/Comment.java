@@ -65,7 +65,9 @@ public class Comment extends CommonDomainModel {
         this.commentWriter = commentWriter;
         this.post = post;
         setSecret(secret);
-        setParent(parent);
+        if (parent != null) {
+            beChild(parent);
+        }
     }
 
     private void setSecret(boolean secret) {
@@ -82,34 +84,11 @@ public class Comment extends CommonDomainModel {
         }
     }
 
-    private void setParent(@Nullable Comment parent) {
-        if (willBeParent(parent)) {
-            unlinkFromParent();
-            return;
-        }
-        beChild(parent);
-    }
-
-    private boolean willBeParent(@Nullable Comment parent) {
-        return parent == null;
-    }
-
-    private void unlinkFromParent() {
-        if (this.parent != null) {
-            this.parent.removeChild(this);
-            this.parent = null;
-        }
-    }
-
-    private void removeChild(Comment child) {
-        this.children.remove(child);
-    }
-
     private void beChild(Comment parent) {
         validateSamePost(parent);
         validateCommentDepthConstraint(parent);
         this.parent = parent;
-        parent.addChild(this);
+        parent.getChildren().add(this);
     }
 
     private void validateSamePost(Comment parent) {
@@ -119,13 +98,9 @@ public class Comment extends CommonDomainModel {
     }
 
     private void validateCommentDepthConstraint(Comment parent) {
-        if (parent.parent != null) {
+        if (parent.getParent() != null) {
             throw new CommentDepthConstraintViolationException();
         }
-    }
-
-    private void addChild(Comment child) {
-        this.children.add(child);
     }
 
     public void update(
@@ -163,5 +138,12 @@ public class Comment extends CommonDomainModel {
 
     public boolean isChild() {
         return parent != null;
+    }
+
+    private void unlinkFromParent() {
+        if (this.parent != null) {
+            this.parent.getChildren().remove(this);
+            this.parent = null;
+        }
     }
 }
