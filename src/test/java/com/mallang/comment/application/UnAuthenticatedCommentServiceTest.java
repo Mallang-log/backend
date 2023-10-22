@@ -11,7 +11,6 @@ import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.AuthenticatedComment;
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.UnAuthenticatedComment;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
@@ -33,7 +32,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 @DisplayName("댓글 서비스(CommentService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class CommentServiceTest {
+class UnAuthenticatedCommentServiceTest {
 
     @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
     @SpringBootTest
@@ -269,7 +268,7 @@ class CommentServiceTest {
             authenticatedCommentService.update(command);
 
             // then
-            AuthenticatedComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
+            Comment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("수정");
         }
 
@@ -332,7 +331,7 @@ class CommentServiceTest {
             unAuthenticatedCommentService.update(command);
 
             // then
-            UnAuthenticatedComment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
+            Comment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("수정");
         }
 
@@ -343,7 +342,7 @@ class CommentServiceTest {
             UpdateUnAuthenticatedCommentCommand command = UpdateUnAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
-                    .password("123")
+                    .password("12345")
                     .build();
 
             // when
@@ -352,7 +351,7 @@ class CommentServiceTest {
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
-            UnAuthenticatedComment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
+            Comment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("댓글");
         }
 
@@ -364,7 +363,7 @@ class CommentServiceTest {
             UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
-                    .secret(true)
+                    .secret(false)
                     .memberId(postWriterId)
                     .build();
 
@@ -374,9 +373,8 @@ class CommentServiceTest {
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
-            AuthenticatedComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
+            Comment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("댓글");
-            assertThat(find.isSecret()).isFalse();
         }
     }
 
@@ -513,7 +511,7 @@ class CommentServiceTest {
                     commentServiceTestHelper.인증된_댓글을_조회한다(comment1Id)
             ).isInstanceOf(NotFoundCommentException.class);
             assertThatThrownBy(() ->
-                    commentServiceTestHelper.비인증_댓글을_조회한다(comment2Id)
+                    commentServiceTestHelper.인증된_댓글을_조회한다(comment2Id)
             ).isInstanceOf(NotFoundCommentException.class);
         }
 
@@ -572,11 +570,11 @@ class CommentServiceTest {
             // given
             Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
-            Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(포스트_ID, "말랑 댓글", "hi", "1");
+            Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(포스트_ID, "말랑 댓글", "hi", "1234");
             Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(포스트_ID, "대댓글", false, 말랑_ID, 댓글_ID);
             DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
                     .commentId(댓글_ID)
-                    .password("1")
+                    .password("1234")
                     .build();
 
             // when
@@ -584,8 +582,8 @@ class CommentServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Comment 제거된_말랑_댓글 = commentServiceTestHelper.비인증_댓글을_조회한다(댓글_ID);
                 Comment 대댓글 = commentServiceTestHelper.인증된_댓글을_조회한다(대댓글_ID);
+                Comment 제거된_말랑_댓글 = commentServiceTestHelper.비인증_댓글을_조회한다(댓글_ID);
                 assertThat(대댓글.getParent()).isEqualTo(제거된_말랑_댓글);
                 assertThat(대댓글.isDeleted()).isFalse();
                 assertThat(제거된_말랑_댓글.isDeleted()).isTrue();
@@ -601,6 +599,7 @@ class CommentServiceTest {
             Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(포스트_ID, "말랑 댓글", "hi", "hi");
             Long 대댓글_ID = commentServiceTestHelper.비인증_대댓글을_작성한다(포스트_ID, "대댓글", "hi2", "12", 댓글_ID);
             commentServiceTestHelper.비인증_댓글을_제거한다(댓글_ID, "hi");
+
             DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
                     .commentId(대댓글_ID)
                     .password("12")

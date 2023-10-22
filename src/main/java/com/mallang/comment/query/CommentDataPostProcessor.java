@@ -1,7 +1,10 @@
 package com.mallang.comment.query;
 
-import com.mallang.comment.query.data.AuthenticatedWriterData;
+import static com.mallang.comment.query.data.AuthenticatedCommentData.WriterData.ANONYMOUS;
+
+import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
+import com.mallang.comment.query.data.UnAuthenticatedCommentData;
 import java.util.List;
 
 public class CommentDataPostProcessor {
@@ -13,18 +16,34 @@ public class CommentDataPostProcessor {
     }
 
     private static CommentData processDeleted(CommentData data) {
-        if (data.deleted()) {
-            return CommentData.builder()
-                    .id(data.id())
+        if (!data.isDeleted()) {
+            return data;
+        }
+
+        if (data instanceof UnAuthenticatedCommentData unAuth) {
+            return UnAuthenticatedCommentData.builder()
+                    .id(data.getId())
                     .content("삭제된 댓글입니다.")
-                    .secret(data.secret())
-                    .commentWriterData(AuthenticatedWriterData.anonymous())
-                    .createdDate(data.createdDate())
-                    .deleted(true)
-                    .children(data.children())
+                    .writerData(unAuth.getWriterData())
+                    .createdDate(unAuth.getCreatedDate())
+                    .deleted(unAuth.isDeleted())
+                    .children(unAuth.getChildren())
                     .build();
         }
-        return data;
+
+        if (data instanceof AuthenticatedCommentData authed) {
+            return AuthenticatedCommentData.builder()
+                    .id(data.getId())
+                    .content("삭제된 댓글입니다.")
+                    .secret(authed.isSecret())
+                    .writerData(authed.getWriterData())
+                    .createdDate(authed.getCreatedDate())
+                    .deleted(authed.isDeleted())
+                    .children(authed.getChildren())
+                    .build();
+        }
+
+        throw new RuntimeException("CommentDataPostProcessor에서 처리되지 않는 형식의 댓글이 들어왔습니다.");
     }
 
     public static List<CommentData> processSecret(List<CommentData> datas, Long memberId) {
@@ -34,21 +53,24 @@ public class CommentDataPostProcessor {
     }
 
     private static CommentData processSecret(CommentData data, Long memberId) {
-        if (!data.secret()) {
+        if (data instanceof UnAuthenticatedCommentData) {
             return data;
         }
-        if (data.commentWriterData() instanceof AuthenticatedWriterData authWriter
-                && authWriter.getMemberId().equals(memberId)) {
+        AuthenticatedCommentData authed = (AuthenticatedCommentData) data;
+        if (!authed.isSecret()) {
             return data;
         }
-        return CommentData.builder()
-                .id(data.id())
+        if (authed.getWriterData().memberId().equals(memberId)) {
+            return data;
+        }
+        return AuthenticatedCommentData.builder()
+                .id(data.getId())
                 .content("비밀 댓글입니다.")
                 .secret(true)
-                .commentWriterData(AuthenticatedWriterData.anonymous())
-                .createdDate(data.createdDate())
-                .deleted(data.deleted())
-                .children(data.children())
+                .writerData(ANONYMOUS)
+                .createdDate(authed.getCreatedDate())
+                .deleted(authed.isDeleted())
+                .children(authed.getChildren())
                 .build();
     }
 }

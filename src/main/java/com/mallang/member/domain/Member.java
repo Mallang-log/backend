@@ -2,7 +2,6 @@ package com.mallang.member.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import com.mallang.auth.domain.event.MemberSignUpEvent;
 import com.mallang.common.domain.CommonDomainModel;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -35,8 +34,4 @@ public class Member extends CommonDomainModel {
     private OauthId oauthId;
     private String nickname;
     private String profileImageUrl;
-
-    public void signUp() {
-        registerEvent(new MemberSignUpEvent(getId()));
-    }
 }

@@ -62,6 +62,25 @@ public class Post extends CommonDomainModel {
         setTags(tags);
     }
 
+    private void setCategory(@Nullable Category category) {
+        if (category == null) {
+            removeCategory();
+            return;
+        }
+        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
+        this.category = category;
+    }
+
+    public void removeCategory() {
+        this.category = null;
+    }
+
+    private void validateOwner(Long memberId, MallangLogException e) {
+        if (!member.getId().equals(memberId)) {
+            throw e;
+        }
+    }
+
     private void setTags(List<String> tags) {
         this.tags.clear();
         if (tags == null) {
@@ -92,24 +111,5 @@ public class Post extends CommonDomainModel {
         setTags(tags);
         this.title = title;
         this.content = content;
-    }
-
-    private void validateOwner(Long memberId, MallangLogException e) {
-        if (!member.getId().equals(memberId)) {
-            throw e;
-        }
-    }
-
-    private void setCategory(@Nullable Category category) {
-        if (category == null) {
-            removeCategory();
-            return;
-        }
-        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
-        this.category = category;
-    }
-
-    public void removeCategory() {
-        this.category = null;
     }
 }

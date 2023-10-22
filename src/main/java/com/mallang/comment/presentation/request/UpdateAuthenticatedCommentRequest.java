@@ -1,18 +1,17 @@
 package com.mallang.comment.presentation.request;
 
-import com.mallang.comment.application.command.UpdateCommentCommand;
-import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
+import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
 
 public record UpdateAuthenticatedCommentRequest(
         String content,
         boolean secret
 ) {
-    public UpdateCommentCommand toCommand(Long commentId, Long memberId) {
-        return UpdateCommentCommand.builder()
+    public UpdateAuthenticatedCommentCommand toCommand(Long commentId, Long memberId) {
+        return UpdateAuthenticatedCommentCommand.builder()
+                .memberId(memberId)
                 .commentId(commentId)
                 .content(content)
                 .secret(secret)
-                .credential(new AuthenticatedWriterCredential(memberId))
                 .build();
     }
 }
