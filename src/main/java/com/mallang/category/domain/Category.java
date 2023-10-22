@@ -75,8 +75,8 @@ public class Category extends CommonDomainModel {
     }
 
     private void unlinkFromParent() {
-        if (this.parent != null) {
-            this.parent.removeChild(this);
+        if (getParent() != null) {
+            getParent().getChildren().remove(this);
             parent = null;
         }
     }
@@ -84,7 +84,6 @@ public class Category extends CommonDomainModel {
     private void beChild(Category parent) {
         validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
         validateHierarchy(parent);
-        unlinkFromParent();
         link(parent);
     }
 
@@ -98,35 +97,37 @@ public class Category extends CommonDomainModel {
         if (this.equals(parent)) {
             throw new CategoryHierarchyViolationException();
         }
-        if (getChildren().contains(parent)) {
+        if (getDescendants().contains(parent)) {
             throw new CategoryHierarchyViolationException();
         }
-        for (Category child : getChildren()) {
-            child.validateHierarchy(parent);
+    }
+
+    public List<Category> getDescendants() {
+        List<Category> children = new ArrayList<>();
+        if (getChildren().isEmpty()) {
+            return children;
         }
+        for (Category child : getChildren()) {
+            children.add(child);
+            children.addAll(child.getDescendants());
+        }
+        return children;
     }
 
     private void link(Category parent) {
+        unlinkFromParent();
+        validateDuplicatedNameInSameHierarchy(parent);
         this.parent = parent;
-        this.parent.addChild(this);
-        validateDuplicatedNameInChildren(name);
+        getParent().getChildren().add(this);
     }
 
-    private void validateDuplicatedNameInChildren(String name) {
-        long duplicatedNameCount = parent.getChildren().stream()
+    private void validateDuplicatedNameInSameHierarchy(Category parent) {
+        parent.getChildren().stream()
                 .filter(it -> it.getName().equals(name))
-                .count();
-        if (duplicatedNameCount > 1) {
-            throw new DuplicateCategoryNameException();
-        }
-    }
-
-    private void addChild(Category child) {
-        children.add(child);
-    }
-
-    private void removeChild(Category child) {
-        children.remove(child);
+                .findAny()
+                .ifPresent(it -> {
+                    throw new DuplicateCategoryNameException();
+                });
     }
 
     public void update(Long memberId, String name, Category parent, CategoryValidator validator) {
@@ -146,17 +147,5 @@ public class Category extends CommonDomainModel {
         if (!children.isEmpty()) {
             throw new ChildCategoryExistException();
         }
-    }
-
-    public List<Category> getDescendants() {
-        List<Category> children = new ArrayList<>();
-        if (getChildren().isEmpty()) {
-            return children;
-        }
-        for (Category child : getChildren()) {
-            children.add(child);
-            children.addAll(child.getDescendants());
-        }
-        return children;
     }
 }

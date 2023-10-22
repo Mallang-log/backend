@@ -1,7 +1,6 @@
 package com.mallang.category.domain;
 
 import com.mallang.category.exception.DuplicateCategoryNameException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +11,12 @@ public class CategoryValidator {
     private final CategoryRepository categoryRepository;
 
     public void validateDuplicateRootName(Long memberId, String name) {
-        List<Category> rootCategories = categoryRepository.findAllRootByMemberId(memberId);
-        boolean duplicate = rootCategories.stream()
-                .anyMatch(it -> it.getName().equals(name));
-        if (duplicate) {
-            throw new DuplicateCategoryNameException();
-        }
+        categoryRepository.findAllRootByMemberId(memberId)
+                .stream()
+                .filter(it -> it.getName().equals(name))
+                .findAny()
+                .ifPresent(it -> {
+                    throw new DuplicateCategoryNameException();
+                });
     }
 }
