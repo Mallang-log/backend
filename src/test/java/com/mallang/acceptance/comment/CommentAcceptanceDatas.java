@@ -12,18 +12,34 @@ public class CommentAcceptanceDatas {
 
     public static final boolean 공개 = false;
     public static final boolean 비공개 = true;
+    public static final boolean 삭제됨 = true;
+    public static final boolean 삭제되지_않음 = false;
 
     public static CommentData 예상_댓글_조회_데이터(
             Long 댓글_ID,
             String 내용,
             boolean 비밀_댓글_여부,
-            CommentWriterData 댓글_작성자_정보
+            CommentWriterData 댓글_작성자_정보,
+            CommentData... 대댓글들
+    ) {
+        return 예상_댓글_조회_데이터(댓글_ID, 내용, 비밀_댓글_여부, 댓글_작성자_정보, false, 대댓글들);
+    }
+
+    public static CommentData 예상_댓글_조회_데이터(
+            Long 댓글_ID,
+            String 내용,
+            boolean 비밀_댓글_여부,
+            CommentWriterData 댓글_작성자_정보,
+            boolean 삭제_여부,
+            CommentData... 대댓글들
     ) {
         return CommentData.builder()
                 .id(댓글_ID)
                 .content(내용)
                 .secret(비밀_댓글_여부)
                 .commentWriterData(댓글_작성자_정보)
+                .deleted(삭제_여부)
+                .children(Arrays.asList(대댓글들))
                 .build();
     }
 

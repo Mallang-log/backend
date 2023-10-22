@@ -120,7 +120,12 @@ public class CommentAcceptanceSteps {
         List<CommentData> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
-                .ignoringFields("createdDate", "commentWriterData.memberId")
+                .ignoringFields(
+                        "createdDate",
+                        "commentWriterData.memberId",
+                        "children.createdDate",
+                        "children.commentWriterData.memberId"
+                )
                 .isEqualTo(예상_데이터);
     }
 }

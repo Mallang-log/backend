@@ -2,6 +2,7 @@ package com.mallang.comment.query.data;
 
 import com.mallang.comment.domain.Comment;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -10,7 +11,9 @@ public record CommentData(
         String content,
         boolean secret,
         CommentWriterData commentWriterData,
-        LocalDateTime createdDate
+        LocalDateTime createdDate,
+        boolean deleted,
+        List<CommentData> children
 ) {
 
     public static CommentData from(Comment comment) {
@@ -20,6 +23,10 @@ public record CommentData(
                 .secret(comment.isSecret())
                 .commentWriterData(CommentWriterData.from(comment.getCommentWriter()))
                 .createdDate(comment.getCreatedDate())
+                .deleted(comment.isDeleted())
+                .children(comment.getChildren().stream()
+                        .map(CommentData::from)
+                        .toList())
                 .build();
     }
 }

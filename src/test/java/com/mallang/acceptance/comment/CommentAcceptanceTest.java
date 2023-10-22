@@ -12,6 +12,7 @@ import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.공개;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.비공개;
+import static com.mallang.acceptance.comment.CommentAcceptanceDatas.삭제됨;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.예상_댓글_작성자_데이터;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.예상_댓글_조회_데이터;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.전체_조회_항목들;
@@ -192,7 +193,7 @@ public class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 포스트_작성자라도_댓글을_수정할_수는_없다() {
+        void 포스트_작성자라도_타인의_댓글을_수정할_수는_없다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
@@ -280,6 +281,81 @@ public class CommentAcceptanceTest extends AcceptanceTest {
 
             // when
             var 응답 = 댓글_삭제_요청(말랑_세션_ID, 댓글_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+            var 댓글_조회_응답 = 특정_포스팅의_댓글_전체_조회(포스트_ID);
+            특정_포스트의_댓글_전체_조회_응답을_검증한다(댓글_조회_응답, 비어있음());
+        }
+
+        @Test
+        void 대댓글_제거_시_부모_댓글과의_관계도_끊어진다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
+            var 댓글_ID = 비인증_댓글_작성(포스트_ID, "좋은 글 감사합니다", "비인증입니다", "1234");
+            var 대댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글입니다", 공개, 댓글_ID);
+
+            // when
+            var 응답 = 댓글_삭제_요청(말랑_세션_ID, 대댓글_ID);
+
+            // then
+            var 댓글_조회_응답 = 특정_포스팅의_댓글_전체_조회(포스트_ID);
+            응답_상태를_검증한다(응답, 정상_처리);
+            특정_포스트의_댓글_전체_조회_응답을_검증한다(댓글_조회_응답,
+                    전체_조회_항목들(
+                            예상_댓글_조회_데이터(
+                                    댓글_ID,
+                                    "좋은 글 감사합니다",
+                                    공개,
+                                    예상_댓글_작성자_데이터("비인증입니다")
+                            )
+                    ));
+        }
+
+        @Test
+        void 댓글_제거_시_자식_댓글이_존재한다면_부모와의_연관관계는_유지되며_논리적으로만_제거시킨다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
+            var 댓글_ID = 비인증_댓글_작성(포스트_ID, "좋은 글 감사합니다", "비인증입니다", "1234");
+            var 대댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글입니다", 공개, 댓글_ID);
+            댓글_삭제_요청(댓글_ID, "1234");
+
+            // when
+            var 응답 =  댓글_삭제_요청(댓글_ID, "1234");
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+            var 댓글_조회_응답 = 특정_포스팅의_댓글_전체_조회(포스트_ID);
+            특정_포스트의_댓글_전체_조회_응답을_검증한다(댓글_조회_응답,
+                    전체_조회_항목들(
+                            예상_댓글_조회_데이터(
+                                    댓글_ID,
+                                    "좋은 글 감사합니다",
+                                    공개,
+                                    예상_댓글_작성자_데이터("비인증입니다"),
+                                    삭제됨,
+                                    예상_댓글_조회_데이터(대댓글_ID,
+                                            "대댓글입니다",
+                                            공개,
+                                            예상_댓글_작성자_데이터("말랑", "말랑")
+                                    )
+                            )
+                    ));
+        }
+
+        @Test
+        void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태이며_더이상_존재하는_자식이_없는_경우_부모_댓글도_물리적으로_제거된다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, "제목", "내용", 없음());
+            var 댓글_ID = 비인증_댓글_작성(포스트_ID, "좋은 글 감사합니다", "비인증입니다", "1234");
+            var 대댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글입니다", 공개, 댓글_ID);
+            댓글_삭제_요청(댓글_ID, "1234");
+
+            // when
+            var 응답 = 댓글_삭제_요청(말랑_세션_ID, 대댓글_ID);
 
             // then
             응답_상태를_검증한다(응답, 정상_처리);

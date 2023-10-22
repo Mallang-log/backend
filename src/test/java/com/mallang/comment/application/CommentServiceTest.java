@@ -596,40 +596,6 @@ class CommentServiceTest {
         }
 
         @Test
-        void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태이며_더이상_존재하는_자식이_없는_경우_부모_댓글도_물리적으로_제거된다() {
-            // given
-            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
-            Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(포스트_ID, "말랑 댓글", "hi", "hi");
-            Long 대댓글_ID = commentServiceTestHelper.비인증_대댓글을_작성한다(포스트_ID, "대댓글", "hi2", "12", 댓글_ID);
-            Long 비인증_댓글작성자_ID = commentServiceTestHelper.댓글의_작성자_ID를_반환한다(댓글_ID);
-            Long 비인증_대댓글작성자_ID = commentServiceTestHelper.댓글의_작성자_ID를_반환한다(대댓글_ID);
-            commentServiceTestHelper.비인증_댓글을_제거한다(댓글_ID, "hi");
-
-            DeleteCommentCommand command = DeleteCommentCommand.builder()
-                    .commentId(대댓글_ID)
-                    .credential(new UnAuthenticatedWriterCredential("12"))
-                    .build();
-
-            // when
-            commentService.delete(command);
-
-            // then
-            assertThatThrownBy(() ->
-                    commentServiceTestHelper.댓글을_조회한다(댓글_ID)
-            ).isInstanceOf(NotFoundCommentException.class);
-            assertThatThrownBy(() ->
-                    commentServiceTestHelper.댓글을_조회한다(대댓글_ID)
-            ).isInstanceOf(NotFoundCommentException.class);
-            assertThatThrownBy(() ->
-                    commentServiceTestHelper.ID로_비인증_댓글_작성자를_조회한다(비인증_댓글작성자_ID)
-            ).isInstanceOf(EntityNotFoundException.class);
-            assertThatThrownBy(() ->
-                    commentServiceTestHelper.ID로_비인증_댓글_작성자를_조회한다(비인증_대댓글작성자_ID)
-            ).isInstanceOf(EntityNotFoundException.class);
-        }
-
-        @Test
         void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태가_아닌_경우_부모는_변함없다() {
             // given
             Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
@@ -683,6 +649,40 @@ class CommentServiceTest {
                 assertThat(제거된_말랑_댓글.getChildren().get(0)).isEqualTo(대댓글);
                 assertThat(commentServiceTestHelper.ID로_비인증_댓글_작성자를_조회한다(비인증_댓글_작성자.getId())).isNotNull();
             });
+        }
+
+        @Test
+        void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태이며_더이상_존재하는_자식이_없는_경우_부모_댓글도_물리적으로_제거된다() {
+            // given
+            Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(말랑_ID, "포스트", "내용");
+            Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(포스트_ID, "말랑 댓글", "hi", "hi");
+            Long 대댓글_ID = commentServiceTestHelper.비인증_대댓글을_작성한다(포스트_ID, "대댓글", "hi2", "12", 댓글_ID);
+            Long 비인증_댓글작성자_ID = commentServiceTestHelper.댓글의_작성자_ID를_반환한다(댓글_ID);
+            Long 비인증_대댓글작성자_ID = commentServiceTestHelper.댓글의_작성자_ID를_반환한다(대댓글_ID);
+            commentServiceTestHelper.비인증_댓글을_제거한다(댓글_ID, "hi");
+
+            DeleteCommentCommand command = DeleteCommentCommand.builder()
+                    .commentId(대댓글_ID)
+                    .credential(new UnAuthenticatedWriterCredential("12"))
+                    .build();
+
+            // when
+            commentService.delete(command);
+
+            // then
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.댓글을_조회한다(댓글_ID)
+            ).isInstanceOf(NotFoundCommentException.class);
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.댓글을_조회한다(대댓글_ID)
+            ).isInstanceOf(NotFoundCommentException.class);
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.ID로_비인증_댓글_작성자를_조회한다(비인증_댓글작성자_ID)
+            ).isInstanceOf(EntityNotFoundException.class);
+            assertThatThrownBy(() ->
+                    commentServiceTestHelper.ID로_비인증_댓글_작성자를_조회한다(비인증_대댓글작성자_ID)
+            ).isInstanceOf(EntityNotFoundException.class);
         }
     }
 }
