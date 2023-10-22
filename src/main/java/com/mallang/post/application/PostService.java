@@ -8,6 +8,7 @@ import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class PostService {
         return saved.getId();
     }
 
-    private Category getCategoryByIdIfPresent(Long id) {
+    private Category getCategoryByIdIfPresent(@Nullable Long id) {
         if (id == null) {
             return null;
         }

@@ -12,6 +12,7 @@ import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -51,7 +52,7 @@ public class Post extends CommonDomainModel {
             String title,
             String content,
             Member member,
-            Category category,
+            @Nullable Category category,
             List<String> tags
     ) {
         this.title = title;
@@ -83,7 +84,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
-            Category category,
+            @Nullable Category category,
             List<String> tags
     ) {
         validateOwner(memberId, new NoAuthorityUpdatePostException());
@@ -99,7 +100,7 @@ public class Post extends CommonDomainModel {
         }
     }
 
-    private void setCategory(Category category) {
+    private void setCategory(@Nullable Category category) {
         if (category == null) {
             removeCategory();
             return;

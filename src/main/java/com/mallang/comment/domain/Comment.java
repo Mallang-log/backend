@@ -47,7 +47,7 @@ public class Comment extends CommonDomainModel {
     private boolean deleted;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "parant_id")
+    @JoinColumn(name = "parant_id", nullable = true)
     private Comment parent;
 
     @OneToMany(mappedBy = "parent")

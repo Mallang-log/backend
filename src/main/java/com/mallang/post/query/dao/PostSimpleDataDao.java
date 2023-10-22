@@ -11,6 +11,7 @@ import com.mallang.post.query.data.PostSearchCond;
 import com.mallang.post.query.data.PostSimpleData;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class PostSimpleDataDao {
                 .toList();
     }
 
-    private BooleanExpression hasCategory(Long categoryId) {
+    private BooleanExpression hasCategory(@Nullable Long categoryId) {
         if (categoryId == null) {
             return null;
         }
@@ -54,20 +55,20 @@ public class PostSimpleDataDao {
         return post.category.id.in(categoryIds);
     }
 
-    private BooleanExpression hasTag(String tagName) {
+    private BooleanExpression hasTag(@Nullable String tagName) {
         if (ObjectUtils.isEmpty(tagName)) {
             return null;
         }
         return tag.content.eq(tagName);
     }
 
-    private BooleanExpression writerIdEq(Long writerId) {
+    private BooleanExpression writerIdEq(@Nullable Long writerId) {
         return writerId == null
                 ? null
                 : post.member.id.eq(writerId);
     }
 
-    private BooleanExpression titleOrContentContains(String title, String content, String titleOrContent) {
+    private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content, @Nullable String titleOrContent) {
         if (!ObjectUtils.isEmpty(title) || !ObjectUtils.isEmpty(content)) {
             if (!ObjectUtils.isEmpty(titleOrContent)) {
                 throw new BadPostSearchCondException("제목이나 내용을 검색하는 경우 제목 + 내용으로는 검색할 수 없습니다");

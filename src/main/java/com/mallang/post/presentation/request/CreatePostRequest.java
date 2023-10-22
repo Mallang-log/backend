@@ -1,12 +1,13 @@
 package com.mallang.post.presentation.request;
 
 import com.mallang.post.application.command.CreatePostCommand;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 public record CreatePostRequest(
         String title,
         String content,
-        Long categoryId,
+        @Nullable Long categoryId,
         List<String> tags
 ) {
 
