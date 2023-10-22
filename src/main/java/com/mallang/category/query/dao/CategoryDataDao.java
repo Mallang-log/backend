@@ -1,6 +1,5 @@
 package com.mallang.category.query.dao;
 
-import com.mallang.category.domain.Category;
 import com.mallang.category.query.dao.support.CategoryQuerySupport;
 import com.mallang.category.query.data.CategoryData;
 import java.util.List;
@@ -16,8 +15,8 @@ public class CategoryDataDao {
     private final CategoryQuerySupport categoryQuerySupport;
 
     public List<CategoryData> findAllByMemberId(Long memberId) {
-        List<Category> categories = categoryQuerySupport.findAllRootByMemberId(memberId);
-        return categories.stream()
+        return categoryQuerySupport.findAllRootByMemberId(memberId)
+                .stream()
                 .map(CategoryData::from)
                 .toList();
     }
