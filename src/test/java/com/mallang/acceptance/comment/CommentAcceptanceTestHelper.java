@@ -13,11 +13,22 @@ public class CommentAcceptanceTestHelper {
             String 내용,
             boolean 비밀_여부
     ) {
+        return 댓글_작성(세션_ID, 포스트_ID, 내용, 비밀_여부, null);
+    }
+
+    public static Long 댓글_작성(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            boolean 비밀_여부,
+            Long 부모_댓글_Id
+    ) {
         return ID를_추출한다(댓글_작성_요청(
                 세션_ID,
                 포스트_ID,
                 내용,
-                비밀_여부
+                비밀_여부,
+                부모_댓글_Id
         ));
     }
 

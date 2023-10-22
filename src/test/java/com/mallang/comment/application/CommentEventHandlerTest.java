@@ -50,7 +50,7 @@ class CommentEventHandlerTest {
             publisher.publishEvent(new MemberSignUpEvent(memberId));
 
             // when
-            CommentWriter writer = commentServiceTestHelper.인증된_댓글_작성자를_조회한다(memberId);
+            CommentWriter writer = commentServiceTestHelper.회원_ID로_인증된_댓글_작성자를_조회한다(memberId);
 
             // then
             assertThat(writer).isInstanceOf(AuthenticatedWriter.class);

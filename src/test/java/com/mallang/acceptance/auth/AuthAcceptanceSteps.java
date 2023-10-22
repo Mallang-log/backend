@@ -1,7 +1,7 @@
 package com.mallang.acceptance.auth;
 
+import static com.mallang.acceptance.AcceptanceSteps.JSESSION_ID;
 import static com.mallang.acceptance.AcceptanceSteps.given;
-import static com.mallang.common.auth.AuthConstant.JSESSION_ID;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class AuthAcceptanceSteps {

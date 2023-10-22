@@ -1,6 +1,7 @@
 package com.mallang.comment.presentation.request;
 
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
+import jakarta.annotation.Nullable;
 import lombok.Builder;
 
 @Builder
@@ -8,7 +9,8 @@ public record WriteAnonymousCommentRequest(
         Long postId,
         String content,
         String nickname,
-        String password
+        String password,
+        @Nullable Long parentCommentId
 ) {
 
     public WriteUnAuthenticatedCommentCommand toCommand() {
@@ -17,6 +19,7 @@ public record WriteAnonymousCommentRequest(
                 .content(content)
                 .nickname(nickname)
                 .password(password)
+                .parentCommentId(parentCommentId)
                 .build();
     }
 }

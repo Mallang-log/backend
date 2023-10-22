@@ -21,12 +21,30 @@ public class CommentQueryService {
     private final CommentDataDao commentDataDao;
 
     public List<CommentData> findAllByPostId(Long postId, @Nullable Long memberId) {
-        if (isPostWriter(postId, memberId)) {
-            return commentDataDao.findCommentsByPostId(postId);
-        }
-        return commentDataDao.findCommentsByPostId(postId).stream()
-                .filter(data -> hasAuthorityToSecret(data, memberId))
+        List<CommentData> result = commentDataDao.findCommentsByPostId(postId).stream()
+                .map(this::toDeletedIfRequired)
                 .toList();
+        if (isPostWriter(postId, memberId)) {
+            return result;
+        }
+        return result.stream()
+                .map(data -> toSecretIfRequired(data, memberId))
+                .toList();
+    }
+
+    private CommentData toDeletedIfRequired(CommentData data) {
+        if (data.deleted()) {
+            return CommentData.builder()
+                    .id(data.id())
+                    .content("삭제된 댓글입니다.")
+                    .secret(data.secret())
+                    .commentWriterData(AuthenticatedWriterData.anonymous())
+                    .createdDate(data.createdDate())
+                    .deleted(true)
+                    .children(data.children())
+                    .build();
+        }
+        return data;
     }
 
     private boolean isPostWriter(Long postId, Long memberId) {
@@ -34,11 +52,22 @@ public class CommentQueryService {
         return Objects.equals(post.getMember().getId(), memberId);
     }
 
-    private boolean hasAuthorityToSecret(CommentData data, Long memberId) {
+    private CommentData toSecretIfRequired(CommentData data, Long memberId) {
         if (!data.secret()) {
-            return true;
+            return data;
         }
-        AuthenticatedWriterData authenticatedWriterData = (AuthenticatedWriterData) data.commentWriterData();
-        return Objects.equals(authenticatedWriterData.getMemberId(), memberId);
+        if (data.commentWriterData() instanceof AuthenticatedWriterData authWriter
+                && authWriter.getMemberId().equals(memberId)) {
+            return data;
+        }
+        return CommentData.builder()
+                .id(data.id())
+                .content("비밀 댓글입니다.")
+                .secret(true)
+                .commentWriterData(AuthenticatedWriterData.anonymous())
+                .createdDate(data.createdDate())
+                .deleted(data.deleted())
+                .children(data.children())
+                .build();
     }
 }

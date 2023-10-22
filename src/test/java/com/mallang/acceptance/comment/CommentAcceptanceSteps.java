@@ -23,8 +23,18 @@ public class CommentAcceptanceSteps {
             String 내용,
             boolean 비밀_여부
     ) {
+        return 댓글_작성_요청(세션_ID, 포스트_ID, 내용, 비밀_여부, null);
+    }
+
+    public static ExtractableResponse<Response> 댓글_작성_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            boolean 비밀_여부,
+            Long 부모_댓글_ID
+    ) {
         return given(세션_ID)
-                .body(new WriteAuthenticatedCommentRequest(포스트_ID, 내용, 비밀_여부))
+                .body(new WriteAuthenticatedCommentRequest(포스트_ID, 내용, 비밀_여부, 부모_댓글_ID))
                 .post("/comments")
                 .then()
                 .log().all()
@@ -37,8 +47,18 @@ public class CommentAcceptanceSteps {
             String 이름,
             String 암호
     ) {
+        return 비인증_댓글_작성_요청(포스트_ID, 내용, 이름, 암호, null);
+    }
+
+    public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호,
+            Long 부모_댓글_ID
+    ) {
         return given()
-                .body(new WriteAnonymousCommentRequest(포스트_ID, 내용, 이름, 암호))
+                .body(new WriteAnonymousCommentRequest(포스트_ID, 내용, 이름, 암호, 부모_댓글_ID))
                 .queryParam("unauthenticated", true)
                 .post("/comments")
                 .then()
@@ -100,7 +120,12 @@ public class CommentAcceptanceSteps {
         List<CommentData> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
-                .ignoringFields("createdDate", "commentWriterData.memberId")
+                .ignoringFields(
+                        "createdDate",
+                        "commentWriterData.memberId",
+                        "children.createdDate",
+                        "children.commentWriterData.memberId"
+                )
                 .isEqualTo(예상_데이터);
     }
 }
