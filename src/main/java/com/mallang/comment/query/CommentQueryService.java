@@ -21,7 +21,7 @@ public class CommentQueryService {
     private final CommentDataDao commentDataDao;
 
     public List<CommentData> findAllByPostId(Long postId, @Nullable Long memberId) {
-        List<CommentData> result = commentDataDao.findCommentsByPostId(postId).stream()
+        List<CommentData> result = commentDataDao.findAllByPostId(postId).stream()
                 .map(this::toDeletedIfRequired)
                 .toList();
         if (isPostWriter(postId, memberId)) {

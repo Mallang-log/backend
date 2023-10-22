@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CommentQuerySupport extends JpaRepository<Comment, Long> {
 
     @EntityGraph(attributePaths = "commentWriter")
-    List<Comment> findCommentsByPostId(Long postId);
+    List<Comment> findAllByPostId(Long postId);
 }
