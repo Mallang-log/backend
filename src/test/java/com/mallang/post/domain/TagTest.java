@@ -30,10 +30,14 @@ class TagTest {
     void 이름이_30_글자_초과이면_안된다() {
         // given
         String over30Content = "말".repeat(31);
+        String just30Content = "말".repeat(30);
 
         // when & then
         assertThatThrownBy(() ->
                 new Tag(over30Content, post)
         ).isInstanceOf(BadTagContentException.class);
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->
+                new Tag(just30Content, post)
+        );
     }
 }
