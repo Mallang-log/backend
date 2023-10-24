@@ -1,18 +1,16 @@
 package com.mallang.post.domain;
 
-import static com.mallang.member.MemberFixture.memberBuilder;
-import static com.mallang.member.domain.OauthServerType.GITHUB;
+import static com.mallang.category.CategoryFixture.루트_카테고리;
+import static com.mallang.category.CategoryFixture.하위_카테고리;
+import static com.mallang.member.MemberFixture.동훈;
+import static com.mallang.member.MemberFixture.말랑;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 import com.mallang.category.domain.Category;
-import com.mallang.category.domain.CategoryValidator;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
-import com.mallang.member.MemberFixture;
 import com.mallang.member.domain.Member;
-import com.mallang.member.domain.OauthId;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import java.util.List;
@@ -27,23 +25,20 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostTest {
 
-    private final CategoryValidator categoryValidator = mock(CategoryValidator.class);
-    private final Member writer = memberBuilder()
-            .id(1L)
-            .oauthId(new OauthId("1", GITHUB))
-            .nickname("말랑")
-            .profileImageUrl("https://mallang.com")
-            .build();
+    private final Member mallang = 말랑(1L);
+    private final Member otherMember = 동훈(3L);
+    private final Category springCategory = 루트_카테고리("Spring", mallang);
+    private final Category jpaCategory = 하위_카테고리("JPA", mallang, springCategory);
+    private final Category otherMemberCategory = 루트_카테고리("otherMemberCategory", otherMember);
 
     @Test
     void 카테고리를_없앨_수_있다() {
         // given
-        Category category = Category.create("카테고리", writer, null, categoryValidator);
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(writer)
-                .category(category)
+                .member(mallang)
+                .category(springCategory)
                 .build();
 
         // when
@@ -54,7 +49,7 @@ class PostTest {
     }
 
     @Nested
-    class 저장_시 {
+    class 생성_시 {
 
         @Test
         void 태그들도_함께_세팅되어_생성된다() {
@@ -62,7 +57,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(writer)
+                    .member(mallang)
                     .tags(List.of("tag1", "tag2"))
                     .build();
 
@@ -78,7 +73,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(writer)
+                    .member(mallang)
                     .build();
 
             // when & then
@@ -92,7 +87,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(writer)
+                            .member(mallang)
                             .tags(List.of("태그1", "태그1"))
                             .build()
             ).isInstanceOf(DuplicatedTagsInPostException.class);
@@ -100,34 +95,27 @@ class PostTest {
 
         @Test
         void 카테고리를_설정할_수_있다() {
-            // given
-            Category category = Category.create("카테고리", writer, null, categoryValidator);
-
             // when
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(writer)
-                    .category(category)
+                    .member(mallang)
+                    .category(jpaCategory)
                     .build();
 
             // then
-            assertThat(post.getCategory().getName()).isEqualTo("카테고리");
+            assertThat(post.getCategory().getName()).isEqualTo("JPA");
         }
 
         @Test
         void 작성자가_생성한_카테고리가_아닌_경우_예외() {
-            // given
-            Member other = MemberFixture.회원(2L, "other");
-            Category category = Category.create("other", other, null, categoryValidator);
-
             // when & then
             assertThatThrownBy(() ->
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(writer)
-                            .category(category)
+                            .member(mallang)
+                            .category(otherMemberCategory)
                             .build()
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
         }
@@ -142,12 +130,12 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(writer)
+                    .member(mallang)
                     .tags(List.of("태그1"))
                     .build();
 
             // when
-            post.update(writer.getId(), "수정제목", "수정내용", null, List.of("태그2"));
+            post.update(mallang.getId(), "수정제목", "수정내용", null, List.of("태그2"));
 
             // then
             assertThat(post.getTitle()).isEqualTo("수정제목");
@@ -163,12 +151,12 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(writer)
+                    .member(mallang)
                     .build();
 
             // when
             assertThatThrownBy(() ->
-                    post.update(writer.getId() + 1, "수정제목", "수정내용", null, emptyList())
+                    post.update(otherMember.getId(), "수정제목", "수정내용", null, emptyList())
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then
