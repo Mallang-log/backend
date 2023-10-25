@@ -37,6 +37,10 @@ public class MemberFixture {
         return member;
     }
 
+    public static Member 회원(String nickname) {
+        return 회원(null, nickname);
+    }
+
     public static Member 회원(Long id, String nickname) {
         return memberBuilder()
                 .id(id)

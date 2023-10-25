@@ -1,6 +1,7 @@
 package com.mallang.comment.domain;
 
 import static com.mallang.member.MemberFixture.memberBuilder;
+import static com.mallang.member.MemberFixture.말랑;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -27,8 +28,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class CommentTest {
 
-    private final Member postWriter = memberBuilder().id(1L).build();
-    private final Post post = Post.builder().member(postWriter).build();
+    private final Member postWriter = 말랑(1L);
+    private final Post post = Post.builder()
+            .member(postWriter)
+            .build();
 
     @Nested
     class 작성_시 {
@@ -36,7 +39,7 @@ class CommentTest {
         @Test
         void 비밀_댓글은_로그인한_사용자만_작성_가능하다() {
             // when
-            Member member = memberBuilder().id(1L).build();
+            Member member = 말랑(1L);
 
             AuthenticatedComment comment = AuthenticatedComment.builder()
                     .content("내용")

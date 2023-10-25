@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
-public class Comment extends CommonDomainModel {
+public abstract class Comment extends CommonDomainModel {
 
     @Column(nullable = false)
     private String content;
