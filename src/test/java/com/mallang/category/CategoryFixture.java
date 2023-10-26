@@ -14,7 +14,7 @@ public class CategoryFixture {
 
     public static Category 루트_카테고리(Long id, String name, Member member) {
         Category category = Category.create(name, member, null, alwaysPassCategoryValidator);
-        ReflectionTestUtils.setField(category, "id" , id);
+        ReflectionTestUtils.setField(category, "id", id);
         return category;
     }
 
@@ -24,7 +24,7 @@ public class CategoryFixture {
 
     public static Category 하위_카테고리(Long id, String name, Member member, Category parent) {
         Category category = Category.create(name, member, parent, alwaysPassCategoryValidator);
-        ReflectionTestUtils.setField(category, "id" , id);
+        ReflectionTestUtils.setField(category, "id", id);
         return category;
     }
 }

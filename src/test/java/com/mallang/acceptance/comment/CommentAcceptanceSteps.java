@@ -4,8 +4,8 @@ import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.comment.presentation.request.DeleteUnAuthenticatedCommentRequest;
-import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentRequest;
+import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
 import com.mallang.comment.query.data.CommentData;

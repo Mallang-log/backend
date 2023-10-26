@@ -12,7 +12,6 @@ import com.mallang.post.query.data.PostSimpleData;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -68,7 +67,8 @@ public class PostSimpleDataDao {
                 : post.member.id.eq(writerId);
     }
 
-    private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content, @Nullable String titleOrContent) {
+    private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content,
+                                                     @Nullable String titleOrContent) {
         if (!ObjectUtils.isEmpty(title) || !ObjectUtils.isEmpty(content)) {
             if (!ObjectUtils.isEmpty(titleOrContent)) {
                 throw new BadPostSearchCondException("제목이나 내용을 검색하는 경우 제목 + 내용으로는 검색할 수 없습니다");
