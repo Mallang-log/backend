@@ -7,8 +7,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Embeddable
@@ -20,12 +22,4 @@ public class OauthId {
     @Enumerated(STRING)
     @Column(nullable = false, name = "oauth_server")
     private OauthServerType oauthServerType;
-
-    public String oauthServerId() {
-        return oauthServerId;
-    }
-
-    public OauthServerType oauthServer() {
-        return oauthServerType;
-    }
 }

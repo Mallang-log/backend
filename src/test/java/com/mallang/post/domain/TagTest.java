@@ -1,6 +1,8 @@
 package com.mallang.post.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.post.exception.BadTagContentException;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,16 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 class TagTest {
 
     private final Post post = Post.builder().build();
+
+    @Test
+    void 작성될_수_있다() {
+        // when
+        Tag tag = new Tag("tag", post);
+
+        // then
+        assertThat(tag.getContent()).isEqualTo("tag");
+        assertThat(tag.getPost()).isEqualTo(post);
+    }
 
     @ParameterizedTest
     @NullAndEmptySource
@@ -36,7 +48,7 @@ class TagTest {
         assertThatThrownBy(() ->
                 new Tag(over30Content, post)
         ).isInstanceOf(BadTagContentException.class);
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() ->
+        assertDoesNotThrow(() ->
                 new Tag(just30Content, post)
         );
     }

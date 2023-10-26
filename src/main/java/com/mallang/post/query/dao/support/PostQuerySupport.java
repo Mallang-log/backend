@@ -9,5 +9,4 @@ public interface PostQuerySupport extends JpaRepository<Post, Long> {
     default Post getById(Long id) {
         return findById(id).orElseThrow(NotFoundPostException::new);
     }
-
 }

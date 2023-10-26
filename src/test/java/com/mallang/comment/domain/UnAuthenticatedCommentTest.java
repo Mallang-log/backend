@@ -41,6 +41,7 @@ class UnAuthenticatedCommentTest {
 
             // then
             assertThat(unAuth.getContent()).isEqualTo("내용");
+            assertThat(unAuth.getPassword()).isEqualTo("1234");
         }
     }
 
