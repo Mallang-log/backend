@@ -1,7 +1,7 @@
 package com.mallang.post.query.dao;
 
+import com.mallang.post.query.dao.support.PostQuerySupport;
 import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.repository.PostQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class PostDetailDataDao {
 
-    private final PostQueryRepository postQueryRepository;
+    private final PostQuerySupport postQuerySupport;
 
     public PostDetailData find(Long id) {
-        return PostDetailData.from(postQueryRepository.getById(id));
+        return PostDetailData.from(postQuerySupport.getById(id));
     }
 }

@@ -28,8 +28,6 @@ public class OauthService {
     }
 
     private Member signUp(Member member) {
-        Member saved = memberRepository.save(member);
-        saved.signUp();
-        return memberRepository.save(saved);
+        return memberRepository.save(member);
     }
 }

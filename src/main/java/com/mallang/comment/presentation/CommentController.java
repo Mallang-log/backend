@@ -1,11 +1,11 @@
 package com.mallang.comment.presentation;
 
-import com.mallang.comment.application.CommentService;
-import com.mallang.comment.application.command.DeleteCommentCommand;
-import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
-import com.mallang.comment.presentation.request.DeleteAnonymousCommentRequest;
-import com.mallang.comment.presentation.request.UpdateAnonymousCommentRequest;
+import com.mallang.comment.application.AuthenticatedCommentService;
+import com.mallang.comment.application.UnAuthenticatedCommentService;
+import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
+import com.mallang.comment.presentation.request.DeleteUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentRequest;
+import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
 import com.mallang.comment.query.CommentQueryService;
@@ -32,7 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommentController {
 
-    private final CommentService commentService;
+    private final AuthenticatedCommentService authenticatedCommentService;
+    private final UnAuthenticatedCommentService unAuthenticatedCommentService;
     private final CommentQueryService commentQueryService;
 
     @PostMapping
@@ -40,7 +41,7 @@ public class CommentController {
             @Auth Long memberId,
             @RequestBody WriteAuthenticatedCommentRequest request
     ) {
-        Long id = commentService.write(request.toCommand(memberId));
+        Long id = authenticatedCommentService.write(request.toCommand(memberId));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
@@ -48,7 +49,7 @@ public class CommentController {
     public ResponseEntity<Void> anonymousWrite(
             @RequestBody WriteAnonymousCommentRequest request
     ) {
-        Long id = commentService.write(request.toCommand());
+        Long id = unAuthenticatedCommentService.write(request.toCommand());
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
@@ -58,16 +59,16 @@ public class CommentController {
             @Auth Long memberId,
             @RequestBody UpdateAuthenticatedCommentRequest request
     ) {
-        commentService.update(request.toCommand(commentId, memberId));
+        authenticatedCommentService.update(request.toCommand(commentId, memberId));
         return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/{id}", params = "unauthenticated=true")
     public ResponseEntity<Void> update(
             @PathVariable("id") Long commentId,
-            @RequestBody UpdateAnonymousCommentRequest request
+            @RequestBody UpdateUnAuthenticatedCommentRequest request
     ) {
-        commentService.update(request.toCommand(commentId));
+        unAuthenticatedCommentService.update(request.toCommand(commentId));
         return ResponseEntity.ok().build();
     }
 
@@ -76,20 +77,21 @@ public class CommentController {
             @PathVariable("id") Long commentId,
             @Auth Long memberId
     ) {
-        DeleteCommentCommand command = DeleteCommentCommand.builder()
+        DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
+                .memberId(memberId)
                 .commentId(commentId)
-                .credential(new AuthenticatedWriterCredential(memberId))
                 .build();
-        commentService.delete(command);
+        authenticatedCommentService.delete(command);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(value = "/{id}", params = "unauthenticated=true")
     public ResponseEntity<Void> delete(
+            @OptionalAuth Long memberId,
             @PathVariable("id") Long commentId,
-            @RequestBody DeleteAnonymousCommentRequest request
+            @RequestBody DeleteUnAuthenticatedCommentRequest request
     ) {
-        commentService.delete(request.toCommand(commentId));
+        unAuthenticatedCommentService.delete(request.toCommand(memberId, commentId));
         return ResponseEntity.ok().build();
     }
 

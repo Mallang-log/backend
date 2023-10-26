@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import com.mallang.comment.application.CommentServiceTestHelper;
-import com.mallang.comment.query.data.AuthenticatedWriterData;
+import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
+import com.mallang.comment.query.data.UnAuthenticatedCommentData;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import java.util.List;
@@ -57,14 +58,18 @@ class CommentQueryServiceTest {
 
             // then
             assertThat(result)
-                    .extracting(CommentData::content)
+                    .extracting(CommentData::getContent)
                     .containsExactly("댓글1", "비밀 댓글입니다.", "댓글3");
             assertThat(result)
-                    .extracting(CommentData::commentWriterData)
-                    .filteredOn(it -> it instanceof AuthenticatedWriterData)
-                    .map(it -> (AuthenticatedWriterData) it)
-                    .extracting(AuthenticatedWriterData::getNickname)
+                    .filteredOn(it -> it instanceof AuthenticatedCommentData)
+                    .map(it -> (AuthenticatedCommentData) it)
+                    .extracting(it -> it.getWriterData().nickname())
                     .containsExactly("말랑", "익명");
+            assertThat(result)
+                    .filteredOn(it -> it instanceof UnAuthenticatedCommentData)
+                    .map(it -> (UnAuthenticatedCommentData) it)
+                    .extracting(it -> it.getWriterData().nickname())
+                    .containsExactly("랑말");
         }
 
         @Test
@@ -85,7 +90,7 @@ class CommentQueryServiceTest {
 
             // then
             assertThat(result)
-                    .extracting(CommentData::content)
+                    .extracting(CommentData::getContent)
                     .containsExactly("동훈 댓글", "헤헤 댓글", "[비밀] 동훈 댓글2", "비밀 댓글입니다.", "댓글3");
         }
 
@@ -107,7 +112,7 @@ class CommentQueryServiceTest {
 
             // then
             assertThat(result)
-                    .extracting(CommentData::content)
+                    .extracting(CommentData::getContent)
                     .containsExactly("동훈 댓글", "헤헤 댓글", "[비밀] 동훈 댓글2", "[비밀] 헤헤 댓글2", "댓글3");
         }
     }

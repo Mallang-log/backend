@@ -1,7 +1,7 @@
 package com.mallang.comment.query.dao;
 
+import com.mallang.comment.query.dao.supoort.CommentQuerySupport;
 import com.mallang.comment.query.data.CommentData;
-import com.mallang.comment.query.repository.CommentQueryRepository;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class CommentDataDao {
 
-    private final CommentQueryRepository commentQueryRepository;
+    private final CommentQuerySupport commentQuerySupport;
 
-    public List<CommentData> findCommentsByPostId(Long postId) {
-        return commentQueryRepository.findCommentsByPostId(postId).stream()
+    public List<CommentData> findAllByPostId(Long postId) {
+        return commentQuerySupport.findAllByPostId(postId).stream()
                 .filter(it -> Objects.isNull(it.getParent()))
                 .map(CommentData::from)
                 .toList();

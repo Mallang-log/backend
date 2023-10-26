@@ -24,8 +24,6 @@ public class MemberServiceTestHelper {
                 .nickname(닉네임)
                 .profileImageUrl(닉네임)
                 .build();
-        Member saved = memberRepository.save(member);
-        saved.signUp();
-        return memberRepository.save(saved).getId();  // 이벤트 발행 위해, TODO -> UUID 등으로 해결?
+        return memberRepository.save(member).getId();
     }
 }

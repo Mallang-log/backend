@@ -12,6 +12,7 @@ import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -51,7 +52,7 @@ public class Post extends CommonDomainModel {
             String title,
             String content,
             Member member,
-            Category category,
+            @Nullable Category category,
             List<String> tags
     ) {
         this.title = title;
@@ -59,6 +60,25 @@ public class Post extends CommonDomainModel {
         this.member = member;
         setCategory(category);
         setTags(tags);
+    }
+
+    private void setCategory(@Nullable Category category) {
+        if (category == null) {
+            removeCategory();
+            return;
+        }
+        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
+        this.category = category;
+    }
+
+    public void removeCategory() {
+        this.category = null;
+    }
+
+    private void validateOwner(Long memberId, MallangLogException e) {
+        if (!member.getId().equals(memberId)) {
+            throw e;
+        }
     }
 
     private void setTags(List<String> tags) {
@@ -83,7 +103,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
-            Category category,
+            @Nullable Category category,
             List<String> tags
     ) {
         validateOwner(memberId, new NoAuthorityUpdatePostException());
@@ -91,24 +111,5 @@ public class Post extends CommonDomainModel {
         setTags(tags);
         this.title = title;
         this.content = content;
-    }
-
-    private void validateOwner(Long memberId, MallangLogException e) {
-        if (!member.getId().equals(memberId)) {
-            throw e;
-        }
-    }
-
-    private void setCategory(Category category) {
-        if (category == null) {
-            removeCategory();
-            return;
-        }
-        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
-        this.category = category;
-    }
-
-    public void removeCategory() {
-        this.category = null;
     }
 }

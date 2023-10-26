@@ -29,7 +29,7 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
-    private Category getParentCategory(@Nullable Long parentCategoryId) {
+    private @Nullable Category getParentCategory(@Nullable Long parentCategoryId) {
         if (parentCategoryId == null) {
             return null;
         }

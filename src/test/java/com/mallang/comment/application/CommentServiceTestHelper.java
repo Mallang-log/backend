@@ -1,16 +1,12 @@
 package com.mallang.comment.application;
 
-import com.mallang.comment.application.command.DeleteCommentCommand;
+import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.DeleteUnAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
-import com.mallang.comment.domain.Comment;
+import com.mallang.comment.domain.AuthenticatedComment;
 import com.mallang.comment.domain.CommentRepository;
-import com.mallang.comment.domain.writer.AuthenticatedWriterCredential;
-import com.mallang.comment.domain.writer.AuthenticatedWriterRepository;
-import com.mallang.comment.domain.writer.CommentWriter;
-import com.mallang.comment.domain.writer.UnAuthenticatedWriterCredential;
-import com.mallang.comment.domain.writer.UnAuthenticatedWriterRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.mallang.comment.domain.UnAuthenticatedComment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,9 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 public class CommentServiceTestHelper {
 
     private final CommentRepository commentRepository;
-    private final CommentService commentService;
-    private final AuthenticatedWriterRepository authenticatedWriterRepository;
-    private final UnAuthenticatedWriterRepository unAuthenticatedWriterRepository;
+    private final AuthenticatedCommentService authenticatedCommentService;
+    private final UnAuthenticatedCommentService unAuthenticatedCommentService;
 
     public Long 댓글을_작성한다(Long postId, String content, boolean secret, Long memberId) {
         WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
@@ -33,7 +28,7 @@ public class CommentServiceTestHelper {
                 .secret(secret)
                 .memberId(memberId)
                 .build();
-        return commentService.write(command);
+        return authenticatedCommentService.write(command);
     }
 
     public Long 비인증_댓글을_작성한다(Long postId, String content, String nickname, String password) {
@@ -43,7 +38,7 @@ public class CommentServiceTestHelper {
                 .nickname(nickname)
                 .password(password)
                 .build();
-        return commentService.write(command);
+        return unAuthenticatedCommentService.write(command);
     }
 
     public Long 대댓글을_작성한다(Long postId, String content, boolean secret, Long memberId, Long parentCommentId) {
@@ -54,7 +49,7 @@ public class CommentServiceTestHelper {
                 .memberId(memberId)
                 .parentCommentId(parentCommentId)
                 .build();
-        return commentService.write(command);
+        return authenticatedCommentService.write(command);
     }
 
     public Long 비인증_대댓글을_작성한다(Long postId, String content, String nickname, String password, Long parentCommentId) {
@@ -65,38 +60,30 @@ public class CommentServiceTestHelper {
                 .password(password)
                 .parentCommentId(parentCommentId)
                 .build();
-        return commentService.write(command);
+        return unAuthenticatedCommentService.write(command);
     }
 
-    public Comment 댓글을_조회한다(Long 댓글_ID) {
-        return commentRepository.getById(댓글_ID);
+    public AuthenticatedComment 인증된_댓글을_조회한다(Long 댓글_ID) {
+        return commentRepository.getAuthenticatedCommentById(댓글_ID);
     }
 
-    public Long 댓글의_작성자_ID를_반환한다(Long 댓글_ID) {
-        return 댓글을_조회한다(댓글_ID).getCommentWriter().getId();
-    }
-
-    public CommentWriter 회원_ID로_인증된_댓글_작성자를_조회한다(Long 회원_ID) {
-        return authenticatedWriterRepository.getByMemberId(회원_ID);
-    }
-
-    public CommentWriter ID로_비인증_댓글_작성자를_조회한다(Long 회원_ID) {
-        return unAuthenticatedWriterRepository.findById(회원_ID).orElseThrow(EntityNotFoundException::new);
+    public UnAuthenticatedComment 비인증_댓글을_조회한다(Long 댓글_ID) {
+        return commentRepository.getUnAuthenticatedCommentById(댓글_ID);
     }
 
     public void 댓글을_제거한다(Long 댓글_ID, Long 회원_ID) {
-        DeleteCommentCommand command = DeleteCommentCommand.builder()
+        DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
                 .commentId(댓글_ID)
-                .credential(new AuthenticatedWriterCredential(회원_ID))
+                .memberId(회원_ID)
                 .build();
-        commentService.delete(command);
+        authenticatedCommentService.delete(command);
     }
 
     public void 비인증_댓글을_제거한다(Long 댓글_ID, String 암호) {
-        DeleteCommentCommand command = DeleteCommentCommand.builder()
+        DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
                 .commentId(댓글_ID)
-                .credential(new UnAuthenticatedWriterCredential(암호))
+                .password(암호)
                 .build();
-        commentService.delete(command);
+        unAuthenticatedCommentService.delete(command);
     }
 }

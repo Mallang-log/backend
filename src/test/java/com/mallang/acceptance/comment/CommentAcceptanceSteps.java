@@ -3,9 +3,9 @@ package com.mallang.acceptance.comment;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.comment.presentation.request.DeleteAnonymousCommentRequest;
-import com.mallang.comment.presentation.request.UpdateAnonymousCommentRequest;
+import com.mallang.comment.presentation.request.DeleteUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentRequest;
+import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
 import com.mallang.comment.query.data.CommentData;
@@ -66,7 +66,7 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 댓글_수정_요청(String 세션_ID, Long 댓글_ID, String 수정_내용, boolean 비공개_여부) {
+    public static ExtractableResponse<Response> 인증된_댓글_수정_요청(String 세션_ID, Long 댓글_ID, String 수정_내용, boolean 비공개_여부) {
 
         return given(세션_ID)
                 .body(new UpdateAuthenticatedCommentRequest(수정_내용, 비공개_여부))
@@ -75,26 +75,35 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 댓글_수정_요청(Long 댓글_ID, String 암호, String 수정_내용) {
+    public static ExtractableResponse<Response> 비인증_댓글_수정_요청(Long 댓글_ID, String 암호, String 수정_내용) {
         return given()
-                .body(new UpdateAnonymousCommentRequest(수정_내용, 암호))
+                .body(new UpdateUnAuthenticatedCommentRequest(수정_내용, 암호))
                 .queryParam("unauthenticated", true)
                 .put("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 댓글_삭제_요청(String 세션_ID, Long 댓글_ID) {
+    public static ExtractableResponse<Response> 인증된_댓글_삭제_요청(String 세션_ID, Long 댓글_ID) {
         return given(세션_ID)
                 .delete("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 댓글_삭제_요청(Long 댓글_ID, String 암호) {
+    public static ExtractableResponse<Response> 비인증_댓글_삭제_요청(Long 댓글_ID, String 암호) {
         return given()
-                .queryParam("unauthenticated", "true")
-                .body(new DeleteAnonymousCommentRequest(암호))
+                .queryParam("unauthenticated", true)
+                .body(new DeleteUnAuthenticatedCommentRequest(null, 암호))
+                .delete("/comments/{id}", 댓글_ID)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 비인증_댓글_삭제_요청(String 세션_ID, Long 댓글_ID) {
+        return given(세션_ID)
+                .queryParam("unauthenticated", true)
+                .body(new DeleteUnAuthenticatedCommentRequest(null, null))
                 .delete("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
@@ -122,9 +131,9 @@ public class CommentAcceptanceSteps {
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields(
                         "createdDate",
-                        "commentWriterData.memberId",
+                        "writerData.memberId",
                         "children.createdDate",
-                        "children.commentWriterData.memberId"
+                        "children.writerData.memberId"
                 )
                 .isEqualTo(예상_데이터);
     }
