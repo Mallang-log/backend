@@ -3,6 +3,7 @@ package com.mallang.category.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
@@ -35,24 +36,31 @@ public class Category extends CommonDomainModel {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "blog_id", nullable = false)
+    private Blog blog;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(fetch = LAZY, mappedBy = "parent")
     private List<Category> children = new ArrayList<>();
 
-    private Category(String name, Member member) {
+    private Category(String name, Member member, Blog blog) {
+        blog.validateOwner(member.getId());
         this.name = name;
         this.member = member;
+        this.blog = blog;
     }
 
     public static Category create(
             String name,
             Member member,
+            Blog blog,
             @Nullable Category parent,
             CategoryValidator validator
     ) {
-        Category category = new Category(name, member);
+        Category category = new Category(name, member, blog);
         category.setParent(parent, validator);
         return category;
     }
@@ -140,7 +148,7 @@ public class Category extends CommonDomainModel {
         validateOwner(memberId, new NoAuthorityDeleteCategoryException());
         validateNoChildren();
         unlinkFromParent();
-        registerEvent(new CategoryDeletedEvent(getId()));
+        registerEvent(new CategoryDeletedEvent(getBlog().getName(), getId()));
     }
 
     private void validateNoChildren() {

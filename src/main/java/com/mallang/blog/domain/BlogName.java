@@ -1,7 +1,9 @@
 package com.mallang.blog.domain;
 
 import com.mallang.blog.exception.BlogNameException;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.Getter;
 
@@ -11,6 +13,7 @@ public class BlogName {
 
     private static final Pattern pattern = Pattern.compile("^(?!-)(?!.*--)[a-z0-9-]{4,32}(?<!-)$");
 
+    @Column(nullable = false, unique = true)
     private String name;
 
     protected BlogName() {
@@ -25,5 +28,21 @@ public class BlogName {
         if (!pattern.matcher(name).matches()) {
             throw new BlogNameException();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BlogName blogName)) {
+            return false;
+        }
+        return Objects.equals(getName(), blogName.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }

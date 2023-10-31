@@ -1,5 +1,6 @@
 package com.mallang.post.presentation;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.common.auth.Auth;
 import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/posts")
+@RequestMapping("/@{blogName}/posts")
 @RestController
 public class PostController {
 
@@ -31,28 +32,31 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Void> create(
+            @PathVariable(name = "blogName") BlogName blogName,
             @Auth Long memberId,
             @RequestBody CreatePostRequest request
     ) {
-        Long id = postService.create(request.toCommand(memberId));
+        Long id = postService.create(request.toCommand(memberId, blogName));
         return ResponseEntity.created(URI.create("/posts/" + id)).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
-            @PathVariable Long id,
+            @PathVariable(name = "blogName") BlogName blogName,
+            @PathVariable(name = "id") Long id,
             @Auth Long memberId,
             @RequestBody UpdatePostRequest request
     ) {
-        postService.update(request.toCommand(id, memberId));
+        postService.update(request.toCommand(id, memberId, blogName));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(
-            @PathVariable Long id
+            @PathVariable(name = "blogName") BlogName blogName,
+            @PathVariable(name = "id") Long id
     ) {
-        return ResponseEntity.ok(postQueryService.getById(id));
+        return ResponseEntity.ok(postQueryService.getByBlogNameAndId(blogName, id));
     }
 
     @GetMapping

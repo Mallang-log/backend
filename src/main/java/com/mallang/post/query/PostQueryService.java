@@ -1,5 +1,6 @@
 package com.mallang.post.query;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.post.query.dao.PostDetailDataDao;
 import com.mallang.post.query.dao.PostSimpleDataDao;
 import com.mallang.post.query.data.PostDetailData;
@@ -18,8 +19,8 @@ public class PostQueryService {
     private final PostDetailDataDao postDetailDataDao;
     private final PostSimpleDataDao postSimpleDataDao;
 
-    public PostDetailData getById(Long id) {
-        return postDetailDataDao.find(id);
+    public PostDetailData getByBlogNameAndId(BlogName blogName, Long id) {
+        return postDetailDataDao.find(blogName, id);
     }
 
     public List<PostSimpleData> search(PostSearchCond cond) {

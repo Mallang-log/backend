@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.AuthenticatedComment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthenticatedComment;
@@ -25,7 +26,14 @@ class CommentDeleteServiceTest {
     private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
 
     private final Member postWriter = memberBuilder().id(1L).build();
-    private final Post post = Post.builder().member(postWriter).build();
+    private final Blog blog = Blog.builder()
+            .name("mallang")
+            .member(postWriter)
+            .build();
+    private final Post post = Post.builder()
+            .member(postWriter)
+            .blog(blog)
+            .build();
     private final Member member = 말랑(1L);
 
     @Test

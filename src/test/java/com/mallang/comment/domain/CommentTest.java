@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
@@ -26,8 +27,10 @@ import org.junit.jupiter.api.Test;
 class CommentTest {
 
     private final Member postWriter = 회원(100L, "글 작성자");
+    private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .member(postWriter)
+            .blog(blog)
             .build();
     private final Member member = 말랑(1L);
     private final Member other = 동훈(2L);
@@ -152,7 +155,10 @@ class CommentTest {
                     .writer(member)
                     .secret(false)
                     .build();
-            Post otherPost = Post.builder().member(postWriter).build();
+            Post otherPost = Post.builder()
+                    .member(postWriter)
+                    .blog(blog)
+                    .build();
 
             // when
             assertThatThrownBy(() ->

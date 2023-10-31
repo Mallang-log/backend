@@ -8,6 +8,8 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.blog.domain.Blog;
+import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.domain.Member;
@@ -27,9 +29,11 @@ class PostTest {
 
     private final Member mallang = 말랑(1L);
     private final Member otherMember = 동훈(3L);
-    private final Category springCategory = 루트_카테고리("Spring", mallang);
-    private final Category jpaCategory = 하위_카테고리("JPA", mallang, springCategory);
-    private final Category otherMemberCategory = 루트_카테고리("otherMemberCategory", otherMember);
+    private final Blog blog = new Blog("mallang", mallang);
+    private final Blog otherBlog = new Blog("ohter", otherMember);
+    private final Category springCategory = 루트_카테고리("Spring", mallang, blog);
+    private final Category jpaCategory = 하위_카테고리("JPA", mallang, blog, springCategory);
+    private final Category otherMemberCategory = 루트_카테고리("otherMemberCategory", otherMember, otherBlog);
 
     @Test
     void 카테고리를_없앨_수_있다() {
@@ -38,6 +42,7 @@ class PostTest {
                 .title("제목")
                 .content("내용")
                 .member(mallang)
+                .blog(blog)
                 .category(springCategory)
                 .build();
 
@@ -58,6 +63,7 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .member(mallang)
+                    .blog(blog)
                     .tags(List.of("tag1", "tag2"))
                     .build();
 
@@ -74,6 +80,7 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .member(mallang)
+                    .blog(blog)
                     .build();
 
             // when & then
@@ -88,6 +95,7 @@ class PostTest {
                             .title("제목")
                             .content("내용")
                             .member(mallang)
+                            .blog(blog)
                             .tags(List.of("태그1", "태그1"))
                             .build()
             ).isInstanceOf(DuplicatedTagsInPostException.class);
@@ -100,6 +108,7 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .member(mallang)
+                    .blog(blog)
                     .category(jpaCategory)
                     .build();
 
@@ -115,9 +124,25 @@ class PostTest {
                             .title("제목")
                             .content("내용")
                             .member(mallang)
+                            .blog(blog)
                             .category(otherMemberCategory)
                             .build()
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
+        }
+
+        @Test
+        void 자신의_블로그가_아니라면_예외() {
+            // given
+
+            // when & then
+            assertThatThrownBy(() ->
+                    Post.builder()
+                            .title("제목")
+                            .content("내용")
+                            .member(mallang)
+                            .blog(otherBlog)
+                            .build()
+            ).isInstanceOf(IsNotBlogOwnerException.class);
         }
     }
 
@@ -131,6 +156,7 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .member(mallang)
+                    .blog(blog)
                     .tags(List.of("태그1"))
                     .build();
 
@@ -152,6 +178,7 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .member(mallang)
+                    .blog(blog)
                     .build();
 
             // when

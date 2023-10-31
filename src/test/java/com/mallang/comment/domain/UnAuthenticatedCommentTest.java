@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
@@ -22,8 +23,10 @@ import org.junit.jupiter.api.Test;
 class UnAuthenticatedCommentTest {
 
     private final Member postWriter = 회원(100L, "글 작성자");
+    private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .member(postWriter)
+            .blog(blog)
             .build();
 
     @Nested

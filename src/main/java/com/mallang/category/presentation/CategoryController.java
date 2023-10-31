@@ -1,5 +1,6 @@
 package com.mallang.category.presentation;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/categories")
+@RequestMapping("/@{blogName}/categories")
 @RestController
 public class CategoryController {
 
@@ -30,37 +31,41 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<Void> create(
+            @PathVariable(name = "blogName") BlogName blogName,
             @Auth Long memberId,
             @RequestBody CreateCategoryRequest request
     ) {
-        Long categoryId = categoryService.create(request.toCommand(memberId));
+        Long categoryId = categoryService.create(request.toCommand(memberId, blogName));
         return ResponseEntity.created(URI.create("/categories/" + categoryId)).build();
     }
 
     @PutMapping("/{categoryId}")
     public ResponseEntity<Void> update(
-            @PathVariable Long categoryId,
+            @PathVariable(name = "blogName") BlogName blogName,
+            @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId,
             @RequestBody UpdateCategoryRequest request
     ) {
-        categoryService.update(request.toCommand(categoryId, memberId));
+        categoryService.update(request.toCommand(categoryId, memberId, blogName));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long categoryId,
+            @PathVariable(name = "blogName") BlogName blogName,
+            @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId
     ) {
-        categoryService.delete(new DeleteCategoryCommand(memberId, categoryId));
+        categoryService.delete(new DeleteCategoryCommand(memberId, blogName, categoryId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<List<CategoryData>> findAllByMember(
+            @PathVariable(name = "blogName") BlogName blogName,
             @Auth Long memberId
     ) {
-        List<CategoryData> result = categoryQueryService.findAllByMemberId(memberId);
+        List<CategoryData> result = categoryQueryService.findAllByMemberIdAndBlogName(memberId, blogName);
         return ResponseEntity.ok(result);
     }
 }

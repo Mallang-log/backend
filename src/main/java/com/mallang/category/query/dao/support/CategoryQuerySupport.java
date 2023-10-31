@@ -1,5 +1,6 @@
 package com.mallang.category.query.dao.support;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NotFoundCategoryException;
 import java.util.List;
@@ -14,6 +15,9 @@ public interface CategoryQuerySupport extends JpaRepository<Category, Long> {
         return findById(id).orElseThrow(NotFoundCategoryException::new);
     }
 
-    @Query("SELECT c FROM Category c WHERE c.member.id = :memberId AND c.parent = null")
-    List<Category> findAllRootByMemberId(@Param("memberId") Long memberId);
+    @Query("SELECT c FROM Category c WHERE c.member.id = :memberId AND c.parent = null AND c.blog.name = :blogName")
+    List<Category> findAllRootByMemberIdAndBlogName(
+            @Param("memberId") Long memberId,
+            @Param("blogName") BlogName blogName
+    );
 }

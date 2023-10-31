@@ -3,6 +3,7 @@ package com.mallang.blog.domain;
 import static com.mallang.member.MemberFixture.동훈;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
@@ -34,7 +35,7 @@ class BlogTest {
             // given
             willThrow(TooManyBlogsException.class)
                     .given(blogValidator)
-                    .validateOpen(1L, new BlogName("mallang"));
+                    .validateOpen(any(), any());
 
             // when & then
             assertThatThrownBy(() -> {
@@ -47,7 +48,7 @@ class BlogTest {
             // given
             willThrow(DuplicateBlogNameException.class)
                     .given(blogValidator)
-                    .validateOpen(1L, new BlogName("mallang"));
+                    .validateOpen(any(), any());
 
             // when & then
             assertThatThrownBy(() -> {
@@ -60,7 +61,7 @@ class BlogTest {
             // given
             willDoNothing()
                     .given(blogValidator)
-                    .validateOpen(1L, new BlogName("mallang"));
+                    .validateOpen(any(), any());
 
             // when & then
             assertDoesNotThrow(() -> {

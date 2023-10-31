@@ -39,12 +39,13 @@ class BlogValidatorTest {
         @Test
         void 중복된_다른_이름을_가진_블로그가_있는지_검증한다() {
             // given
-            given(blogRepository.existsByName(new BlogName("mallang")))
+            BlogName blogName = new BlogName("mallang");
+            given(blogRepository.existsByName(blogName))
                     .willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> {
-                blogValidator.validateOpen(1L, new BlogName("mallang"));
+                blogValidator.validateOpen(1L, blogName);
             }).isInstanceOf(DuplicateBlogNameException.class);
         }
 

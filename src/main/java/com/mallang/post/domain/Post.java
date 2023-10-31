@@ -5,6 +5,7 @@ import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
@@ -41,6 +42,10 @@ public class Post extends CommonDomainModel {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "blog_id", nullable = false)
+    private Blog blog;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
@@ -52,11 +57,14 @@ public class Post extends CommonDomainModel {
             String title,
             String content,
             Member member,
+            Blog blog,
             @Nullable Category category,
             List<String> tags
     ) {
+        blog.validateOwner(member.getId());
         this.title = title;
         this.content = content;
+        this.blog = blog;
         this.member = member;
         setCategory(category);
         setTags(tags);

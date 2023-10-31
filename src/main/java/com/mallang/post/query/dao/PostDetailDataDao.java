@@ -1,5 +1,6 @@
 package com.mallang.post.query.dao;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.post.query.dao.support.PostQuerySupport;
 import com.mallang.post.query.data.PostDetailData;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ public class PostDetailDataDao {
 
     private final PostQuerySupport postQuerySupport;
 
-    public PostDetailData find(Long id) {
-        return PostDetailData.from(postQuerySupport.getById(id));
+    public PostDetailData find(BlogName blogName, Long id) {
+        return PostDetailData.from(postQuerySupport.getByBlogNameAndId(blogName, id));
     }
 }

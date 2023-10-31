@@ -6,9 +6,9 @@ import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.domain.BlogValidator;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional
