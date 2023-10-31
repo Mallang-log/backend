@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class Blog extends CommonDomainModel {
 
     @Column(unique = true)
-    private String name;
+    private BlogName name;
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -27,7 +27,7 @@ public class Blog extends CommonDomainModel {
 
     @Builder
     public Blog(String name, Member member) {
-        this.name = name;
+        this.name = new BlogName(name);
         this.member = member;
     }
 

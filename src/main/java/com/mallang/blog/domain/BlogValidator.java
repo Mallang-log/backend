@@ -11,7 +11,7 @@ public class BlogValidator {
 
     private final BlogRepository blogRepository;
 
-    public void validateOpen(Long memberId, String name) {
+    public void validateOpen(Long memberId, BlogName name) {
         if (blogRepository.existsByMemberId(memberId)) {
             throw new TooManyBlogsException();
         }

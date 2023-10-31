@@ -34,7 +34,7 @@ class BlogTest {
             // given
             willThrow(TooManyBlogsException.class)
                     .given(blogValidator)
-                    .validateOpen(1L, "mallang");
+                    .validateOpen(1L, new BlogName("mallang"));
 
             // when & then
             assertThatThrownBy(() -> {
@@ -47,7 +47,7 @@ class BlogTest {
             // given
             willThrow(DuplicateBlogNameException.class)
                     .given(blogValidator)
-                    .validateOpen(1L, "mallang");
+                    .validateOpen(1L, new BlogName("mallang"));
 
             // when & then
             assertThatThrownBy(() -> {
@@ -60,7 +60,7 @@ class BlogTest {
             // given
             willDoNothing()
                     .given(blogValidator)
-                    .validateOpen(1L, "mallang");
+                    .validateOpen(1L, new BlogName("mallang"));
 
             // when & then
             assertDoesNotThrow(() -> {

@@ -10,7 +10,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
         return findById(id).orElseThrow(NotFoundBlogException::new);
     }
 
-    boolean existsByName(String name);
+    boolean existsByName(BlogName name);
 
     boolean existsByMemberId(Long memberId);
 }

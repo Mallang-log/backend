@@ -32,19 +32,19 @@ class BlogValidatorTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                blogValidator.validateOpen(1L, "mallang");
+                blogValidator.validateOpen(1L, new BlogName("mallang"));
             }).isInstanceOf(TooManyBlogsException.class);
         }
 
         @Test
         void 중복된_다른_이름을_가진_블로그가_있는지_검증한다() {
             // given
-            given(blogRepository.existsByName("mallang"))
+            given(blogRepository.existsByName(new BlogName("mallang")))
                     .willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> {
-                blogValidator.validateOpen(1L, "mallang");
+                blogValidator.validateOpen(1L, new BlogName("mallang"));
             }).isInstanceOf(DuplicateBlogNameException.class);
         }
 
@@ -52,7 +52,7 @@ class BlogValidatorTest {
         void 회원의_블로그가_존재하지_않으며_중복된_다른_블로그_이름이_없는_경우_문제없다() {
             // when & then
             assertDoesNotThrow(() -> {
-                blogValidator.validateOpen(1L, "mallang");
+                blogValidator.validateOpen(1L, new BlogName("mallang"));
             });
         }
     }
