@@ -26,7 +26,6 @@ class BlogTest {
         private final BlogValidator blogValidator = mock(BlogValidator.class);
         private final Blog blog = Blog.builder()
                 .name("mallang")
-                .domainName("mallang")
                 .member(동훈())
                 .build();
 

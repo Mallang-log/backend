@@ -6,7 +6,6 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.domain.Member;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -22,17 +21,13 @@ public class Blog extends CommonDomainModel {
     @Column(unique = true)
     private String name;
 
-    @Embedded
-    private BlogDomain domain;
-
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    public Blog(String name, String domainName, Member member) {
+    public Blog(String name, Member member) {
         this.name = name;
-        this.domain = new BlogDomain(domainName);
         this.member = member;
     }
 
