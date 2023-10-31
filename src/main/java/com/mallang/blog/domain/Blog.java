@@ -10,6 +10,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,4 +28,15 @@ public class Blog extends CommonDomainModel {
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public Blog(String name, String domainName, Member member) {
+        this.name = name;
+        this.domain = new BlogDomain(domainName);
+        this.member = member;
+    }
+
+    public void open(BlogValidator blogValidator) {
+        blogValidator.validateOpen(this.member.getId(), this.name);
+    }
 }
