@@ -15,8 +15,8 @@ public class CategoryAcceptanceTestHelper {
             Long 부모_카테고리_ID
     ) {
         return ID를_추출한다(given(세션_ID)
-                .body(new CreateCategoryRequest(카테고리_이름, 부모_카테고리_ID))
-                .post("/@{blogName}/categories", 블로그_이름)
+                .body(new CreateCategoryRequest(블로그_이름, 카테고리_이름, 부모_카테고리_ID))
+                .post("/categories")
                 .then().log().all()
                 .extract());
     }

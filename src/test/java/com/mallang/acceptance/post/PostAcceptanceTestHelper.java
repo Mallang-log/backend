@@ -21,9 +21,9 @@ public class PostAcceptanceTestHelper {
             String... 태그들
     ) {
         return ID를_추출한다(given(세션_ID)
-                .body(new CreatePostRequest(포스트_제목, 포스트_내용, 카테고리_ID, Arrays.asList(태그들)))
+                .body(new CreatePostRequest(블로그_이름, 포스트_제목, 포스트_내용, 카테고리_ID, Arrays.asList(태그들)))
                 .when()
-                .post("/{blogName}/posts", 블로그_이름)
+                .post("/posts")
                 .then().log().all()
                 .extract());
     }

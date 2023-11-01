@@ -20,10 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/@{blogName}/posts")
+@RequestMapping("/posts")
 @RestController
 public class PostController {
 
@@ -32,28 +33,26 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @PathVariable(name = "blogName") BlogName blogName,
             @Auth Long memberId,
             @RequestBody CreatePostRequest request
     ) {
-        Long id = postService.create(request.toCommand(memberId, blogName));
+        Long id = postService.create(request.toCommand(memberId));
         return ResponseEntity.created(URI.create("/posts/" + id)).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
-            @PathVariable(name = "blogName") BlogName blogName,
             @PathVariable(name = "id") Long id,
             @Auth Long memberId,
             @RequestBody UpdatePostRequest request
     ) {
-        postService.update(request.toCommand(id, memberId, blogName));
+        postService.update(request.toCommand(id, memberId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(
-            @PathVariable(name = "blogName") BlogName blogName,
+            @RequestParam(name = "blogName", required = true) BlogName blogName,
             @PathVariable(name = "id") Long id
     ) {
         return ResponseEntity.ok(postQueryService.getByBlogNameAndId(blogName, id));

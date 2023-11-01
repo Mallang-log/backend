@@ -113,6 +113,7 @@ class PostQueryServiceTest {
         postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", 노드);
         PostSearchCond cond = PostSearchCond.builder()
                 .categoryId(스프링)
+                .blogName(blogName.getName())
                 .build();
 
         // when
@@ -142,6 +143,7 @@ class PostQueryServiceTest {
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", JPA);
         PostSearchCond cond = PostSearchCond.builder()
                 .categoryId(스프링)
+                .blogName(blogName.getName())
                 .build();
 
         // when

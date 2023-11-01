@@ -24,11 +24,11 @@ public class PostAcceptanceSteps {
             Long 카테고리_ID,
             String... 태그들
     ) {
-        CreatePostRequest request = new CreatePostRequest(포스트_제목, 포스트_내용, 카테고리_ID, Arrays.asList(태그들));
+        CreatePostRequest request = new CreatePostRequest(블로그_이름, 포스트_제목, 포스트_내용, 카테고리_ID, Arrays.asList(태그들));
         return given(세션_ID)
                 .body(request)
                 .when()
-                .post("/@{blogName}/posts", 블로그_이름)
+                .post("/posts")
                 .then().log().all()
                 .extract();
     }
@@ -43,8 +43,8 @@ public class PostAcceptanceSteps {
             String... 태그들
     ) {
         return given(세션_ID)
-                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용, 변경할_카테고리_ID, Arrays.asList(태그들)))
-                .put("/@{blogName}/posts/{id}", 블로그_이름, 포스트_ID)
+                .body(new UpdatePostRequest(블로그_이름, 업데이트_제목, 업데이트_내용, 변경할_카테고리_ID, Arrays.asList(태그들)))
+                .put("/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
     }
@@ -54,7 +54,8 @@ public class PostAcceptanceSteps {
             Long 포스트_ID
     ) {
         return given()
-                .get("/@{blogName}/posts/{id}", 포스트_ID)
+                .param("blogName", 블로그_이름)
+                .get("/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
     }
