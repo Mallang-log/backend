@@ -11,7 +11,7 @@ import lombok.Getter;
 @Embeddable
 public class BlogName {
 
-    private static final Pattern pattern = Pattern.compile("^(?!-)(?!.*--)[a-z0-9-]{4,32}(?<!-)$");
+    private static final Pattern pattern = Pattern.compile("^(?![-_])(?!.*--)[a-z0-9-_]{4,32}(?<![-_])$");
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -20,6 +20,7 @@ public class BlogName {
     }
 
     public BlogName(String name) {
+        name = name.strip();
         validateDomainName(name);
         this.name = name;
     }

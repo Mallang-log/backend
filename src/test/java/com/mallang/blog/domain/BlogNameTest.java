@@ -1,5 +1,6 @@
 package com.mallang.blog.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -42,9 +43,9 @@ class BlogNameTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "correct-domain-name-1234",
-            "2-it-is-also-right-domain-1"
+            "2-it-is-also-right-do_main-1"
     })
-    void 영문_소문자_숫자_하이픈으로만_구성되어야_한다(String name) {
+    void 영문_소문자_숫자_하이픈_언더바로만_구성되어야_한다(String name) {
         // when & then
         assertDoesNotThrow(() -> {
             new BlogName(name);
@@ -84,5 +85,56 @@ class BlogNameTest {
         assertThatThrownBy(() ->
                 new BlogName(name)
         ).isInstanceOf(BlogNameException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "correct__name",
+    })
+    void 언더바는_연속해서_사용할_수_있다(String name) {
+        // when & then
+        assertDoesNotThrow(() -> {
+            new BlogName(name);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "_wrong",
+            "wrong_",
+    })
+    void 언더바로_시작하거나_끝나서는_안된다(String name) {
+        // when & then
+        assertThatThrownBy(() ->
+                new BlogName(name)
+        ).isInstanceOf(BlogNameException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "wr ong",
+    })
+    void 공백은_올_수_없다(String name) {
+        // when & then
+        assertThatThrownBy(() ->
+                new BlogName(name)
+        ).isInstanceOf(BlogNameException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            " correct",
+            " correct ",
+            "correct ",
+            "correct     ",
+            "       correct",
+            "       correct      ",
+    })
+    void 앞뒤로_존재하는_여러개의_공백은_모두_제거된다(String name) {
+        // when
+        BlogName blogName = new BlogName(name);
+
+        // then
+        assertThat(blogName.getName()).isEqualTo("correct");
     }
 }
