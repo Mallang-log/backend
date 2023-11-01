@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.member.domain.Member;
 import java.util.List;
@@ -29,9 +30,10 @@ class CategoryValidatorTest {
     void 한_사용자의_루트_카테고리끼리_이름이_겹치면_예외() {
         // given
         Member member = 말랑(1L);
+        Blog mallangBlog = new Blog("mallang-log", member);
         Long memberId = member.getId();
-        Category spring = 루트_카테고리("Spring", member);
-        Category nodejs = 루트_카테고리("nodejs", member);
+        Category spring = 루트_카테고리("Spring", member, mallangBlog);
+        Category nodejs = 루트_카테고리("nodejs", member, mallangBlog);
         given(categoryRepository.findAllRootByMemberId(memberId))
                 .willReturn(List.of(spring, nodejs));
 

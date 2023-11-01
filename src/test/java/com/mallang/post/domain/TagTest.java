@@ -3,6 +3,7 @@ package com.mallang.post.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.mock;
 
 import com.mallang.post.exception.BadTagContentException;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class TagTest {
 
-    private final Post post = Post.builder().build();
+    private final Post post = mock(Post.class);
 
     @Test
     void 작성될_수_있다() {

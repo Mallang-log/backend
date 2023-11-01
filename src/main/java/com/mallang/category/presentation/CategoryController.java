@@ -1,8 +1,9 @@
 package com.mallang.category.presentation;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.category.application.CategoryService;
-import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
+import com.mallang.category.presentation.request.DeleteCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
 import com.mallang.category.query.CategoryQueryService;
 import com.mallang.category.query.data.CategoryData;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class CategoryController {
 
     @PutMapping("/{categoryId}")
     public ResponseEntity<Void> update(
-            @PathVariable Long categoryId,
+            @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId,
             @RequestBody UpdateCategoryRequest request
     ) {
@@ -49,18 +51,20 @@ public class CategoryController {
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long categoryId,
-            @Auth Long memberId
+            @PathVariable(name = "categoryId") Long categoryId,
+            @Auth Long memberId,
+            @RequestBody DeleteCategoryRequest request
     ) {
-        categoryService.delete(new DeleteCategoryCommand(memberId, categoryId));
+        categoryService.delete(request.toCommand(categoryId, memberId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryData>> findAllByMember(
+    public ResponseEntity<List<CategoryData>> findAllByBlogAndMember(
+            @RequestParam(name = "blogName", required = true) BlogName blogName,
             @Auth Long memberId
     ) {
-        List<CategoryData> result = categoryQueryService.findAllByMemberId(memberId);
+        List<CategoryData> result = categoryQueryService.findAllByMemberIdAndBlogName(memberId, blogName);
         return ResponseEntity.ok(result);
     }
 }

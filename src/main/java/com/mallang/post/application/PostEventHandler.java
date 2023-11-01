@@ -18,7 +18,7 @@ public class PostEventHandler {
 
     @EventListener(CategoryDeletedEvent.class)
     void deleteCategoryFromPost(CategoryDeletedEvent event) {
-        List<Post> posts = postRepository.findAllByCategoryId(event.categoryId());
+        List<Post> posts = postRepository.findAllByBlogNameAndCategoryId(event.blogName(), event.categoryId());
         for (Post post : posts) {
             post.removeCategory();
         }

@@ -1,5 +1,7 @@
 package com.mallang.category.application;
 
+import com.mallang.blog.domain.Blog;
+import com.mallang.blog.domain.BlogRepository;
 import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.application.command.UpdateCategoryCommand;
@@ -19,13 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
     private final MemberRepository memberRepository;
+    private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryValidator categoryValidator;
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
+        Blog blog = blogRepository.getByName(command.blogName());
         Category parentCategory = getParentCategory(command.parentCategoryId());
-        Category category = Category.create(command.name(), member, parentCategory, categoryValidator);
+        Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
         return categoryRepository.save(category).getId();
     }
 
@@ -37,13 +41,13 @@ public class CategoryService {
     }
 
     public void update(UpdateCategoryCommand command) {
-        Category category = categoryRepository.getById(command.categoryId());
+        Category category = categoryRepository.getByIdAndBlogName(command.categoryId(), command.blogName());
         Category parentCategory = getParentCategory(command.parentCategoryId());
         category.update(command.memberId(), command.name(), parentCategory, categoryValidator);
     }
 
     public void delete(DeleteCategoryCommand command) {
-        Category category = categoryRepository.getById(command.categoryId());
+        Category category = categoryRepository.getByIdAndBlogName(command.categoryId(), command.blogName());
         category.delete(command.memberId());
         categoryRepository.delete(category);
     }

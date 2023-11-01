@@ -1,5 +1,6 @@
 package com.mallang.post.presentation;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.common.auth.Auth;
 import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long id,
             @Auth Long memberId,
             @RequestBody UpdatePostRequest request
     ) {
@@ -50,9 +52,10 @@ public class PostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(
-            @PathVariable Long id
+            @RequestParam(name = "blogName", required = true) BlogName blogName,
+            @PathVariable(name = "id") Long id
     ) {
-        return ResponseEntity.ok(postQueryService.getById(id));
+        return ResponseEntity.ok(postQueryService.getByBlogNameAndId(blogName, id));
     }
 
     @GetMapping
