@@ -37,11 +37,11 @@ class CategoryQueryServiceTest {
     void 특정_회원의_카테고리를_전체_조회한다() {
         // given
         Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
-        BlogName 동훈_블로그_이름 = blogServiceTestHelper.블로그_개설(동훈_ID, "donghun");
+        BlogName 동훈_블로그_이름 = blogServiceTestHelper.블로그_개설후_이름_반환(동훈_ID, "donghun");
         categoryServiceTestHelper.최상위_카테고리를_저장한다(동훈_ID, 동훈_블로그_이름, "Node");
 
         Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
-        BlogName 말랑_블로그_이름 = blogServiceTestHelper.블로그_개설(말랑_ID, "mallang");
+        BlogName 말랑_블로그_이름 = blogServiceTestHelper.블로그_개설후_이름_반환(말랑_ID, "mallang");
         Long springId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Spring");
         Long jpaId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "JPA", springId);
         Long n1Id = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "N + 1", jpaId);

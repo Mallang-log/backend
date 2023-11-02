@@ -53,6 +53,10 @@ public class AuthConfig implements WebMvcConfigurer {
                 UriAndMethodCondition.builder()
                         .uriPatterns(Set.of("/comments"))
                         .httpMethods(Set.of(GET))
+                        .build(),
+                UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/blog-subscribes/*"))
+                        .httpMethods(Set.of(GET))
                         .build()
         );
         return authInterceptor;

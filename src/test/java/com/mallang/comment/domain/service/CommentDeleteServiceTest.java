@@ -28,7 +28,7 @@ class CommentDeleteServiceTest {
     private final Member postWriter = memberBuilder().id(1L).build();
     private final Blog blog = Blog.builder()
             .name("mallang")
-            .member(postWriter)
+            .owner(postWriter)
             .build();
     private final Post post = Post.builder()
             .member(postWriter)

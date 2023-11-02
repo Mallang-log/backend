@@ -65,7 +65,7 @@ class UnAuthenticatedCommentServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang");
+            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang");
         }
 
         @Test
@@ -236,10 +236,10 @@ class UnAuthenticatedCommentServiceTest {
         @BeforeEach
         void setUp() {
             postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
-            BlogName postWriterBlogName = blogServiceTestHelper.블로그_개설(postWriterId, "postwriter");
+            BlogName postWriterBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(postWriterId, "postwriter");
             postId = postServiceTestHelper.포스트를_저장한다(postWriterId, postWriterBlogName, "제목", "내용");
             memberId = memberServiceTestHelper.회원을_저장한다("닝냥");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang");
+            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang");
         }
 
         @Test
@@ -373,10 +373,10 @@ class UnAuthenticatedCommentServiceTest {
         @BeforeEach
         void setUp() {
             postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
-            BlogName postWriterBlogName = blogServiceTestHelper.블로그_개설(postWriterId, "postwriter");
+            BlogName postWriterBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(postWriterId, "postwriter");
             postId = postServiceTestHelper.포스트를_저장한다(postWriterId, postWriterBlogName, "제목", "내용");
             memberId = memberServiceTestHelper.회원을_저장한다("닝냥");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang");
+            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang");
         }
 
         @Test

@@ -42,11 +42,11 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
-            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "id") Long postId,
             @Auth Long memberId,
             @RequestBody UpdatePostRequest request
     ) {
-        postService.update(request.toCommand(id, memberId));
+        postService.update(request.toCommand(memberId, postId));
         return ResponseEntity.ok().build();
     }
 

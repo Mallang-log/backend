@@ -17,6 +17,7 @@ public final class AcceptanceSteps {
     public static final String JSESSION_ID = "JSESSIONID";
     public static final HttpStatus 정상_처리 = HttpStatus.OK;
     public static final HttpStatus 생성됨 = HttpStatus.CREATED;
+    public static final HttpStatus 본문_없음 = HttpStatus.NO_CONTENT;
     public static final HttpStatus 잘못된_요청 = HttpStatus.BAD_REQUEST;
     public static final HttpStatus 권한_없음 = HttpStatus.FORBIDDEN;
     public static final HttpStatus 찾을수_없음 = HttpStatus.NOT_FOUND;

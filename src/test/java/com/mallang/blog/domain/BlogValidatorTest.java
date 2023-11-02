@@ -27,7 +27,7 @@ class BlogValidatorTest {
         @Test
         void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있는지_검사한다() {
             // given
-            given(blogRepository.existsByMemberId(1L))
+            given(blogRepository.existsByOwnerId(1L))
                     .willReturn(true);
 
             // when & then

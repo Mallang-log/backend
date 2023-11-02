@@ -60,7 +60,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log");
+            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang-log");
         }
 
 
@@ -124,7 +124,7 @@ class PostServiceTest {
         void 다른_사람의_블로그에_글을_쓰려는_경우_예외() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("다른");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설(otherMemberId, "other-log");
+            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherMemberId, "other-log");
 
             // when
             CreatePostCommand command = CreatePostCommand.builder()
@@ -144,7 +144,7 @@ class PostServiceTest {
         void 자신이_만든_카테고리가_아니면_예외() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("다른");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설(otherMemberId, "other-log");
+            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherMemberId, "other-log");
             Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, otherBlogName, "Spring");
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
@@ -190,7 +190,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log");
+            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang-log");
         }
 
         @Test
@@ -296,7 +296,7 @@ class PostServiceTest {
             // given
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설(otherMemberId, "other-log");
+            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherMemberId, "other-log");
             Long otherMemberSpringCategoryId =
                     categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, otherBlogName, "Spring");
 
