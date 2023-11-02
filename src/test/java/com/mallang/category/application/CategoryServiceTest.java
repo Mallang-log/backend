@@ -16,6 +16,7 @@ import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventTestHelper;
+import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.MemberServiceTestHelper;
@@ -26,40 +27,36 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @DisplayName("카테고리 서비스(CategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
+@ServiceTest
 class CategoryServiceTest {
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
+    @Autowired
+    private MemberServiceTestHelper memberServiceTestHelper;
+
+    @Autowired
+    private BlogServiceTestHelper blogServiceTestHelper;
+
+    @Autowired
+    private CategoryServiceTestHelper categoryServiceTestHelper;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private EventTestHelper eventTestHelper;
+
+    @Autowired
+    private TransactionHelper transactionHelper;
+
+    private Long mallangId;
+    private BlogName mallangBlogName;
+
     @Nested
     class 저장_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private CategoryServiceTestHelper categoryServiceTestHelper;
-
-        @Autowired
-        private CategoryService categoryService;
-
-        @Autowired
-        private EventTestHelper eventTestHelper;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
-
-        private Long mallangId;
-        private BlogName mallangBlogName;
 
         @BeforeEach
         void setUp() {
@@ -135,31 +132,8 @@ class CategoryServiceTest {
         }
     }
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
     @Nested
     class 수정_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private CategoryServiceTestHelper categoryServiceTestHelper;
-
-        @Autowired
-        private CategoryService categoryService;
-
-        @Autowired
-        private EventTestHelper eventTestHelper;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
-
-        private Long mallangId;
-        private BlogName mallangBlogName;
 
         @BeforeEach
         void setUp() {
@@ -325,31 +299,8 @@ class CategoryServiceTest {
         }
     }
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
     @Nested
     class 제거_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private CategoryServiceTestHelper categoryServiceTestHelper;
-
-        @Autowired
-        private CategoryService categoryService;
-
-        @Autowired
-        private EventTestHelper eventTestHelper;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
-
-        private Long mallangId;
-        private BlogName mallangBlogName;
 
         @BeforeEach
         void setUp() {

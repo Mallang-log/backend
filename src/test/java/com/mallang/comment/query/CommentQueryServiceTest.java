@@ -1,7 +1,6 @@
 package com.mallang.comment.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.BlogName;
@@ -9,6 +8,7 @@ import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
 import com.mallang.comment.query.data.UnAuthenticatedCommentData;
+import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import java.util.List;
@@ -19,39 +19,34 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 @DisplayName("CommentQuery 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@SpringBootTest
+@ServiceTest
 class CommentQueryServiceTest {
 
-    @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
+    @Autowired
+    private MemberServiceTestHelper memberServiceTestHelper;
+
+    @Autowired
+    private BlogServiceTestHelper blogServiceTestHelper;
+
+    @Autowired
+    private PostServiceTestHelper postServiceTestHelper;
+
+    @Autowired
+    private CommentServiceTestHelper commentServiceTestHelper;
+
+    @Autowired
+    private CommentQueryService commentQueryService;
+
+    private Long memberId;
+    private BlogName blogName;
+    private Long postId;
+
     @Nested
     class 특정_포스트의_댓글_모두_조회_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private PostServiceTestHelper postServiceTestHelper;
-
-        @Autowired
-        private CommentServiceTestHelper commentServiceTestHelper;
-
-        @Autowired
-        private CommentQueryService commentQueryService;
-
-        private Long memberId;
-        private BlogName blogName;
-        private Long postId;
 
         @BeforeEach
         void setUp() {

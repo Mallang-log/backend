@@ -6,20 +6,17 @@ import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.BlogName;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
+import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
 
 @DisplayName("포스트 이벤트 핸들러(PostEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@SpringBootTest
+@ServiceTest
 class PostEventHandlerTest {
 
     @Autowired

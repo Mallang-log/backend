@@ -6,6 +6,7 @@ import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.BlogName;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.query.data.CategoryData;
+import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +14,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @DisplayName("카테고리 조회 서비스(CategoryQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@SpringBootTest
+@ServiceTest
 class CategoryQueryServiceTest {
 
     @Autowired
