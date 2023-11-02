@@ -3,12 +3,12 @@ package com.mallang.blog.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.exception.BlogNameException;
 import com.mallang.blog.exception.DuplicateBlogNameException;
 import com.mallang.blog.exception.TooManyBlogsException;
+import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,26 +19,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 @DisplayName("블로그 서비스(BlogService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
+@ServiceTest
 class BlogServiceTest {
 
-    @DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
+    @Autowired
+    private MemberServiceTestHelper memberServiceTestHelper;
+
+    @Autowired
+    private BlogService blogService;
+
+    private Long 말랑_ID;
+
     @Nested
     class 개설_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogService blogService;
-
-        private Long 말랑_ID;
 
         @BeforeEach
         void setUp() {

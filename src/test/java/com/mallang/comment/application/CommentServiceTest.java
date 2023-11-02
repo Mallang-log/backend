@@ -18,6 +18,7 @@ import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
+import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
@@ -28,45 +29,40 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @DisplayName("댓글 서비스(CommentService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
+@ServiceTest
 class CommentServiceTest {
+
+    @Autowired
+    private MemberServiceTestHelper memberServiceTestHelper;
+
+    @Autowired
+    private BlogServiceTestHelper blogServiceTestHelper;
+
+    @Autowired
+    private PostServiceTestHelper postServiceTestHelper;
+
+    @Autowired
+    private CommentServiceTestHelper commentServiceTestHelper;
+
+    @Autowired
+    private AuthenticatedCommentService authenticatedCommentService;
+
+    @Autowired
+    private UnAuthenticatedCommentService unAuthenticatedCommentService;
+
+    @Autowired
+    private TransactionHelper transactionHelper;
 
     private Long memberId;
     private BlogName blogName;
     private Long postId;
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
     @Nested
     class 댓글_작성_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private PostServiceTestHelper postServiceTestHelper;
-
-        @Autowired
-        private CommentServiceTestHelper commentServiceTestHelper;
-
-        @Autowired
-        private AuthenticatedCommentService authenticatedCommentService;
-
-        @Autowired
-        private UnAuthenticatedCommentService unAuthenticatedCommentService;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
-
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
@@ -226,28 +222,8 @@ class CommentServiceTest {
         }
     }
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
     @Nested
     class 댓글_수정_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private PostServiceTestHelper postServiceTestHelper;
-
-        @Autowired
-        private CommentServiceTestHelper commentServiceTestHelper;
-
-        @Autowired
-        private AuthenticatedCommentService authenticatedCommentService;
-
-        @Autowired
-        private UnAuthenticatedCommentService unAuthenticatedCommentService;
 
         private Long postWriterId;
         private Long postId;
@@ -387,31 +363,8 @@ class CommentServiceTest {
         }
     }
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
     @Nested
     class 댓글_제거_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private PostServiceTestHelper postServiceTestHelper;
-
-        @Autowired
-        private CommentServiceTestHelper commentServiceTestHelper;
-
-        @Autowired
-        private AuthenticatedCommentService authenticatedCommentService;
-
-        @Autowired
-        private UnAuthenticatedCommentService unAuthenticatedCommentService;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
 
         private Long postWriterId;
         private Long postId;

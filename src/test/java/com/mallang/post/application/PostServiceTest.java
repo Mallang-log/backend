@@ -10,6 +10,7 @@ import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
+import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
@@ -25,40 +26,36 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 @DisplayName("포스트 서비스(PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
+@ServiceTest
 class PostServiceTest {
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
+    @Autowired
+    private MemberServiceTestHelper memberServiceTestHelper;
+
+    @Autowired
+    private BlogServiceTestHelper blogServiceTestHelper;
+
+    @Autowired
+    private PostServiceTestHelper postServiceTestHelper;
+
+    @Autowired
+    private CategoryServiceTestHelper categoryServiceTestHelper;
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private TransactionHelper transactionHelper;
+
+    private Long memberId;
+    private BlogName blogName;
+
     @Nested
     class 포스트_저장_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private PostServiceTestHelper postServiceTestHelper;
-
-        @Autowired
-        private CategoryServiceTestHelper categoryServiceTestHelper;
-
-        @Autowired
-        private PostService postService;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
-
-        private Long memberId;
-        private BlogName blogName;
 
         @BeforeEach
         void setUp() {
@@ -187,38 +184,14 @@ class PostServiceTest {
         }
     }
 
-    @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-    @SpringBootTest
     @Nested
     class 포스트_수정_시 {
-
-        @Autowired
-        private MemberServiceTestHelper memberServiceTestHelper;
-
-        @Autowired
-        private BlogServiceTestHelper blogServiceTestHelper;
-
-        @Autowired
-        private PostServiceTestHelper postServiceTestHelper;
-
-        @Autowired
-        private CategoryServiceTestHelper categoryServiceTestHelper;
-
-        @Autowired
-        private PostService postService;
-
-        @Autowired
-        private TransactionHelper transactionHelper;
-
-        private Long memberId;
-        private BlogName blogName;
 
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
             blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log");
         }
-
 
         @Test
         void 내가_쓴_포스트를_수정할_수_있다() {
