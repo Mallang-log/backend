@@ -23,4 +23,13 @@ public class BlogSubscribe extends CommonDomainModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id")
     private Blog blog;
+
+    public BlogSubscribe(Member subscriber, Blog blog) {
+        this.subscriber = subscriber;
+        this.blog = blog;
+    }
+
+    public void subscribe(BlogSubscribeValidator validator) {
+        validator.validateSubscribe(this);
+    }
 }

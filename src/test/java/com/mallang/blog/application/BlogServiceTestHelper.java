@@ -16,8 +16,12 @@ public class BlogServiceTestHelper {
     private final BlogService blogService;
     private final BlogRepository blogRepository;
 
-    public BlogName 블로그_개설(Long memberId, String name) {
+    public BlogName 블로그_개설후_이름_반환(Long memberId, String name) {
         blogService.open(new OpenBlogCommand(memberId, name));
         return new BlogName(name);
+    }
+
+    public Long 블로그_개설(Long memberId, String name) {
+        return blogService.open(new OpenBlogCommand(memberId, name));
     }
 }
