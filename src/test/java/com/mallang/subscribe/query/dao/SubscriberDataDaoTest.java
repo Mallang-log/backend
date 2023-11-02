@@ -34,7 +34,7 @@ class SubscriberDataDaoTest {
     private BlogSubscribeService blogSubscribeService;
 
     @Test
-    void 나를_구독중인_구독자_모두_조회() {
+    void 특정_회원을_구독중인_구독자_모두_조회() {
         // given
         Long 주인_ID = memberServiceTestHelper.회원을_저장한다("주인");
         Long 주인_블로그_ID = blogServiceTestHelper.블로그_개설(주인_ID, "owner-blog");

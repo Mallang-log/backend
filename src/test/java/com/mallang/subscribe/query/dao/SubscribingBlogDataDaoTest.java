@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("내가 구독중인 블로그 조회 DAO(SubscribingBlogDataDao) 은(는)")
+@DisplayName("특정 회원이 구독중인 블로그 조회 DAO(SubscribingBlogDataDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ServiceTest
@@ -34,7 +34,7 @@ class SubscribingBlogDataDaoTest {
     private BlogSubscribeService blogSubscribeService;
 
     @Test
-    void 내가_구독중인_블로그_모두_조회() {
+    void 특정_회원이_구독중인_블로그_모두_조회() {
         // given
         Long 주인_ID = memberServiceTestHelper.회원을_저장한다("주인");
         Long 주인_블로그_ID = blogServiceTestHelper.블로그_개설(주인_ID, "owner-blog");
