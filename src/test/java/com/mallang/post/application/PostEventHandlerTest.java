@@ -41,7 +41,7 @@ class PostEventHandlerTest {
         void 해당_카테고리에_속한_포스트들을_카테고리_없음으로_만든다() {
             // given
             Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
-            BlogName blogName = blogServiceTestHelper.블로그_개설(말랑_ID, "mallang-log");
+            BlogName blogName = blogServiceTestHelper.블로그_개설후_이름_반환(말랑_ID, "mallang-log");
             Long categoryId1 = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, blogName, "최상위1");
             Long categoryId2 = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, blogName, "최상위2");
             Long postId1 = postServiceTestHelper.포스트를_저장한다(말랑_ID, blogName, "제목1", "내용", categoryId1);

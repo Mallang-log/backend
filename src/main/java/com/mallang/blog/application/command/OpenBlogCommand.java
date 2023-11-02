@@ -10,7 +10,7 @@ public record OpenBlogCommand(
     public Blog toBlog(Member member) {
         return Blog.builder()
                 .name(name)
-                .member(member)
+                .owner(member)
                 .build();
     }
 }

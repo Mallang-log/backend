@@ -24,20 +24,20 @@ public class Blog extends CommonDomainModel {
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member owner;
 
     @Builder
-    public Blog(String name, Member member) {
+    public Blog(String name, Member owner) {
         this.name = new BlogName(name);
-        this.member = member;
+        this.owner = owner;
     }
 
     public void open(BlogValidator blogValidator) {
-        blogValidator.validateOpen(this.member.getId(), this.name);
+        blogValidator.validateOpen(this.owner.getId(), this.name);
     }
 
     public void validateOwner(Long memberId) {
-        if (!getMember().getId().equals(memberId)) {
+        if (!getOwner().getId().equals(memberId)) {
             throw new IsNotBlogOwnerException();
         }
     }

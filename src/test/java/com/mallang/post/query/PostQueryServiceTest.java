@@ -52,7 +52,7 @@ class PostQueryServiceTest {
     @BeforeEach
     void setUp() {
         memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang");
+        blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang");
     }
 
     @Test
@@ -199,7 +199,7 @@ class PostQueryServiceTest {
     void 특정_작성자의_포스트만_조회한다() {
         // given
         Long findWriterId = memberServiceTestHelper.회원을_저장한다("말랑말랑");
-        BlogName otherBlogName = blogServiceTestHelper.블로그_개설(findWriterId, "other");
+        BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(findWriterId, "other");
         Long post1Id = postServiceTestHelper.포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1");
         Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", "tag1", "tag2");
         PostSearchCond cond = PostSearchCond.builder()

@@ -12,7 +12,7 @@ public class BlogValidator {
     private final BlogRepository blogRepository;
 
     public void validateOpen(Long memberId, BlogName name) {
-        if (blogRepository.existsByMemberId(memberId)) {
+        if (blogRepository.existsByOwnerId(memberId)) {
             throw new TooManyBlogsException();
         }
         if (blogRepository.existsByName(name)) {
