@@ -31,7 +31,6 @@ import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.댓글_
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.비인증_댓글_작성;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
 
-import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -41,10 +40,10 @@ import org.junit.jupiter.api.Test;
 @DisplayName("댓글 인수테스트")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-public class CommentAcceptanceTest extends AcceptanceTest {
+public class CommentAcceptanceTest {
 
     @Nested
-    class 포스트에_댓글_작성_시 extends AcceptanceTest {
+    class 포스트에_댓글_작성_시 {
 
         @Test
         void 비인증으로_댓글을_작성한다() {
@@ -138,7 +137,7 @@ public class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 댓글_수정_시 extends AcceptanceTest {
+    class 댓글_수정_시 {
 
         @Test
         void 자신의_댓글을_수정한다() {
@@ -232,7 +231,7 @@ public class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 댓글_삭제_시 extends AcceptanceTest {
+    class 댓글_삭제_시 {
 
         @Test
         void 자신의_댓글을_삭제한다() {
@@ -402,7 +401,7 @@ public class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_포스트의_댓글_전체_조회_시 extends AcceptanceTest {
+    class 특정_포스트의_댓글_전체_조회_시 {
 
         @Test
         void 로그인하지_않은_경우_비밀_댓글은_비밀_댓글입니다로_처리되어_조회된다() {

@@ -54,7 +54,7 @@ public class BlogSubscribeController {
 
     @GetMapping("/subscribing-blogs")
     public List<SubscribingBlogData> findSubscribingBlogs(
-            @RequestParam(name = "blogId", required = true) Long memberId
+            @RequestParam(name = "memberId", required = true) Long memberId
     ) {
         return blogSubscribeQueryService.findSubscribingBlogs(memberId);
     }

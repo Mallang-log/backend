@@ -7,12 +7,17 @@ import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceTestHelper.블로그_개설;
+import static com.mallang.acceptance.member.MemberAcceptanceSteps.내_정보_조회_요청;
+import static com.mallang.acceptance.member.MemberAcceptanceSteps.회원_정보_조회_결과_데이터;
+import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.구독중인_블로그_조회_결과_검증;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독_요청;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독_취소_요청;
+import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독자_조회_결과_검증;
+import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.특정_블로그를_구독중인_구독자_조회_요청;
+import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.특정_회원이_구독중인_블로그_조회_요청;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -97,52 +102,51 @@ public class BlogSubscribeAcceptanceTest extends AcceptanceTest {
         }
     }
 
-    @Disabled("회원 정보 조회 기능 이후 구현")
     @Nested
     class 특정_회원이_구독중인_블로그_조회_시 {
 
         @Test
         void 조회된다() {
-//            // given
-//            var 블로그1주인_세션_ID = 회원가입과_로그인_후_세션_ID_반환("블로그1주인");
-//            var 블로그2주인_세션_ID = 회원가입과_로그인_후_세션_ID_반환("블로그2주인");
-//            var 구독자_세션_ID = 회원가입과_로그인_후_세션_ID_반환("구독자");
-//            var 블로그1_ID = 블로그_개설(블로그1주인_세션_ID, "blog1");
-//            var 블로그2_ID = 블로그_개설(블로그2주인_세션_ID, "blog2");
-//            블로그_구독_요청(구독자_세션_ID, 블로그1_ID);
-//            블로그_구독_요청(구독자_세션_ID, 블로그2_ID);
-//
-//            // when
-//            given()
-//                    .param("memberId", 구독자_세션_ID)
+            // given
+            var 블로그1주인_세션_ID = 회원가입과_로그인_후_세션_ID_반환("블로그1주인");
+            var 블로그2주인_세션_ID = 회원가입과_로그인_후_세션_ID_반환("블로그2주인");
+            var 구독자_세션_ID = 회원가입과_로그인_후_세션_ID_반환("구독자");
+            var 구독자_ID = 회원_정보_조회_결과_데이터(내_정보_조회_요청(구독자_세션_ID)).id();
+            var 블로그1_ID = 블로그_개설(블로그1주인_세션_ID, "blog1");
+            var 블로그2_ID = 블로그_개설(블로그2주인_세션_ID, "blog2");
+            블로그_구독_요청(구독자_세션_ID, 블로그1_ID);
+            블로그_구독_요청(구독자_세션_ID, 블로그2_ID);
+
+            // when
+            var 응답 = 특정_회원이_구독중인_블로그_조회_요청(구독자_ID);
 
             // then
+            구독중인_블로그_조회_결과_검증(응답, "blog2", "blog1");
         }
     }
 
-    @Disabled("회원 정보 조회 기능 이후 구현")
     @Nested
     class 특정_블로그를_구독중인_구독자_조회_시 {
 
         @Test
         void 조회된다() {
             // given
-//            Long 주인_ID = memberServiceTestHelper.회원을_저장한다("주인");
-//            Long 주인_블로그_ID = blogServiceTestHelper.블로그_개설(주인_ID, "owner-blog");
-//            Long 구독자1_ID = memberServiceTestHelper.회원을_저장한다("구독자1");
-//            Long 구독자2_ID = memberServiceTestHelper.회원을_저장한다("구독자2");
-//            Long 구독자3_ID = memberServiceTestHelper.회원을_저장한다("구독자3");
-//            Long 다른블로그주인_ID = memberServiceTestHelper.회원을_저장한다("다른블로그주인");
-//            Long 다른_블로그_ID = blogServiceTestHelper.블로그_개설(다른블로그주인_ID, "other-blog");
-//            Long 다른블로그구독자1_ID = memberServiceTestHelper.회원을_저장한다("다른블로그구독자1");
-//            blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_ID));
-//            blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자2_ID, 주인_블로그_ID));
-//            blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자3_ID, 주인_블로그_ID));
-//            blogSubscribeService.subscribe(new BlogSubscribeCommand(다른블로그구독자1_ID, 다른_블로그_ID));
-//
+            var 블로그1주인_세션_ID = 회원가입과_로그인_후_세션_ID_반환("블로그1주인");
+            var 블로그2주인_세션_ID = 회원가입과_로그인_후_세션_ID_반환("블로그2주인");
+            var 블로그1_ID = 블로그_개설(블로그1주인_세션_ID, "blog1");
+            var 블로그2_ID = 블로그_개설(블로그2주인_세션_ID, "blog2");
+            var 구독자1_세션_ID = 회원가입과_로그인_후_세션_ID_반환("구독자1");
+            var 구독자2_세션_ID = 회원가입과_로그인_후_세션_ID_반환("구독자2");
+            var 구독자3_세션_ID = 회원가입과_로그인_후_세션_ID_반환("구독자3");
+            블로그_구독_요청(구독자1_세션_ID, 블로그1_ID);
+            블로그_구독_요청(구독자2_세션_ID, 블로그1_ID);
+            블로그_구독_요청(구독자3_세션_ID, 블로그2_ID);
+
             // when
+            var 응답 = 특정_블로그를_구독중인_구독자_조회_요청(블로그1_ID);
 
             // then
+            블로그_구독자_조회_결과_검증(응답, "구독자2", "구독자1");
         }
     }
 }
