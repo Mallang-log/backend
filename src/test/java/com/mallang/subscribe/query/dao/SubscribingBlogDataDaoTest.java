@@ -51,6 +51,6 @@ class SubscribingBlogDataDaoTest {
         assertThat(result).hasSize(2);
         assertThat(result)
                 .extracting(SubscribingBlogData::blogName)
-                .containsExactly("owner-blog", "other-blog");
+                .containsExactly("other-blog", "owner-blog");
     }
 }

@@ -34,6 +34,7 @@ public class SubscribingBlogDataDao {
                 .join(blogSubscribe.blog, blog)
                 .join(blogSubscribe.subscriber, member)
                 .where(blogSubscribe.subscriber.id.eq(memberId))
+                .orderBy(blogSubscribe.createdDate.desc())
                 .fetch();
     }
 }
