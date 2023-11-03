@@ -132,7 +132,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 카테고리_제거_시 extends AcceptanceTest {
+    class 카테고리_제거_시 {
 
         @Test
         void 카테고리를_제거한다() {

@@ -102,7 +102,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 포스트_검색_시 extends AcceptanceTest {
+    class 포스트_검색_시 {
 
         @Test
         void 포스트_전체_조회() {
