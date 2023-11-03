@@ -42,6 +42,10 @@ public class AuthConfig implements WebMvcConfigurer {
     private AuthInterceptor setUpAuthInterceptor() {
         authInterceptor.setNoAuthRequiredConditions(
                 UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/members/**"))
+                        .httpMethods(Set.of(GET))
+                        .build(),
+                UriAndMethodCondition.builder()
                         .uriPatterns(Set.of("/posts/**"))
                         .httpMethods(Set.of(GET))
                         .build(),
