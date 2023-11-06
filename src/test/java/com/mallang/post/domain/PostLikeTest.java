@@ -53,7 +53,7 @@ class PostLikeTest {
         assertThatThrownBy(() -> {
             postLike.click(postLikeValidator);
         }).isInstanceOf(AlreadyLikedPostException.class);
-        
+
         // then
         assertThat(post.getLikeCount()).isEqualTo(0);
     }
