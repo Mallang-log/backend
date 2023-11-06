@@ -13,6 +13,7 @@ public record PostSimpleData(
         Long id,
         String title,
         String content,
+        int likeCount,
         LocalDateTime createdDate,
         WriterSimpleInfo writerInfo,
         CategorySimpleInfo categoryInfo,
@@ -24,6 +25,7 @@ public record PostSimpleData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .likeCount(post.getLikeCount())
                 .createdDate(post.getCreatedDate())
                 .writerInfo(WriterSimpleInfo.from(post))
                 .categoryInfo(CategorySimpleInfo.from(post))
