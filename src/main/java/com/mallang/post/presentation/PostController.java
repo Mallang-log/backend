@@ -2,6 +2,7 @@ package com.mallang.post.presentation;
 
 import com.mallang.blog.domain.BlogName;
 import com.mallang.common.auth.Auth;
+import com.mallang.common.auth.OptionalAuth;
 import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -52,10 +53,11 @@ public class PostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(
+            @OptionalAuth Long memberId,
             @RequestParam(name = "blogName", required = true) BlogName blogName,
             @PathVariable(name = "id") Long id
     ) {
-        return ResponseEntity.ok(postQueryService.getByBlogNameAndId(blogName, id));
+        return ResponseEntity.ok(postQueryService.getByBlogNameAndId(memberId, blogName, id));
     }
 
     @GetMapping
