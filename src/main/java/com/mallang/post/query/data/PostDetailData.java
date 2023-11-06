@@ -13,6 +13,8 @@ public record PostDetailData(
         Long id,
         String title,
         String content,
+        int likeCount,
+        boolean isLiked,
         LocalDateTime createdDate,
         WriterDetailInfo writerInfo,
         CategoryDetailInfo categoryInfo,
@@ -20,10 +22,16 @@ public record PostDetailData(
 ) {
 
     public static PostDetailData from(Post post) {
+        return withLiked(post, false);
+    }
+
+    public static PostDetailData withLiked(Post post, boolean isLiked) {
         return PostDetailData.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .likeCount(post.getLikeCount())
+                .isLiked(isLiked)
                 .createdDate(post.getCreatedDate())
                 .writerInfo(WriterDetailInfo.from(post))
                 .categoryInfo(CategoryDetailInfo.from(post))

@@ -13,6 +13,7 @@ import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +49,8 @@ public class Post extends CommonDomainModel {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
+
+    private int likeCount = 0;
 
     @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
@@ -119,5 +122,16 @@ public class Post extends CommonDomainModel {
         setTags(tags);
         this.title = title;
         this.content = content;
+    }
+
+    public void clickLike() {
+        this.likeCount++;
+    }
+
+    public void cancelLike() {
+        if (likeCount == 0) {
+            throw new PostLikeCountNegativeException();
+        }
+        this.likeCount--;
     }
 }

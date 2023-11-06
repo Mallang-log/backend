@@ -15,6 +15,7 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import com.mallang.post.exception.PostLikeCountNegativeException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -190,5 +191,60 @@ class PostTest {
             assertThat(post.getTitle()).isEqualTo("제목");
             assertThat(post.getContent()).isEqualTo("내용");
         }
+    }
+
+    @Test
+    void 좋아요를_누를_수_있다() {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(mallang)
+                .blog(blog)
+                .build();
+
+        // when
+        post.clickLike();
+
+        // then
+        assertThat(post.getLikeCount()).isEqualTo(1);
+    }
+
+    @Test
+    void 좋아료를_취소한다() {
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(mallang)
+                .blog(blog)
+                .build();
+        post.clickLike();
+        post.clickLike();
+        post.clickLike();
+
+        // when
+        post.cancelLike();
+
+        // then
+        assertThat(post.getLikeCount()).isEqualTo(2);
+    }
+
+    @Test
+    void 좋아요는_음수가_될_수_없다() {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(mallang)
+                .blog(blog)
+                .build();
+
+        // when
+        assertThatThrownBy(() -> {
+            post.cancelLike();
+        }).isInstanceOf(PostLikeCountNegativeException.class);
+
+        // then
+        assertThat(post.getLikeCount()).isEqualTo(0);
     }
 }

@@ -61,7 +61,7 @@ class PostQueryServiceTest {
         Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트 1", "content");
 
         // when
-        PostDetailData response = postQueryService.getByBlogNameAndId(blogName, id);
+        PostDetailData response = postQueryService.getByBlogNameAndId(null, blogName, id);
 
         // then
         assertThat(response.id()).isEqualTo(id);
