@@ -10,8 +10,10 @@ import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -35,13 +37,13 @@ public abstract class Comment extends CommonDomainModel {
     private String content;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Post post;
 
     private boolean deleted;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "parant_id", nullable = true)
+    @JoinColumn(name = "parant_id", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Comment parent;
 
     @OneToMany(mappedBy = "parent")
@@ -82,7 +84,7 @@ public abstract class Comment extends CommonDomainModel {
         this.content = content;
     }
 
-    protected void delete(CommentDeleteService commentDeleteService) {
+    public void delete(CommentDeleteService commentDeleteService) {
         this.deleted = true;
         commentDeleteService.delete(this);
     }

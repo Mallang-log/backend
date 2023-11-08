@@ -46,7 +46,7 @@ class BlogSubscribeServiceTest {
     void setUp() {
         mallangId = memberServiceTestHelper.회원을_저장한다("mallang");
         otherId = memberServiceTestHelper.회원을_저장한다("other");
-        otherBlogId = blogServiceTestHelper.블로그_개설(otherId, "other-log");
+        otherBlogId = blogServiceTestHelper.블로그_개설(otherId, "other-log").getId();
     }
 
     @Nested
@@ -64,7 +64,7 @@ class BlogSubscribeServiceTest {
         @Test
         void 자신의_블로그를_구독하면_예외() {
             // given
-            Long mallangBlogId = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log");
+            Long mallangBlogId = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log").getId();
 
             // when & then
             assertThatThrownBy(() ->

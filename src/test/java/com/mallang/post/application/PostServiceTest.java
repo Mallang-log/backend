@@ -10,13 +10,18 @@ import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
+import com.mallang.comment.application.CommentServiceTestHelper;
+import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
+import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.Tag;
+import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +31,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.event.ApplicationEvents;
 
 @DisplayName("포스트 서비스(PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -51,6 +57,9 @@ class PostServiceTest {
     @Autowired
     private TransactionHelper transactionHelper;
 
+    @Autowired
+    private ApplicationEvents events;
+
     private Long memberId;
     private BlogName blogName;
 
@@ -62,7 +71,6 @@ class PostServiceTest {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
             blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang-log");
         }
-
 
         @Test
         void 카테고리_없는_포스트를_저장한다() {
@@ -315,6 +323,64 @@ class PostServiceTest {
             // then
             Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
             assertThat(post.getTitle()).isEqualTo("포스트");
+        }
+    }
+
+    @Autowired
+    private CommentServiceTestHelper commentServiceTestHelper;
+
+    @Nested
+    class 포스트_제거_시 {
+
+        private Long myPostId1;
+        private Long myPostId2;
+        private Long otherId;
+        private Long otherPostId;
+
+        @BeforeEach
+        void setUp() {
+            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
+            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang-log");
+            myPostId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
+            myPostId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
+            commentServiceTestHelper.댓글을_작성한다(myPostId1, "dw", false, memberId);
+            otherId = memberServiceTestHelper.회원을_저장한다("other");
+            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherId, "other-log");
+            otherPostId = postServiceTestHelper.포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
+        }
+
+        @Test
+        void 자신이_작성한_글이_아닌_경우_예외() {
+            // when
+            assertThatThrownBy(() -> {
+                postService.delete(new DeletePostCommand(otherId, blogName, List.of(myPostId1)));
+            }).isInstanceOf(NoAuthorityDeletePostException.class);
+
+            // then
+            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isTrue();
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(0);
+        }
+
+        @Test
+        void 없는_글이_있으면_제외하고_제거된다() {
+            // when
+            postService.delete(new DeletePostCommand(memberId, blogName, List.of(myPostId1, 100000L)));
+
+            // then
+            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(1);
+        }
+
+        @Test
+        void 원하는_포스트들을_제거하며_각각_댓글_제거_이벤트가_발행된다() {
+            // when
+            postService.delete(new DeletePostCommand(memberId, blogName, List.of(myPostId1, myPostId2)));
+
+            // then
+            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
+            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId2)).isFalse();
+            assertThat(postServiceTestHelper.포스트_존재여부_확인(otherPostId)).isTrue();
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(2);
         }
     }
 }

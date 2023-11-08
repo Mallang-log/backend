@@ -5,6 +5,7 @@ import com.mallang.common.auth.Auth;
 import com.mallang.common.auth.OptionalAuth;
 import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.data.PostDetailData;
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +52,16 @@ public class PostController {
         postService.update(request.toCommand(memberId, postId));
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> update(
+            @Auth Long memberId,
+            @RequestBody DeletePostRequest request
+    ) {
+        postService.delete(request.toCommand(memberId));
+        return ResponseEntity.noContent().build();
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(

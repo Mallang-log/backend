@@ -36,4 +36,8 @@ public class PostServiceTestHelper {
     public Post 포스트를_조회한다(Long 포스트_ID) {
         return postRepository.getById(포스트_ID);
     }
+
+    public boolean 포스트_존재여부_확인(Long 포스트_ID) {
+        return postRepository.existsById(포스트_ID);
+    }
 }

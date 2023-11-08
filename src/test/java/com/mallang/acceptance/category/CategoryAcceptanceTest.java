@@ -135,7 +135,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     class 카테고리_제거_시 {
 
         @Test
-        void 카테고리를_제거한다() {
+        void 카테고리는_제거되며_해당_카테고리를_가진_포스트는_카테고리_없음_상태가_된다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";

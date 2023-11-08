@@ -1,6 +1,7 @@
 package com.mallang.blog.application;
 
 import com.mallang.blog.application.command.OpenBlogCommand;
+import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogName;
 import com.mallang.blog.domain.BlogRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class BlogServiceTestHelper {
         return new BlogName(name);
     }
 
-    public Long 블로그_개설(Long memberId, String name) {
-        return blogService.open(new OpenBlogCommand(memberId, name));
+    public Blog 블로그_개설(Long memberId, String name) {
+        return blogRepository.getById(blogService.open(new OpenBlogCommand(memberId, name)));
     }
 }
