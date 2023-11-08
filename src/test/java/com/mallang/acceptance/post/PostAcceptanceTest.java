@@ -100,7 +100,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 포스트_단일_조회() {
+    void 포스트를_단일_조회한다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         var 블로그_이름 = "mallang-log";
@@ -117,7 +117,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 없는_포스트_단일_조회() {
+    void 없는_포스트를_단일_조회한다면_예외() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         var 블로그_이름 = "mallang-log";
@@ -135,7 +135,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     class 포스트_검색_시 {
 
         @Test
-        void 포스트_전체_조회() {
+        void 포스트를_전체_조회한다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
@@ -206,7 +206,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         // TODO 회원 정보 조회 기능 생성 이후 작성자 필터링 테스트 추가
 
         @Test
-        void 제목으로_검색() {
+        void 제목으로_검색한다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
@@ -225,7 +225,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 내용으로_검색() {
+        void 내용으로_검색한다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
@@ -244,7 +244,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 제목_내용으로_검색() {
+        void 제목_내용으로_검색한다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";

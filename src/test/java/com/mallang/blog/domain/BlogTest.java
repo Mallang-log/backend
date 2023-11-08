@@ -31,7 +31,7 @@ class BlogTest {
                 .build();
 
         @Test
-        void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예와() {
+        void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예외() {
             // given
             willThrow(TooManyBlogsException.class)
                     .given(blogValidator)

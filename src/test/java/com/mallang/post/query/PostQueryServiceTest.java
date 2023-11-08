@@ -324,9 +324,9 @@ class PostQueryServiceTest {
                 );
     }
 
-    @DisplayName("제목이나 내용이 있는데 제목 + 내용도 있다면 오류")
+    @DisplayName("제목이나 내용이 있는데 제목 + 내용도 있다면 예외")
     @Test
-    void 제목이나_내용이_있는데_제목_and_내용도_있다면_오류() {
+    void 제목이나_내용이_있는데_제목_and_내용도_있다면_예외() {
         // given
         PostSearchCond cond = PostSearchCond.builder()
                 .title("1")
