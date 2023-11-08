@@ -33,6 +33,10 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Post extends CommonDomainModel {
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "blog_id", nullable = false)
+    private Blog blog;
+
     @Column(nullable = false)
     private String title;
 
@@ -44,16 +48,13 @@ public class Post extends CommonDomainModel {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "blog_id", nullable = false)
-    private Blog blog;
-
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
     private int likeCount = 0;
 
-    @OneToMany(mappedBy = "post", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "post_id")
     private List<Tag> tags = new ArrayList<>();
 
     @Builder
@@ -100,7 +101,7 @@ public class Post extends CommonDomainModel {
         }
         validateDuplicateTags(tags);
         tags.stream()
-                .map(it -> new Tag(it, this))
+                .map(Tag::new)
                 .forEach(it -> this.tags.add(it));
     }
 
