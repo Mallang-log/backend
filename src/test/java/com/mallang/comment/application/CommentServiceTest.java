@@ -63,6 +63,7 @@ class CommentServiceTest {
 
     @Nested
     class 댓글_작성_시 {
+
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
