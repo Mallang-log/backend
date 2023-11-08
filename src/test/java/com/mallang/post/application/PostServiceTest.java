@@ -10,6 +10,7 @@ import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
+import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
@@ -325,6 +326,9 @@ class PostServiceTest {
         }
     }
 
+    @Autowired
+    private CommentServiceTestHelper commentServiceTestHelper;
+
     @Nested
     class 포스트_제거_시 {
 
@@ -339,6 +343,7 @@ class PostServiceTest {
             blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang-log");
             myPostId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
             myPostId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
+            commentServiceTestHelper.댓글을_작성한다(myPostId1, "dw", false, memberId);
             otherId = memberServiceTestHelper.회원을_저장한다("other");
             BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherId, "other-log");
             otherPostId = postServiceTestHelper.포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
