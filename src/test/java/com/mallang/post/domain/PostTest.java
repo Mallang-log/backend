@@ -7,6 +7,7 @@ import static com.mallang.member.MemberFixture.말랑;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.IsNotBlogOwnerException;
@@ -14,6 +15,7 @@ import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
+import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import java.util.List;
@@ -190,6 +192,45 @@ class PostTest {
             // then
             assertThat(post.getTitle()).isEqualTo("제목");
             assertThat(post.getContent()).isEqualTo("내용");
+        }
+    }
+
+    @Nested
+    class 삭제_시 {
+
+        private final Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .member(mallang)
+                .blog(blog)
+                .build();
+
+        @Test
+        void 해당_글_작성자만_삭제할_수_있다() {
+            // when & then
+            assertDoesNotThrow(() -> {
+                post.delete(mallang.getId());
+            });
+        }
+
+        @Test
+        void 포스트_삭제_이벤트가_발행된다() {
+            // when
+            post.delete(mallang.getId());
+
+            // then
+            assertThat(post.domainEvents().get(0)).isEqualTo(PostDeleteEvent.class);
+        }
+
+        @Test
+        void 해당_글_작성자가_아니면_예외() {
+            // when
+            assertThatThrownBy(() -> {
+                post.delete(mallang.getId() + 1);
+            }).isInstanceOf(NoAuthorityDeletePostException.class);
+
+            // then
+            assertThat(post.domainEvents()).isEmpty();
         }
     }
 

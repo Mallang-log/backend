@@ -12,6 +12,7 @@ import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
+import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
@@ -133,5 +134,10 @@ public class Post extends CommonDomainModel {
             throw new PostLikeCountNegativeException();
         }
         this.likeCount--;
+    }
+
+    public void delete(Long memberId) {
+        validateOwner(memberId, new NoAuthorityDeletePostException());
+        registerEvent(new PostDeleteEvent(getId()));
     }
 }
