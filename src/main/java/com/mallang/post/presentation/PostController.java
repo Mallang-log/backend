@@ -54,14 +54,13 @@ public class PostController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> update(
+    public ResponseEntity<Void> delete(
             @Auth Long memberId,
             @RequestBody DeletePostRequest request
     ) {
         postService.delete(request.toCommand(memberId));
         return ResponseEntity.noContent().build();
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(
