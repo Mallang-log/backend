@@ -219,7 +219,7 @@ class PostTest {
             post.delete(mallang.getId());
 
             // then
-            assertThat(post.domainEvents().get(0)).isEqualTo(PostDeleteEvent.class);
+            assertThat(post.domainEvents().get(0)).isInstanceOf(PostDeleteEvent.class);
         }
 
         @Test
