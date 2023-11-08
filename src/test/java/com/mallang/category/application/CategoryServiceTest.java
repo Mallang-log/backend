@@ -15,7 +15,7 @@ import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.common.EventTestHelper;
+import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.common.domain.CommonDomainModel;
@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.event.ApplicationEvents;
 
 @DisplayName("카테고리 서비스(CategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -47,7 +48,7 @@ class CategoryServiceTest {
     private CategoryService categoryService;
 
     @Autowired
-    private EventTestHelper eventTestHelper;
+    private ApplicationEvents events;
 
     @Autowired
     private TransactionHelper transactionHelper;
@@ -373,7 +374,7 @@ class CategoryServiceTest {
             categoryService.delete(command);
 
             // then
-            int count = eventTestHelper.이벤트_발생_횟수(CategoryDeletedEvent.class);
+            int count = EventsTestUtils.count(events, CategoryDeletedEvent.class);
             assertThat(count).isEqualTo(1);
         }
     }

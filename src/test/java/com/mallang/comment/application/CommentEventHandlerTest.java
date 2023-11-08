@@ -7,7 +7,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogName;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
-import com.mallang.common.EventTestHelper;
 import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
@@ -45,9 +44,6 @@ class CommentEventHandlerTest {
     @Autowired
     private ApplicationEventPublisher publisher;
 
-    @Autowired
-    private EventTestHelper eventTestHelper;
-
     @Nested
     class 포스트_삭제_이벤트를_받아 {
 
@@ -65,7 +61,7 @@ class CommentEventHandlerTest {
             commentServiceTestHelper.비인증_대댓글을_작성한다(postId1, "댓1", "익1", "1234", post1Comment1);
             commentServiceTestHelper.비인증_댓글을_작성한다(postId1, "댓1", "익2", "12345");
 
-            Long post2Comment1 = commentServiceTestHelper.댓글을_작성한다(postId2, "댓1", true, ohterMemberId);
+            commentServiceTestHelper.댓글을_작성한다(postId2, "댓1", true, ohterMemberId); // no delete
 
             // when
             publisher.publishEvent(new PostDeleteEvent(postId1, blog.getId()));
@@ -75,7 +71,6 @@ class CommentEventHandlerTest {
             boolean nonDeleteCommentExist = all.stream()
                     .anyMatch(it -> (it.getPost().getId().equals(postId1)));
             assertThat(nonDeleteCommentExist).isFalse();
-            assertThat(eventTestHelper.이벤트_발생_횟수(PostDeleteEvent.class)).isEqualTo(1);
         }
     }
 }

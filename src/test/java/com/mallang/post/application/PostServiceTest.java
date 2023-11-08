@@ -10,7 +10,7 @@ import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.common.EventTestHelper;
+import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
@@ -30,6 +30,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.event.ApplicationEvents;
 
 @DisplayName("포스트 서비스(PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -56,7 +57,7 @@ class PostServiceTest {
     private TransactionHelper transactionHelper;
 
     @Autowired
-    private EventTestHelper eventTestHelper;
+    private ApplicationEvents events;
 
     private Long memberId;
     private BlogName blogName;
@@ -352,7 +353,7 @@ class PostServiceTest {
 
             // then
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isTrue();
-            assertThat(eventTestHelper.이벤트_발생_횟수(PostDeleteEvent.class)).isEqualTo(0);
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(0);
         }
 
         @Test
@@ -362,7 +363,7 @@ class PostServiceTest {
 
             // then
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
-            assertThat(eventTestHelper.이벤트_발생_횟수(PostDeleteEvent.class)).isEqualTo(1);
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(1);
         }
 
         @Test
@@ -374,7 +375,7 @@ class PostServiceTest {
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId2)).isFalse();
             assertThat(postServiceTestHelper.포스트_존재여부_확인(otherPostId)).isTrue();
-            assertThat(eventTestHelper.이벤트_발생_횟수(PostDeleteEvent.class)).isEqualTo(2);
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(2);
         }
     }
 }
