@@ -52,7 +52,7 @@ class BlogServiceTest {
         }
 
         @Test
-        void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예와() {
+        void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예외() {
             // given
             blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog"));
 
@@ -91,7 +91,7 @@ class BlogServiceTest {
                 "aaa",
                 "012345678901234567890123456789012"
         })
-        void 블로그_이름이_4자_미만이거나_32자_초과이면_예외이다(String name) {
+        void 블로그_이름이_4자_미만이거나_32자_초과이면_예외(String name) {
             // when & then
             assertThatThrownBy(() ->
                     blogService.open(new OpenBlogCommand(말랑_ID, name))
@@ -115,7 +115,7 @@ class BlogServiceTest {
                 "wrong-이름",
                 "it-is-wrong-👍"
         })
-        void 블로그_이름에_영문_대문자_한글_이모지_언더바_등이_들어오면_예외이다(String name) {
+        void 블로그_이름에_영문_대문자_한글_이모지_언더바_등이_들어오면_예외(String name) {
             // when & then
             assertThatThrownBy(() ->
                     blogService.open(new OpenBlogCommand(말랑_ID, name))

@@ -147,7 +147,7 @@ class CommentTest {
         }
 
         @Test
-        void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외이다() {
+        void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외() {
             // given
             AuthenticatedComment parent = AuthenticatedComment.builder()
                     .content("내용")

@@ -199,7 +199,7 @@ class CommentServiceTest {
         }
 
         @Test
-        void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외이다() {
+        void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외() {
             // given
             Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "내용");
             Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, memberId);
@@ -279,7 +279,7 @@ class CommentServiceTest {
         }
 
         @Test
-        void 자신의_댓글이_아닌_경우_오류이다() {
+        void 자신의_댓글이_아닌_경우_예외() {
             // given
             Long memberId = memberServiceTestHelper.회원을_저장한다("1");
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("otherMember");
@@ -321,7 +321,7 @@ class CommentServiceTest {
         }
 
         @Test
-        void 비인증_댓글_수정_시_비밀번호가_틀리면_오류이다() {
+        void 비인증_댓글_수정_시_비밀번호가_틀리면_예외() {
             // given
             Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             UpdateUnAuthenticatedCommentCommand command = UpdateUnAuthenticatedCommentCommand.builder()
@@ -397,7 +397,7 @@ class CommentServiceTest {
         }
 
         @Test
-        void 자신의_댓글이_아닌_경우_오류() {
+        void 자신의_댓글이_아닌_경우_예외() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("otherMember");
             Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);

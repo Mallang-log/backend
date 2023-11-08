@@ -230,7 +230,7 @@ class CategoryServiceTest {
         }
 
         @Test
-        void 자신의_카테고리가_아니면_오류() {
+        void 자신의_카테고리가_아니면_예외() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("동훈");
             BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherMemberId, "other");
@@ -327,7 +327,7 @@ class CategoryServiceTest {
         }
 
         @Test
-        void 자신의_카테고리가_아니라면_오류() {
+        void 자신의_카테고리가_아니라면_예외() {
             // given
             Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
             BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(동훈_ID, "other");

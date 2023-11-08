@@ -33,7 +33,7 @@ class BlogNameTest {
             "aaa",
             "012345678901234567890123456789012"
     })
-    void 이름이_4자_미만이거나_32자_초과이면_예외이다(String name) {
+    void 이름이_4자_미만이거나_32자_초과이면_예외(String name) {
         // when & then
         assertThatThrownBy(() ->
                 new BlogName(name)
@@ -57,7 +57,7 @@ class BlogNameTest {
             "wrong-이름",
             "it-is-wrong-👍"
     })
-    void 영문_대문자_한글_이모지_언더바_등이_들어오면_예외이다(String name) {
+    void 영문_대문자_한글_이모지_언더바_등이_들어오면_예외(String name) {
         // when & then
         assertThatThrownBy(() ->
                 new BlogName(name)

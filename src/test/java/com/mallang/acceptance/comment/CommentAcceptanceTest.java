@@ -163,7 +163,7 @@ public class CommentAcceptanceTest {
         }
 
         @Test
-        void 자신의_댓글이_아닌_경우_오류이다() {
+        void 자신의_댓글이_아닌_경우_예외() {
             // given
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
@@ -197,7 +197,7 @@ public class CommentAcceptanceTest {
         }
 
         @Test
-        void 비인증_댓글_수정_시_비밀번호가_다르면_오류() {
+        void 비인증_댓글_수정_시_비밀번호가_다르면_예외() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
@@ -253,7 +253,7 @@ public class CommentAcceptanceTest {
         }
 
         @Test
-        void 자신의_댓글이_아닌_경우_오류이다() {
+        void 자신의_댓글이_아닌_경우_예외() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
@@ -287,7 +287,7 @@ public class CommentAcceptanceTest {
         }
 
         @Test
-        void 비인증_댓글_삭제_시_비밀번호가_다르면_오류() {
+        void 비인증_댓글_삭제_시_비밀번호가_다르면_예외() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
