@@ -50,6 +50,10 @@ public class AuthConfig implements WebMvcConfigurer {
                         .httpMethods(Set.of(GET))
                         .build(),
                 UriAndMethodCondition.builder()
+                        .uriPatterns(Set.of("/categories"))
+                        .httpMethods(Set.of(GET))
+                        .build(),
+                UriAndMethodCondition.builder()
                         .uriPatterns(Set.of("/comments/**"))
                         .httpMethods(Set.of(POST, PUT, DELETE))
                         .params(Map.of("unauthenticated", "true"))

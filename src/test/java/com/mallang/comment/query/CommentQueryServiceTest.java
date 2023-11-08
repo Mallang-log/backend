@@ -3,7 +3,6 @@ package com.mallang.comment.query;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.blog.domain.BlogName;
 import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
@@ -42,7 +41,7 @@ class CommentQueryServiceTest {
     private CommentQueryService commentQueryService;
 
     private Long memberId;
-    private BlogName blogName;
+    private Long blogId;
     private Long postId;
 
     @Nested
@@ -51,8 +50,8 @@ class CommentQueryServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang");
-            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang");
+            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
         }
 
         @Test

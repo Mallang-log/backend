@@ -5,10 +5,10 @@ import lombok.Builder;
 
 @Builder
 public record PostSearchCond(
-        @Nullable Long categoryId,
-        @Nullable String blogName,
-        @Nullable String tag,
+        @Nullable Long blogId,
         @Nullable Long writerId,
+        @Nullable Long categoryId,
+        @Nullable String tag,
         @Nullable String title,
         @Nullable String content,
         @Nullable String titleOrContent

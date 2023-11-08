@@ -1,7 +1,6 @@
 package com.mallang.post.application;
 
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.domain.BlogName;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
@@ -32,31 +31,29 @@ public class PostService {
 
     public Long create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByName(command.blogName());
-        Category category = getCategoryByIdIfPresent(command.categoryId(), command.blogName());
+        Blog blog = blogRepository.getById(command.blogId());
+        Category category = getCategoryByIdIfPresent(command.categoryId());
         Long postIdInBlog = postOrderInBlogGenerator.generate(blog);
         Post post = command.toPost(member, blog, category, postIdInBlog);
         Post saved = postRepository.save(post);
         return saved.getId();
     }
 
-    private Category getCategoryByIdIfPresent(@Nullable Long id, BlogName blogName) {
+    private Category getCategoryByIdIfPresent(@Nullable Long id) {
         if (id == null) {
             return null;
         }
-        return categoryRepository.getByIdAndBlogName(id, blogName);
+        return categoryRepository.getById(id);
     }
 
     public void update(UpdatePostCommand command) {
         Post post = postRepository.getById(command.postId());
-        Category category = getCategoryByIdIfPresent(command.categoryId(), command.blogName());
+        Category category = getCategoryByIdIfPresent(command.categoryId());
         post.update(command.memberId(), command.title(), command.content(), category, command.tags());
     }
 
     public void delete(DeletePostCommand command) {
-        List<Post> posts = postRepository.findAllByBlogNameAndPostIdsIn(
-                command.blogName(), command.postIds()
-        );
+        List<Post> posts = postRepository.findAllByIdIn(command.postIds());
         for (Post post : posts) {
             post.delete(command.memberId());
             postRepository.delete(post);

@@ -1,6 +1,5 @@
 package com.mallang.post.application;
 
-import com.mallang.blog.domain.BlogName;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
@@ -18,14 +17,14 @@ public class PostServiceTestHelper {
     private final PostService postService;
     private final PostRepository postRepository;
 
-    public Long 포스트를_저장한다(Long 회원_ID, BlogName 블로그_이름, String 제목, String 내용, String... 태그들) {
-        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, null, 태그들);
+    public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, null, 태그들);
     }
 
-    public Long 포스트를_저장한다(Long 회원_ID, BlogName 블로그_이름, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
+    public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
         return postService.create(new CreatePostCommand(
                 회원_ID,
-                블로그_이름,
+                블로그_ID,
                 제목,
                 내용,
                 카테고리_ID,

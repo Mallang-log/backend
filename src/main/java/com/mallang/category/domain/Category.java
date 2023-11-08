@@ -148,7 +148,7 @@ public class Category extends CommonDomainModel {
         validateOwner(memberId, new NoAuthorityDeleteCategoryException());
         validateNoChildren();
         unlinkFromParent();
-        registerEvent(new CategoryDeletedEvent(getBlog().getName(), getId()));
+        registerEvent(new CategoryDeletedEvent(getId()));
     }
 
     private void validateNoChildren() {

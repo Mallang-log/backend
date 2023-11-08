@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.blog.domain.BlogName;
 import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CancelPostLikeCommand;
@@ -46,14 +45,14 @@ class PostLikeServiceTest {
     private PostLikeRepository postLikeRepository;
 
     private Long memberId;
-    private BlogName blogName;
+    private Long blogId;
     private Long postId;
 
     @BeforeEach
     void setUp() {
         memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mallang-log");
-        postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+        blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang-log");
+        postId = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", "태그1");
     }
 
     @Nested

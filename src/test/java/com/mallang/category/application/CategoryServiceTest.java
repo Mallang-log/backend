@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.blog.domain.BlogName;
 import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.application.command.UpdateCategoryCommand;
@@ -13,6 +12,8 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
+import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
+import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
@@ -54,7 +55,7 @@ class CategoryServiceTest {
     private TransactionHelper transactionHelper;
 
     private Long mallangId;
-    private BlogName mallangBlogName;
+    private Long mallangBlogId;
 
     @Nested
     class 저장_시 {
@@ -62,14 +63,14 @@ class CategoryServiceTest {
         @BeforeEach
         void setUp() {
             mallangId = memberServiceTestHelper.회원을_저장한다("mallang");
-            mallangBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(mallangId, "mallang-log");
+            mallangBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(mallangId, "mallang-log");
         }
 
 
         @Test
         void 최상위_카테고리로_저장할_수_있다() {
             // given
-            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogName, "최상위 카테고리", null);
+            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogId, "최상위 카테고리", null);
 
             // when
             Long 최상위_카테고리 = categoryService.create(command);
@@ -83,8 +84,8 @@ class CategoryServiceTest {
         @Test
         void 계층형으로_저장할_수_있다() {
             // given
-            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogName, "하위 카테고리", 최상위);
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogId, "하위 카테고리", 최상위);
 
             // when
             Long id = categoryService.create(command);
@@ -98,7 +99,7 @@ class CategoryServiceTest {
         @Test
         void 없는_부모_카테고리_ID를_설정한_경우_예외() {
             // given
-            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogName, "하위 카테고리", 100L);
+            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogId, "하위 카테고리", 100L);
 
             // when & then
             assertThatThrownBy(() ->
@@ -110,9 +111,9 @@ class CategoryServiceTest {
         void 하위_카테고리를_생성하려는_회원가_상위_카테고리를_생성한_회원이_동일하지_않으면_예외() {
             // given
             Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(동훈_ID, "donghun");
-            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            CreateCategoryCommand command = new CreateCategoryCommand(동훈_ID, otherBlogName, "하위 카테고리", 최상위);
+            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(동훈_ID, "donghun");
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            CreateCategoryCommand command = new CreateCategoryCommand(동훈_ID, otherBlogId, "하위 카테고리", 최상위);
 
             // when & then
             assertThatThrownBy(() ->
@@ -123,8 +124,8 @@ class CategoryServiceTest {
         @Test
         void 루트끼리는_이름이_같을_수_없다() {
             // given
-            categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogName, "최상위", null);
+            categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            CreateCategoryCommand command = new CreateCategoryCommand(mallangId, mallangBlogId, "최상위", null);
 
             // when & then
             assertThatThrownBy(() ->
@@ -139,18 +140,16 @@ class CategoryServiceTest {
         @BeforeEach
         void setUp() {
             mallangId = memberServiceTestHelper.회원을_저장한다("mallang");
-            mallangBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(mallangId, "mallang-log");
+            mallangBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(mallangId, "mallang-log");
         }
 
 
         @Test
         void 자신의_카테고리라면_수정_가능() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위",
-                    categoryId);
-            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, mallangId, mallangBlogName, "수정",
-                    categoryId);
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위", categoryId);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, mallangId, "수정", categoryId);
 
             // when
             categoryService.update(command);
@@ -164,11 +163,10 @@ class CategoryServiceTest {
         @Test
         void 부모_카테고리를_제거함으로써_최상위_카테고리로_만들_수_있다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위",
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위",
                     categoryId);
-            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, mallangId, mallangBlogName, "수정",
-                    null);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, mallangId, "수정", null);
 
             // when
             categoryService.update(command);
@@ -182,15 +180,15 @@ class CategoryServiceTest {
         @Test
         void 부모_카테고리를_변경할_수_있다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long otherRootCategory = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위2");
-            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위",
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long otherRootCategory = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위2");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위",
                     categoryId);
-            Long childChildCategoryId1 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "더하위1",
+            Long childChildCategoryId1 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "더하위1",
                     childCategoryId);
-            Long childChildCategoryId2 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "더하위2",
+            Long childChildCategoryId2 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "더하위2",
                     childCategoryId);
-            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, mallangId, mallangBlogName, "수정",
+            UpdateCategoryCommand command = new UpdateCategoryCommand(childCategoryId, mallangId, "수정",
                     otherRootCategory);
 
             // when
@@ -210,14 +208,14 @@ class CategoryServiceTest {
         @Test
         void 자신의_하위_카테고리를_부모로_만들_수_없다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위",
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위",
                     categoryId);
-            Long childChildCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "더하위1",
+            Long childChildCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "더하위1",
                     childCategoryId);
-            UpdateCategoryCommand command1 = new UpdateCategoryCommand(categoryId, mallangId, mallangBlogName, "수정",
+            UpdateCategoryCommand command1 = new UpdateCategoryCommand(categoryId, mallangId, "수정",
                     childCategoryId);
-            UpdateCategoryCommand command2 = new UpdateCategoryCommand(categoryId, mallangId, mallangBlogName, "수정",
+            UpdateCategoryCommand command2 = new UpdateCategoryCommand(categoryId, mallangId, "수정",
                     childChildCategoryId);
 
             // when & then
@@ -233,15 +231,14 @@ class CategoryServiceTest {
         void 자신의_카테고리가_아니면_예외() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("동훈");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherMemberId, "other");
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            UpdateCategoryCommand command = new UpdateCategoryCommand(categoryId, otherMemberId, otherBlogName, "수정",
-                    null);
+            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(otherMemberId, "other");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            UpdateCategoryCommand command = new UpdateCategoryCommand(categoryId, otherMemberId, "수정", null);
 
             // when
             assertThatThrownBy(() ->
                     categoryService.update(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NoAuthorityUpdateCategoryException.class);
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
@@ -253,11 +250,10 @@ class CategoryServiceTest {
         void 다른_사람의_카테고리의_하위_카테고리로_변경할_수_없다() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("동훈");
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(otherMemberId, "other");
-            Long otherCategory = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, otherBlogName, "최상위");
-            UpdateCategoryCommand command = new UpdateCategoryCommand(categoryId, mallangId, mallangBlogName, "수정",
-                    otherCategory);
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(otherMemberId, "other");
+            Long otherCategory = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, otherBlogId, "최상위");
+            UpdateCategoryCommand command = new UpdateCategoryCommand(categoryId, mallangId, "수정", otherCategory);
 
             // when
             assertThatThrownBy(() ->
@@ -275,10 +271,10 @@ class CategoryServiceTest {
         @Test
         void 같은_부모를_가진_직계_자식끼리는_이름이_겹쳐서는_안된다() {
             // given
-            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long 자식1 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위1", 최상위);
-            Long 자식2 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위2", 최상위);
-            UpdateCategoryCommand command = new UpdateCategoryCommand(자식2, mallangId, mallangBlogName, "하위1", 최상위);
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long 자식1 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위1", 최상위);
+            Long 자식2 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위2", 최상위);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(자식2, mallangId, "하위1", 최상위);
 
             // when & then
             assertThatThrownBy(() ->
@@ -289,9 +285,9 @@ class CategoryServiceTest {
         @Test
         void 루트끼리는_이름이_같을_수_없다() {
             // given
-            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long 자식 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위", 최상위);
-            UpdateCategoryCommand command = new UpdateCategoryCommand(자식, mallangId, mallangBlogName, "최상위", null);
+            Long 최상위 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long 자식 = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위", 최상위);
+            UpdateCategoryCommand command = new UpdateCategoryCommand(자식, mallangId, "최상위", null);
 
             // when & then
             assertThatThrownBy(() ->
@@ -306,16 +302,16 @@ class CategoryServiceTest {
         @BeforeEach
         void setUp() {
             mallangId = memberServiceTestHelper.회원을_저장한다("mallang");
-            mallangBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(mallangId, "mallang-log");
+            mallangBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(mallangId, "mallang-log");
         }
 
 
         @Test
         void 하위_카테고리가_있다면_오류() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위", categoryId);
-            DeleteCategoryCommand command = new DeleteCategoryCommand(mallangId, mallangBlogName, categoryId);
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위", categoryId);
+            DeleteCategoryCommand command = new DeleteCategoryCommand(mallangId, categoryId);
 
             // when
             assertThatThrownBy(() ->
@@ -330,15 +326,15 @@ class CategoryServiceTest {
         void 자신의_카테고리가_아니라면_예외() {
             // given
             Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
-            BlogName otherBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(동훈_ID, "other");
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위", categoryId);
-            DeleteCategoryCommand command = new DeleteCategoryCommand(동훈_ID, otherBlogName, categoryId);
+            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(동훈_ID, "other");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위", categoryId);
+            DeleteCategoryCommand command = new DeleteCategoryCommand(동훈_ID, categoryId);
 
             // when
             assertThatThrownBy(() ->
                     categoryService.delete(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NoAuthorityDeleteCategoryException.class);
 
             // then
             assertThat(categoryServiceTestHelper.카테고리를_조회한다(categoryId)).isNotNull();
@@ -347,10 +343,10 @@ class CategoryServiceTest {
         @Test
         void 부모_카테고리의_자식에서_제거된다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "하위",
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            Long childCategoryId = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogId, "하위",
                     categoryId);
-            DeleteCategoryCommand command = new DeleteCategoryCommand(mallangId, mallangBlogName, childCategoryId);
+            DeleteCategoryCommand command = new DeleteCategoryCommand(mallangId, childCategoryId);
 
             // when
             categoryService.delete(command);
@@ -367,8 +363,8 @@ class CategoryServiceTest {
         @Test
         void 카테고리_제거_이벤트가_발행된다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "최상위");
-            DeleteCategoryCommand command = new DeleteCategoryCommand(mallangId, mallangBlogName, categoryId);
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogId, "최상위");
+            DeleteCategoryCommand command = new DeleteCategoryCommand(mallangId, categoryId);
 
             // when
             categoryService.delete(command);

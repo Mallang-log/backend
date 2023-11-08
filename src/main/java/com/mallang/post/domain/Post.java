@@ -155,6 +155,6 @@ public class Post extends CommonDomainModel {
 
     public void delete(Long memberId) {
         validateOwner(memberId, new NoAuthorityDeletePostException());
-        registerEvent(new PostDeleteEvent(getId(), getBlog().getId()));
+        registerEvent(new PostDeleteEvent(getId()));
     }
 }

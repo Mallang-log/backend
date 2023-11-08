@@ -37,7 +37,7 @@ public abstract class Comment extends CommonDomainModel {
     private String content;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     private boolean deleted;
