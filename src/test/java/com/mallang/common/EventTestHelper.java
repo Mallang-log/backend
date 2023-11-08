@@ -19,6 +19,8 @@ public class EventTestHelper {
     }
 
     public int 이벤트_발생_횟수(Class<?> eventClass) {
-        return store.get(eventClass);
+        Integer result = store.getOrDefault(eventClass, 0);
+        store.clear();
+        return result;
     }
 }

@@ -18,4 +18,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("blogName") BlogName blogName,
             @Param("categoryId") Long categoryId
     );
+
+    @Query("SELECT p FROM Post p WHERE p.blog.name = :blogName AND p.id IN (:ids)")
+    List<Post> findAllByBlogNameAndPostIdsIn(
+            @Param("blogName") BlogName blogName,
+            @Param("ids") List<Long> ids
+    );
 }
