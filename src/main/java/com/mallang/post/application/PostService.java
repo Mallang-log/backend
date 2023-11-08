@@ -11,6 +11,7 @@ import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostOrderInBlogGenerator;
 import com.mallang.post.domain.PostRepository;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -27,12 +28,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
+    private final PostOrderInBlogGenerator postOrderInBlogGenerator;
 
     public Long create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
         Category category = getCategoryByIdIfPresent(command.categoryId(), command.blogName());
-        Post post = command.toPost(member, blog, category);
+        Long postIdInBlog = postOrderInBlogGenerator.generate(blog);
+        Post post = command.toPost(member, blog, category, postIdInBlog);
         Post saved = postRepository.save(post);
         return saved.getId();
     }

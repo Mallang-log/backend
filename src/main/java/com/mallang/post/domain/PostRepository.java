@@ -1,5 +1,6 @@
 package com.mallang.post.domain;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogName;
 import com.mallang.post.exception.NotFoundPostException;
 import java.util.List;
@@ -24,4 +25,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("blogName") BlogName blogName,
             @Param("ids") List<Long> ids
     );
+
+    Long countByBlog(Blog blog);
 }

@@ -18,10 +18,11 @@ public record CreatePostCommand(
         @Nullable Long categoryId,
         List<String> tags
 ) {
-    public Post toPost(Member member, Blog blog, Category category) {
+    public Post toPost(Member member, Blog blog, Category category, Long postIdInBlog) {
         return Post.builder()
                 .title(title)
                 .content(content)
+                .order(postIdInBlog)
                 .member(member)
                 .blog(blog)
                 .category(category)

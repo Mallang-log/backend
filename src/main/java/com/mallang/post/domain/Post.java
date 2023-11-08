@@ -21,6 +21,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,8 +32,20 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(
+        name = "post",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"orders", "blog_id"}
+                )
+        }
+)
 @Entity
 public class Post extends CommonDomainModel {
+
+    // TODO https://github.com/jakartaee/persistence/issues/113 해당 이슈 해결되면, 해당 방법 사용해서 자동 생성되도록 수정하기
+    @Column(name = "orders", nullable = false, updatable = false)
+    private Long order;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
@@ -59,14 +73,16 @@ public class Post extends CommonDomainModel {
 
     @Builder
     public Post(
+            Long order,
             String title,
+            Blog blog,
             String content,
             Member member,
-            Blog blog,
             @Nullable Category category,
             List<String> tags
     ) {
         blog.validateOwner(member.getId());
+        this.order = order;
         this.title = title;
         this.content = content;
         this.blog = blog;
