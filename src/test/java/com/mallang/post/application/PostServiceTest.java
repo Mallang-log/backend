@@ -1,5 +1,6 @@
 package com.mallang.post.application;
 
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +21,6 @@ import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.Tag;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import java.util.List;
@@ -79,7 +79,7 @@ class PostServiceTest {
                     .memberId(memberId)
                     .blogId(blogId)
                     .title("포스트 1")
-                    .visibility(Visibility.PUBLIC)
+                    .visibility(PUBLIC)
                     .content("content")
                     .build();
 
@@ -99,7 +99,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
-                    .visibility(Visibility.PUBLIC)
+                    .visibility(PUBLIC)
                     .categoryId(categoryId)
                     .build();
 
@@ -121,7 +121,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
-                    .visibility(Visibility.PUBLIC)
+                    .visibility(PUBLIC)
                     .categoryId(1000L)
                     .build();
 
@@ -143,7 +143,7 @@ class PostServiceTest {
                     .blogId(otherBlogId)
                     .title("포스트 1")
                     .content("content")
-                    .visibility(Visibility.PUBLIC)
+                    .visibility(PUBLIC)
                     .build();
 
             // then
@@ -163,7 +163,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
-                    .visibility(Visibility.PUBLIC)
+                    .visibility(PUBLIC)
                     .categoryId(categoryId)
                     .build();
 
@@ -181,7 +181,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
-                    .visibility(Visibility.PUBLIC)
+                    .visibility(PUBLIC)
                     .tags(List.of("tag1", "tag2", "tag3"))
                     .build();
 
@@ -213,7 +213,10 @@ class PostServiceTest {
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", "태그1");
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null, List.of("태그2")));
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID,
+                    "수정제목", "수정내용",
+                    PUBLIC, null,
+                    null, List.of("태그2")));
 
             // then
             transactionHelper.doAssert(() -> {
@@ -234,7 +237,10 @@ class PostServiceTest {
             // when
             assertThatThrownBy(() ->
                     postService.update(
-                            new UpdatePostCommand(otherMemberId, 포스트_ID, "수정제목", "수정내용", null, emptyList()))
+                            new UpdatePostCommand(otherMemberId, 포스트_ID,
+                                    "수정제목", "수정내용",
+                                    PUBLIC, null,
+                                    null, emptyList()))
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then
@@ -250,7 +256,10 @@ class PostServiceTest {
             Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", springCategoryId);
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", null, emptyList()));
+            postService.update(new UpdatePostCommand(memberId, 포스트_ID,
+                    "수정제목", "수정내용",
+                    PUBLIC, null,
+                    null, emptyList()));
 
             // then
             Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
@@ -267,7 +276,10 @@ class PostServiceTest {
 
             // when
             postService.update(
-                    new UpdatePostCommand(memberId, 포스트_ID, "수정제목", "수정내용", springCategoryId, emptyList()));
+                    new UpdatePostCommand(memberId, 포스트_ID,
+                            "수정제목", "수정내용",
+                            PUBLIC, null,
+                            springCategoryId, emptyList()));
 
             // then
             transactionHelper.doAssert(() -> {
@@ -289,11 +301,9 @@ class PostServiceTest {
             postService.update(new UpdatePostCommand(
                     memberId,
                     포스트_ID,
-                    "수정제목",
-                    "수정내용",
-                    nodeCategoryId,
-                    emptyList())
-            );
+                    "수정제목", "수정내용",
+                    PUBLIC, null,
+                    nodeCategoryId, emptyList()));
 
             // then
             transactionHelper.doAssert(() -> {
@@ -316,12 +326,18 @@ class PostServiceTest {
             // when
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
-                            memberId, 포스트_ID, "수정제목", "수정내용", 1000L, emptyList()
+                            memberId, 포스트_ID,
+                            "수정제목", "수정내용",
+                            PUBLIC, null,
+                            1000L, emptyList()
                     ))
             ).isInstanceOf(NotFoundCategoryException.class);
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
-                            memberId, 포스트_ID, "수정제목", "수정내용", otherMemberSpringCategoryId, emptyList()
+                            memberId, 포스트_ID,
+                            "수정제목", "수정내용",
+                            PUBLIC, null,
+                            otherMemberSpringCategoryId, emptyList()
                     ))
             ).isInstanceOf(NoAuthorityUseCategoryException.class);
 

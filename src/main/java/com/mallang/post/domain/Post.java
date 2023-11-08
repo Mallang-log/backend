@@ -139,6 +139,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
+            PostVisibility visibility,
             @Nullable Category category,
             List<String> tags
     ) {
@@ -146,6 +147,7 @@ public class Post extends CommonDomainModel {
         setCategory(category);
         setTags(tags);
         this.title = title;
+        this.visibility = visibility;
         this.content = content;
     }
 

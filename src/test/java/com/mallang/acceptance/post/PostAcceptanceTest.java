@@ -26,6 +26,9 @@ import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_수정_�
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +50,10 @@ public class PostAcceptanceTest extends AcceptanceTest {
         var 카테고리_ID = 카테고리_생성(말랑_세션_ID, 블로그_ID, "Spring", 없음());
 
         // when
-        var 응답 = 포스트_생성_요청(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 카테고리_ID, "태그1", "태그2");
+        var 응답 = 포스트_생성_요청(말랑_세션_ID, 블로그_ID,
+                "첫 포스트", "첫 포스트이네요.",
+                PUBLIC, 없음(),
+                카테고리_ID, "태그1", "태그2");
 
         // then
         응답_상태를_검증한다(응답, 생성됨);
@@ -60,11 +66,17 @@ public class PostAcceptanceTest extends AcceptanceTest {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-        var 생성된_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1");
+        var 생성된_포스트_ID = 포스트_생성(말랑_세션_ID,
+                블로그_ID, "첫 포스트", "첫 포스트이네요.",
+                PROTECTED, "1234",
+                없음(), "태그1");
         var 카테고리_ID = 카테고리_생성(말랑_세션_ID, 블로그_ID, "Spring", 없음());
 
         // when
-        var 응답 = 포스트_수정_요청(말랑_세션_ID, 생성된_포스트_ID, "업데이트 제목", "업데이트 내용", 카테고리_ID, "태그1", "태그2");
+        var 응답 = 포스트_수정_요청(말랑_세션_ID, 생성된_포스트_ID,
+                "업데이트 제목", "업데이트 내용",
+                PRIVATE, 없음(),
+                카테고리_ID, "태그1", "태그2");
 
         // then
         응답_상태를_검증한다(응답, 정상_처리);

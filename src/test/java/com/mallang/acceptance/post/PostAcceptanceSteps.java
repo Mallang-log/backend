@@ -61,11 +61,13 @@ public class PostAcceptanceSteps {
             Long 포스트_ID,
             String 업데이트_제목,
             String 업데이트_내용,
+            Visibility 공개_범위,
+            String 비밀번호,
             Long 변경할_카테고리_ID,
             String... 태그들
     ) {
         return given(세션_ID)
-                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용, 변경할_카테고리_ID, Arrays.asList(태그들)))
+                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용, 공개_범위, 비밀번호, 변경할_카테고리_ID, Arrays.asList(태그들)))
                 .put("/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
