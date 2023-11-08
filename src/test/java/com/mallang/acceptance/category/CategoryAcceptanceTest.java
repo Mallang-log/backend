@@ -25,7 +25,6 @@ import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_내
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
 
 import com.mallang.acceptance.AcceptanceTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -136,7 +135,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     class 카테고리_제거_시 {
 
         @Test
-        void 카테고리를_제거한다() {
+        void 카테고리는_제거되며_해당_카테고리를_가진_포스트는_카테고리_없음_상태가_된다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_이름 = "mallang-log";
@@ -151,17 +150,6 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 정상_처리);
             포스트_내용_검증(블로그_이름, 포스트_ID, 예상_포스트_단일_조회_응답(포스트_ID, "말랑", 없음(), 없음(), "제목", "내용"));
-        }
-
-        @Disabled
-        @Test
-        void 카테고리가_제거되면_해당_카테고리르_가진_게시물은_카테고리_없음_상태가_된다() {
-            // given
-
-            // when
-            // TODO
-
-            // then
         }
 
         @Test

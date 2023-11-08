@@ -76,7 +76,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 포스트_삭제_시() {
+    void 포스트를_삭제한다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         var 블로그_이름 = "mallang-log";
