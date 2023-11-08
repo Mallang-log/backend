@@ -16,6 +16,6 @@ public class CommentEventHandler {
 
     @EventListener(PostDeleteEvent.class)
     void deleteCommentsFromPost(PostDeleteEvent event) {
-        commentRepository.deleteAllByBlogIdAndPostId(event.blogId(), event.postId());
+        commentRepository.deleteAllByPostId(event.postId());
     }
 }

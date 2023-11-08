@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.blog.domain.BlogName;
 import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.DeleteUnAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
@@ -58,7 +57,7 @@ class CommentServiceTest {
     private TransactionHelper transactionHelper;
 
     private Long memberId;
-    private BlogName blogName;
+    private Long blogId;
     private Long postId;
 
     @Nested
@@ -67,8 +66,8 @@ class CommentServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(memberId, "mwllang");
-            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang");
+            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
         }
 
         @Test
@@ -201,7 +200,7 @@ class CommentServiceTest {
         @Test
         void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외() {
             // given
-            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "내용");
+            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "내용");
             Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, memberId);
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(포스트2_ID)
@@ -232,8 +231,8 @@ class CommentServiceTest {
         @BeforeEach
         void setUp() {
             postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설후_이름_반환(postWriterId, "postwriter");
-            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, blogName, "제목", "내용");
+            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(postWriterId, "postwriter");
+            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, blogId, "제목", "내용");
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
         }
 
@@ -373,8 +372,8 @@ class CommentServiceTest {
         @BeforeEach
         void setUp() {
             postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
-            BlogName postWriterBlogName = blogServiceTestHelper.블로그_개설후_이름_반환(postWriterId, "postwriter");
-            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, postWriterBlogName, "제목", "내용");
+            Long postWriterBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(postWriterId, "postwriter");
+            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, postWriterBlogId, "제목", "내용");
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
         }
 

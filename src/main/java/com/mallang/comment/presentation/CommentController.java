@@ -46,7 +46,7 @@ public class CommentController {
     }
 
     @PostMapping(params = "unauthenticated=true")
-    public ResponseEntity<Void> anonymousWrite(
+    public ResponseEntity<Void> unAuthenticatedWrite(
             @RequestBody WriteAnonymousCommentRequest request
     ) {
         Long id = unAuthenticatedCommentService.write(request.toCommand());

@@ -8,7 +8,7 @@ import static com.mallang.acceptance.AcceptanceSteps.인증되지_않음;
 import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
-import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
+import static com.mallang.acceptance.blog.BlogAcceptanceTestHelper.블로그_개설;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.좋아요_취소_요청;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.포스트_좋아요_요청;
@@ -28,9 +28,8 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
     void 로그인하지_않았다면_좋아요를_누를_수_없다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 블로그_이름 = "mallang-log";
-        블로그_개설_요청(말랑_세션_ID, 블로그_이름);
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_이름, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+        var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
 
         // when
         var 응답 = 포스트_좋아요_요청(없음(), 포스트_ID);
@@ -42,9 +41,8 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
     @Test
     void 포스트에_좋아요를_누른다() {
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 블로그_이름 = "mallang-log";
-        블로그_개설_요청(말랑_세션_ID, 블로그_이름);
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_이름, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+        var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
 
         // when
         var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
@@ -57,9 +55,8 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
     void 이미_좋아요를_누른_포스트에는_중복해서_좋아요를_누를_수_없다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 블로그_이름 = "mallang-log";
-        블로그_개설_요청(말랑_세션_ID, 블로그_이름);
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_이름, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+        var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
         포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
 
         // when
@@ -73,9 +70,8 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
     void 좋아요를_취소한다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 블로그_이름 = "mallang-log";
-        블로그_개설_요청(말랑_세션_ID, 블로그_이름);
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_이름, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+        var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
         포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
 
         // when
@@ -89,9 +85,8 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
     void 좋아요를_누르지_않은_경우_취소하면_예외가_발생한다() {
         // given
         var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        var 블로그_이름 = "mallang-log";
-        블로그_개설_요청(말랑_세션_ID, 블로그_이름);
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_이름, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+        var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
 
         // when
         var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID);

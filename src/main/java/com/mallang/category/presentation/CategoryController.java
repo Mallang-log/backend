@@ -1,9 +1,8 @@
 package com.mallang.category.presentation;
 
-import com.mallang.blog.domain.BlogName;
 import com.mallang.category.application.CategoryService;
+import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
-import com.mallang.category.presentation.request.DeleteCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
 import com.mallang.category.query.CategoryQueryService;
 import com.mallang.category.query.data.CategoryData;
@@ -52,19 +51,17 @@ public class CategoryController {
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> delete(
             @PathVariable(name = "categoryId") Long categoryId,
-            @Auth Long memberId,
-            @RequestBody DeleteCategoryRequest request
+            @Auth Long memberId
     ) {
-        categoryService.delete(request.toCommand(categoryId, memberId));
+        categoryService.delete(new DeleteCategoryCommand(memberId, categoryId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryData>> findAllByBlogAndMember(
-            @RequestParam(name = "blogName", required = true) BlogName blogName,
-            @Auth Long memberId
+    public ResponseEntity<List<CategoryData>> findAllByBlog(
+            @RequestParam(name = "blogId", required = true) Long blogId
     ) {
-        List<CategoryData> result = categoryQueryService.findAllByMemberIdAndBlogName(memberId, blogName);
+        List<CategoryData> result = categoryQueryService.findAllByBlogId(blogId);
         return ResponseEntity.ok(result);
     }
 }

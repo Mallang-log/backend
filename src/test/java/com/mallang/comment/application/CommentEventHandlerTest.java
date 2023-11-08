@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.domain.BlogName;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.common.ServiceTest;
@@ -53,9 +52,9 @@ class CommentEventHandlerTest {
             Long memberId = memberServiceTestHelper.회원을_저장한다("말랑");
             Long ohterMemberId = memberServiceTestHelper.회원을_저장한다("ohter");
             Blog blog = blogServiceTestHelper.블로그_개설(memberId, "mallang-log");
-            BlogName blogName = blog.getName();
-            Long postId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "제목", "내용");
-            Long postId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "제목2", "내용1");
+            Long blogId = blog.getId();
+            Long postId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "제목", "내용");
+            Long postId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "제목2", "내용1");
             Long post1Comment1 = commentServiceTestHelper.댓글을_작성한다(postId1, "댓1", true, ohterMemberId);
             commentServiceTestHelper.대댓글을_작성한다(postId1, "댓1", true, memberId, post1Comment1);
             commentServiceTestHelper.비인증_대댓글을_작성한다(postId1, "댓1", "익1", "1234", post1Comment1);
@@ -64,7 +63,7 @@ class CommentEventHandlerTest {
             commentServiceTestHelper.댓글을_작성한다(postId2, "댓1", true, ohterMemberId); // no delete
 
             // when
-            publisher.publishEvent(new PostDeleteEvent(postId1, blog.getId()));
+            publisher.publishEvent(new PostDeleteEvent(postId1));
 
             // then
             List<Comment> all = commentRepository.findAll();

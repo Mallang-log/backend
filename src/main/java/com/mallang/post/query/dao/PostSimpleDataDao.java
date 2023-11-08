@@ -3,7 +3,6 @@ package com.mallang.post.query.dao;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
 
-import com.mallang.blog.domain.BlogName;
 import com.mallang.category.domain.Category;
 import com.mallang.category.query.dao.support.CategoryQuerySupport;
 import com.mallang.common.domain.CommonDomainModel;
@@ -31,7 +30,8 @@ public class PostSimpleDataDao {
         return query.selectFrom(post)
                 .leftJoin(post.tags, tag)
                 .where(
-                        hasCategory(cond.categoryId(), cond.blogName()),
+                        blogEq(cond.blogId()),
+                        hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
                         titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
@@ -42,7 +42,14 @@ public class PostSimpleDataDao {
                 .toList();
     }
 
-    private BooleanExpression hasCategory(@Nullable Long categoryId, String blogName) {
+    private BooleanExpression blogEq(@Nullable Long blogId) {
+        if (blogId == null) {
+            return null;
+        }
+        return post.blog.id.eq(blogId);
+    }
+
+    private BooleanExpression hasCategory(@Nullable Long categoryId) {
         if (categoryId == null) {
             return null;
         }
@@ -52,9 +59,7 @@ public class PostSimpleDataDao {
         List<Long> categoryIds = descendants.stream()
                 .map(CommonDomainModel::getId)
                 .toList();
-        return post.blog.name.eq(new BlogName(blogName)).and(
-                post.category.id.in(categoryIds)
-        );
+        return post.category.id.in(categoryIds);
     }
 
     private BooleanExpression hasTag(@Nullable String tagName) {
