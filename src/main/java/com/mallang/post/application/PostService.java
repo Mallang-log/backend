@@ -8,7 +8,7 @@ import com.mallang.category.domain.CategoryRepository;
 import com.mallang.member.domain.Member;
 import com.mallang.member.domain.MemberRepository;
 import com.mallang.post.application.command.CreatePostCommand;
-import com.mallang.post.application.command.PostDeleteCommand;
+import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
@@ -50,7 +50,7 @@ public class PostService {
         post.update(command.memberId(), command.title(), command.content(), category, command.tags());
     }
 
-    public void delete(PostDeleteCommand command) {
+    public void delete(DeletePostCommand command) {
         List<Post> posts = postRepository.findAllByBlogNameAndPostIdsIn(
                 command.blogName(), command.postIds()
         );

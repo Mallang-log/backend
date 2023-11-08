@@ -45,4 +45,20 @@ public class CommentAcceptanceTestHelper {
                 암호
         ));
     }
+
+    public static Long 비인증_댓글_작성(
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호,
+            Long 부모_댓글_Id
+    ) {
+        return ID를_추출한다(비인증_댓글_작성_요청(
+                포스트_ID,
+                내용,
+                이름,
+                암호,
+                부모_댓글_Id
+        ));
+    }
 }

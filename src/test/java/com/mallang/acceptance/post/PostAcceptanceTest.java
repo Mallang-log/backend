@@ -2,6 +2,7 @@ package com.mallang.acceptance.post;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
+import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
@@ -10,11 +11,16 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceTestHelper.카테고리_생성;
+import static com.mallang.acceptance.comment.CommentAcceptanceDatas.공개;
+import static com.mallang.acceptance.comment.CommentAcceptanceDatas.비공개;
+import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.댓글_작성;
+import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.비인증_댓글_작성;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_단일_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_전체_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.전체_조회_항목들;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_응답을_검증한다;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_삭제_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_생성_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_수정_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_요청;
@@ -67,6 +73,30 @@ public class PostAcceptanceTest extends AcceptanceTest {
         var 예상_데이터 = 예상_포스트_단일_조회_응답(생성된_포스트_ID, "말랑", 카테고리_ID, "Spring", "업데이트 제목", "업데이트 내용", "태그1", "태그2");
         var 조회_결과 = 포스트_단일_조회_요청(블로그_이름, 생성된_포스트_ID);
         포스트_단일_조회_응답을_검증한다(조회_결과, 예상_데이터);
+    }
+
+    @Test
+    void 포스트_삭제_시() {
+        // given
+        var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+        var 블로그_이름 = "mallang-log";
+        블로그_개설_요청(말랑_세션_ID, 블로그_이름);
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_이름, "첫 포스트", "첫 포스트이네요.", 없음());
+
+        var 다른_회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("다른회원");
+
+        Long 댓글1_ID = 비인증_댓글_작성(포스트_ID, "댓글", "비인증", "1234");
+        Long 댓글2_ID = 댓글_작성(다른_회원_세션_ID, 포스트_ID, "댓글", 비공개);
+        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글1_ID);
+        댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글", 공개, 댓글1_ID);
+        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글2_ID);
+
+        // when
+        var 응답 = 포스트_삭제_요청(말랑_세션_ID, 블로그_이름, 포스트_ID);
+
+        // then
+        응답_상태를_검증한다(응답, 본문_없음);
+        응답_상태를_검증한다(포스트_단일_조회_요청(블로그_이름, 포스트_ID), 찾을수_없음);
     }
 
     @Test

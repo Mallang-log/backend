@@ -16,7 +16,7 @@ import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
-import com.mallang.post.application.command.PostDeleteCommand;
+import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
@@ -353,7 +353,7 @@ class PostServiceTest {
         void 자신이_작성한_글이_아닌_경우_예외() {
             // when
             assertThatThrownBy(() -> {
-                postService.delete(new PostDeleteCommand(otherId, blogName, List.of(myPostId1)));
+                postService.delete(new DeletePostCommand(otherId, blogName, List.of(myPostId1)));
             }).isInstanceOf(NoAuthorityDeletePostException.class);
 
             // then
@@ -364,7 +364,7 @@ class PostServiceTest {
         @Test
         void 없는_글이_있으면_제외하고_제거된다() {
             // when
-            postService.delete(new PostDeleteCommand(memberId, blogName, List.of(myPostId1, 100000L)));
+            postService.delete(new DeletePostCommand(memberId, blogName, List.of(myPostId1, 100000L)));
 
             // then
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
@@ -374,7 +374,7 @@ class PostServiceTest {
         @Test
         void 원하는_포스트들을_제거하며_각각_댓글_제거_이벤트가_발행된다() {
             // when
-            postService.delete(new PostDeleteCommand(memberId, blogName, List.of(myPostId1, myPostId2)));
+            postService.delete(new DeletePostCommand(memberId, blogName, List.of(myPostId1, myPostId2)));
 
             // then
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();

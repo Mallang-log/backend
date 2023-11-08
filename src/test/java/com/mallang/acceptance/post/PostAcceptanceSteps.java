@@ -3,7 +3,9 @@ package com.mallang.acceptance.post;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.blog.domain.BlogName;
 import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostSimpleData;
@@ -46,6 +48,15 @@ public class PostAcceptanceSteps {
                 .body(new UpdatePostRequest(블로그_이름, 업데이트_제목, 업데이트_내용, 변경할_카테고리_ID, Arrays.asList(태그들)))
                 .put("/posts/{id}", 포스트_ID)
                 .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 포스트_삭제_요청(String 말랑_세션_ID, String 블로그_이름, Long 포스트_ID) {
+        return given(말랑_세션_ID)
+                .body(new DeletePostRequest(Arrays.asList(포스트_ID), new BlogName(블로그_이름)))
+                .delete("/posts")
+                .then()
+                .log().all()
                 .extract();
     }
 
