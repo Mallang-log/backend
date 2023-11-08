@@ -20,6 +20,7 @@ import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.Tag;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import java.util.List;
@@ -78,6 +79,7 @@ class PostServiceTest {
                     .memberId(memberId)
                     .blogId(blogId)
                     .title("포스트 1")
+                    .visibility(Visibility.PUBLIC)
                     .content("content")
                     .build();
 
@@ -97,6 +99,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
+                    .visibility(Visibility.PUBLIC)
                     .categoryId(categoryId)
                     .build();
 
@@ -118,6 +121,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
+                    .visibility(Visibility.PUBLIC)
                     .categoryId(1000L)
                     .build();
 
@@ -139,6 +143,7 @@ class PostServiceTest {
                     .blogId(otherBlogId)
                     .title("포스트 1")
                     .content("content")
+                    .visibility(Visibility.PUBLIC)
                     .build();
 
             // then
@@ -158,6 +163,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
+                    .visibility(Visibility.PUBLIC)
                     .categoryId(categoryId)
                     .build();
 
@@ -175,6 +181,7 @@ class PostServiceTest {
                     .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
+                    .visibility(Visibility.PUBLIC)
                     .tags(List.of("tag1", "tag2", "tag3"))
                     .build();
 

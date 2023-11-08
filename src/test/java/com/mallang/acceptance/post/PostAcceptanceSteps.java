@@ -3,6 +3,7 @@ package com.mallang.acceptance.post;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -25,7 +26,28 @@ public class PostAcceptanceSteps {
             Long 카테고리_ID,
             String... 태그들
     ) {
-        CreatePostRequest request = new CreatePostRequest(블로그_ID, 포스트_제목, 포스트_내용, 카테고리_ID, Arrays.asList(태그들));
+        return 포스트_생성_요청(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, Visibility.PUBLIC, null, 카테고리_ID, 태그들);
+    }
+
+    public static ExtractableResponse<Response> 포스트_생성_요청(
+            String 세션_ID,
+            Long 블로그_ID,
+            String 포스트_제목,
+            String 포스트_내용,
+            Visibility 공개_범위,
+            String 비밀번호,
+            Long 카테고리_ID,
+            String... 태그들
+    ) {
+        CreatePostRequest request = new CreatePostRequest(
+                블로그_ID,
+                포스트_제목,
+                포스트_내용,
+                공개_범위,
+                비밀번호,
+                카테고리_ID,
+                Arrays.asList(태그들)
+        );
         return given(세션_ID)
                 .body(request)
                 .when()

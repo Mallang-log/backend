@@ -11,12 +11,14 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
+import com.mallang.post.domain.visibility.PostVisibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -57,6 +59,9 @@ public class Post extends CommonDomainModel {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Embedded
+    private PostVisibility visibility;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -77,6 +82,7 @@ public class Post extends CommonDomainModel {
             String title,
             Blog blog,
             String content,
+            PostVisibility visibility,
             Member member,
             @Nullable Category category,
             List<String> tags
@@ -87,6 +93,7 @@ public class Post extends CommonDomainModel {
         this.content = content;
         this.blog = blog;
         this.member = member;
+        this.visibility = visibility;
         setCategory(category);
         setTags(tags);
     }

@@ -3,6 +3,8 @@ package com.mallang.post.application;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.visibility.PostVisibility;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,15 +20,26 @@ public class PostServiceTestHelper {
     private final PostRepository postRepository;
 
     public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, String... 태그들) {
-        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, null, 태그들);
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, new PostVisibility(Visibility.PUBLIC), null, 태그들);
     }
 
     public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, new PostVisibility(Visibility.PUBLIC), 카테고리_ID, 태그들);
+    }
+
+    public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, PostVisibility 공개범위, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, 공개범위, null, 태그들);
+    }
+
+    public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, PostVisibility 공개범위, Long 카테고리_ID,
+                          String... 태그들) {
         return postService.create(new CreatePostCommand(
                 회원_ID,
                 블로그_ID,
                 제목,
                 내용,
+                공개범위.getVisibility(),
+                공개범위.getPassword(),
                 카테고리_ID,
                 Arrays.asList(태그들)
         ));
