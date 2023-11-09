@@ -8,6 +8,8 @@ import static org.mockito.Mockito.mock;
 
 import com.mallang.blog.domain.Blog;
 import com.mallang.member.domain.Member;
+import com.mallang.post.domain.visibility.PostVisibility;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -26,6 +28,7 @@ class PostLikeTest {
             .title("제목")
             .content("내용")
             .member(mallang)
+            .visibility(new PostVisibility(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
 

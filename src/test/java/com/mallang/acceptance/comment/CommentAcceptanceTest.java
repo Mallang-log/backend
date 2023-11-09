@@ -30,6 +30,8 @@ import static com.mallang.acceptance.comment.CommentAcceptanceSteps.특정_포�
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.댓글_작성;
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.비인증_댓글_작성;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PROTECTED;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -129,6 +131,53 @@ public class CommentAcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 잘못된_요청);
+        }
+
+        @Test
+        void 블로그_주인이_아닌_경우_보호되었거나_비공개된_글에는_해당_API로_댓글을_작성할_수_없다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+            var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+            var 비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.",
+                    PRIVATE, 없음(),
+                    없음(), "태그1", "태그2");
+            var 보호_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.",
+                    PROTECTED, "1234",
+                    없음(), "태그1", "태그2");
+
+            // when
+            var 비공개_응답 = 댓글_작성_요청(동훈_세션_ID, 비공개_포스트_ID, "댓글", 비공개);
+            var 보호_응답 = 댓글_작성_요청(동훈_세션_ID, 보호_포스트_ID, "댓글", 비공개);
+
+            // then
+            응답_상태를_검증한다(비공개_응답, 권한_없음);
+            응답_상태를_검증한다(보호_응답, 권한_없음);
+        }
+
+        @Test
+        void 블로그_주인은_경우_보호되었거나_비공개된_글에도_댓글을_작성할_수_있다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+            var 비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.",
+                    PRIVATE, 없음(),
+                    없음(), "태그1", "태그2");
+            var 보호_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.",
+                    PROTECTED, "1234",
+                    없음(), "태그1", "태그2");
+
+            // when
+            var 비공개_응답 = 댓글_작성_요청(말랑_세션_ID, 비공개_포스트_ID, "댓글", 비공개);
+            var 보호_응답 = 댓글_작성_요청(말랑_세션_ID, 보호_포스트_ID, "댓글", 비공개);
+
+            // then
+            응답_상태를_검증한다(비공개_응답, 생성됨);
+            응답_상태를_검증한다(보호_응답, 생성됨);
         }
     }
 

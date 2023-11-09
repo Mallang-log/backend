@@ -4,6 +4,8 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.domain.Member;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -30,11 +32,24 @@ public class PostLike extends CommonDomainModel {
     }
 
     public void click(PostLikeValidator postLikeValidator) {
+        validatePostVisibility();
         postLikeValidator.validateClickLike(post, member);
         post.clickLike();
     }
 
     public void cancel() {
+        validatePostVisibility();
         post.cancelLike();
+    }
+
+    // TODO: 개선
+    private void validatePostVisibility() {
+        if (post.getVisibility().getVisibility() == Visibility.PUBLIC) {
+            return;
+        }
+        if (post.getMember().equals(member)) {
+            return;
+        }
+        throw new NoAuthorityAccessPostException();
     }
 }

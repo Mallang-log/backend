@@ -13,6 +13,8 @@ import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.visibility.PostVisibility;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -30,6 +32,7 @@ class AuthenticatedCommentTest {
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .member(postWriter)
+            .visibility(new PostVisibility(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
     private final Member member = 말랑(1L);

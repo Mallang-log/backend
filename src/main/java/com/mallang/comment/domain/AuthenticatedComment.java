@@ -6,6 +6,8 @@ import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,6 +39,18 @@ public class AuthenticatedComment extends Comment {
         super(content, post, parent);
         this.secret = secret;
         this.writer = writer;
+        validatePostVisibility();
+    }
+
+    // TODO: 개선
+    private void validatePostVisibility() {
+        if (getPost().getVisibility().getVisibility() == Visibility.PUBLIC) {
+            return;
+        }
+        if (getPost().getMember().equals(writer)) {
+            return;
+        }
+        throw new NoAuthorityAccessPostException();
     }
 
     public void update(
@@ -44,6 +58,7 @@ public class AuthenticatedComment extends Comment {
             String content,
             boolean secret
     ) {
+        validatePostVisibility();
         validateWriter(writer);
         super.update(content);
         this.secret = secret;
@@ -56,6 +71,7 @@ public class AuthenticatedComment extends Comment {
     }
 
     public void delete(Member member, CommentDeleteService commentDeleteService) {
+        validatePostVisibility();
         if (!isPostOwner(member)) {
             validateWriter(member);
         }
