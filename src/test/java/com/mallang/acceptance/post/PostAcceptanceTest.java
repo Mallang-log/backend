@@ -294,6 +294,67 @@ public class PostAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
+        void 비공개_포스트인_경우_주인에게만_조회되며_나머지_포스트는_모든_사람이_조회할_수_있다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+            var 말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+            var 동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghub-log");
+            Long 말랑_공개_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+                    "mallang-public", "mallang-public-content",
+                    PUBLIC, 없음(), 없음());
+            Long 말랑_보호_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+                    "mallang-protected", "mallang-protected-content",
+                    PROTECTED, "1234", 없음());
+            Long 말랑_비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+                    "mallang-private", "mallang-private-content",
+                    PRIVATE, 없음(), 없음());
+
+            Long 동훈_공개_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_ID,
+                    "donghun-public", "donghun-public-content",
+                    PUBLIC, 없음(), 없음());
+            Long 동훈_보호_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_ID,
+                    "donghun-protected", "donghun-protected-content",
+                    PROTECTED, "123455", 없음());
+            Long 동훈_비공개_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_ID,
+                    "donghun-private", "donghun-private-content",
+                    PRIVATE, 없음(), 없음());
+
+            // when
+            var 응답 = 포스트_전체_조회_요청(동훈_세션_ID, 없음(), 없음(), 없음(), 없음(), 없음(), 없음(), 없음());
+
+            // then
+            var 예상_데이터 = 전체_조회_항목들(
+
+                    예상_포스트_전체_조회_응답(동훈_비공개_포스트_ID, "동훈",
+                            없음(), 없음(),
+                            "donghun-private", "donghun-private-content",
+                            PRIVATE),
+
+                    예상_포스트_전체_조회_응답(동훈_보호_포스트_ID, "동훈",
+                            없음(), 없음(),
+                            "donghun-protected", "donghun-protected-content",
+                            PROTECTED),
+
+                    예상_포스트_전체_조회_응답(동훈_공개_포스트_ID, "동훈",
+                            없음(), 없음(),
+                            "donghun-public", "donghun-public-content",
+                            PUBLIC),
+
+                    예상_포스트_전체_조회_응답(말랑_보호_포스트_ID, "말랑",
+                            없음(), 없음(),
+                            "mallang-protected", "보호되어 있는 글입니다.",
+                            PROTECTED),
+
+                    예상_포스트_전체_조회_응답(말랑_공개_포스트_ID, "말랑",
+                            없음(), 없음(),
+                            "mallang-public", "mallang-public-content",
+                            PUBLIC)
+            );
+            포스트_전체_조회_응답을_검증한다(응답, 예상_데이터);
+        }
+
+        @Test
         void 특정_카테고리로_검색하면_해당_카테고리와_하위_카테고리에_해당하는_포스트가_조회된다() {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");

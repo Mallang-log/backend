@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class PostDataProtector {
 
     public PostDetailData protectIfRequired(Long memberId, PostDetailData postDetailData) {
-        if (postDetailData.visibility() != Visibility.PROTECTED) {
+        if (isNotProtected(postDetailData.visibility())) {
             return postDetailData;
         }
         if (postDetailData.writerInfo().writerId().equals(memberId)) {
@@ -31,7 +31,33 @@ public class PostDataProtector {
         );
     }
 
+    private boolean isNotProtected(Visibility visibility) {
+        return visibility != Visibility.PROTECTED;
+    }
+
     public List<PostSimpleData> protectIfRequired(Long memberId, List<PostSimpleData> result) {
-        return result;
+        return result.stream()
+                .map(it -> protectIfRequired(memberId, it))
+                .toList();
+    }
+
+    private PostSimpleData protectIfRequired(Long memberId, PostSimpleData postSimpleData) {
+        if (isNotProtected(postSimpleData.visibility())) {
+            return postSimpleData;
+        }
+        if (postSimpleData.writerInfo().writerId().equals(memberId)) {
+            return postSimpleData;
+        }
+        return new PostSimpleData(
+                postSimpleData.id(),
+                postSimpleData.title(),
+                "보호되어 있는 글입니다.",
+                postSimpleData.visibility(),
+                postSimpleData.likeCount(),
+                postSimpleData.createdDate(),
+                postSimpleData.writerInfo(),
+                postSimpleData.categoryInfo(),
+                postSimpleData.tagSimpleInfos()
+        );
     }
 }

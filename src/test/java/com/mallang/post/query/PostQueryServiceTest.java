@@ -210,23 +210,23 @@ class PostQueryServiceTest {
             Blog blog = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log");
             Blog otherBlog = blogServiceTestHelper.블로그_개설(otherId, "other-log");
             postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
-                    "mallang-public", "content",
+                    "mallang-public", "mallang-public",
                     new PostVisibility(PUBLIC, null));
             postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
-                    "mallang-protected", "content",
+                    "mallang-protected", "mallang-protected",
                     new PostVisibility(PROTECTED, "1234"));
             postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
-                    "mallang-private", "content",
+                    "mallang-private", "mallang-private",
                     new PostVisibility(PRIVATE, null));
 
             postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
-                    "ohter-public", "content",
+                    "ohter-public", "ohter-public",
                     new PostVisibility(PUBLIC, null));
             postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
-                    "ohter-protected", "content",
+                    "ohter-protected", "ohter-protected",
                     new PostVisibility(PROTECTED, "1234"));
             postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
-                    "ohter-private", "content",
+                    "ohter-private", "ohter-private",
                     new PostVisibility(PRIVATE, null));
 
             // when
@@ -239,8 +239,11 @@ class PostQueryServiceTest {
             assertThat(search)
                     .extracting(PostSimpleData::title)
                     .containsExactly("ohter-protected", "ohter-public",
-                            "mallang-private", "mallang-protected", "mallang-public"
-                    );
+                            "mallang-private", "mallang-protected", "mallang-public");
+            assertThat(search)
+                    .extracting(PostSimpleData::content)
+                    .containsExactly("보호되어 있는 글입니다.", "ohter-public",
+                            "mallang-private", "mallang-protected", "mallang-public");
         }
 
         @Test
