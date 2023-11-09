@@ -1,6 +1,7 @@
 package com.mallang.auth.presentation;
 
 import com.mallang.common.auth.OptionalAuth;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class OptionalAuthArgumentResolver implements HandlerMethodArgumentResolv
     }
 
     @Override
-    public Object resolveArgument(
+    public @Nullable Object resolveArgument(
             MethodParameter parameter,
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,

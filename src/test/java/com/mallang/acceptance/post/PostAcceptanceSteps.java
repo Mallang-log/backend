@@ -1,6 +1,7 @@
 package com.mallang.acceptance.post;
 
 import static com.mallang.acceptance.AcceptanceSteps.given;
+import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
@@ -103,6 +104,23 @@ public class PostAcceptanceSteps {
         assertThat(postDetailData).usingRecursiveComparison()
                 .ignoringFields("writerInfo.writerId", "writerInfo.writerProfileImageUrl", "createdDate")
                 .isEqualTo(예상_데이터);
+        assertThat(postDetailData.password()).isNull();
+    }
+
+    public static ExtractableResponse<Response> 보호된_포스트_단일_조회_요청(
+            Long 포스트_ID, String 비밀번호
+    ) {
+        return 보호된_포스트_단일_조회_요청(null, 포스트_ID, 비밀번호);
+    }
+
+    public static ExtractableResponse<Response> 보호된_포스트_단일_조회_요청(
+            String 세션_ID, Long 포스트_ID, String 비밀번호
+    ) {
+        return given(세션_ID)
+                .header(PROTECTED_PASSWORD_HEADER, 비밀번호)
+                .get("/posts/{id}", 포스트_ID)
+                .then().log().all()
+                .extract();
     }
 
     public static ExtractableResponse<Response> 포스트_전체_조회_요청(

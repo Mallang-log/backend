@@ -1,5 +1,6 @@
 package com.mallang.post.query.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
@@ -16,6 +17,7 @@ public record PostDetailData(
         String content,
         Visibility visibility,
         boolean isProtected,
+        @JsonIgnore String password,
         int likeCount,
         boolean isLiked,
         LocalDateTime createdDate,
@@ -34,6 +36,7 @@ public record PostDetailData(
                 .title(post.getTitle())
                 .content(post.getContent())
                 .visibility(post.getVisibilityPolish().getVisibility())
+                .password(post.getVisibilityPolish().getPassword())
                 .likeCount(post.getLikeCount())
                 .isLiked(isLiked)
                 .createdDate(post.getCreatedDate())

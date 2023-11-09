@@ -17,6 +17,7 @@ import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.BadPostSearchCondException;
+import com.mallang.post.exception.IncorrectAccessPostException;
 import com.mallang.post.exception.NoAuthorityViewPostException;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
@@ -165,6 +166,52 @@ class PostQueryServiceTest {
             assertThat(response.writerInfo()).isEqualTo(new WriterDetailInfo(memberId, "말랑", "말랑"));
             assertThat(response.title()).isEqualTo("포스트 1");
             assertThat(response.content()).isEqualTo("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.");
+            assertThat(response.createdDate()).isNotNull();
+        }
+    }
+
+    @Nested
+    class 보호된_포스트_조회_시 {
+
+        @Test
+        void 보호된_포스트가_아니라면_예외() {
+            // given
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트 1", "content");
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postQueryService.getProtectedById(null, id, "1234")
+            ).isInstanceOf(IncorrectAccessPostException.class);
+        }
+
+        @Test
+        void 비밀번호가_일치하지_않으면_조회할_수_없다() {
+            // given
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+                    "포스트 1", "content",
+                    new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postQueryService.getProtectedById(null, id, "134")
+            ).isInstanceOf(NoAuthorityViewPostException.class);
+        }
+
+        @Test
+        void 비밀번호가_일치하면_조회된다() {
+            // given
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+                    "포스트 1", "content",
+                    new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
+
+            // when
+            PostDetailData response = postQueryService.getProtectedById(null, id, "1234");
+
+            // then
+            assertThat(response.id()).isEqualTo(id);
+            assertThat(response.writerInfo()).isEqualTo(new WriterDetailInfo(memberId, "말랑", "말랑"));
+            assertThat(response.title()).isEqualTo("포스트 1");
+            assertThat(response.content()).isEqualTo("content");
             assertThat(response.createdDate()).isNotNull();
         }
     }

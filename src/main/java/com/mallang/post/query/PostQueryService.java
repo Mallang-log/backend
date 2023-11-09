@@ -27,6 +27,12 @@ public class PostQueryService {
         return postDataProtector.protectIfRequired(memberId, postDetailData);
     }
 
+    public PostDetailData getProtectedById(@Nullable Long memberId, Long id, String password) {
+        PostDetailData postDetailData = postDetailDataDao.find(memberId, id);
+        postDataValidator.validateAccessProtected(postDetailData, password);
+        return postDetailData;
+    }
+
     public List<PostSimpleData> search(@Nullable Long memberId, PostSearchCond cond) {
         List<PostSimpleData> result = postSimpleDataDao.search(memberId, cond);
         return postDataProtector.protectIfRequired(memberId, result);
