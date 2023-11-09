@@ -15,6 +15,7 @@ public record PostDetailData(
         String title,
         String content,
         Visibility visibility,
+        boolean isProtected,
         int likeCount,
         boolean isLiked,
         LocalDateTime createdDate,

@@ -16,6 +16,8 @@ import static com.mallang.acceptance.comment.CommentAcceptanceDatas.공개;
 import static com.mallang.acceptance.comment.CommentAcceptanceDatas.비공개;
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.댓글_작성;
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.비인증_댓글_작성;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.보호되지_않음;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.보호됨;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_단일_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_전체_조회_응답;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.전체_조회_항목들;
@@ -88,7 +90,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         var 예상_데이터 = 예상_포스트_단일_조회_응답(생성된_포스트_ID, "말랑",
                 카테고리_ID, "Spring",
                 "업데이트 제목", "업데이트 내용",
-                PRIVATE, 좋아요_안눌림,
+                PRIVATE, 보호되지_않음, 좋아요_안눌림,
                 "태그1", "태그2");
         포스트_단일_조회_응답을_검증한다(조회_결과, 예상_데이터);
     }
@@ -134,8 +136,8 @@ public class PostAcceptanceTest extends AcceptanceTest {
             var 예상_데이터 = 예상_포스트_단일_조회_응답(생성된_포스트_ID, "말랑",
                     카테고리_ID, "Spring",
                     "첫 포스트", "첫 포스트이네요.",
-                    PUBLIC, 좋아요_안눌림,
-                    "태그1");
+                    PUBLIC, 보호되지_않음,
+                    좋아요_안눌림, "태그1");
             포스트_단일_조회_응답을_검증한다(응답, 예상_데이터);
         }
 
@@ -170,12 +172,14 @@ public class PostAcceptanceTest extends AcceptanceTest {
                     예상_포스트_단일_조회_응답(포스트_ID, "말랑",
                             없음(), 없음(),
                             "첫 포스트", "첫 포스트이네요.",
-                            PUBLIC, 좋아요_눌림, 1));
+                            PUBLIC, 보호되지_않음,
+                            좋아요_눌림, 1));
             포스트_단일_조회_응답을_검증한다(좋아요_안눌린_응답,
                     예상_포스트_단일_조회_응답(포스트_ID, "말랑",
                             없음(), 없음(),
                             "첫 포스트", "첫 포스트이네요.",
-                            PUBLIC, 좋아요_안눌림, 1));
+                            PUBLIC, 보호되지_않음,
+                            좋아요_안눌림, 1));
         }
 
         @Test
@@ -195,7 +199,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
                     예상_포스트_단일_조회_응답(포스트_ID, "말랑",
                             없음(), 없음(),
                             "첫 포스트", "첫 포스트이네요.",
-                            PRIVATE, 좋아요_안눌림));
+                            PRIVATE, 보호되지_않음, 좋아요_안눌림));
         }
 
         @Test
@@ -231,7 +235,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
                     예상_포스트_단일_조회_응답(포스트_ID, "말랑",
                             없음(), 없음(),
                             "첫 포스트", "첫 포스트이네요.",
-                            PROTECTED, 좋아요_안눌림));
+                            PROTECTED, 보호되지_않음, 좋아요_안눌림));
         }
 
         @Test
@@ -251,7 +255,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
                     예상_포스트_단일_조회_응답(포스트_ID, "말랑",
                             없음(), 없음(),
                             "첫 포스트", "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
-                            PROTECTED, 좋아요_안눌림));
+                            PROTECTED, 보호됨, 좋아요_안눌림));
         }
     }
 
