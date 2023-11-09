@@ -4,6 +4,7 @@ import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.Tag;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -13,6 +14,7 @@ public record PostDetailData(
         Long id,
         String title,
         String content,
+        Visibility visibility,
         int likeCount,
         boolean isLiked,
         LocalDateTime createdDate,
@@ -30,6 +32,7 @@ public record PostDetailData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .visibility(post.getVisibility().getVisibility())
                 .likeCount(post.getLikeCount())
                 .isLiked(isLiked)
                 .createdDate(post.getCreatedDate())

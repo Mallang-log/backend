@@ -21,8 +21,10 @@ import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고�
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
 import static com.mallang.acceptance.category.CategoryAcceptanceTestHelper.카테고리_생성;
 import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_단일_조회_응답;
+import static com.mallang.acceptance.post.PostAcceptanceDatas.좋아요_안눌림;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_내용_검증;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -143,7 +145,10 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 정상_처리);
-            포스트_내용_검증(포스트_ID, 예상_포스트_단일_조회_응답(포스트_ID, "말랑", 없음(), 없음(), "제목", "내용"));
+            포스트_내용_검증(포스트_ID, 예상_포스트_단일_조회_응답(포스트_ID, "말랑",
+                    없음(), 없음(),
+                    "제목", "내용",
+                    PUBLIC, 좋아요_안눌림));
         }
 
         @Test

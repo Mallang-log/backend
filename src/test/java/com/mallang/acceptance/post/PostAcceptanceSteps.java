@@ -85,7 +85,14 @@ public class PostAcceptanceSteps {
     public static ExtractableResponse<Response> 포스트_단일_조회_요청(
             Long 포스트_ID
     ) {
-        return given()
+        return 포스트_단일_조회_요청(null, 포스트_ID);
+    }
+
+    public static ExtractableResponse<Response> 포스트_단일_조회_요청(
+            String 세션_ID,
+            Long 포스트_ID
+    ) {
+        return given(세션_ID)
                 .get("/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
