@@ -27,8 +27,9 @@ public class PostQueryService {
         return postDataProtector.protectIfRequired(memberId, postDetailData);
     }
 
-    public List<PostSimpleData> search(PostSearchCond cond) {
-        return postSimpleDataDao.search(cond);
+    public List<PostSimpleData> search(@Nullable Long memberId, PostSearchCond cond) {
+        List<PostSimpleData> result = postSimpleDataDao.search(memberId, cond);
+        return postDataProtector.protectIfRequired(memberId, result);
     }
 }
 

@@ -2,6 +2,7 @@ package com.mallang.post.query.dao;
 
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
 
 import com.mallang.category.domain.Category;
 import com.mallang.category.query.dao.support.CategoryQuerySupport;
@@ -26,20 +27,32 @@ public class PostSimpleDataDao {
     private final JPAQueryFactory query;
     private final CategoryQuerySupport categoryQuerySupport;
 
-    public List<PostSimpleData> search(PostSearchCond cond) {
+    public List<PostSimpleData> search(@Nullable Long memberId, PostSearchCond cond) {
         return query.selectFrom(post)
                 .leftJoin(post.tags, tag)
                 .where(
+                        filterPrivatePost(memberId),
                         blogEq(cond.blogId()),
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
                         titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
                 )
+                .orderBy(post.id.desc())
                 .fetch()
                 .stream()
                 .map(PostSimpleData::from)
                 .toList();
+    }
+
+    private BooleanExpression filterPrivatePost(@Nullable Long memberId) {
+        if (memberId == null) {
+            return post.visibility.visibility.ne(PRIVATE);
+        }
+        return post.visibility.visibility.ne(PRIVATE)
+                .or(post.visibility.visibility.eq(PRIVATE)
+                        .and(post.member.id.eq(memberId))
+                );
     }
 
     private BooleanExpression blogEq(@Nullable Long blogId) {

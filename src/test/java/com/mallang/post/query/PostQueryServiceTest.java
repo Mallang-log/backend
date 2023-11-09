@@ -1,9 +1,13 @@
 package com.mallang.post.query;
 
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.application.BlogServiceTestHelper;
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.common.ServiceTest;
 import com.mallang.member.MemberServiceTestHelper;
@@ -176,25 +180,66 @@ class PostQueryServiceTest {
             PostSearchCond cond = PostSearchCond.builder().build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(List.of(
                                     PostSimpleData.builder()
-                                            .id(post1Id)
-                                            .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .content("content1")
-                                            .build(),
-                                    PostSimpleData.builder()
                                             .id(post2Id)
                                             .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
                                             .title("포스트2")
                                             .content("content2")
+                                            .build(),
+                                    PostSimpleData.builder()
+                                            .id(post1Id)
+                                            .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                            .title("포스트1")
+                                            .content("content1")
                                             .build()
                             )
+                    );
+        }
+
+        @Test
+        void 비공개_포스트인_경우_주인에게만_조회되며_나머지_포스트는_모든_사람이_조회할_수_있다() {
+            // given
+            Long mallangId = memberServiceTestHelper.회원을_저장한다("말랑");
+            Long otherId = memberServiceTestHelper.회원을_저장한다("other");
+            Blog blog = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log");
+            Blog otherBlog = blogServiceTestHelper.블로그_개설(otherId, "other-log");
+            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
+                    "mallang-public", "content",
+                    new PostVisibility(PUBLIC, null));
+            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
+                    "mallang-protected", "content",
+                    new PostVisibility(PROTECTED, "1234"));
+            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
+                    "mallang-private", "content",
+                    new PostVisibility(PRIVATE, null));
+
+            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
+                    "ohter-public", "content",
+                    new PostVisibility(PUBLIC, null));
+            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
+                    "ohter-protected", "content",
+                    new PostVisibility(PROTECTED, "1234"));
+            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
+                    "ohter-private", "content",
+                    new PostVisibility(PRIVATE, null));
+
+            // when
+            List<PostSimpleData> search = postQueryService.search(mallangId, new PostSearchCond(
+                    null, null, null, null,
+                    null, null, null
+            ));
+
+            // then
+            assertThat(search)
+                    .extracting(PostSimpleData::title)
+                    .containsExactly("ohter-protected", "ohter-public",
+                            "mallang-private", "mallang-protected", "mallang-public"
                     );
         }
 
@@ -211,7 +256,7 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -241,25 +286,25 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(List.of(
                                     PostSimpleData.builder()
-                                            .id(post1Id)
-                                            .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .content("content1")
-                                            .categoryInfo(new CategorySimpleInfo(스프링, "스프링"))
-                                            .build(),
-                                    PostSimpleData.builder()
                                             .id(post2Id)
                                             .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
                                             .title("포스트2")
                                             .content("content2")
                                             .categoryInfo(new CategorySimpleInfo(JPA, "JPA"))
+                                            .build(),
+                                    PostSimpleData.builder()
+                                            .id(post1Id)
+                                            .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                            .title("포스트1")
+                                            .content("content1")
+                                            .categoryInfo(new CategorySimpleInfo(스프링, "스프링"))
                                             .build()
                             )
                     );
@@ -275,7 +320,7 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -304,7 +349,7 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -332,7 +377,7 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -359,23 +404,23 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(List.of(
                                     PostSimpleData.builder()
-                                            .id(post1Id)
-                                            .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .content("안녕")
-                                            .build(),
-                                    PostSimpleData.builder()
                                             .id(post2Id)
                                             .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
                                             .title("포스트2")
                                             .content("안녕하세요")
+                                            .build(),
+                                    PostSimpleData.builder()
+                                            .id(post1Id)
+                                            .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
+                                            .title("포스트1")
+                                            .content("안녕")
                                             .build()
                             )
                     );
@@ -393,17 +438,17 @@ class PostQueryServiceTest {
                     .build();
 
             // when
-            List<PostSimpleData> responses = postQueryService.search(cond);
+            List<PostSimpleData> responses = postQueryService.search(null, cond);
 
             // then
             assertThat(responses).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(List.of(
                                     PostSimpleData.builder()
-                                            .id(post1Id)
+                                            .id(post3Id)
                                             .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .content("안녕")
+                                            .title("안녕히")
+                                            .content("히히")
                                             .build(),
                                     PostSimpleData.builder()
                                             .id(post2Id)
@@ -412,10 +457,10 @@ class PostQueryServiceTest {
                                             .content("안녕하세요")
                                             .build(),
                                     PostSimpleData.builder()
-                                            .id(post3Id)
+                                            .id(post1Id)
                                             .writerInfo(new WriterSimpleInfo(memberId, "말랑", "말랑"))
-                                            .title("안녕히")
-                                            .content("히히")
+                                            .title("포스트1")
+                                            .content("안녕")
                                             .build()
                             )
                     );
@@ -432,7 +477,7 @@ class PostQueryServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    postQueryService.search(cond)
+                    postQueryService.search(null, cond)
             ).isInstanceOf(BadPostSearchCondException.class);
         }
     }

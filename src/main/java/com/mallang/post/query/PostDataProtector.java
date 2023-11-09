@@ -2,6 +2,8 @@ package com.mallang.post.query;
 
 import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import com.mallang.post.query.data.PostDetailData;
+import com.mallang.post.query.data.PostSimpleData;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,5 +29,9 @@ public class PostDataProtector {
                 postDetailData.categoryInfo(),
                 postDetailData.tagDetailInfos()
         );
+    }
+
+    public List<PostSimpleData> protectIfRequired(Long memberId, List<PostSimpleData> result) {
+        return result;
     }
 }
