@@ -4,6 +4,7 @@ import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.Tag;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -13,6 +14,7 @@ public record PostSimpleData(
         Long id,
         String title,
         String content,
+        Visibility visibility,
         int likeCount,
         LocalDateTime createdDate,
         WriterSimpleInfo writerInfo,
@@ -25,6 +27,7 @@ public record PostSimpleData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .visibility(post.getVisibility().getVisibility())
                 .likeCount(post.getLikeCount())
                 .createdDate(post.getCreatedDate())
                 .writerInfo(WriterSimpleInfo.from(post))
@@ -39,7 +42,7 @@ public record PostSimpleData(
             String writerProfileImageUrl
     ) {
         private static WriterSimpleInfo from(Post post) {
-            Member member = post.getMember();
+            Member member = post.getWriter();
             return new WriterSimpleInfo(
                     member.getId(),
                     member.getNickname(),

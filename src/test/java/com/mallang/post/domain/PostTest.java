@@ -4,6 +4,8 @@ import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static com.mallang.member.MemberFixture.동훈;
 import static com.mallang.member.MemberFixture.말랑;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,6 +16,8 @@ import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.member.domain.Member;
+import com.mallang.post.domain.visibility.PostVisibility;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
@@ -44,7 +48,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .category(springCategory)
                 .build();
@@ -65,7 +69,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .tags(List.of("tag1", "tag2"))
                     .build();
@@ -82,7 +86,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .build();
 
@@ -97,7 +101,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(mallang)
+                            .writer(mallang)
                             .blog(blog)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -110,7 +114,7 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .category(jpaCategory)
                     .build();
@@ -126,7 +130,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(mallang)
+                            .writer(mallang)
                             .blog(blog)
                             .category(otherMemberCategory)
                             .build()
@@ -142,7 +146,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(mallang)
+                            .writer(mallang)
                             .blog(otherBlog)
                             .build()
             ).isInstanceOf(IsNotBlogOwnerException.class);
@@ -158,17 +162,22 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
+                    .visibility(new PostVisibility(Visibility.PROTECTED, "123"))
                     .tags(List.of("태그1"))
                     .build();
 
             // when
-            post.update(mallang.getId(), "수정제목", "수정내용", null, List.of("태그2"));
+            post.update(mallang.getId(), "수정제목", "수정내용",
+                    new PostVisibility(PRIVATE), null,
+                    List.of("태그2")
+            );
 
             // then
             assertThat(post.getTitle()).isEqualTo("수정제목");
             assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getVisibility().getVisibility()).isEqualTo(PRIVATE);
             assertThat(post.getTags())
                     .extracting(Tag::getContent)
                     .containsExactly("태그2");
@@ -180,13 +189,13 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .build();
 
             // when
             assertThatThrownBy(() ->
-                    post.update(otherMember.getId(), "수정제목", "수정내용", null, emptyList())
+                    post.update(otherMember.getId(), "수정제목", "수정내용", new PostVisibility(PUBLIC), null, emptyList())
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 
             // then
@@ -201,7 +210,7 @@ class PostTest {
         private final Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
 
@@ -240,7 +249,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
 
@@ -256,7 +265,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
         post.clickLike();
@@ -276,7 +285,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
 

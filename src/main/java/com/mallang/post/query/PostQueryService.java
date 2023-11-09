@@ -18,13 +18,18 @@ public class PostQueryService {
 
     private final PostDetailDataDao postDetailDataDao;
     private final PostSimpleDataDao postSimpleDataDao;
+    private final PostDataValidator postDataValidator;
+    private final PostDataProtector postDataProtector;
 
     public PostDetailData getById(@Nullable Long memberId, Long id) {
-        return postDetailDataDao.find(memberId, id);
+        PostDetailData postDetailData = postDetailDataDao.find(memberId, id);
+        postDataValidator.validateViewPermissions(memberId, postDetailData);
+        return postDataProtector.protectIfRequired(memberId, postDetailData);
     }
 
-    public List<PostSimpleData> search(PostSearchCond cond) {
-        return postSimpleDataDao.search(cond);
+    public List<PostSimpleData> search(@Nullable Long memberId, PostSearchCond cond) {
+        List<PostSimpleData> result = postSimpleDataDao.search(memberId, cond);
+        return postDataProtector.protectIfRequired(memberId, result);
     }
 }
 

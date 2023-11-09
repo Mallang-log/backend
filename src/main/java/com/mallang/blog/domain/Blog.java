@@ -23,7 +23,7 @@ public class Blog extends CommonDomainModel {
     private BlogName name;
 
     @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "owner_id")
     private Member owner;
 
     @Builder

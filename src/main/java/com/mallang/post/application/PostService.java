@@ -12,6 +12,7 @@ import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostOrderInBlogGenerator;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.visibility.PostVisibility;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,14 @@ public class PostService {
     public void update(UpdatePostCommand command) {
         Post post = postRepository.getById(command.postId());
         Category category = getCategoryByIdIfPresent(command.categoryId());
-        post.update(command.memberId(), command.title(), command.content(), category, command.tags());
+        post.update(
+                command.memberId(),
+                command.title(),
+                command.content(),
+                new PostVisibility(command.visibility(), command.password()),
+                category,
+                command.tags()
+        );
     }
 
     public void delete(DeletePostCommand command) {

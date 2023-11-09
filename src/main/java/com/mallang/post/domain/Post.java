@@ -11,12 +11,14 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
+import com.mallang.post.domain.visibility.PostVisibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -57,9 +59,12 @@ public class Post extends CommonDomainModel {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Embedded
+    private PostVisibility visibility;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "writer_id", nullable = false)
+    private Member writer;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
@@ -77,16 +82,18 @@ public class Post extends CommonDomainModel {
             String title,
             Blog blog,
             String content,
-            Member member,
+            PostVisibility visibility,
+            Member writer,
             @Nullable Category category,
             List<String> tags
     ) {
-        blog.validateOwner(member.getId());
+        blog.validateOwner(writer.getId());
         this.order = order;
         this.title = title;
         this.content = content;
         this.blog = blog;
-        this.member = member;
+        this.writer = writer;
+        this.visibility = visibility;
         setCategory(category);
         setTags(tags);
     }
@@ -96,7 +103,7 @@ public class Post extends CommonDomainModel {
             removeCategory();
             return;
         }
-        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
+        validateOwner(category.getOwner().getId(), new NoAuthorityUseCategoryException());
         this.category = category;
     }
 
@@ -105,7 +112,7 @@ public class Post extends CommonDomainModel {
     }
 
     private void validateOwner(Long memberId, MallangLogException e) {
-        if (!member.getId().equals(memberId)) {
+        if (!writer.getId().equals(memberId)) {
             throw e;
         }
     }
@@ -132,6 +139,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
+            PostVisibility visibility,
             @Nullable Category category,
             List<String> tags
     ) {
@@ -139,6 +147,7 @@ public class Post extends CommonDomainModel {
         setCategory(category);
         setTags(tags);
         this.title = title;
+        this.visibility = visibility;
         this.content = content;
     }
 

@@ -70,8 +70,9 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostSimpleData>> search(
+            @OptionalAuth Long memberId,
             @ModelAttribute PostSearchCond postSearchCond
     ) {
-        return ResponseEntity.ok(postQueryService.search(postSearchCond));
+        return ResponseEntity.ok(postQueryService.search(memberId, postSearchCond));
     }
 }

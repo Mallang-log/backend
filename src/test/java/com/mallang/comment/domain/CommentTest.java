@@ -15,6 +15,8 @@ import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.visibility.PostVisibility;
+import com.mallang.post.domain.visibility.PostVisibility.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -29,7 +31,8 @@ class CommentTest {
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
-            .member(postWriter)
+            .writer(postWriter)
+            .visibility(new PostVisibility(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
     private final Member member = 말랑(1L);
@@ -156,7 +159,7 @@ class CommentTest {
                     .secret(false)
                     .build();
             Post otherPost = Post.builder()
-                    .member(postWriter)
+                    .writer(postWriter)
                     .blog(blog)
                     .build();
 
