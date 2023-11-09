@@ -32,9 +32,9 @@ import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_�
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.포스트_좋아요_요청;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;

@@ -6,7 +6,7 @@ import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
@@ -44,7 +44,7 @@ public class AuthenticatedComment extends Comment {
 
     // TODO: 개선
     private void validatePostVisibility() {
-        if (getPost().getVisibility().getVisibility() == Visibility.PUBLIC) {
+        if (getPost().getVisibilityPolish().getVisibility() == Visibility.PUBLIC) {
             return;
         }
         if (getPost().getWriter().equals(writer)) {

@@ -14,7 +14,7 @@ import org.springframework.util.ObjectUtils;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-public class PostVisibility {
+public class PostVisibilityPolicy {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -23,11 +23,11 @@ public class PostVisibility {
     @Column(nullable = true)
     private String password;
 
-    public PostVisibility(Visibility visibility) {
+    public PostVisibilityPolicy(Visibility visibility) {
         this(visibility, null);
     }
 
-    public PostVisibility(Visibility visibility, String password) {
+    public PostVisibilityPolicy(Visibility visibility, String password) {
         validate(visibility, password);
         this.visibility = visibility;
         this.password = password;

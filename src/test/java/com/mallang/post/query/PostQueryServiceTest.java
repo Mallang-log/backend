@@ -1,8 +1,8 @@
 package com.mallang.post.query;
 
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -14,8 +14,8 @@ import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.application.command.ClickPostLikeCommand;
-import com.mallang.post.domain.visibility.PostVisibility;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.exception.NoAuthorityViewPostException;
 import com.mallang.post.query.data.PostDetailData;
@@ -106,7 +106,7 @@ class PostQueryServiceTest {
             // given
             Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
                     "포스트 1", "content",
-                    new PostVisibility(Visibility.PRIVATE, null));
+                    new PostVisibilityPolicy(Visibility.PRIVATE, null));
 
             // when
             PostDetailData response = postQueryService.getById(memberId, id);
@@ -124,7 +124,7 @@ class PostQueryServiceTest {
             // given
             Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
                     "포스트 1", "content",
-                    new PostVisibility(Visibility.PRIVATE, null));
+                    new PostVisibilityPolicy(Visibility.PRIVATE, null));
 
             // when & then
             assertThatThrownBy(() ->
@@ -137,7 +137,7 @@ class PostQueryServiceTest {
             // given
             Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
                     "포스트 1", "content",
-                    new PostVisibility(Visibility.PROTECTED, "1234"));
+                    new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
 
             // when
             PostDetailData response = postQueryService.getById(memberId, id);
@@ -155,7 +155,7 @@ class PostQueryServiceTest {
             // given
             Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
                     "포스트 1", "content",
-                    new PostVisibility(Visibility.PROTECTED, "1234"));
+                    new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
 
             // when
             PostDetailData response = postQueryService.getById(memberId + 1, id);
@@ -211,23 +211,23 @@ class PostQueryServiceTest {
             Blog otherBlog = blogServiceTestHelper.블로그_개설(otherId, "other-log");
             postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
                     "mallang-public", "mallang-public",
-                    new PostVisibility(PUBLIC, null));
+                    new PostVisibilityPolicy(PUBLIC, null));
             postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
                     "mallang-protected", "mallang-protected",
-                    new PostVisibility(PROTECTED, "1234"));
+                    new PostVisibilityPolicy(PROTECTED, "1234"));
             postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
                     "mallang-private", "mallang-private",
-                    new PostVisibility(PRIVATE, null));
+                    new PostVisibilityPolicy(PRIVATE, null));
 
             postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
                     "ohter-public", "ohter-public",
-                    new PostVisibility(PUBLIC, null));
+                    new PostVisibilityPolicy(PUBLIC, null));
             postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
                     "ohter-protected", "ohter-protected",
-                    new PostVisibility(PROTECTED, "1234"));
+                    new PostVisibilityPolicy(PROTECTED, "1234"));
             postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
                     "ohter-private", "ohter-private",
-                    new PostVisibility(PRIVATE, null));
+                    new PostVisibilityPolicy(PRIVATE, null));
 
             // when
             List<PostSimpleData> search = postQueryService.search(mallangId, new PostSearchCond(

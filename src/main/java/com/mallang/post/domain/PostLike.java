@@ -4,7 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.member.domain.Member;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -44,7 +44,7 @@ public class PostLike extends CommonDomainModel {
 
     // TODO: 개선
     private void validatePostVisibility() {
-        if (post.getVisibility().getVisibility() == Visibility.PUBLIC) {
+        if (post.getVisibilityPolish().getVisibility() == Visibility.PUBLIC) {
             return;
         }
         if (post.getWriter().equals(member)) {

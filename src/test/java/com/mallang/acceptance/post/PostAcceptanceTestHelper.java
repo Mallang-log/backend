@@ -5,7 +5,7 @@ import static com.mallang.acceptance.AcceptanceSteps.given;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_응답을_검증한다;
 
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.query.data.PostDetailData;
 import java.util.Arrays;

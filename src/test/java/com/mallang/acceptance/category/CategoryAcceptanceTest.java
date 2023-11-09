@@ -25,7 +25,7 @@ import static com.mallang.acceptance.post.PostAcceptanceDatas.예상_포스트_�
 import static com.mallang.acceptance.post.PostAcceptanceDatas.좋아요_안눌림;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_내용_검증;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;

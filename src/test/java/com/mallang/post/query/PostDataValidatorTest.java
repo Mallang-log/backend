@@ -3,7 +3,7 @@ package com.mallang.post.query;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import org.junit.jupiter.api.DisplayName;
