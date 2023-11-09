@@ -33,7 +33,7 @@ class CommentDeleteServiceTest {
             .owner(postWriter)
             .build();
     private final Post post = Post.builder()
-            .member(postWriter)
+            .writer(postWriter)
             .visibility(new PostVisibility(Visibility.PUBLIC, null))
             .blog(blog)
             .build();

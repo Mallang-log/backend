@@ -47,7 +47,7 @@ public class AuthenticatedComment extends Comment {
         if (getPost().getVisibility().getVisibility() == Visibility.PUBLIC) {
             return;
         }
-        if (getPost().getMember().equals(writer)) {
+        if (getPost().getWriter().equals(writer)) {
             return;
         }
         throw new NoAuthorityAccessPostException();

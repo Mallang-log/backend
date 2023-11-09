@@ -47,7 +47,7 @@ public class PostLike extends CommonDomainModel {
         if (post.getVisibility().getVisibility() == Visibility.PUBLIC) {
             return;
         }
-        if (post.getMember().equals(member)) {
+        if (post.getWriter().equals(member)) {
             return;
         }
         throw new NoAuthorityAccessPostException();

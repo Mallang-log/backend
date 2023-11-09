@@ -32,8 +32,8 @@ public class Category extends CommonDomainModel {
     private String name;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "owner_id", nullable = false)
+    private Member owner;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
@@ -46,10 +46,10 @@ public class Category extends CommonDomainModel {
     @OneToMany(fetch = LAZY, mappedBy = "parent")
     private List<Category> children = new ArrayList<>();
 
-    private Category(String name, Member member, Blog blog) {
-        blog.validateOwner(member.getId());
+    private Category(String name, Member owner, Blog blog) {
+        blog.validateOwner(owner.getId());
         this.name = name;
-        this.member = member;
+        this.owner = owner;
         this.blog = blog;
     }
 
@@ -78,7 +78,7 @@ public class Category extends CommonDomainModel {
     }
 
     private void beRoot(CategoryValidator validator) {
-        validator.validateDuplicateRootName(member.getId(), name);
+        validator.validateDuplicateRootName(owner.getId(), name);
         unlinkFromParent();
     }
 
@@ -90,13 +90,13 @@ public class Category extends CommonDomainModel {
     }
 
     private void beChild(Category parent) {
-        validateOwner(parent.getMember().getId(), new NoAuthorityUseCategoryException());
+        validateOwner(parent.getOwner().getId(), new NoAuthorityUseCategoryException());
         validateHierarchy(parent);
         link(parent);
     }
 
     private void validateOwner(Long memberId, MallangLogException e) {
-        if (!member.getId().equals(memberId)) {
+        if (!owner.getId().equals(memberId)) {
             throw e;
         }
     }

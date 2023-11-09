@@ -49,7 +49,7 @@ public record PostDetailData(
             String writerProfileImageUrl
     ) {
         private static WriterDetailInfo from(Post post) {
-            Member member = post.getMember();
+            Member member = post.getWriter();
             return new WriterDetailInfo(
                     member.getId(),
                     member.getNickname(),

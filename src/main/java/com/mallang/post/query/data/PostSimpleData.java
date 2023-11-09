@@ -42,7 +42,7 @@ public record PostSimpleData(
             String writerProfileImageUrl
     ) {
         private static WriterSimpleInfo from(Post post) {
-            Member member = post.getMember();
+            Member member = post.getWriter();
             return new WriterSimpleInfo(
                     member.getId(),
                     member.getNickname(),

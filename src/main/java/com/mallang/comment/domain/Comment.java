@@ -99,6 +99,6 @@ public abstract class Comment extends CommonDomainModel {
     }
 
     protected boolean isPostOwner(Member member) {
-        return getPost().getMember().equals(member);
+        return getPost().getWriter().equals(member);
     }
 }

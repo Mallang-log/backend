@@ -27,7 +27,7 @@ class PostLikeTest {
     private final Post post = Post.builder()
             .title("제목")
             .content("내용")
-            .member(mallang)
+            .writer(mallang)
             .visibility(new PostVisibility(Visibility.PUBLIC, null))
             .blog(blog)
             .build();

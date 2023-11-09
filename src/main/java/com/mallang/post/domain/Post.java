@@ -63,8 +63,8 @@ public class Post extends CommonDomainModel {
     private PostVisibility visibility;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+    @JoinColumn(name = "writer_id", nullable = false)
+    private Member writer;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
@@ -83,16 +83,16 @@ public class Post extends CommonDomainModel {
             Blog blog,
             String content,
             PostVisibility visibility,
-            Member member,
+            Member writer,
             @Nullable Category category,
             List<String> tags
     ) {
-        blog.validateOwner(member.getId());
+        blog.validateOwner(writer.getId());
         this.order = order;
         this.title = title;
         this.content = content;
         this.blog = blog;
-        this.member = member;
+        this.writer = writer;
         this.visibility = visibility;
         setCategory(category);
         setTags(tags);
@@ -103,7 +103,7 @@ public class Post extends CommonDomainModel {
             removeCategory();
             return;
         }
-        validateOwner(category.getMember().getId(), new NoAuthorityUseCategoryException());
+        validateOwner(category.getOwner().getId(), new NoAuthorityUseCategoryException());
         this.category = category;
     }
 
@@ -112,7 +112,7 @@ public class Post extends CommonDomainModel {
     }
 
     private void validateOwner(Long memberId, MallangLogException e) {
-        if (!member.getId().equals(memberId)) {
+        if (!writer.getId().equals(memberId)) {
             throw e;
         }
     }

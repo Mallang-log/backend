@@ -26,7 +26,7 @@ public record CreatePostCommand(
                 .title(title)
                 .content(content)
                 .order(postIdInBlog)
-                .member(member)
+                .writer(member)
                 .visibility(new PostVisibility(visibility, password))
                 .blog(blog)
                 .category(category)

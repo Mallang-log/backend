@@ -26,7 +26,7 @@ class PostLikeValidatorTest {
     private final Post post = Post.builder()
             .title("제목")
             .content("내용")
-            .member(mallang)
+            .writer(mallang)
             .blog(blog)
             .build();
 

@@ -31,7 +31,7 @@ class CommentTest {
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
-            .member(postWriter)
+            .writer(postWriter)
             .visibility(new PostVisibility(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
@@ -159,7 +159,7 @@ class CommentTest {
                     .secret(false)
                     .build();
             Post otherPost = Post.builder()
-                    .member(postWriter)
+                    .writer(postWriter)
                     .blog(blog)
                     .build();
 

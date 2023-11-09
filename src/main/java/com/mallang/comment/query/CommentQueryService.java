@@ -32,6 +32,6 @@ public class CommentQueryService {
 
     private boolean isPostWriter(Long postId, Long memberId) {
         Post post = postRepository.getById(postId);
-        return Objects.equals(post.getMember().getId(), memberId);
+        return Objects.equals(post.getWriter().getId(), memberId);
     }
 }

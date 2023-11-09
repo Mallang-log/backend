@@ -51,7 +51,7 @@ public class PostSimpleDataDao {
         }
         return post.visibility.visibility.ne(PRIVATE)
                 .or(post.visibility.visibility.eq(PRIVATE)
-                        .and(post.member.id.eq(memberId))
+                        .and(post.writer.id.eq(memberId))
                 );
     }
 
@@ -85,7 +85,7 @@ public class PostSimpleDataDao {
     private BooleanExpression writerIdEq(@Nullable Long writerId) {
         return writerId == null
                 ? null
-                : post.member.id.eq(writerId);
+                : post.writer.id.eq(writerId);
     }
 
     private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content,

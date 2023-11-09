@@ -48,7 +48,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .category(springCategory)
                 .build();
@@ -69,7 +69,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .tags(List.of("tag1", "tag2"))
                     .build();
@@ -86,7 +86,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .build();
 
@@ -101,7 +101,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(mallang)
+                            .writer(mallang)
                             .blog(blog)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -114,7 +114,7 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .category(jpaCategory)
                     .build();
@@ -130,7 +130,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(mallang)
+                            .writer(mallang)
                             .blog(blog)
                             .category(otherMemberCategory)
                             .build()
@@ -146,7 +146,7 @@ class PostTest {
                     Post.builder()
                             .title("제목")
                             .content("내용")
-                            .member(mallang)
+                            .writer(mallang)
                             .blog(otherBlog)
                             .build()
             ).isInstanceOf(IsNotBlogOwnerException.class);
@@ -162,7 +162,7 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .visibility(new PostVisibility(Visibility.PROTECTED, "123"))
                     .tags(List.of("태그1"))
@@ -189,7 +189,7 @@ class PostTest {
             Post post = Post.builder()
                     .title("제목")
                     .content("내용")
-                    .member(mallang)
+                    .writer(mallang)
                     .blog(blog)
                     .build();
 
@@ -210,7 +210,7 @@ class PostTest {
         private final Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
 
@@ -249,7 +249,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
 
@@ -265,7 +265,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
         post.clickLike();
@@ -285,7 +285,7 @@ class PostTest {
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
-                .member(mallang)
+                .writer(mallang)
                 .blog(blog)
                 .build();
 
