@@ -7,6 +7,7 @@ import com.mallang.comment.query.data.CommentData;
 import com.mallang.comment.query.data.UnAuthenticatedCommentData;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,7 @@ public class CommentDataPostProcessor {
         throw new RuntimeException("CommentDataPostProcessor에서 처리되지 않는 형식의 댓글이 들어왔습니다.");
     }
 
-    public List<CommentData> processSecret(Long postId, List<CommentData> datas, Long memberId) {
+    public List<CommentData> processSecret(List<CommentData> datas, Long postId, @Nullable Long memberId) {
         if (isPostWriter(postId, memberId)) {
             return datas;
         }
@@ -61,12 +62,12 @@ public class CommentDataPostProcessor {
                 .toList();
     }
 
-    private boolean isPostWriter(Long postId, Long memberId) {
+    private boolean isPostWriter(Long postId, @Nullable Long memberId) {
         Post post = postRepository.getById(postId);
         return Objects.equals(post.getWriter().getId(), memberId);
     }
 
-    private CommentData processSecret(CommentData data, Long memberId) {
+    private CommentData processSecret(CommentData data, @Nullable Long memberId) {
         if (data instanceof UnAuthenticatedCommentData) {
             return data;
         }
@@ -84,7 +85,9 @@ public class CommentDataPostProcessor {
                 .writerData(ANONYMOUS)
                 .createdDate(authed.getCreatedDate())
                 .deleted(authed.isDeleted())
-                .children(authed.getChildren())
+                .children(authed.getChildren().stream()
+                        .map(it -> processSecret(it, memberId))
+                        .toList())
                 .build();
     }
 }
