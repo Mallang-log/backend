@@ -139,8 +139,6 @@ class PostTest {
 
         @Test
         void 자신의_블로그가_아니라면_예외() {
-            // given
-
             // when & then
             assertThatThrownBy(() ->
                     Post.builder()
