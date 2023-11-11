@@ -47,7 +47,6 @@ public class PostVisibilityPolicy {
     }
 
     public enum Visibility {
-
         PUBLIC,
         PROTECTED,
         PRIVATE

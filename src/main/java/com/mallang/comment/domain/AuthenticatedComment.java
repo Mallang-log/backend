@@ -56,17 +56,17 @@ public class AuthenticatedComment extends Comment {
         this.secret = secret;
     }
 
-    private void validateWriter(Member writer) {
-        if (!writer.equals(getWriter())) {
-            throw new NoAuthorityForCommentException();
-        }
-    }
-
     public void delete(Member member, CommentDeleteService commentDeleteService, @Nullable String postPassword) {
         post.validatePostAccessibility(writer.getId(), postPassword);
         if (!isPostOwner(member)) {
             validateWriter(member);
         }
         super.delete(commentDeleteService);
+    }
+
+    private void validateWriter(Member writer) {
+        if (!writer.equals(getWriter())) {
+            throw new NoAuthorityForCommentException();
+        }
     }
 }

@@ -36,15 +36,7 @@ public class PostService {
         Category category = getCategoryByIdIfPresent(command.categoryId());
         Long postIdInBlog = postOrderInBlogGenerator.generate(blog);
         Post post = command.toPost(member, blog, category, postIdInBlog);
-        Post saved = postRepository.save(post);
-        return saved.getId();
-    }
-
-    private Category getCategoryByIdIfPresent(@Nullable Long id) {
-        if (id == null) {
-            return null;
-        }
-        return categoryRepository.getById(id);
+        return postRepository.save(post).getId();
     }
 
     public void update(UpdatePostCommand command) {
@@ -66,5 +58,12 @@ public class PostService {
             post.delete(command.memberId());
             postRepository.delete(post);
         }
+    }
+
+    private Category getCategoryByIdIfPresent(@Nullable Long id) {
+        if (id == null) {
+            return null;
+        }
+        return categoryRepository.getById(id);
     }
 }

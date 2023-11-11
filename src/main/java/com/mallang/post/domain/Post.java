@@ -100,6 +100,27 @@ public class Post extends CommonDomainModel {
         setTags(tags);
     }
 
+    public void update(
+            Long memberId,
+            String title,
+            String content,
+            PostVisibilityPolicy visibility,
+            @Nullable Category category,
+            List<String> tags
+    ) {
+        validateOwner(memberId, new NoAuthorityUpdatePostException());
+        setCategory(category);
+        setTags(tags);
+        this.title = title;
+        this.visibilityPolish = visibility;
+        this.content = content;
+    }
+
+    public void delete(Long memberId) {
+        validateOwner(memberId, new NoAuthorityDeletePostException());
+        registerEvent(new PostDeleteEvent(getId()));
+    }
+
     private void setCategory(@Nullable Category category) {
         if (category == null) {
             removeCategory();
@@ -137,22 +158,6 @@ public class Post extends CommonDomainModel {
         }
     }
 
-    public void update(
-            Long memberId,
-            String title,
-            String content,
-            PostVisibilityPolicy visibility,
-            @Nullable Category category,
-            List<String> tags
-    ) {
-        validateOwner(memberId, new NoAuthorityUpdatePostException());
-        setCategory(category);
-        setTags(tags);
-        this.title = title;
-        this.visibilityPolish = visibility;
-        this.content = content;
-    }
-
     public void clickLike() {
         this.likeCount++;
     }
@@ -162,11 +167,6 @@ public class Post extends CommonDomainModel {
             throw new PostLikeCountNegativeException();
         }
         this.likeCount--;
-    }
-
-    public void delete(Long memberId) {
-        validateOwner(memberId, new NoAuthorityDeletePostException());
-        registerEvent(new PostDeleteEvent(getId()));
     }
 
     public void validatePostAccessibility(@Nullable Long memberId,

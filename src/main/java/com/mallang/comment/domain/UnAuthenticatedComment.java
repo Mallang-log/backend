@@ -52,12 +52,6 @@ public class UnAuthenticatedComment extends Comment {
         super.update(content);
     }
 
-    private void validatePassword(String password) {
-        if (!this.password.equals(password)) {
-            throw new NoAuthorityForCommentException();
-        }
-    }
-
     public void delete(
             @Nullable Member member,
             @Nullable String password,
@@ -69,5 +63,11 @@ public class UnAuthenticatedComment extends Comment {
             validatePassword(password);
         }
         super.delete(commentDeleteService);
+    }
+
+    private void validatePassword(String password) {
+        if (!this.password.equals(password)) {
+            throw new NoAuthorityForCommentException();
+        }
     }
 }

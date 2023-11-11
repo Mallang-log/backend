@@ -28,7 +28,6 @@ public class CommentDataPostProcessor {
         if (!data.isDeleted()) {
             return data;
         }
-
         if (data instanceof UnAuthenticatedCommentData unAuth) {
             return UnAuthenticatedCommentData.builder()
                     .id(data.getId())
@@ -39,7 +38,6 @@ public class CommentDataPostProcessor {
                     .children(unAuth.getChildren())
                     .build();
         }
-
         if (data instanceof AuthenticatedCommentData authed) {
             return AuthenticatedCommentData.builder()
                     .id(data.getId())
@@ -51,7 +49,6 @@ public class CommentDataPostProcessor {
                     .children(authed.getChildren())
                     .build();
         }
-
         throw new RuntimeException("CommentDataPostProcessor에서 처리되지 않는 형식의 댓글이 들어왔습니다.");
     }
 
