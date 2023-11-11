@@ -1,6 +1,6 @@
 package com.mallang.subscribe.query.dao;
 
-import static com.mallang.member.domain.QMember.member;
+import static com.mallang.auth.domain.QMember.member;
 import static com.mallang.subscribe.domain.QBlogSubscribe.blogSubscribe;
 
 import com.mallang.subscribe.query.data.SubscriberData;

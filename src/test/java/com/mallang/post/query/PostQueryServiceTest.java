@@ -6,11 +6,11 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.application.command.ClickPostLikeCommand;

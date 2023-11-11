@@ -1,8 +1,8 @@
 package com.mallang.subscribe.domain;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.member.domain.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;

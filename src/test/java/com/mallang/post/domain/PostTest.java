@@ -1,9 +1,9 @@
 package com.mallang.post.domain;
 
+import static com.mallang.auth.MemberFixture.동훈;
+import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
-import static com.mallang.member.MemberFixture.동훈;
-import static com.mallang.member.MemberFixture.말랑;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
@@ -11,11 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
-import com.mallang.member.domain.Member;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;

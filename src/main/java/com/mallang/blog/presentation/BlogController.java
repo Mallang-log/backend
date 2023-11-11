@@ -1,8 +1,8 @@
 package com.mallang.blog.presentation;
 
+import com.mallang.auth.presentation.support.Auth;
 import com.mallang.blog.application.BlogService;
 import com.mallang.blog.presentation.request.OpenBlogRequest;
-import com.mallang.common.auth.Auth;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

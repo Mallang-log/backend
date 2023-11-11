@@ -2,9 +2,9 @@ package com.mallang.category;
 
 import static com.mallang.category.domain.AlwaysPassCategoryValidator.alwaysPassCategoryValidator;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
-import com.mallang.member.domain.Member;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class CategoryFixture {

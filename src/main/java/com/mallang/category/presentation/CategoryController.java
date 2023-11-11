@@ -1,12 +1,12 @@
 package com.mallang.category.presentation;
 
+import com.mallang.auth.presentation.support.Auth;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
 import com.mallang.category.query.CategoryQueryService;
 import com.mallang.category.query.data.CategoryData;
-import com.mallang.common.auth.Auth;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

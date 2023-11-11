@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.application.CategoryServiceTestHelper;
@@ -14,7 +15,6 @@ import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;

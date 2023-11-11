@@ -3,9 +3,9 @@ package com.mallang.auth.domain.oauth;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.OauthServerType;
 import com.mallang.auth.exception.UnsupportedOauthTypeException;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.OauthServerType;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;

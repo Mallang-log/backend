@@ -1,7 +1,7 @@
 package com.mallang.post.application;
 
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.post.application.command.CancelPostLikeCommand;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.domain.Post;

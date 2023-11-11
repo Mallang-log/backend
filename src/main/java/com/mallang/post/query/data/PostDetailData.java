@@ -1,8 +1,8 @@
 package com.mallang.post.query.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
-import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.Tag;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;

@@ -1,12 +1,12 @@
 package com.mallang.auth.infrastructure.oauth.github;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.OauthServerType;
 import com.mallang.auth.domain.oauth.OauthMemberClient;
 import com.mallang.auth.infrastructure.oauth.github.client.GithubApiClient;
 import com.mallang.auth.infrastructure.oauth.github.dto.GithubMemberResponse;
 import com.mallang.auth.infrastructure.oauth.github.dto.GithubToken;
 import com.mallang.auth.infrastructure.oauth.github.dto.GithubTokenRequest;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.OauthServerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

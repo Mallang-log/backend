@@ -2,11 +2,11 @@ package com.mallang.comment.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;

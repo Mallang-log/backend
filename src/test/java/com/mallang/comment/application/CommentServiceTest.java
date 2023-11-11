@@ -3,6 +3,7 @@ package com.mallang.comment.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.DeleteUnAuthenticatedCommentCommand;
@@ -19,7 +20,6 @@ import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

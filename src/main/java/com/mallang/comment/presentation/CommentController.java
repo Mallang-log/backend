@@ -1,5 +1,7 @@
 package com.mallang.comment.presentation;
 
+import com.mallang.auth.presentation.support.Auth;
+import com.mallang.auth.presentation.support.OptionalAuth;
 import com.mallang.comment.application.AuthenticatedCommentService;
 import com.mallang.comment.application.UnAuthenticatedCommentService;
 import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
@@ -10,8 +12,6 @@ import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
 import com.mallang.comment.query.CommentQueryService;
 import com.mallang.comment.query.data.CommentData;
-import com.mallang.common.auth.Auth;
-import com.mallang.common.auth.OptionalAuth;
 import com.mallang.post.presentation.support.OptionalPostPassword;
 import jakarta.annotation.Nullable;
 import java.net.URI;

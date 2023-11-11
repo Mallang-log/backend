@@ -1,14 +1,15 @@
 package com.mallang.category.domain;
 
+import static com.mallang.auth.MemberFixture.동훈;
+import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
-import static com.mallang.member.MemberFixture.동훈;
-import static com.mallang.member.MemberFixture.말랑;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
@@ -17,7 +18,6 @@ import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
 import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
 import com.mallang.category.exception.NoAuthorityUseCategoryException;
-import com.mallang.member.domain.Member;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

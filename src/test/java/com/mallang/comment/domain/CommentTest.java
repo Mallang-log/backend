@@ -1,19 +1,19 @@
 package com.mallang.comment.domain;
 
-import static com.mallang.member.MemberFixture.동훈;
-import static com.mallang.member.MemberFixture.말랑;
-import static com.mallang.member.MemberFixture.회원;
+import static com.mallang.auth.MemberFixture.동훈;
+import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.MemberFixture.회원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
-import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
