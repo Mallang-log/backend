@@ -12,6 +12,7 @@ import com.mallang.comment.query.CommentQueryService;
 import com.mallang.comment.query.data.CommentData;
 import com.mallang.common.auth.Auth;
 import com.mallang.common.auth.OptionalAuth;
+import com.mallang.post.presentation.support.OptionalPostPassword;
 import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
@@ -39,45 +40,51 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<Void> write(
             @Auth Long memberId,
+            @OptionalPostPassword String postPassword,
             @RequestBody WriteAuthenticatedCommentRequest request
     ) {
-        Long id = authenticatedCommentService.write(request.toCommand(memberId));
+        Long id = authenticatedCommentService.write(request.toCommand(memberId, postPassword));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
     @PostMapping(params = "unauthenticated=true")
     public ResponseEntity<Void> unAuthenticatedWrite(
+            @OptionalPostPassword String postPassword,
             @RequestBody WriteAnonymousCommentRequest request
     ) {
-        Long id = unAuthenticatedCommentService.write(request.toCommand());
+        Long id = unAuthenticatedCommentService.write(request.toCommand(postPassword));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(
+            @OptionalPostPassword String postPassword,
             @PathVariable("id") Long commentId,
             @Auth Long memberId,
             @RequestBody UpdateAuthenticatedCommentRequest request
     ) {
-        authenticatedCommentService.update(request.toCommand(commentId, memberId));
+        authenticatedCommentService.update(request.toCommand(commentId, memberId, postPassword));
         return ResponseEntity.ok().build();
     }
 
     @PutMapping(value = "/{id}", params = "unauthenticated=true")
     public ResponseEntity<Void> update(
+            @OptionalPostPassword String postPassword,
             @PathVariable("id") Long commentId,
             @RequestBody UpdateUnAuthenticatedCommentRequest request
     ) {
-        unAuthenticatedCommentService.update(request.toCommand(commentId));
+        unAuthenticatedCommentService.update(request.toCommand(commentId, postPassword));
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
+            @OptionalPostPassword String postPassword,
             @PathVariable("id") Long commentId,
             @Auth Long memberId
     ) {
         DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
+                .postPassword(postPassword)
                 .memberId(memberId)
                 .commentId(commentId)
                 .build();
@@ -87,20 +94,22 @@ public class CommentController {
 
     @DeleteMapping(value = "/{id}", params = "unauthenticated=true")
     public ResponseEntity<Void> delete(
+            @OptionalPostPassword String postPassword,
             @OptionalAuth Long memberId,
             @PathVariable("id") Long commentId,
             @RequestBody DeleteUnAuthenticatedCommentRequest request
     ) {
-        unAuthenticatedCommentService.delete(request.toCommand(memberId, commentId));
+        unAuthenticatedCommentService.delete(request.toCommand(memberId, commentId, postPassword));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<List<CommentData>> findAll(
+            @OptionalPostPassword String postPassword,
             @Nullable @OptionalAuth Long memberId,
             @RequestParam(value = "postId", required = true) Long postId
     ) {
-        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId);
+        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
         return ResponseEntity.ok(result);
     }
 }

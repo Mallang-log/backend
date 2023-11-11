@@ -57,7 +57,28 @@ public class CommentAcceptanceSteps {
             String 암호,
             Long 부모_댓글_ID
     ) {
-        return given()
+        return 비인증_댓글_작성_요청(null, 포스트_ID, 내용, 이름, 암호, 부모_댓글_ID);
+    }
+
+    public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호
+    ) {
+        return 비인증_댓글_작성_요청(세션_ID, 포스트_ID, 내용, 이름, 암호, null);
+    }
+
+    public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호,
+            Long 부모_댓글_ID
+    ) {
+        return given(세션_ID)
                 .body(new WriteAnonymousCommentRequest(포스트_ID, 내용, 이름, 암호, 부모_댓글_ID))
                 .queryParam("unauthenticated", true)
                 .post("/comments")

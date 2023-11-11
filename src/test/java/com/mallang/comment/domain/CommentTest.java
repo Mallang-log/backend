@@ -15,8 +15,8 @@ import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibility;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,7 +32,7 @@ class CommentTest {
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .writer(postWriter)
-            .visibility(new PostVisibility(Visibility.PUBLIC, null))
+            .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
     private final Member member = 말랑(1L);
@@ -203,7 +203,7 @@ class CommentTest {
                     .build();
 
             // when
-            child.delete(null, "1234", commentDeleteService);
+            child.delete(null, "1234", commentDeleteService, null);
 
             // then
             assertThat(child.isDeleted()).isTrue();
@@ -229,7 +229,7 @@ class CommentTest {
                     .build();
 
             // when
-            parent.delete(member, commentDeleteService);
+            parent.delete(member, commentDeleteService, null);
 
             // then
             assertThat(parent.isDeleted()).isTrue();
@@ -263,7 +263,7 @@ class CommentTest {
                     .build();
 
             // when
-            childComment.delete(member, commentDeleteService);
+            childComment.delete(member, commentDeleteService, null);
 
             // then
             assertThat(childComment.getParent()).isNull();
@@ -289,10 +289,10 @@ class CommentTest {
                     .secret(true)
                     .parent(parentComment)
                     .build();
-            parentComment.delete(member, commentDeleteService);
+            parentComment.delete(member, commentDeleteService, null);
 
             // when
-            childComment.delete(member, commentDeleteService);
+            childComment.delete(member, commentDeleteService, null);
 
             // then
             assertThat(childComment.getParent()).isNull();
@@ -319,7 +319,7 @@ class CommentTest {
                     .build();
 
             // when
-            childComment.delete(member, commentDeleteService);
+            childComment.delete(member, commentDeleteService, null);
 
             // then
             assertThat(childComment.getParent()).isNull();
@@ -346,7 +346,7 @@ class CommentTest {
                     .build();
 
             // when
-            parentComment.delete(member, commentDeleteService);
+            parentComment.delete(member, commentDeleteService, null);
 
             // then
             assertThat(childComment.getParent()).isEqualTo(parentComment);

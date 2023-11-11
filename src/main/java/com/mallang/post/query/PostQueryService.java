@@ -23,8 +23,14 @@ public class PostQueryService {
 
     public PostDetailData getById(@Nullable Long memberId, Long id) {
         PostDetailData postDetailData = postDetailDataDao.find(memberId, id);
-        postDataValidator.validateViewPermissions(memberId, postDetailData);
+        postDataValidator.validateAccessPost(memberId, postDetailData);
         return postDataProtector.protectIfRequired(memberId, postDetailData);
+    }
+
+    public PostDetailData getProtectedById(@Nullable Long memberId, Long id, String password) {
+        PostDetailData postDetailData = postDetailDataDao.find(memberId, id);
+        postDataValidator.validateAccessProtectedPost(postDetailData, password);
+        return postDetailData;
     }
 
     public List<PostSimpleData> search(@Nullable Long memberId, PostSearchCond cond) {

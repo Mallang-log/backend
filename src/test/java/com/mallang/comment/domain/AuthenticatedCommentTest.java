@@ -13,8 +13,8 @@ import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibility;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,7 +32,7 @@ class AuthenticatedCommentTest {
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .writer(postWriter)
-            .visibility(new PostVisibility(Visibility.PUBLIC, null))
+            .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
     private final Member member = 말랑(1L);
@@ -85,7 +85,7 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.update(other, "수정", true)
+                    comment.update(other, "수정", true, null)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -100,7 +100,7 @@ class AuthenticatedCommentTest {
                     .build();
 
             // when
-            comment.update(member, "update", true);
+            comment.update(member, "update", true, null);
 
             // then
             assertThat(comment.getContent()).isEqualTo("update");
@@ -122,7 +122,7 @@ class AuthenticatedCommentTest {
                     .build();
 
             // when
-            comment.update(member, "변경", after);
+            comment.update(member, "변경", after, null);
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
@@ -148,7 +148,7 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertDoesNotThrow(() ->
-                    comment.delete(member, commentDeleteService)
+                    comment.delete(member, commentDeleteService, null)
             );
         }
 
@@ -164,7 +164,7 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.delete(other, commentDeleteService)
+                    comment.delete(other, commentDeleteService, null)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -187,8 +187,8 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                comment.delete(postWriter, commentDeleteService);
-                secretComment.delete(postWriter, commentDeleteService);
+                comment.delete(postWriter, commentDeleteService, null);
+                secretComment.delete(postWriter, commentDeleteService, null);
             });
         }
     }

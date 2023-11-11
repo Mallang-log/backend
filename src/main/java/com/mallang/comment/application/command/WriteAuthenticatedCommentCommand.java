@@ -6,6 +6,7 @@ import lombok.Builder;
 @Builder
 public record WriteAuthenticatedCommentCommand(
         Long postId,
+        @Nullable String postPassword,
         String content,
         boolean secret,
         Long memberId,

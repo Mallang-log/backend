@@ -1,6 +1,6 @@
 package com.mallang.acceptance.post;
 
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.CategoryDetailInfo;
 import com.mallang.post.query.data.PostDetailData.TagDetailInfos;

@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 
 import com.mallang.blog.domain.Blog;
 import com.mallang.member.domain.Member;
-import com.mallang.post.domain.visibility.PostVisibility;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -28,7 +28,7 @@ class PostLikeTest {
             .title("제목")
             .content("내용")
             .writer(mallang)
-            .visibility(new PostVisibility(Visibility.PUBLIC, null))
+            .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .blog(blog)
             .build();
 
@@ -38,7 +38,7 @@ class PostLikeTest {
         PostLike postLike = new PostLike(post, mallang);
 
         // when
-        postLike.click(postLikeValidator);
+        postLike.click(postLikeValidator, null);
 
         // then
         assertThat(post.getLikeCount()).isEqualTo(1);
@@ -54,7 +54,7 @@ class PostLikeTest {
 
         // when
         assertThatThrownBy(() -> {
-            postLike.click(postLikeValidator);
+            postLike.click(postLikeValidator, null);
         }).isInstanceOf(AlreadyLikedPostException.class);
 
         // then
@@ -65,10 +65,10 @@ class PostLikeTest {
     void 취소_시_포스트의_좋아요_수가_1_감소한다() {
         // given
         PostLike postLike = new PostLike(post, mallang);
-        postLike.click(postLikeValidator);
+        postLike.click(postLikeValidator, null);
 
         // when
-        postLike.cancel();
+        postLike.cancel(null);
 
         // then
         assertThat(post.getLikeCount()).isEqualTo(0);

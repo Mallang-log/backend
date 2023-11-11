@@ -1,11 +1,11 @@
 package com.mallang.post.query;
 
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PUBLIC;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import com.mallang.post.query.data.PostSimpleData;

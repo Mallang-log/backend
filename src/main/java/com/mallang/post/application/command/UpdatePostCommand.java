@@ -1,6 +1,6 @@
 package com.mallang.post.application.command;
 
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;

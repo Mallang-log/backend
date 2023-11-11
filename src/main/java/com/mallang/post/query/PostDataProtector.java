@@ -1,6 +1,6 @@
 package com.mallang.post.query;
 
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostSimpleData;
 import java.util.List;
@@ -22,6 +22,7 @@ public class PostDataProtector {
                 "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
                 postDetailData.visibility(),
                 true,
+                postDetailData.password(),
                 postDetailData.likeCount(),
                 postDetailData.isLiked(),
                 postDetailData.createdDate(),

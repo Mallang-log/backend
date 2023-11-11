@@ -6,6 +6,7 @@ import lombok.Builder;
 @Builder
 public record WriteUnAuthenticatedCommentCommand(
         Long postId,
+        @Nullable String postPassword,
         String content,
         String nickname,
         String password,

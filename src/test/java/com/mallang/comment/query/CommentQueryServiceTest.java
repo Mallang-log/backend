@@ -62,7 +62,7 @@ class CommentQueryServiceTest {
             commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentData> result = commentQueryService.findAllByPostId(postId, null);
+            List<CommentData> result = commentQueryService.findAllByPostId(postId, null, null);
 
             // then
             assertThat(result)
@@ -92,7 +92,7 @@ class CommentQueryServiceTest {
             commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentData> result = commentQueryService.findAllByPostId(postId, dong);
+            List<CommentData> result = commentQueryService.findAllByPostId(postId, dong, null);
 
             // then
             assertThat(result)
@@ -112,7 +112,7 @@ class CommentQueryServiceTest {
             commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId);
+            List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId, null);
 
             // then
             assertThat(result)

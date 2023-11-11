@@ -10,9 +10,10 @@ public record WriteAuthenticatedCommentRequest(
         @Nullable Long parentCommentId
 ) {
 
-    public WriteAuthenticatedCommentCommand toCommand(Long memberId) {
+    public WriteAuthenticatedCommentCommand toCommand(Long memberId, @Nullable String postPassword) {
         return WriteAuthenticatedCommentCommand.builder()
                 .postId(postId)
+                .postPassword(postPassword)
                 .content(content)
                 .secret(secret)
                 .memberId(memberId)

@@ -4,8 +4,8 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibility;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
@@ -27,7 +27,7 @@ public record CreatePostCommand(
                 .content(content)
                 .order(postIdInBlog)
                 .writer(member)
-                .visibility(new PostVisibility(visibility, password))
+                .visibilityPolish(new PostVisibilityPolicy(visibility, password))
                 .blog(blog)
                 .category(category)
                 .tags(tags)

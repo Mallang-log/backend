@@ -27,12 +27,12 @@ public class PostLikeService {
         Post post = postRepository.getById(command.postId());
         Member member = memberRepository.getById(command.memberId());
         PostLike postLike = new PostLike(post, member);
-        postLike.click(postLikeValidator);
+        postLike.click(postLikeValidator, command.postPassword());
         postLikeRepository.save(postLike);
     }
 
     public void cancel(CancelPostLikeCommand command) {
         PostLike postLike = postLikeRepository.getByPostIdAndMemberId(command.postId(), command.memberId());
-        postLike.cancel();
+        postLike.cancel(command.postPassword());
     }
 }

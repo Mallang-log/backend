@@ -2,7 +2,7 @@ package com.mallang.post.query.dao;
 
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
-import static com.mallang.post.domain.visibility.PostVisibility.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 
 import com.mallang.category.domain.Category;
 import com.mallang.category.query.dao.support.CategoryQuerySupport;
@@ -47,10 +47,10 @@ public class PostSimpleDataDao {
 
     private BooleanExpression filterPrivatePost(@Nullable Long memberId) {
         if (memberId == null) {
-            return post.visibility.visibility.ne(PRIVATE);
+            return post.visibilityPolish.visibility.ne(PRIVATE);
         }
-        return post.visibility.visibility.ne(PRIVATE)
-                .or(post.visibility.visibility.eq(PRIVATE)
+        return post.visibilityPolish.visibility.ne(PRIVATE)
+                .or(post.visibilityPolish.visibility.eq(PRIVATE)
                         .and(post.writer.id.eq(memberId))
                 );
     }

@@ -80,6 +80,8 @@ public abstract class Comment extends CommonDomainModel {
         }
     }
 
+    public abstract void write(@Nullable String postPassword);
+
     protected void update(String content) {
         this.content = content;
     }

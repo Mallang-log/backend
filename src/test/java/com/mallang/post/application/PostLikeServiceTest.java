@@ -61,11 +61,11 @@ class PostLikeServiceTest {
         @Test
         void 회원이_이미_해당_포스트에_좋아요를_누른_경우_예외() {
             // given
-            postLikeService.click(new ClickPostLikeCommand(postId, memberId));
+            postLikeService.click(new ClickPostLikeCommand(postId, memberId, null));
 
             // when
             assertThatThrownBy(() -> {
-                postLikeService.click(new ClickPostLikeCommand(postId, memberId));
+                postLikeService.click(new ClickPostLikeCommand(postId, memberId, null));
             }).isInstanceOf(AlreadyLikedPostException.class);
 
             // then
@@ -76,7 +76,7 @@ class PostLikeServiceTest {
         @Test
         void 해당_포스트에_좋아요를_누른_적이_없으면_좋아요를_누른다() {
             // when
-            postLikeService.click(new ClickPostLikeCommand(postId, memberId));
+            postLikeService.click(new ClickPostLikeCommand(postId, memberId, null));
 
             // then
             Post post = postRepository.getById(postId);
@@ -86,10 +86,10 @@ class PostLikeServiceTest {
 
     @Test
     void 좋아요_취소_시_좋아요가_제거된다() {
-        postLikeService.click(new ClickPostLikeCommand(postId, memberId));
+        postLikeService.click(new ClickPostLikeCommand(postId, memberId, null));
 
         // when
-        postLikeService.cancel(new CancelPostLikeCommand(postId, memberId));
+        postLikeService.cancel(new CancelPostLikeCommand(postId, memberId, null));
 
         // then
         Post post = postRepository.getById(postId);

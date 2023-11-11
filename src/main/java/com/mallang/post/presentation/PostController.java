@@ -1,5 +1,8 @@
 package com.mallang.post.presentation;
 
+import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_HEADER;
+import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_SESSION;
+
 import com.mallang.common.auth.Auth;
 import com.mallang.common.auth.OptionalAuth;
 import com.mallang.post.application.PostService;
@@ -10,6 +13,8 @@ import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostSearchCond;
 import com.mallang.post.query.data.PostSimpleData;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,6 +72,20 @@ public class PostController {
             @PathVariable(name = "id") Long id
     ) {
         return ResponseEntity.ok(postQueryService.getById(memberId, id));
+    }
+
+    @GetMapping(path = "/{id}", headers = {PROTECTED_PASSWORD_HEADER})
+    public ResponseEntity<PostDetailData> getProtectedById(
+            @RequestHeader(name = PROTECTED_PASSWORD_HEADER) String password,
+            @OptionalAuth Long memberId,
+            @PathVariable(name = "id") Long id,
+            HttpServletRequest request
+    ) {
+        PostDetailData data = postQueryService.getProtectedById(memberId, id, password);
+        HttpSession session = request.getSession(true);
+        session.setAttribute(PROTECTED_PASSWORD_SESSION, password);
+        session.setMaxInactiveInterval(86400);
+        return ResponseEntity.ok(data);
     }
 
     @GetMapping

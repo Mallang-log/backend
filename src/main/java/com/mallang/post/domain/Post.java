@@ -11,7 +11,7 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.member.domain.Member;
-import com.mallang.post.domain.visibility.PostVisibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
@@ -60,7 +60,7 @@ public class Post extends CommonDomainModel {
     private String content;
 
     @Embedded
-    private PostVisibility visibility;
+    private PostVisibilityPolicy visibilityPolish;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "writer_id", nullable = false)
@@ -82,7 +82,7 @@ public class Post extends CommonDomainModel {
             String title,
             Blog blog,
             String content,
-            PostVisibility visibility,
+            PostVisibilityPolicy visibilityPolish,
             Member writer,
             @Nullable Category category,
             List<String> tags
@@ -93,7 +93,7 @@ public class Post extends CommonDomainModel {
         this.content = content;
         this.blog = blog;
         this.writer = writer;
-        this.visibility = visibility;
+        this.visibilityPolish = visibilityPolish;
         setCategory(category);
         setTags(tags);
     }
@@ -139,7 +139,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
-            PostVisibility visibility,
+            PostVisibilityPolicy visibility,
             @Nullable Category category,
             List<String> tags
     ) {
@@ -147,7 +147,7 @@ public class Post extends CommonDomainModel {
         setCategory(category);
         setTags(tags);
         this.title = title;
-        this.visibility = visibility;
+        this.visibilityPolish = visibility;
         this.content = content;
     }
 

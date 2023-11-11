@@ -1,10 +1,11 @@
 package com.mallang.post.query.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mallang.category.domain.Category;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.Tag;
-import com.mallang.post.domain.visibility.PostVisibility.Visibility;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public record PostDetailData(
         String content,
         Visibility visibility,
         boolean isProtected,
+        @JsonIgnore String password,
         int likeCount,
         boolean isLiked,
         LocalDateTime createdDate,
@@ -33,7 +35,8 @@ public record PostDetailData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .visibility(post.getVisibility().getVisibility())
+                .visibility(post.getVisibilityPolish().getVisibility())
+                .password(post.getVisibilityPolish().getPassword())
                 .likeCount(post.getLikeCount())
                 .isLiked(isLiked)
                 .createdDate(post.getCreatedDate())

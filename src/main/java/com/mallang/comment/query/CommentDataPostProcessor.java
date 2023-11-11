@@ -5,17 +5,26 @@ import static com.mallang.comment.query.data.AuthenticatedCommentData.WriterData
 import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
 import com.mallang.comment.query.data.UnAuthenticatedCommentData;
+import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostRepository;
 import java.util.List;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
+@Component
 public class CommentDataPostProcessor {
 
-    public static List<CommentData> processDeleted(List<CommentData> datas) {
+    private final PostRepository postRepository;
+
+    public List<CommentData> processDeleted(List<CommentData> datas) {
         return datas.stream()
-                .map(CommentDataPostProcessor::processDeleted)
+                .map(this::processDeleted)
                 .toList();
     }
 
-    private static CommentData processDeleted(CommentData data) {
+    private CommentData processDeleted(CommentData data) {
         if (!data.isDeleted()) {
             return data;
         }
@@ -46,13 +55,21 @@ public class CommentDataPostProcessor {
         throw new RuntimeException("CommentDataPostProcessor에서 처리되지 않는 형식의 댓글이 들어왔습니다.");
     }
 
-    public static List<CommentData> processSecret(List<CommentData> datas, Long memberId) {
+    public List<CommentData> processSecret(Long postId, List<CommentData> datas, Long memberId) {
+        if (isPostWriter(postId, memberId)) {
+            return datas;
+        }
         return datas.stream()
                 .map(it -> processSecret(it, memberId))
                 .toList();
     }
 
-    private static CommentData processSecret(CommentData data, Long memberId) {
+    private boolean isPostWriter(Long postId, Long memberId) {
+        Post post = postRepository.getById(postId);
+        return Objects.equals(post.getWriter().getId(), memberId);
+    }
+
+    private CommentData processSecret(CommentData data, Long memberId) {
         if (data instanceof UnAuthenticatedCommentData) {
             return data;
         }
