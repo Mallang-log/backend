@@ -109,7 +109,7 @@ public class CommentController {
             @Nullable @OptionalAuth Long memberId,
             @RequestParam(value = "postId", required = true) Long postId
     ) {
-        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId);
+        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
         return ResponseEntity.ok(result);
     }
 }

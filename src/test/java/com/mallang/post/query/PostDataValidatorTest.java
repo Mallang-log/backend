@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.IncorrectAccessPostException;
-import com.mallang.post.exception.NoAuthorityViewPostException;
+import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ class PostDataValidatorTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                postDataValidator.validateViewPermissions(1000L, postDetailData);
+                postDataValidator.validateAccessPost(1000L, postDetailData);
             });
         }
 
@@ -53,7 +53,7 @@ class PostDataValidatorTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                postDataValidator.validateViewPermissions(memberId, postDetailData);
+                postDataValidator.validateAccessPost(memberId, postDetailData);
             });
         }
 
@@ -69,7 +69,7 @@ class PostDataValidatorTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                postDataValidator.validateViewPermissions(null, postDetailData);
+                postDataValidator.validateAccessPost(null, postDetailData);
             });
         }
     }
@@ -88,7 +88,7 @@ class PostDataValidatorTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                postDataValidator.validateAccessProtected(postDetailData, "11234");
+                postDataValidator.validateAccessProtectedPost(postDetailData, "11234");
             }).isInstanceOf(IncorrectAccessPostException.class);
         }
 
@@ -103,8 +103,8 @@ class PostDataValidatorTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                postDataValidator.validateAccessProtected(postDetailData, "11234");
-            }).isInstanceOf(NoAuthorityViewPostException.class);
+                postDataValidator.validateAccessProtectedPost(postDetailData, "11234");
+            }).isInstanceOf(NoAuthorityAccessPostException.class);
         }
 
         @Test
@@ -118,7 +118,7 @@ class PostDataValidatorTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                postDataValidator.validateAccessProtected(postDetailData, "1234");
+                postDataValidator.validateAccessProtectedPost(postDetailData, "1234");
             });
         }
     }

@@ -18,7 +18,7 @@ import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.exception.IncorrectAccessPostException;
-import com.mallang.post.exception.NoAuthorityViewPostException;
+import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import com.mallang.post.query.data.PostSearchCond;
@@ -130,7 +130,7 @@ class PostQueryServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postQueryService.getById(memberId + 1, id)
-            ).isInstanceOf(NoAuthorityViewPostException.class);
+            ).isInstanceOf(NoAuthorityAccessPostException.class);
         }
 
         @Test
@@ -194,7 +194,7 @@ class PostQueryServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postQueryService.getProtectedById(null, id, "134")
-            ).isInstanceOf(NoAuthorityViewPostException.class);
+            ).isInstanceOf(NoAuthorityAccessPostException.class);
         }
 
         @Test
