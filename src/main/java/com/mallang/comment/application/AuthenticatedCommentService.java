@@ -36,18 +36,19 @@ public class AuthenticatedCommentService {
                 .secret(command.secret())
                 .parent(parent)
                 .build();
+        comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
     }
 
     public void update(UpdateAuthenticatedCommentCommand command) {
         AuthenticatedComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
         Member writer = memberRepository.getById(command.memberId());
-        comment.update(writer, command.content(), command.secret());
+        comment.update(writer, command.content(), command.secret(), command.postPassword());
     }
 
     public void delete(DeleteAuthenticatedCommentCommand command) {
         AuthenticatedComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
         Member member = memberRepository.getById(command.memberId());
-        comment.delete(member, commentDeleteService);
+        comment.delete(member, commentDeleteService, command.postPassword());
     }
 }

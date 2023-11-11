@@ -105,7 +105,7 @@ class CommentDeleteServiceTest {
                 .secret(true)
                 .parent(parentComment)
                 .build();
-        parentComment.delete(member, "1234", commentDeleteService);
+        parentComment.delete(member, "1234", commentDeleteService, null);
 
         // when
         commentDeleteService.delete(childComment);

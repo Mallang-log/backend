@@ -42,7 +42,7 @@ public class PostLike extends CommonDomainModel {
         post.cancelLike();
     }
 
-    // TODO: 개선
+    // TODO 개선 (보호 포스트 중복, 테스트 작성)
     private void validatePostVisibility() {
         if (post.getVisibilityPolish().getVisibility() == Visibility.PUBLIC) {
             return;

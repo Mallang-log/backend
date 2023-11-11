@@ -85,7 +85,7 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.update(other, "수정", true)
+                    comment.update(other, "수정", true, null)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -100,7 +100,7 @@ class AuthenticatedCommentTest {
                     .build();
 
             // when
-            comment.update(member, "update", true);
+            comment.update(member, "update", true, null);
 
             // then
             assertThat(comment.getContent()).isEqualTo("update");
@@ -122,7 +122,7 @@ class AuthenticatedCommentTest {
                     .build();
 
             // when
-            comment.update(member, "변경", after);
+            comment.update(member, "변경", after, null);
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
@@ -148,7 +148,7 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertDoesNotThrow(() ->
-                    comment.delete(member, commentDeleteService)
+                    comment.delete(member, commentDeleteService, null)
             );
         }
 
@@ -164,7 +164,7 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.delete(other, commentDeleteService)
+                    comment.delete(other, commentDeleteService, null)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -187,8 +187,8 @@ class AuthenticatedCommentTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                comment.delete(postWriter, commentDeleteService);
-                secretComment.delete(postWriter, commentDeleteService);
+                comment.delete(postWriter, commentDeleteService, null);
+                secretComment.delete(postWriter, commentDeleteService, null);
             });
         }
     }

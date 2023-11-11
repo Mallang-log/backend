@@ -1,6 +1,7 @@
 package com.mallang.comment.domain;
 
 import static com.mallang.member.MemberFixture.회원;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -11,6 +12,7 @@ import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -25,6 +27,7 @@ class UnAuthenticatedCommentTest {
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
+            .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .writer(postWriter)
             .blog(blog)
             .build();
@@ -63,7 +66,7 @@ class UnAuthenticatedCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.update("12345", "말랑")
+                    comment.update("12345", "말랑", null)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -78,7 +81,7 @@ class UnAuthenticatedCommentTest {
                     .build();
 
             // when
-            comment.update("1234", "변경");
+            comment.update("1234", "변경", null);
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
@@ -103,7 +106,7 @@ class UnAuthenticatedCommentTest {
 
             // when & then
             assertDoesNotThrow(() ->
-                    comment.delete(null, "1234", commentDeleteService)
+                    comment.delete(null, "1234", commentDeleteService, null)
             );
         }
 
@@ -119,7 +122,7 @@ class UnAuthenticatedCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.delete(null, "12345", commentDeleteService)
+                    comment.delete(null, "12345", commentDeleteService, null)
             ).isInstanceOf(NoAuthorityForCommentException.class);
         }
 
@@ -135,7 +138,7 @@ class UnAuthenticatedCommentTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                unAuth.delete(postWriter, null, commentDeleteService);
+                unAuth.delete(postWriter, null, commentDeleteService, null);
             });
         }
     }

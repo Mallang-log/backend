@@ -7,8 +7,11 @@ public record DeleteUnAuthenticatedCommentRequest(
         @Nullable Long memberId,
         String password
 ) {
-    public DeleteUnAuthenticatedCommentCommand toCommand(@Nullable Long memberId, Long commentId) {
+    public DeleteUnAuthenticatedCommentCommand toCommand(@Nullable Long memberId,
+                                                         Long commentId,
+                                                         @Nullable String postPassword) {
         return DeleteUnAuthenticatedCommentCommand.builder()
+                .postPassword(postPassword)
                 .password(password)
                 .commentId(commentId)
                 .memberId(memberId)

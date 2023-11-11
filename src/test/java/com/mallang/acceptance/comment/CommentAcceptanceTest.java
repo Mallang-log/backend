@@ -1,6 +1,7 @@
 package com.mallang.acceptance.comment;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
+import static com.mallang.acceptance.AcceptanceSteps.JSESSION_ID;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
 import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.비어있음;
@@ -29,9 +30,12 @@ import static com.mallang.acceptance.comment.CommentAcceptanceSteps.특정_포�
 import static com.mallang.acceptance.comment.CommentAcceptanceSteps.특정_포스팅의_댓글_전체_조회;
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.댓글_작성;
 import static com.mallang.acceptance.comment.CommentAcceptanceTestHelper.비인증_댓글_작성;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.보호된_포스트_단일_조회_요청;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_수정_요청;
 import static com.mallang.acceptance.post.PostAcceptanceTestHelper.포스트_생성;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -133,51 +137,143 @@ public class CommentAcceptanceTest {
             응답_상태를_검증한다(응답, 잘못된_요청);
         }
 
-        @Test
-        void 블로그_주인이_아닌_경우_보호되었거나_비공개된_글에는_해당_API로_댓글을_작성할_수_없다() {
-            // given
-            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-            var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-            var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                    "첫 포스트", "첫 포스트이네요.",
-                    PRIVATE, 없음(),
-                    없음(), "태그1", "태그2");
-            var 보호_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                    "첫 포스트", "첫 포스트이네요.",
-                    PROTECTED, "1234",
-                    없음(), "태그1", "태그2");
+        @Nested
+        class 보호된_포스트에_댓글_작성_시 {
 
-            // when
-            var 비공개_응답 = 댓글_작성_요청(동훈_세션_ID, 비공개_포스트_ID, "댓글", 비공개);
-            var 보호_응답 = 댓글_작성_요청(동훈_세션_ID, 보호_포스트_ID, "댓글", 비공개);
+            @Test
+            void 블로그_주인은_작성_가능하다() {
+                // given
+                var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                        "제목", "내용",
+                        PROTECTED, "1234", 없음());
 
-            // then
-            응답_상태를_검증한다(비공개_응답, 권한_없음);
-            응답_상태를_검증한다(보호_응답, 권한_없음);
+                // when
+                var 응답 = 댓글_작성_요청(말랑_세션_ID, 포스트_ID, "댓글", 비공개);
+
+                // then
+                응답_상태를_검증한다(응답, 생성됨);
+            }
+
+            @Nested
+            class 블로그_주인이_아닌_경우 {
+
+                @Test
+                void 보호된_글에_접근하지_않고서는_쓸_수_없다() {
+                    // given
+                    var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                    Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                            "제목", "내용",
+                            PROTECTED, "1234", 없음());
+                    var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+
+                    // when
+                    var 응답 = 댓글_작성_요청(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
+
+                    // then
+                    응답_상태를_검증한다(응답, 권한_없음);
+                }
+
+                @Test
+                void 대댓글로_남기는_것_역시_불가하다() {
+                    // given
+                    var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                    Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                            "제목", "내용",
+                            PUBLIC, 없음(), 없음());
+                    var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+
+                    var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
+
+                    포스트_수정_요청(말랑_세션_ID, 포스트_ID,
+                            "보호로 변경", "보호",
+                            PROTECTED, "1234", 없음());
+
+                    // when
+                    var 응답 = 댓글_작성_요청(동훈_세션_ID, 포스트_ID, "댓글", 비공개, 댓글_ID);
+
+                    // then
+                    응답_상태를_검증한다(응답, 권한_없음);
+                }
+
+                @Test
+                void 보호된_글에_접근한_뒤에는_작성할_수_있다() {
+                    // given
+                    var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                    Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                            "제목", "내용",
+                            PROTECTED, "1234", 없음());
+                    var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+
+                    보호된_포스트_단일_조회_요청(동훈_세션_ID, 포스트_ID, "1234");
+
+                    // when
+                    var 응답 = 댓글_작성_요청(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
+
+                    // then
+                    응답_상태를_검증한다(응답, 생성됨);
+                }
+
+                @Test
+                void 회원이_아니어도_보호된_글에_접근한_뒤에는_작성할_수_있다() {
+                    // given
+                    var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                    Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                            "제목", "내용",
+                            PROTECTED, "1234", 없음());
+
+                    String 세션_ID = 보호된_포스트_단일_조회_요청(포스트_ID, "1234")
+                            .cookie(JSESSION_ID);
+
+                    // when
+                    var 응답 = 비인증_댓글_작성_요청(세션_ID, 포스트_ID, "댓글", "익명입니다", "1234");
+
+                    // then
+                    응답_상태를_검증한다(응답, 생성됨);
+                }
+            }
         }
 
-        @Test
-        void 블로그_주인은_경우_보호되었거나_비공개된_글에도_댓글을_작성할_수_있다() {
-            // given
-            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-            var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                    "첫 포스트", "첫 포스트이네요.",
-                    PRIVATE, 없음(),
-                    없음(), "태그1", "태그2");
-            var 보호_포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                    "첫 포스트", "첫 포스트이네요.",
-                    PROTECTED, "1234",
-                    없음(), "태그1", "태그2");
+        @Nested
+        class 비공개_포스트에_댓글_작성_시 {
 
-            // when
-            var 비공개_응답 = 댓글_작성_요청(말랑_세션_ID, 비공개_포스트_ID, "댓글", 비공개);
-            var 보호_응답 = 댓글_작성_요청(말랑_세션_ID, 보호_포스트_ID, "댓글", 비공개);
+            @Test
+            void 블로그_주인은_작성_가능하다() {
+                // given
+                var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                        "제목", "내용",
+                        PRIVATE, 없음(), 없음());
 
-            // then
-            응답_상태를_검증한다(비공개_응답, 생성됨);
-            응답_상태를_검증한다(보호_응답, 생성됨);
+                // when
+                var 응답 = 댓글_작성_요청(말랑_세션_ID, 포스트_ID, "댓글", 비공개);
+
+                // then
+                응답_상태를_검증한다(응답, 생성됨);
+            }
+
+            @Test
+            void 블로그_주인이_아닌_경우_작성할_수_없다() {
+                // given
+                var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+                Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                        "제목", "내용",
+                        PRIVATE, 없음(), 없음());
+                var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
+
+                // when
+                var 응답 = 댓글_작성_요청(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
+
+                // then
+                응답_상태를_검증한다(응답, 권한_없음);
+            }
         }
     }
 

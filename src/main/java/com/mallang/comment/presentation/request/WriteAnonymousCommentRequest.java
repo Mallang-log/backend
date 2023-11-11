@@ -11,9 +11,10 @@ public record WriteAnonymousCommentRequest(
         @Nullable Long parentCommentId
 ) {
 
-    public WriteUnAuthenticatedCommentCommand toCommand() {
+    public WriteUnAuthenticatedCommentCommand toCommand(@Nullable String postPassword) {
         return WriteUnAuthenticatedCommentCommand.builder()
                 .postId(postId)
+                .postPassword(postPassword)
                 .content(content)
                 .nickname(nickname)
                 .password(password)

@@ -6,6 +6,7 @@ import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.annotation.Nullable;
@@ -39,26 +40,21 @@ public class AuthenticatedComment extends Comment {
         super(content, post, parent);
         this.secret = secret;
         this.writer = writer;
-        validatePostVisibility();
     }
 
-    // TODO: 개선
-    private void validatePostVisibility() {
-        if (getPost().getVisibilityPolish().getVisibility() == Visibility.PUBLIC) {
-            return;
-        }
-        if (getPost().getWriter().equals(writer)) {
-            return;
-        }
-        throw new NoAuthorityAccessPostException();
+    // TODO 개선 (보호 포스트 중복, 테스트 작성)
+    @Override
+    public void write(@Nullable String postPassword) {
+        validatePostAccessibility(postPassword);
     }
 
     public void update(
             Member writer,
             String content,
-            boolean secret
+            boolean secret,
+            @Nullable String postPassword
     ) {
-        validatePostVisibility();
+        validatePostAccessibility(postPassword);
         validateWriter(writer);
         super.update(content);
         this.secret = secret;
@@ -70,11 +66,27 @@ public class AuthenticatedComment extends Comment {
         }
     }
 
-    public void delete(Member member, CommentDeleteService commentDeleteService) {
-        validatePostVisibility();
+    public void delete(Member member, CommentDeleteService commentDeleteService, @Nullable String postPassword) {
+        validatePostAccessibility(postPassword);
         if (!isPostOwner(member)) {
             validateWriter(member);
         }
         super.delete(commentDeleteService);
+    }
+
+    private void validatePostAccessibility(@Nullable String postPassword) {
+        PostVisibilityPolicy visibilityPolish = getPost().getVisibilityPolish();
+        if (visibilityPolish.getVisibility() == Visibility.PUBLIC) {
+            return;
+        }
+        if (getPost().getWriter().getId().equals(writer.getId())) {
+            return;
+        }
+        if (visibilityPolish.getVisibility() == Visibility.PROTECTED) {
+            if (visibilityPolish.getPassword().equals(postPassword)) {
+                return;
+            }
+        }
+        throw new NoAuthorityAccessPostException();
     }
 }

@@ -35,12 +35,13 @@ public class UnAuthenticatedCommentService {
                 .parent(parent)
                 .password(command.password())
                 .build();
+        comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
     }
 
     public void update(UpdateUnAuthenticatedCommentCommand command) {
         UnAuthenticatedComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
-        comment.update(command.password(), command.content());
+        comment.update(command.password(), command.content(), command.postPassword());
     }
 
     public void delete(DeleteUnAuthenticatedCommentCommand command) {
@@ -48,6 +49,6 @@ public class UnAuthenticatedCommentService {
         Member member = (command.memberId() == null)
                 ? null
                 : memberRepository.getById(command.memberId());
-        comment.delete(member, command.password(), commentDeleteService);
+        comment.delete(member, command.password(), commentDeleteService, command.postPassword());
     }
 }

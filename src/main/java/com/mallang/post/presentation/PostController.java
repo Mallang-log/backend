@@ -68,10 +68,8 @@ public class PostController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailData> getById(
-            @RequestHeader(name = PROTECTED_PASSWORD_HEADER, required = false) String password,
             @OptionalAuth Long memberId,
-            @PathVariable(name = "id") Long id,
-            HttpServletRequest request
+            @PathVariable(name = "id") Long id
     ) {
         return ResponseEntity.ok(postQueryService.getById(memberId, id));
     }
