@@ -2,13 +2,13 @@ package com.mallang.comment.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
 import com.mallang.comment.query.data.UnAuthenticatedCommentData;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

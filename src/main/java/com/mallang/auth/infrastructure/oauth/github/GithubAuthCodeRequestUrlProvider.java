@@ -1,7 +1,7 @@
 package com.mallang.auth.infrastructure.oauth.github;
 
+import com.mallang.auth.domain.OauthServerType;
 import com.mallang.auth.domain.oauth.AuthCodeRequestUrlProvider;
-import com.mallang.member.domain.OauthServerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;

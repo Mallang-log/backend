@@ -3,9 +3,9 @@ package com.mallang.subscribe.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.subscribe.application.command.BlogSubscribeCommand;
 import com.mallang.subscribe.application.command.BlogUnsubscribeCommand;
 import com.mallang.subscribe.domain.BlogSubscribeRepository;

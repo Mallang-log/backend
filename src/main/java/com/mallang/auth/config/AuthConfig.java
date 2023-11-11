@@ -5,11 +5,11 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 
-import com.mallang.auth.presentation.AuthArgumentResolver;
-import com.mallang.auth.presentation.AuthInterceptor;
-import com.mallang.auth.presentation.AuthInterceptor.UriAndMethodCondition;
-import com.mallang.auth.presentation.ExtractAuthenticationInterceptor;
-import com.mallang.auth.presentation.OptionalAuthArgumentResolver;
+import com.mallang.auth.presentation.support.AuthArgumentResolver;
+import com.mallang.auth.presentation.support.AuthInterceptor;
+import com.mallang.auth.presentation.support.AuthInterceptor.UriAndMethodCondition;
+import com.mallang.auth.presentation.support.ExtractAuthenticationInterceptor;
+import com.mallang.auth.presentation.support.OptionalAuthArgumentResolver;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

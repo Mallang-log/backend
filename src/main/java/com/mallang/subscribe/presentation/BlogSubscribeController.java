@@ -1,6 +1,6 @@
 package com.mallang.subscribe.presentation;
 
-import com.mallang.common.auth.Auth;
+import com.mallang.auth.presentation.support.Auth;
 import com.mallang.subscribe.application.BlogSubscribeService;
 import com.mallang.subscribe.presentation.request.BlogSubscribeRequest;
 import com.mallang.subscribe.presentation.request.BlogUnsubscribeRequest;

@@ -1,6 +1,6 @@
 package com.mallang.blog.domain;
 
-import static com.mallang.member.MemberFixture.동훈;
+import static com.mallang.auth.MemberFixture.동훈;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;

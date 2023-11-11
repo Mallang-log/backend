@@ -3,8 +3,8 @@ package com.mallang.post.presentation;
 import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_HEADER;
 import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_SESSION;
 
-import com.mallang.common.auth.Auth;
-import com.mallang.common.auth.OptionalAuth;
+import com.mallang.auth.presentation.support.Auth;
+import com.mallang.auth.presentation.support.OptionalAuth;
 import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;

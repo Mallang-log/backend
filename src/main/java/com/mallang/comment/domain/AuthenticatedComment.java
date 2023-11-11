@@ -2,9 +2,9 @@ package com.mallang.comment.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
-import com.mallang.member.domain.Member;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;

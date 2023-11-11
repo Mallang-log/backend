@@ -2,12 +2,12 @@ package com.mallang.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.domain.PostDeleteEvent;
 import java.util.List;

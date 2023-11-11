@@ -1,5 +1,7 @@
 package com.mallang.category.application;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.category.application.command.CreateCategoryCommand;
@@ -8,8 +10,6 @@ import com.mallang.category.application.command.UpdateCategoryCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.domain.CategoryValidator;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

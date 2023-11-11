@@ -6,9 +6,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.mallang.auth.MemberFixture;
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.member.MemberFixture;
-import com.mallang.member.domain.Member;
 import com.mallang.subscribe.exception.AlreadySubscribedException;
 import com.mallang.subscribe.exception.SelfSubscribeException;
 import org.junit.jupiter.api.DisplayName;

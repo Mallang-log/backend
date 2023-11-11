@@ -3,9 +3,9 @@ package com.mallang.blog.domain;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;

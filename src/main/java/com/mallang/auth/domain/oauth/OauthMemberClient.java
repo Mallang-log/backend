@@ -1,7 +1,7 @@
 package com.mallang.auth.domain.oauth;
 
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.OauthServerType;
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.OauthServerType;
 
 public interface OauthMemberClient {
 

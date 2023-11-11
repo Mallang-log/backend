@@ -1,10 +1,10 @@
 package com.mallang.auth.application;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
+import com.mallang.auth.domain.OauthServerType;
 import com.mallang.auth.domain.oauth.AuthCodeRequestUrlProviderComposite;
 import com.mallang.auth.domain.oauth.OauthMemberClientComposite;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
-import com.mallang.member.domain.OauthServerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

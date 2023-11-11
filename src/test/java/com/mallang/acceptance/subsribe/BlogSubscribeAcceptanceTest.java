@@ -6,9 +6,9 @@ import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한�
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
+import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
+import static com.mallang.acceptance.auth.MemberAcceptanceSteps.회원_정보_조회_결과_데이터;
 import static com.mallang.acceptance.blog.BlogAcceptanceTestHelper.블로그_개설;
-import static com.mallang.acceptance.member.MemberAcceptanceSteps.내_정보_조회_요청;
-import static com.mallang.acceptance.member.MemberAcceptanceSteps.회원_정보_조회_결과_데이터;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.구독중인_블로그_조회_결과_검증;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독_요청;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독_취소_요청;

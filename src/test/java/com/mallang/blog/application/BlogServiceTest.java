@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.exception.BlogNameException;
 import com.mallang.blog.exception.DuplicateBlogNameException;
 import com.mallang.blog.exception.TooManyBlogsException;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

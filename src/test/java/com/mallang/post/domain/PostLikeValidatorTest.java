@@ -1,13 +1,13 @@
 package com.mallang.post.domain;
 
-import static com.mallang.member.MemberFixture.말랑;
+import static com.mallang.auth.MemberFixture.말랑;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.member.domain.Member;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

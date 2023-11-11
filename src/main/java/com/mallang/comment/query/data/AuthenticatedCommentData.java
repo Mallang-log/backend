@@ -1,7 +1,7 @@
 package com.mallang.comment.query.data;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.AuthenticatedComment;
-import com.mallang.member.domain.Member;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;

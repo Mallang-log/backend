@@ -1,9 +1,9 @@
 package com.mallang.subscribe.application;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
 import com.mallang.subscribe.application.command.BlogSubscribeCommand;
 import com.mallang.subscribe.application.command.BlogUnsubscribeCommand;
 import com.mallang.subscribe.domain.BlogSubscribe;

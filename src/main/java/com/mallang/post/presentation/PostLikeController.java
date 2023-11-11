@@ -2,7 +2,7 @@ package com.mallang.post.presentation;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-import com.mallang.common.auth.Auth;
+import com.mallang.auth.presentation.support.Auth;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.presentation.request.CancelPostLikeRequest;
 import com.mallang.post.presentation.request.ClickPostLikeRequest;

@@ -2,11 +2,11 @@ package com.mallang.category.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.query.data.CategoryData;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

@@ -3,6 +3,7 @@ package com.mallang.category.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.application.command.DeleteCategoryCommand;
@@ -20,7 +21,6 @@ import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.common.TransactionHelper;
 import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.member.MemberServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

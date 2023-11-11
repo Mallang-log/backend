@@ -2,9 +2,9 @@ package com.mallang.subscribe.query.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
-import com.mallang.member.MemberServiceTestHelper;
 import com.mallang.subscribe.application.BlogSubscribeService;
 import com.mallang.subscribe.application.command.BlogSubscribeCommand;
 import com.mallang.subscribe.query.data.SubscriberData;

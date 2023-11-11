@@ -1,11 +1,11 @@
 package com.mallang.post.application;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;

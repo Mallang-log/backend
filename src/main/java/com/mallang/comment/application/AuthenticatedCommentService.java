@@ -1,5 +1,7 @@
 package com.mallang.comment.application;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
@@ -7,8 +9,6 @@ import com.mallang.comment.domain.AuthenticatedComment;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.service.CommentDeleteService;
-import com.mallang.member.domain.Member;
-import com.mallang.member.domain.MemberRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import lombok.RequiredArgsConstructor;

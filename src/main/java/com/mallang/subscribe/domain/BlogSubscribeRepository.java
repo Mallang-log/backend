@@ -1,7 +1,7 @@
 package com.mallang.subscribe.domain;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.member.domain.Member;
 import com.mallang.subscribe.exception.NotFoundBlogSubscribeException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
