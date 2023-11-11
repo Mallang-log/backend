@@ -6,6 +6,7 @@ import com.mallang.common.auth.Auth;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.presentation.request.CancelPostLikeRequest;
 import com.mallang.post.presentation.request.ClickPostLikeRequest;
+import com.mallang.post.presentation.support.OptionalPostPassword;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,18 +25,20 @@ public class PostLikeController {
     @PostMapping
     public ResponseEntity<Void> click(
             @Auth Long memberId,
+            @OptionalPostPassword String postPassword,
             @RequestBody ClickPostLikeRequest request
     ) {
-        postLikeService.click(request.toCommand(memberId));
+        postLikeService.click(request.toCommand(memberId, postPassword));
         return ResponseEntity.status(CREATED).build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> click(
+    public ResponseEntity<Void> cancel(
             @Auth Long memberId,
+            @OptionalPostPassword String postPassword,
             @RequestBody CancelPostLikeRequest request
     ) {
-        postLikeService.cancel(request.toCommand(memberId));
+        postLikeService.cancel(request.toCommand(memberId, postPassword));
         return ResponseEntity.noContent().build();
     }
 }

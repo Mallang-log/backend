@@ -91,7 +91,7 @@ class PostQueryServiceTest {
         void 좋아요_눌렀는지_여부가_반영된다() {
             // given
             Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트 1", "content");
-            postLikeService.click(new ClickPostLikeCommand(id, memberId));
+            postLikeService.click(new ClickPostLikeCommand(id, memberId, null));
 
             // when
             PostDetailData responseClickLike = postQueryService.getById(memberId, id);
