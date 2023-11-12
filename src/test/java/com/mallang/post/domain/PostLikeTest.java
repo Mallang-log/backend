@@ -69,7 +69,7 @@ class PostLikeTest {
             }).isInstanceOf(AlreadyLikedPostException.class);
 
             // then
-            assertThat(post.getLikeCount()).isEqualTo(0);
+            assertThat(post.getLikeCount()).isZero();
         }
 
         @Nested
@@ -132,7 +132,7 @@ class PostLikeTest {
                 assertThatThrownBy(() -> {
                     postLike.click(postLikeValidator, "12345");
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
-                assertThat(post.getLikeCount()).isEqualTo(0);
+                assertThat(post.getLikeCount()).isZero();
             }
         }
 
@@ -168,7 +168,7 @@ class PostLikeTest {
                 assertThatThrownBy(() -> {
                     postLike.click(postLikeValidator, null);
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
-                assertThat(post.getLikeCount()).isEqualTo(0);
+                assertThat(post.getLikeCount()).isZero();
             }
         }
     }
@@ -186,7 +186,7 @@ class PostLikeTest {
             postLike.cancel(null);
 
             // then
-            assertThat(post.getLikeCount()).isEqualTo(0);
+            assertThat(post.getLikeCount()).isZero();
         }
 
         @Nested
@@ -202,7 +202,7 @@ class PostLikeTest {
                 postLike.cancel(null);
 
                 // then
-                assertThat(post.getLikeCount()).isEqualTo(0);
+                assertThat(post.getLikeCount()).isZero();
             }
         }
 
@@ -227,7 +227,7 @@ class PostLikeTest {
                 assertDoesNotThrow(() -> {
                     postLike.cancel("1234");
                 });
-                assertThat(post.getLikeCount()).isEqualTo(0);
+                assertThat(post.getLikeCount()).isZero();
             }
 
             @Test
@@ -240,7 +240,7 @@ class PostLikeTest {
                 assertDoesNotThrow(() -> {
                     postLike.cancel(null);
                 });
-                assertThat(post.getLikeCount()).isEqualTo(0);
+                assertThat(post.getLikeCount()).isZero();
             }
 
             @Test
@@ -277,7 +277,7 @@ class PostLikeTest {
                 assertDoesNotThrow(() -> {
                     postLike.cancel(null);
                 });
-                assertThat(post.getLikeCount()).isEqualTo(0);
+                assertThat(post.getLikeCount()).isZero();
             }
 
             @Test
@@ -292,7 +292,7 @@ class PostLikeTest {
                         .build();
                 PostLike postLike = new PostLike(post, other);
                 postLike.click(postLikeValidator, null);
-                post.update(mallang.getId(), "up", "up",
+                post.update(mallang.getId(), "up", "up", new PostIntro("update"),
                         new PostVisibilityPolicy(PRIVATE, null),
                         null, emptyList());
 

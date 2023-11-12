@@ -4,6 +4,7 @@ import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostIntro;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
@@ -16,6 +17,7 @@ public record CreatePostCommand(
         Long blogId,
         String title,
         String content,
+        String intro,
         Visibility visibility,
         @Nullable String password,
         @Nullable Long categoryId,
@@ -30,6 +32,7 @@ public record CreatePostCommand(
                 .visibilityPolish(new PostVisibilityPolicy(visibility, password))
                 .blog(blog)
                 .category(category)
+                .postIntro(new PostIntro(intro))
                 .tags(tags)
                 .build();
     }

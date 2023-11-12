@@ -62,6 +62,9 @@ public class Post extends CommonDomainModel {
     private String content;
 
     @Embedded
+    private PostIntro postIntro;
+
+    @Embedded
     private PostVisibilityPolicy visibilityPolish;
 
     @ManyToOne(fetch = LAZY)
@@ -75,15 +78,16 @@ public class Post extends CommonDomainModel {
     private int likeCount = 0;
 
     @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", updatable = false, nullable = false)
     private List<Tag> tags = new ArrayList<>();
 
     @Builder
     public Post(
             Long order,
-            String title,
             Blog blog,
+            String title,
             String content,
+            PostIntro postIntro,
             PostVisibilityPolicy visibilityPolish,
             Member writer,
             @Nullable Category category,
@@ -91,11 +95,12 @@ public class Post extends CommonDomainModel {
     ) {
         blog.validateOwner(writer.getId());
         this.order = order;
+        this.blog = blog;
         this.title = title;
         this.content = content;
-        this.blog = blog;
-        this.writer = writer;
+        this.postIntro = postIntro;
         this.visibilityPolish = visibilityPolish;
+        this.writer = writer;
         setCategory(category);
         setTags(tags);
     }
@@ -104,6 +109,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
+            PostIntro intro,
             PostVisibilityPolicy visibility,
             @Nullable Category category,
             List<String> tags
@@ -112,8 +118,9 @@ public class Post extends CommonDomainModel {
         setCategory(category);
         setTags(tags);
         this.title = title;
-        this.visibilityPolish = visibility;
         this.content = content;
+        this.postIntro = intro;
+        this.visibilityPolish = visibility;
     }
 
     public void delete(Long memberId) {
@@ -183,5 +190,9 @@ public class Post extends CommonDomainModel {
             }
         }
         throw new NoAuthorityAccessPostException();
+    }
+
+    public String getPostIntro() {
+        return postIntro.getIntro();
     }
 }

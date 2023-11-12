@@ -39,7 +39,9 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
+                    없음(), "태그1", "태그2");
 
             // when
             var 응답 = 포스트_좋아요_요청(없음(), 포스트_ID);
@@ -52,7 +54,9 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
         void 포스트에_좋아요를_누른다() {
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
+                    없음(), "태그1", "태그2");
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
             // when
@@ -67,7 +71,9 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
+                    없음(), "태그1", "태그2");
             포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
 
             // when
@@ -89,7 +95,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "첫 포스트", "첫 포스트이네요.",
+                            "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                             PROTECTED, "1234", 없음());
 
                     // when
@@ -110,7 +116,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "첫 포스트", "첫 포스트이네요.",
+                            "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                             PROTECTED, "1234", 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
@@ -127,7 +133,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "첫 포스트", "첫 포스트이네요.",
+                            "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                             PROTECTED, "1234", 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     보호된_포스트_단일_조회_요청(동훈_세션_ID, 포스트_ID, "1234");
@@ -150,7 +156,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "첫 포스트", "첫 포스트이네요.",
+                        "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                         PRIVATE, 없음(), 없음());
 
                 // when
@@ -166,7 +172,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "첫 포스트", "첫 포스트이네요.",
+                        "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                         PRIVATE, 없음(), 없음());
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
@@ -187,7 +193,9 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
+                    없음(), "태그1", "태그2");
             포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
 
             // when
@@ -202,7 +210,9 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
             // given
             var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
             var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "첫 포스트", "첫 포스트이네요.", 없음(), "태그1", "태그2");
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
+                    "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
+                    없음(), "태그1", "태그2");
 
             // when
             var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID);
@@ -223,7 +233,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "첫 포스트", "첫 포스트이네요.",
+                            "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                             PROTECTED, "1234", 없음());
                     포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
 
@@ -244,12 +254,12 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "첫 포스트", "첫 포스트이네요.",
+                            "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
                     포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                            "업데이트", "업데이트",
+                            "업데이트", "업데이트", "포스트 인트로",
                             PROTECTED, "1234", 없음());
 
                     // when
@@ -265,12 +275,12 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "첫 포스트", "첫 포스트이네요.",
+                            "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
                     포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                            "업데이트", "업데이트",
+                            "업데이트", "업데이트", "포스트 인트로",
                             PROTECTED, "1234", 없음());
                     보호된_포스트_단일_조회_요청(동훈_세션_ID, 포스트_ID, "1234");
 
@@ -292,7 +302,7 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "첫 포스트", "첫 포스트이네요.",
+                        "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                         PRIVATE, 없음(), 없음());
                 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
 
@@ -309,12 +319,12 @@ public class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "첫 포스트", "첫 포스트이네요.",
+                        "첫 포스트", "첫 포스트이네요.", "포스트 인트로",
                         PUBLIC, 없음(), 없음());
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
                 포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                        "업데이트", "업데이트",
+                        "업데이트", "업데이트", "포스트 인트로",
                         PRIVATE, 없음(), 없음());
 
                 // when

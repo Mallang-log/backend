@@ -94,18 +94,21 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-public")
                             .content("mallang-public")
+                            .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
                     PostSimpleData.builder()
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-protected")
                             .content("mallang-protected")
+                            .intro("intro")
                             .visibility(PROTECTED)
                             .build(),
                     PostSimpleData.builder()
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-private")
                             .content("mallang-private")
+                            .intro("intro")
                             .visibility(PRIVATE)
                             .build(),
 
@@ -113,12 +116,14 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-public")
                             .content("other-public")
+                            .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
                     PostSimpleData.builder()
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-protected")
                             .content("other-protected")
+                            .intro("intro")
                             .visibility(PROTECTED)
                             .build());
 
@@ -131,18 +136,21 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-public")
                             .content("mallang-public")
+                            .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
                     PostSimpleData.builder()
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-protected")
                             .content("mallang-protected")
+                            .intro("intro")
                             .visibility(PROTECTED)
                             .build(),
                     PostSimpleData.builder()
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-private")
                             .content("mallang-private")
+                            .intro("intro")
                             .visibility(PRIVATE)
                             .build(),
 
@@ -150,12 +158,14 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-public")
                             .content("other-public")
+                            .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
                     PostSimpleData.builder()
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-protected")
                             .content("보호되어 있는 글입니다.")
+                            .intro("")
                             .visibility(PROTECTED)
                             .build());
             assertThat(protect).usingRecursiveComparison()

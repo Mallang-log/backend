@@ -53,6 +53,7 @@ public class PostDataProtector {
                 postSimpleData.id(),
                 postSimpleData.title(),
                 "보호되어 있는 글입니다.",
+                "",
                 postSimpleData.visibility(),
                 postSimpleData.likeCount(),
                 postSimpleData.createdDate(),

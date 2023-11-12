@@ -9,6 +9,7 @@ public record CreatePostRequest(
         Long blogId,
         String title,
         String content,
+        String intro,
         Visibility visibility,
         @Nullable String password,
         @Nullable Long categoryId,
@@ -21,6 +22,7 @@ public record CreatePostRequest(
                 .blogId(blogId)
                 .title(title)
                 .content(content)
+                .intro(intro)
                 .visibility(visibility)
                 .password(password)
                 .categoryId(categoryId)

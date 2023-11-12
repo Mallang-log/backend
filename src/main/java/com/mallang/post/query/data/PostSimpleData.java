@@ -14,6 +14,7 @@ public record PostSimpleData(
         Long id,
         String title,
         String content,
+        String intro,
         Visibility visibility,
         int likeCount,
         LocalDateTime createdDate,
@@ -27,6 +28,7 @@ public record PostSimpleData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .intro(post.getPostIntro())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .likeCount(post.getLikeCount())
                 .createdDate(post.getCreatedDate())
