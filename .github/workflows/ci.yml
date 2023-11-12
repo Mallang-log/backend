@@ -35,14 +35,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: ✨ SonarCloud packages 캐싱
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: ✨ Gradlew 권한 설정
         run: chmod +x ./gradlew
 
       - name: ✨ 테스트 진행
-        run: ./gradlew test sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonar --info
 
       - name: ✨ 테스트 결과 Report
         uses: EnricoMi/publish-unit-test-result-action@v2
