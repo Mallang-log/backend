@@ -168,9 +168,9 @@ jacocoTestCoverageVerification {
 
 sonar {
 
-    def Qdomains = []
+    def Qdomains = "";
     for (qPattern in "**/QA".."**/QZ") {
-        Qdomains.add(qPattern + "*.java")
+        Qdomains += (qPattern + "*.java,")
     }
 
     properties {
@@ -181,7 +181,7 @@ sonar {
         property 'sonar.exclusions', '**/test/**, **/*Doc*.java, **/resources/** ,**/*Application*.java , **/*Exception*.java,' +
                 '**/*Config*.java, **/*Constant*.java, **/dto/**, **/command/**, **/request/**, **/data/**,' +
                 '**/dao/support/*Support.java ,**/domain/*Repository*.java ,**/auth/infrastructure/oauth/*/**' +
-                '**/OauthController.java'
+                '**/OauthController.java,'
         +Qdomains
         property 'sonar.java.coveragePlugin', 'jacoco'
     }
