@@ -169,7 +169,7 @@ jacocoTestCoverageVerification {
 sonar {
     properties {
         property 'sonar.host.url', 'https://sonarcloud.io'
-        property "sonar.organization", "mallang-log"
+        property "sonar.organization", "Mallang-log"
         property "sonar.projectKey", "backend"
         property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/jacoco/index.xml"
     }
