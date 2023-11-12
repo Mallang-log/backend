@@ -57,7 +57,7 @@ public class AuthenticatedComment extends Comment {
     }
 
     public void delete(Member member, CommentDeleteService commentDeleteService, @Nullable String postPassword) {
-        post.validatePostAccessibility(writer.getId(), postPassword);
+        post.validatePostAccessibility(member.getId(), postPassword);
         if (!isPostOwner(member)) {
             validateWriter(member);
         }
