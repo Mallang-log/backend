@@ -8,8 +8,5 @@ class MallangLogApplicationTests {
 
     @Test
     void contextLoads() {
-        if (1 == 1) {
-            throw new RuntimeException();
-        }
     }
 }
