@@ -10,6 +10,7 @@ import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.UnAuthenticatedComment;
 import com.mallang.common.execption.MallangLogException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -42,7 +43,9 @@ public abstract class CommentData {
         this.content = content;
         this.createdDate = createdDate;
         this.deleted = deleted;
-        this.children = children;
+        this.children = (children == null)
+                ? new ArrayList<>()
+                : children;
     }
 
     public static final String AUTHENTICATED_COMMENT_DATA_TYPE = "AuthenticatedComment";

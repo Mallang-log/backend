@@ -6,9 +6,6 @@ import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,10 +37,9 @@ public class UnAuthenticatedComment extends Comment {
         this.password = password;
     }
 
-    // TODO 개선 (보호 포스트 중복, 테스트 작성)
     @Override
     public void write(@Nullable String postPassword) {
-        validatePostAccessibility(postPassword);
+        post.validatePostAccessibility(null, postPassword);
     }
 
     public void update(
@@ -51,15 +47,9 @@ public class UnAuthenticatedComment extends Comment {
             String content,
             @Nullable String postPassword
     ) {
-        validatePostAccessibility(postPassword);
+        post.validatePostAccessibility(null, postPassword);
         validatePassword(password);
         super.update(content);
-    }
-
-    private void validatePassword(String password) {
-        if (!this.password.equals(password)) {
-            throw new NoAuthorityForCommentException();
-        }
     }
 
     public void delete(
@@ -68,25 +58,16 @@ public class UnAuthenticatedComment extends Comment {
             CommentDeleteService commentDeleteService,
             @Nullable String postPassword
     ) {
-        validatePostAccessibility(postPassword);
         if (!isPostOwner(member)) {
+            post.validatePostAccessibility(null, postPassword);
             validatePassword(password);
         }
         super.delete(commentDeleteService);
     }
 
-    private void validatePostAccessibility(@Nullable String postPassword) {
-        PostVisibilityPolicy visibilityPolish = getPost().getVisibilityPolish();
-        if (visibilityPolish.getVisibility() == Visibility.PUBLIC) {
-            return;
-        }
-        if (visibilityPolish.getVisibility() == Visibility.PRIVATE) {
-            throw new NoAuthorityAccessPostException();
-        }
-        if (visibilityPolish.getVisibility() == Visibility.PROTECTED) {
-            if (!visibilityPolish.getPassword().equals(postPassword)) {
-                throw new NoAuthorityAccessPostException();
-            }
+    private void validatePassword(String password) {
+        if (!this.password.equals(password)) {
+            throw new NoAuthorityForCommentException();
         }
     }
 }

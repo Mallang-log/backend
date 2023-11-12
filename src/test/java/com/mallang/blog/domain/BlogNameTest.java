@@ -8,6 +8,7 @@ import com.mallang.blog.exception.BlogNameException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -136,5 +137,20 @@ class BlogNameTest {
 
         // then
         assertThat(blogName.getName()).isEqualTo("correct");
+    }
+
+    @Test
+    void 이름이_같으면_같다고_판단한다() {
+        // given
+        BlogName blogName = new BlogName("test");
+        BlogName same = new BlogName("test");
+        BlogName otherName = new BlogName("ttttt");
+
+        // when & then
+        assertThat(blogName.equals(blogName)).isTrue();
+        assertThat(blogName.equals(same)).isTrue();
+        assertThat(blogName.equals("test")).isFalse();
+        assertThat(blogName.equals(otherName)).isFalse();
+        assertThat(blogName.hashCode()).isEqualTo(same.hashCode());
     }
 }

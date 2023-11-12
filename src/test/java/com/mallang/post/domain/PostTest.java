@@ -5,6 +5,7 @@ import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +20,7 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
+import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
@@ -139,8 +141,6 @@ class PostTest {
 
         @Test
         void 자신의_블로그가_아니라면_예외() {
-            // given
-
             // when & then
             assertThatThrownBy(() ->
                     Post.builder()
@@ -241,6 +241,104 @@ class PostTest {
 
             // then
             assertThat(post.domainEvents()).isEmpty();
+        }
+    }
+
+    @Nested
+    class 접근_권한_확인_시 {
+
+        @Nested
+        class 공개_포스트인_경우 {
+
+            @Test
+            void 누구나_접근_가능하다() {
+                // given
+                Post post = Post.builder()
+                        .title("제목")
+                        .content("내용")
+                        .writer(mallang)
+                        .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
+                        .blog(blog)
+                        .category(springCategory)
+                        .build();
+
+                // when & then
+                assertDoesNotThrow(() -> {
+                    post.validatePostAccessibility(mallang.getId(), null);
+                });
+                assertDoesNotThrow(() -> {
+                    post.validatePostAccessibility(100L, null);
+                });
+                assertDoesNotThrow(() -> {
+                    post.validatePostAccessibility(null, null);
+                });
+            }
+        }
+
+        @Nested
+        class 보호_포스트인_경우 {
+
+            private final Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .writer(mallang)
+                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
+                    .blog(blog)
+                    .category(springCategory)
+                    .build();
+
+            @Test
+            void 비밀번호가_일치하면_접근할_수_있다() {
+                // when & then
+                assertDoesNotThrow(() -> {
+                    post.validatePostAccessibility(null, "1234");
+                });
+            }
+
+            @Test
+            void 글_작성자라면_접근할_수_있다() {
+                // when & then
+                assertDoesNotThrow(() -> {
+                    post.validatePostAccessibility(mallang.getId(), null);
+                });
+            }
+
+            @Test
+            void 글_작성자가_아니며_비밀번호도_일치하지_않으면_접근할_수_없다() {
+                // when & then
+                assertThatThrownBy(() -> {
+                    post.validatePostAccessibility(2L, "12345");
+                }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }
+        }
+
+        @Nested
+        class 비공개_포스트인_경우 {
+
+            private final Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .writer(mallang)
+                    .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
+                    .blog(blog)
+                    .category(springCategory)
+                    .build();
+
+            @Test
+            void 포스트_작성자만_접근할_수_있다() {
+                // when & then
+                assertDoesNotThrow(() -> {
+                    post.validatePostAccessibility(mallang.getId(), null);
+                });
+            }
+
+            @Test
+            void 포스트_작성자가_아니면_접근할_수_없다() {
+                // when & then
+                assertThatThrownBy(() -> {
+                    post.validatePostAccessibility(2L, null);
+                }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }
         }
     }
 

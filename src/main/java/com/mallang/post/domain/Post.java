@@ -12,7 +12,9 @@ import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.common.execption.MallangLogException;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
+import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.NoAuthorityDeletePostException;
 import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
@@ -98,6 +100,27 @@ public class Post extends CommonDomainModel {
         setTags(tags);
     }
 
+    public void update(
+            Long memberId,
+            String title,
+            String content,
+            PostVisibilityPolicy visibility,
+            @Nullable Category category,
+            List<String> tags
+    ) {
+        validateOwner(memberId, new NoAuthorityUpdatePostException());
+        setCategory(category);
+        setTags(tags);
+        this.title = title;
+        this.visibilityPolish = visibility;
+        this.content = content;
+    }
+
+    public void delete(Long memberId) {
+        validateOwner(memberId, new NoAuthorityDeletePostException());
+        registerEvent(new PostDeleteEvent(getId()));
+    }
+
     private void setCategory(@Nullable Category category) {
         if (category == null) {
             removeCategory();
@@ -135,22 +158,6 @@ public class Post extends CommonDomainModel {
         }
     }
 
-    public void update(
-            Long memberId,
-            String title,
-            String content,
-            PostVisibilityPolicy visibility,
-            @Nullable Category category,
-            List<String> tags
-    ) {
-        validateOwner(memberId, new NoAuthorityUpdatePostException());
-        setCategory(category);
-        setTags(tags);
-        this.title = title;
-        this.visibilityPolish = visibility;
-        this.content = content;
-    }
-
     public void clickLike() {
         this.likeCount++;
     }
@@ -162,8 +169,19 @@ public class Post extends CommonDomainModel {
         this.likeCount--;
     }
 
-    public void delete(Long memberId) {
-        validateOwner(memberId, new NoAuthorityDeletePostException());
-        registerEvent(new PostDeleteEvent(getId()));
+    public void validatePostAccessibility(@Nullable Long memberId,
+                                          @Nullable String postPassword) {
+        if (visibilityPolish.getVisibility() == Visibility.PUBLIC) {
+            return;
+        }
+        if (getWriter().getId().equals(memberId)) {
+            return;
+        }
+        if (visibilityPolish.getVisibility() == Visibility.PROTECTED) {
+            if (visibilityPolish.getPassword().equals(postPassword)) {
+                return;
+            }
+        }
+        throw new NoAuthorityAccessPostException();
     }
 }

@@ -65,6 +65,19 @@ public class Category extends CommonDomainModel {
         return category;
     }
 
+    public void update(Long memberId, String name, Category parent, CategoryValidator validator) {
+        validateOwner(memberId, new NoAuthorityUpdateCategoryException());
+        this.name = name;
+        setParent(parent, validator);
+    }
+
+    public void delete(Long memberId) {
+        validateOwner(memberId, new NoAuthorityDeleteCategoryException());
+        validateNoChildren();
+        unlinkFromParent();
+        registerEvent(new CategoryDeletedEvent(getId()));
+    }
+
     private void setParent(@Nullable Category parent, CategoryValidator validator) {
         if (willBeRoot(parent)) {
             beRoot(validator);
@@ -110,18 +123,6 @@ public class Category extends CommonDomainModel {
         }
     }
 
-    public List<Category> getDescendants() {
-        List<Category> children = new ArrayList<>();
-        if (getChildren().isEmpty()) {
-            return children;
-        }
-        for (Category child : getChildren()) {
-            children.add(child);
-            children.addAll(child.getDescendants());
-        }
-        return children;
-    }
-
     private void link(Category parent) {
         unlinkFromParent();
         validateDuplicatedNameInSameHierarchy(parent);
@@ -138,22 +139,21 @@ public class Category extends CommonDomainModel {
                 });
     }
 
-    public void update(Long memberId, String name, Category parent, CategoryValidator validator) {
-        validateOwner(memberId, new NoAuthorityUpdateCategoryException());
-        this.name = name;
-        setParent(parent, validator);
-    }
-
-    public void delete(Long memberId) {
-        validateOwner(memberId, new NoAuthorityDeleteCategoryException());
-        validateNoChildren();
-        unlinkFromParent();
-        registerEvent(new CategoryDeletedEvent(getId()));
-    }
-
     private void validateNoChildren() {
         if (!children.isEmpty()) {
             throw new ChildCategoryExistException();
         }
+    }
+
+    public List<Category> getDescendants() {
+        List<Category> children = new ArrayList<>();
+        if (getChildren().isEmpty()) {
+            return children;
+        }
+        for (Category child : getChildren()) {
+            children.add(child);
+            children.addAll(child.getDescendants());
+        }
+        return children;
     }
 }

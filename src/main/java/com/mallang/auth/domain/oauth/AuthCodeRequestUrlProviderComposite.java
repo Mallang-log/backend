@@ -24,7 +24,7 @@ public class AuthCodeRequestUrlProviderComposite {
         return getProvider(oauthServerType).provide();
     }
 
-    public AuthCodeRequestUrlProvider getProvider(OauthServerType oauthServerType) {
+    private AuthCodeRequestUrlProvider getProvider(OauthServerType oauthServerType) {
         return Optional.ofNullable(mapping.get(oauthServerType))
                 .orElseThrow(UnsupportedOauthTypeException::new);
     }

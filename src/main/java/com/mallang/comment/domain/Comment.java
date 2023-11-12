@@ -34,20 +34,20 @@ import lombok.NoArgsConstructor;
 public abstract class Comment extends CommonDomainModel {
 
     @Column(nullable = false)
-    private String content;
+    protected String content;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    protected Post post;
 
-    private boolean deleted;
+    protected boolean deleted;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parant_id", nullable = true, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Comment parent;
+    protected Comment parent;
 
     @OneToMany(mappedBy = "parent")
-    private List<Comment> children = new ArrayList<>();
+    protected List<Comment> children = new ArrayList<>();
 
     protected Comment(
             String content,

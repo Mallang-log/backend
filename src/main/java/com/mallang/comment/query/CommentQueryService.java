@@ -23,6 +23,6 @@ public class CommentQueryService {
         commentDataValidator.validateAccessPost(postId, memberId, postPassword);
         List<CommentData> result = commentDataDao.findAllByPostId(postId);
         List<CommentData> deletedProcessedResult = commentDataPostProcessor.processDeleted(result);
-        return commentDataPostProcessor.processSecret(postId, deletedProcessedResult, memberId);
+        return commentDataPostProcessor.processSecret(deletedProcessedResult, postId, memberId);
     }
 }
