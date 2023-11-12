@@ -39,18 +39,16 @@ public class CommentDataPostProcessor {
                     .children(unAuth.getChildren())
                     .build();
         }
-        if (data instanceof AuthenticatedCommentData authed) {
-            return AuthenticatedCommentData.builder()
-                    .id(data.getId())
-                    .content("삭제된 댓글입니다.")
-                    .secret(authed.isSecret())
-                    .writerData(authed.getWriterData())
-                    .createdDate(authed.getCreatedDate())
-                    .deleted(authed.isDeleted())
-                    .children(authed.getChildren())
-                    .build();
-        }
-        throw new RuntimeException("CommentDataPostProcessor에서 처리되지 않는 형식의 댓글이 들어왔습니다.");
+        AuthenticatedCommentData authed = (AuthenticatedCommentData) data;
+        return AuthenticatedCommentData.builder()
+                .id(data.getId())
+                .content("삭제된 댓글입니다.")
+                .secret(authed.isSecret())
+                .writerData(authed.getWriterData())
+                .createdDate(authed.getCreatedDate())
+                .deleted(authed.isDeleted())
+                .children(authed.getChildren())
+                .build();
     }
 
     public List<CommentData> processSecret(List<CommentData> datas, Long postId, @Nullable Long memberId) {

@@ -139,4 +139,37 @@ class CommentDeleteServiceTest {
         verify(commentRepository, times(1)).delete(childComment);
         verify(commentRepository, times(0)).delete(parentComment);
     }
+
+    @Test
+    void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태라도_여전히_다른_자식이_존재한다면_부모는_변함없다() {
+        // given
+        AuthenticatedComment parentComment = AuthenticatedComment.builder()
+                .content("내용")
+                .post(post)
+                .writer(member)
+                .secret(true)
+                .build();
+        UnAuthenticatedComment childComment = UnAuthenticatedComment.builder()
+                .content("to be delete")
+                .post(post)
+                .nickname("익")
+                .password("1234")
+                .parent(parentComment)
+                .build();
+        UnAuthenticatedComment otherChildComment = UnAuthenticatedComment.builder()
+                .content("to be delete")
+                .post(post)
+                .nickname("익")
+                .password("1234")
+                .parent(parentComment)
+                .build();
+        parentComment.delete(member, commentDeleteService, null);
+
+        // when
+        commentDeleteService.delete(childComment);
+
+        // then
+        verify(commentRepository, times(1)).delete(childComment);
+        verify(commentRepository, times(0)).delete(parentComment);
+    }
 }

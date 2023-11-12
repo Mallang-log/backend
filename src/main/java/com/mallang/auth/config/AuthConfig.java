@@ -7,9 +7,9 @@ import static org.springframework.http.HttpMethod.PUT;
 
 import com.mallang.auth.presentation.support.AuthArgumentResolver;
 import com.mallang.auth.presentation.support.AuthInterceptor;
-import com.mallang.auth.presentation.support.AuthInterceptor.UriAndMethodCondition;
 import com.mallang.auth.presentation.support.ExtractAuthenticationInterceptor;
 import com.mallang.auth.presentation.support.OptionalAuthArgumentResolver;
+import com.mallang.common.presentation.UriAndMethodAndParamCondition;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,28 +41,28 @@ public class AuthConfig implements WebMvcConfigurer {
 
     private AuthInterceptor setUpAuthInterceptor() {
         authInterceptor.setNoAuthRequiredConditions(
-                UriAndMethodCondition.builder()
+                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/members/**"))
                         .httpMethods(Set.of(GET))
                         .build(),
-                UriAndMethodCondition.builder()
+                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/posts/**"))
                         .httpMethods(Set.of(GET))
                         .build(),
-                UriAndMethodCondition.builder()
+                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/categories"))
                         .httpMethods(Set.of(GET))
                         .build(),
-                UriAndMethodCondition.builder()
+                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/comments/**"))
                         .httpMethods(Set.of(POST, PUT, DELETE))
                         .params(Map.of("unauthenticated", "true"))
                         .build(),
-                UriAndMethodCondition.builder()
+                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/comments"))
                         .httpMethods(Set.of(GET))
                         .build(),
-                UriAndMethodCondition.builder()
+                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/blog-subscribes/*"))
                         .httpMethods(Set.of(GET))
                         .build()
