@@ -103,18 +103,18 @@ jacocoTestReport {
         classDirectories.setFrom(
                 files(classDirectories.files.collect {
                     fileTree(dir: it, excludes: [
-                            '**/*Application',
-                            '**/*Exception',
-                            '**/*Config',
-                            '**/*Constant',
+                            '**/*Application*',
+                            '**/*Exception*',
+                            '**/*Config*',
+                            '**/*Constant*',
                             '**/dto/**',
                             '**/command/**',
                             '**/request/**',
                             '**/data/**',
-                            '**/dao/support/*Support',
-                            '**/domain/*Repository',
+                            '**/dao/support/*Support*',
+                            '**/domain/*Repository*',
                             '**/auth/infrastructure/oauth/*/**',
-                            '**/auth/OauthController',
+                            '**/auth/presentation/OauthController*',
                     ] + Qdomains)
                 }))
     }
