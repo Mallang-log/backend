@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 @DisplayName("포스트 인트로(PostIntro) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -26,14 +28,23 @@ class PostIntroTest {
         });
     }
 
-    @Test
-    void 길익가_0이거나_null_이거나_250글자_초과라면_예외() {
+    @ParameterizedTest
+    @NullAndEmptySource
+    void 길익가_0이거나_null_이라면_예외(String value) {
         // when & then
         assertThatThrownBy(() -> {
-            new PostIntro("");
+            new PostIntro(value);
         }).isInstanceOf(InvalidPostIntroLengthException.class);
+    }
+
+    @Test
+    void 길익가_250글자_초과라면_예외() {
+        // given
+        String repeat = "1".repeat(251);
+
+        // when & then
         assertThatThrownBy(() -> {
-            new PostIntro("1".repeat(251));
+            new PostIntro(repeat);
         }).isInstanceOf(InvalidPostIntroLengthException.class);
     }
 
@@ -44,6 +55,8 @@ class PostIntroTest {
         PostIntro intro2 = new PostIntro("123");
 
         // when & then
+        assertThat(intro1).isNotEqualTo("123");
+        assertThat(intro1).isEqualTo(intro1);
         assertThat(intro1).isEqualTo(intro2);
         assertThat(intro1.hashCode()).isEqualTo(intro2.hashCode());
     }
