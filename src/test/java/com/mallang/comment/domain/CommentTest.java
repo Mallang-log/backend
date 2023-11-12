@@ -66,7 +66,6 @@ class CommentTest {
             assertThat(parent.getChildren().get(0)).isEqualTo(child);
         }
 
-
         @Test
         void 다른_사람의_댓글에_대댓글을_달_수_있다() {
             // given
