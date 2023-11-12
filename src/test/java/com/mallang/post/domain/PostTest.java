@@ -169,7 +169,7 @@ class PostTest {
                     .build();
 
             // when
-            post.update(mallang.getId(), "수정제목", "수정내용",
+            post.update(mallang.getId(), "수정제목", "수정내용", new PostIntro("수정인트로"),
                     new PostVisibilityPolicy(PRIVATE), null,
                     List.of("태그2")
             );
@@ -195,7 +195,8 @@ class PostTest {
 
             // when
             assertThatThrownBy(() ->
-                    post.update(otherMember.getId(), "수정제목", "수정내용", new PostVisibilityPolicy(PUBLIC), null,
+                    post.update(otherMember.getId(), "수정제목", "수정내용", new PostIntro("수정인트로"),
+                            new PostVisibilityPolicy(PUBLIC), null,
                             emptyList())
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
 

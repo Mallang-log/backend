@@ -139,7 +139,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
             Long 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
             var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 블로그_ID, "Spring", 없음());
             var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 블로그_ID, "JPA", Spring_카테고리_ID);
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "제목", "내용", JPA_카테고리_ID);
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID, "제목", "내용", "인트로", JPA_카테고리_ID);
 
             // when
             var 응답 = 카테고리_제거_요청(말랑_세션_ID, JPA_카테고리_ID);

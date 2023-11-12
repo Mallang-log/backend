@@ -1,6 +1,7 @@
 package com.mallang.acceptance.post;
 
 import static com.mallang.acceptance.AcceptanceSteps.given;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,10 +25,11 @@ public class PostAcceptanceSteps {
             Long 블로그_ID,
             String 포스트_제목,
             String 포스트_내용,
+            String 포스트_인트로,
             Long 카테고리_ID,
             String... 태그들
     ) {
-        return 포스트_생성_요청(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, Visibility.PUBLIC, null, 카테고리_ID, 태그들);
+        return 포스트_생성_요청(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, 포스트_인트로, PUBLIC, null, 카테고리_ID, 태그들);
     }
 
     public static ExtractableResponse<Response> 포스트_생성_요청(
@@ -35,6 +37,7 @@ public class PostAcceptanceSteps {
             Long 블로그_ID,
             String 포스트_제목,
             String 포스트_내용,
+            String 포스트_인트로,
             Visibility 공개_범위,
             String 비밀번호,
             Long 카테고리_ID,
@@ -44,6 +47,7 @@ public class PostAcceptanceSteps {
                 블로그_ID,
                 포스트_제목,
                 포스트_내용,
+                포스트_인트로,
                 공개_범위,
                 비밀번호,
                 카테고리_ID,
@@ -62,13 +66,17 @@ public class PostAcceptanceSteps {
             Long 포스트_ID,
             String 업데이트_제목,
             String 업데이트_내용,
+            String 업데이트_인트로,
             Visibility 공개_범위,
             String 비밀번호,
             Long 변경할_카테고리_ID,
             String... 태그들
     ) {
         return given(세션_ID)
-                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용, 공개_범위, 비밀번호, 변경할_카테고리_ID, Arrays.asList(태그들)))
+                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용, 업데이트_인트로,
+                        공개_범위, 비밀번호,
+                        변경할_카테고리_ID,
+                        Arrays.asList(태그들)))
                 .put("/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
