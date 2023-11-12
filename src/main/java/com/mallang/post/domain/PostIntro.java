@@ -18,13 +18,15 @@ public class PostIntro {
     private String intro;
 
     public PostIntro(String intro) {
-        intro = intro.strip();
         validateLength(intro);
-        this.intro = intro;
+        this.intro = intro.strip();
     }
 
     private void validateLength(String value) {
-        int length = value.length();
+        if (value == null) {
+            throw new InvalidPostIntroLengthException();
+        }
+        int length = value.strip().length();
         if (length < 1 || 250 < length) {
             throw new InvalidPostIntroLengthException();
         }
