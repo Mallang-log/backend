@@ -178,10 +178,5 @@ sonar {
         property "sonar.organization", "mallang-log"
         property "sonar.projectKey", "backend"
         property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/jacoco/index.xml"
-        property 'sonar.exclusions', '**/test/**, **/*Doc*.java, **/resources/** ,**/*Application*.java , **/*Exception*.java,' +
-                '**/*Config*.java, **/*Constant*.java, **/dto/**, **/command/**, **/request/**, **/data/**,' +
-                '**/dao/support/*Support.java ,**/domain/*Repository*.java ,**/auth/infrastructure/oauth/*/**' +
-                "**/OauthController.java, ${Qdomains}"
-        property 'sonar.java.coveragePlugin', 'jacoco'
     }
 }
