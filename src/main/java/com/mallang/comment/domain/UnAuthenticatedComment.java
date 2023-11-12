@@ -58,8 +58,8 @@ public class UnAuthenticatedComment extends Comment {
             CommentDeleteService commentDeleteService,
             @Nullable String postPassword
     ) {
-        post.validatePostAccessibility(null, postPassword);
         if (!isPostOwner(member)) {
+            post.validatePostAccessibility(null, postPassword);
             validatePassword(password);
         }
         super.delete(commentDeleteService);
