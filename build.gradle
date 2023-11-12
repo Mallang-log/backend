@@ -181,8 +181,7 @@ sonar {
         property 'sonar.exclusions', '**/test/**, **/*Doc*.java, **/resources/** ,**/*Application*.java , **/*Exception*.java,' +
                 '**/*Config*.java, **/*Constant*.java, **/dto/**, **/command/**, **/request/**, **/data/**,' +
                 '**/dao/support/*Support.java ,**/domain/*Repository*.java ,**/auth/infrastructure/oauth/*/**' +
-                '**/OauthController.java,'
-        +Qdomains
+                "**/OauthController.java, ${Qdomains}"
         property 'sonar.java.coveragePlugin', 'jacoco'
     }
 }
