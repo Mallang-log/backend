@@ -81,6 +81,26 @@ test {
     finalizedBy 'jacocoTestReport'
 }
 
+def Qdomains = []
+for (qPattern in "**/QA".."**/QZ") {
+    Qdomains.add(qPattern + "*")
+}
+
+def excludeCoverage = [
+        '**/*Application*',
+        '**/*Exception*',
+        '**/*Config*',
+        '**/*Constant*',
+        '**/dto/**',
+        '**/command/**',
+        '**/request/**',
+        '**/data/**',
+        '**/dao/support/*Support*',
+        '**/domain/*Repository*',
+        '**/auth/infrastructure/oauth/*/**',
+        '**/auth/presentation/OauthController*',
+] + Qdomains
+
 jacocoTestReport {
     reports {
         xml {
@@ -95,42 +115,26 @@ jacocoTestReport {
             destination file("${buildDir}/jacoco/index.html")
         }
     }
-    def Qdomains = []
-    for (qPattern in "**/QA".."**/QZ") {
-        Qdomains.add(qPattern + "*")
-    }
+
     afterEvaluate {
         classDirectories.setFrom(
                 files(classDirectories.files.collect {
-                    fileTree(dir: it, excludes: [
-                            '**/*Application*',
-                            '**/*Exception*',
-                            '**/*Config*',
-                            '**/*Constant*',
-                            '**/dto/**',
-                            '**/command/**',
-                            '**/request/**',
-                            '**/data/**',
-                            '**/dao/support/*Support*',
-                            '**/domain/*Repository*',
-                            '**/auth/infrastructure/oauth/*/**',
-                            '**/auth/presentation/OauthController*',
-                    ] + Qdomains)
+                    fileTree(dir: it, excludes: excludeCoverage)
                 }))
     }
     finalizedBy 'jacocoTestCoverageVerification'
 }
 
 jacocoTestCoverageVerification {
-    def Qdomains = []
+    def QdomainsInVerification = []
     for (qPattern in '*.QA'..'*.QZ') {
-        Qdomains.add(qPattern + '*')
+        QdomainsInVerification.add(qPattern + '*')
     }
     violationRules {
         rule {
             enabled = true
             element = 'CLASS'
-            excludes = excludes = [
+            excludes = [
                     '*.*Application',
                     '*.*Exception',
                     '*.*Config',
@@ -143,7 +147,7 @@ jacocoTestCoverageVerification {
                     '*.domain.*Repository',
                     '*.auth.infrastructure.oauth.*.*',
                     '*.OauthController',
-            ] + Qdomains
+            ] + QdomainsInVerification
 
             limit {
                 counter = 'LINE'
@@ -172,5 +176,6 @@ sonar {
         property "sonar.projectKey", "Mallang-log_backend"
         property "sonar.organization", "mallang-log"
         property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/jacoco/index.xml"
+        property 'sonar.exclusions', excludeCoverage
     }
 }
