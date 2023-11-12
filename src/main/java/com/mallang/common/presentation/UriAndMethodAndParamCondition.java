@@ -3,6 +3,7 @@ package com.mallang.common.presentation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import lombok.Builder;
 import org.springframework.http.HttpMethod;
@@ -34,9 +35,9 @@ public record UriAndMethodAndParamCondition(
         if (matchParamIsNotRequired()) {
             return true;
         }
-        for (String param : params.keySet()) {
-            String value = request.getParameter(param);
-            if (!params.get(param).equals(value)) {
+        for (Entry<String, String> entry : params.entrySet()) {
+            String value = request.getParameter(entry.getKey());
+            if (!entry.getValue().equals(value)) {
                 return false;
             }
         }

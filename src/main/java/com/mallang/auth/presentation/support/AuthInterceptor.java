@@ -28,17 +28,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (noAuthenticationRequired(request)) {
-            return true;
-        }
-        if (authContext.unAuthenticated()) {
+        if (authenticationRequired(request) && authContext.unAuthenticated()) {
             throw new NoAuthenticationSessionException();
         }
         return true;
     }
 
-    private boolean noAuthenticationRequired(HttpServletRequest request) {
+    private boolean authenticationRequired(HttpServletRequest request) {
         return noAuthRequiredConditions.stream()
-                .anyMatch(it -> it.match(pathMatcher.getIfAvailable(), request));
+                .noneMatch(it -> it.match(pathMatcher.getIfAvailable(), request));
     }
 }
