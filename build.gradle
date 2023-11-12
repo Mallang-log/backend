@@ -4,11 +4,12 @@ buildscript {
     }
 }
 
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0-M1'
     id 'io.spring.dependency-management' version '1.1.2'
+    id 'jacoco'
+    id 'org.sonarqube' version '4.2.1.3168'
 }
 
 group = 'com.mallang.log'
@@ -57,10 +58,6 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 def generated = 'src/main/generated'
 
 tasks.withType(JavaCompile).configureEach {
@@ -71,7 +68,109 @@ sourceSets {
     main.java.srcDirs += [generated]
 }
 
-// gradle clean 시에 QClass 디렉토리 삭제
 clean {
     delete file(generated)
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+}
+
+jacocoTestReport {
+    reports {
+        xml {
+            required = true
+            destination file("${buildDir}/jacoco/index.xml")
+        }
+        csv {
+            required = false
+        }
+        html {
+            required = true
+            destination file("${buildDir}/jacoco/index.html")
+        }
+    }
+    def Qdomains = []
+    for (qPattern in "**/QA".."**/QZ") {
+        Qdomains.add(qPattern + "*")
+    }
+    afterEvaluate {
+        classDirectories.setFrom(
+                files(classDirectories.files.collect {
+                    fileTree(dir: it, excludes: [
+                            '**/*Application',
+                            '**/*Exception',
+                            '**/*Config',
+                            '**/*Constant',
+                            '**/dto/**',
+                            '**/command/**',
+                            '**/request/**',
+                            '**/data/**',
+                            '**/dao/support/*Support',
+                            '**/domain/*Repository',
+                            '**/auth/infrastructure/oauth/*/**',
+                            '**/auth/OauthController',
+                    ] + Qdomains)
+                }))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    def Qdomains = []
+    for (qPattern in '*.QA'..'*.QZ') {
+        Qdomains.add(qPattern + '*')
+    }
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            excludes = excludes = [
+                    '*.*Application',
+                    '*.*Exception',
+                    '*.*Config',
+                    '*.*Constant',
+                    '*.dto.*',
+                    '*.command.*',
+                    '*.request.*',
+                    '*.data.*',
+                    '*.dao.support.*Support',
+                    '*.domain.*Repository',
+                    '*.auth.infrastructure.oauth.*.*',
+                    '*.OauthController',
+            ] + Qdomains
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1
+            }
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 1
+            }
+
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 200
+            }
+        }
+    }
+}
+
+sonar {
+    properties {
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property "sonar.projectKey", "Mallang-log_backend"
+        property "sonar.organization", "mallang-log"
+        property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/jacoco/index.xml"
+    }
 }
