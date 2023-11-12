@@ -55,10 +55,11 @@ class PostIntroTest {
         PostIntro intro2 = new PostIntro("123");
 
         // when & then
-        assertThat(intro1).isNotEqualTo("123");
-        assertThat(intro1).isEqualTo(intro1);
-        assertThat(intro1).isEqualTo(intro2);
-        assertThat(intro1.hashCode()).isEqualTo(intro2.hashCode());
+        assertThat(intro1)
+                .isNotEqualTo(new Object())
+                .isEqualTo(intro1)
+                .isEqualTo(intro2)
+                .hasSameHashCodeAs(intro2);
     }
 
     @Test
