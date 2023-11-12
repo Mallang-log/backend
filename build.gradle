@@ -167,12 +167,6 @@ jacocoTestCoverageVerification {
 }
 
 sonar {
-
-    def Qdomains = "";
-    for (qPattern in "**/QA".."**/QZ") {
-        Qdomains += (qPattern + "*.java,")
-    }
-
     properties {
         property 'sonar.host.url', 'https://sonarcloud.io'
         property "sonar.organization", "mallang-log"
