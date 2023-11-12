@@ -78,7 +78,7 @@ public class Post extends CommonDomainModel {
     private int likeCount = 0;
 
     @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", updatable = false, nullable = false)
     private List<Tag> tags = new ArrayList<>();
 
     @Builder
