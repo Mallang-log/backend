@@ -63,7 +63,7 @@ class PostDataProtectorTest {
 
             // then
             assertThat(protectedData.content()).isEqualTo("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.");
-            assertThat(protectedData.postThumbnailImageName()).isEqualTo("");
+            assertThat(protectedData.postThumbnailImageName()).isEmpty();
         }
 
         @ParameterizedTest
