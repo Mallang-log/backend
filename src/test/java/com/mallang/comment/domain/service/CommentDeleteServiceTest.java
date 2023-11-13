@@ -1,7 +1,7 @@
 package com.mallang.comment.domain.service;
 
-import static com.mallang.auth.MemberFixture.memberBuilder;
 import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.MemberFixture.회원;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -27,7 +27,7 @@ class CommentDeleteServiceTest {
     private final CommentRepository commentRepository = mock(CommentRepository.class);
     private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
 
-    private final Member postWriter = memberBuilder().id(1L).build();
+    private final Member postWriter = 회원(1L, "postWriter");
     private final Blog blog = Blog.builder()
             .name("mallang")
             .owner(postWriter)
