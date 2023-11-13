@@ -6,6 +6,7 @@ import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.Tag;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -15,6 +16,7 @@ public record PostDetailData(
         Long id,
         String title,
         String content,
+        @Nullable String postThumbnailImageName,
         Visibility visibility,
         boolean isProtected,
         @JsonIgnore String password,
@@ -35,6 +37,7 @@ public record PostDetailData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .postThumbnailImageName(post.getPostThumbnailImageName())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .password(post.getVisibilityPolish().getPassword())
                 .likeCount(post.getLikeCount())

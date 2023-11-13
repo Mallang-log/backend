@@ -29,7 +29,18 @@ public class PostAcceptanceSteps {
             Long 카테고리_ID,
             String... 태그들
     ) {
-        return 포스트_생성_요청(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, 포스트_인트로, PUBLIC, null, 카테고리_ID, 태그들);
+        return 포스트_생성_요청(
+                세션_ID,
+                블로그_ID,
+                포스트_제목,
+                포스트_내용,
+                null,
+                포스트_인트로,
+                PUBLIC,
+                null,
+                카테고리_ID,
+                태그들
+        );
     }
 
     public static ExtractableResponse<Response> 포스트_생성_요청(
@@ -43,10 +54,37 @@ public class PostAcceptanceSteps {
             Long 카테고리_ID,
             String... 태그들
     ) {
+        return 포스트_생성_요청(
+                세션_ID,
+                블로그_ID,
+                포스트_제목,
+                포스트_내용,
+                null,
+                포스트_인트로,
+                공개_범위,
+                비밀번호,
+                카테고리_ID,
+                태그들
+        );
+    }
+
+    public static ExtractableResponse<Response> 포스트_생성_요청(
+            String 세션_ID,
+            Long 블로그_ID,
+            String 포스트_제목,
+            String 포스트_내용,
+            String 썸네일_이미지_이름,
+            String 포스트_인트로,
+            Visibility 공개_범위,
+            String 비밀번호,
+            Long 카테고리_ID,
+            String... 태그들
+    ) {
         CreatePostRequest request = new CreatePostRequest(
                 블로그_ID,
                 포스트_제목,
                 포스트_내용,
+                썸네일_이미지_이름,
                 포스트_인트로,
                 공개_범위,
                 비밀번호,
@@ -72,9 +110,40 @@ public class PostAcceptanceSteps {
             Long 변경할_카테고리_ID,
             String... 태그들
     ) {
+        return 포스트_수정_요청(
+                세션_ID,
+                포스트_ID,
+                업데이트_제목,
+                업데이트_내용,
+                null,
+                업데이트_인트로,
+                공개_범위,
+                비밀번호,
+                변경할_카테고리_ID,
+                태그들
+        );
+    }
+
+    public static ExtractableResponse<Response> 포스트_수정_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 업데이트_제목,
+            String 업데이트_내용,
+            String 업데이트_인트로,
+            String 썸네일_이미지_이름,
+            Visibility 공개_범위,
+            String 비밀번호,
+            Long 변경할_카테고리_ID,
+            String... 태그들
+    ) {
         return given(세션_ID)
-                .body(new UpdatePostRequest(업데이트_제목, 업데이트_내용, 업데이트_인트로,
-                        공개_범위, 비밀번호,
+                .body(new UpdatePostRequest(
+                        업데이트_제목,
+                        업데이트_내용,
+                        업데이트_인트로,
+                        썸네일_이미지_이름,
+                        공개_범위,
+                        비밀번호,
                         변경할_카테고리_ID,
                         Arrays.asList(태그들)))
                 .put("/posts/{id}", 포스트_ID)
@@ -110,7 +179,11 @@ public class PostAcceptanceSteps {
     public static void 포스트_단일_조회_응답을_검증한다(ExtractableResponse<Response> 응답, PostDetailData 예상_데이터) {
         PostDetailData postDetailData = 응답.as(PostDetailData.class);
         assertThat(postDetailData).usingRecursiveComparison()
-                .ignoringFields("writerInfo.writerId", "writerInfo.writerProfileImageUrl", "createdDate")
+                .ignoringFields(
+                        "writerInfo.writerId",
+                        "writerInfo.writerProfileImageUrl",
+                        "createdDate"
+                )
                 .isEqualTo(예상_데이터);
         assertThat(postDetailData.password()).isNull();
     }

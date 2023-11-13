@@ -5,6 +5,7 @@ import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.Tag;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -14,6 +15,7 @@ public record PostSimpleData(
         Long id,
         String title,
         String content,
+        @Nullable String postThumbnailImageName,
         String intro,
         Visibility visibility,
         int likeCount,
@@ -28,6 +30,7 @@ public record PostSimpleData(
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .postThumbnailImageName(post.getPostThumbnailImageName())
                 .intro(post.getPostIntro())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .likeCount(post.getLikeCount())

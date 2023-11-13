@@ -32,15 +32,21 @@ public class PostServiceTestHelper {
         return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, 공개범위, null, 태그들);
     }
 
-    public Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID,
-                          String 제목, String 내용,
-                          PostVisibilityPolicy 공개범위, Long 카테고리_ID,
-                          String... 태그들) {
+    public Long 포스트를_저장한다(
+            Long 회원_ID,
+            Long 블로그_ID,
+            String 제목,
+            String 내용,
+            PostVisibilityPolicy 공개범위,
+            Long 카테고리_ID,
+            String... 태그들
+    ) {
         return postService.create(new CreatePostCommand(
                 회원_ID,
                 블로그_ID,
                 제목,
                 내용,
+                null,
                 내용.substring(0, Math.min(내용.length(), 50)),
                 공개범위.getVisibility(),
                 공개범위.getPassword(),

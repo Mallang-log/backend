@@ -149,6 +149,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
             포스트_내용_검증(포스트_ID, 예상_포스트_단일_조회_응답(포스트_ID, "말랑",
                     없음(), 없음(),
                     "제목", "내용",
+                    null,
                     PUBLIC, 보호되지_않음, 좋아요_안눌림));
         }
 

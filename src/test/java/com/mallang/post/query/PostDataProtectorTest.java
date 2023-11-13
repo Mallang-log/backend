@@ -54,6 +54,7 @@ class PostDataProtectorTest {
             PostDetailData postDetailData = PostDetailData.builder()
                     .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
                     .content("content")
+                    .postThumbnailImageName("thumb")
                     .visibility(PROTECTED)
                     .build();
 
@@ -62,6 +63,7 @@ class PostDataProtectorTest {
 
             // then
             assertThat(protectedData.content()).isEqualTo("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.");
+            assertThat(protectedData.postThumbnailImageName()).isEmpty();
         }
 
         @ParameterizedTest
@@ -94,6 +96,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-public")
                             .content("mallang-public")
+                            .postThumbnailImageName("thumb-mallang-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
@@ -101,6 +104,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-protected")
                             .content("mallang-protected")
+                            .postThumbnailImageName("thumb-mallang-protected")
                             .intro("intro")
                             .visibility(PROTECTED)
                             .build(),
@@ -108,6 +112,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-private")
                             .content("mallang-private")
+                            .postThumbnailImageName("thumb-mallang-private")
                             .intro("intro")
                             .visibility(PRIVATE)
                             .build(),
@@ -116,6 +121,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-public")
                             .content("other-public")
+                            .postThumbnailImageName("thumb-other-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
@@ -123,6 +129,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-protected")
                             .content("other-protected")
+                            .postThumbnailImageName("thumb-other-protected")
                             .intro("intro")
                             .visibility(PROTECTED)
                             .build());
@@ -136,6 +143,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-public")
                             .content("mallang-public")
+                            .postThumbnailImageName("thumb-mallang-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
@@ -143,6 +151,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-protected")
                             .content("mallang-protected")
+                            .postThumbnailImageName("thumb-mallang-protected")
                             .intro("intro")
                             .visibility(PROTECTED)
                             .build(),
@@ -150,6 +159,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
                             .title("mallang-private")
                             .content("mallang-private")
+                            .postThumbnailImageName("thumb-mallang-private")
                             .intro("intro")
                             .visibility(PRIVATE)
                             .build(),
@@ -158,6 +168,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-public")
                             .content("other-public")
+                            .postThumbnailImageName("thumb-other-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
@@ -165,6 +176,7 @@ class PostDataProtectorTest {
                             .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
                             .title("other-protected")
                             .content("보호되어 있는 글입니다.")
+                            .postThumbnailImageName("")
                             .intro("")
                             .visibility(PROTECTED)
                             .build());

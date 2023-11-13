@@ -150,7 +150,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PROTECTED, "1234", 없음());
 
                     // when
@@ -170,7 +171,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PROTECTED, "1234", 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
@@ -187,7 +189,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
@@ -210,7 +213,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PROTECTED, "1234", 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
@@ -229,7 +233,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PROTECTED, "1234", 없음());
 
                     String 세션_ID = 보호된_포스트_단일_조회_요청(포스트_ID, "1234")
@@ -253,7 +258,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PRIVATE, 없음(), 없음());
 
                 // when
@@ -269,7 +275,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PRIVATE, 없음(), 없음());
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
@@ -382,7 +389,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PROTECTED, "1234", 없음());
                     var 댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "댓글", 비공개);
 
@@ -403,7 +411,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
@@ -424,7 +433,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
@@ -451,7 +461,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PRIVATE, 없음(), 없음());
                 var 댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "댓글", 비공개);
 
@@ -467,7 +478,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PUBLIC, 없음(), 없음());
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                 var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
@@ -657,7 +669,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PROTECTED, "1234", 없음());
                     var 댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "댓글", 비공개);
 
@@ -678,7 +691,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
@@ -699,7 +713,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
@@ -726,7 +741,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PRIVATE, 없음(), 없음());
                 var 댓글_ID = 댓글_작성(말랑_세션_ID, 포스트_ID, "댓글", 비공개);
 
@@ -742,7 +758,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PUBLIC, 없음(), 없음());
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                 var 댓글_ID = 댓글_작성(동훈_세션_ID, 포스트_ID, "댓글", 비공개);
@@ -894,7 +911,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
 
                     var 헤헤_댓글_ID = 비인증_댓글_작성(포스트_ID, "헤헤 댓글", "헤헤", "1234");
@@ -935,7 +953,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
 
                     var 헤헤_댓글_ID = 비인증_댓글_작성(포스트_ID, "헤헤 댓글", "헤헤", "1234");
@@ -963,7 +982,8 @@ public class CommentAcceptanceTest {
                     var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                     var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                            "제목", "내용", "인트로",
+                            "제목", "내용",
+                            null, "인트로",
                             PUBLIC, 없음(), 없음());
 
                     var 헤헤_댓글_ID = 비인증_댓글_작성(포스트_ID, "헤헤 댓글", "헤헤", "1234");
@@ -1005,7 +1025,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PUBLIC, 없음(), 없음());
 
                 var 헤헤_댓글_ID = 비인증_댓글_작성(포스트_ID, "헤헤 댓글", "헤헤", "1234");
@@ -1041,7 +1062,8 @@ public class CommentAcceptanceTest {
                 var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
                 var 블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 블로그_ID,
-                        "제목", "내용", "인트로",
+                        "제목", "내용",
+                        null, "인트로",
                         PUBLIC, 없음(), 없음());
 
                 var 헤헤_댓글_ID = 비인증_댓글_작성(포스트_ID, "헤헤 댓글", "헤헤", "1234");

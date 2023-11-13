@@ -47,6 +47,7 @@ public class PostService {
                 command.memberId(),
                 command.title(),
                 command.content(),
+                command.postThumbnailImageName(),
                 new PostIntro(command.intro()),
                 new PostVisibilityPolicy(command.visibility(), command.password()),
                 category,

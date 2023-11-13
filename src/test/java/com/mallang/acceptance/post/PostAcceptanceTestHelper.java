@@ -23,7 +23,7 @@ public class PostAcceptanceTestHelper {
             Long 카테고리_ID,
             String... 태그들
     ) {
-        return 포스트_생성(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, 포스트_인트로, PUBLIC, null, 카테고리_ID, 태그들);
+        return 포스트_생성(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, null, 포스트_인트로, PUBLIC, null, 카테고리_ID, 태그들);
     }
 
     public static Long 포스트_생성(
@@ -31,6 +31,20 @@ public class PostAcceptanceTestHelper {
             Long 블로그_ID,
             String 포스트_제목,
             String 포스트_내용,
+            String 썸네일_이미지_이름,
+            String 포스트_인트로,
+            Long 카테고리_ID,
+            String... 태그들
+    ) {
+        return 포스트_생성(세션_ID, 블로그_ID, 포스트_제목, 포스트_내용, 썸네일_이미지_이름, 포스트_인트로, PUBLIC, null, 카테고리_ID, 태그들);
+    }
+
+    public static Long 포스트_생성(
+            String 세션_ID,
+            Long 블로그_ID,
+            String 포스트_제목,
+            String 포스트_내용,
+            String 썸네일_이미지_이름,
             String 포스트_인트로,
             Visibility 공개_범위,
             String 비밀번호,
@@ -38,8 +52,16 @@ public class PostAcceptanceTestHelper {
             String... 태그들
     ) {
         return ID를_추출한다(given(세션_ID)
-                .body(new CreatePostRequest(블로그_ID, 포스트_제목, 포스트_내용, 포스트_인트로,
-                        공개_범위, 비밀번호, 카테고리_ID, Arrays.asList(태그들)))
+                .body(new CreatePostRequest(
+                        블로그_ID,
+                        포스트_제목,
+                        포스트_내용,
+                        썸네일_이미지_이름,
+                        포스트_인트로,
+                        공개_범위,
+                        비밀번호,
+                        카테고리_ID,
+                        Arrays.asList(태그들)))
                 .when()
                 .post("/posts")
                 .then().log().all()
