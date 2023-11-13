@@ -61,6 +61,9 @@ public class Post extends CommonDomainModel {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = true)
+    private String postThumbnailImageName;
+
     @Embedded
     private PostIntro postIntro;
 
@@ -87,6 +90,7 @@ public class Post extends CommonDomainModel {
             Blog blog,
             String title,
             String content,
+            String postThumbnailImageName,
             PostIntro postIntro,
             PostVisibilityPolicy visibilityPolish,
             Member writer,
@@ -98,6 +102,7 @@ public class Post extends CommonDomainModel {
         this.blog = blog;
         this.title = title;
         this.content = content;
+        this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = postIntro;
         this.visibilityPolish = visibilityPolish;
         this.writer = writer;
@@ -109,6 +114,7 @@ public class Post extends CommonDomainModel {
             Long memberId,
             String title,
             String content,
+            String postThumbnailImageName,
             PostIntro intro,
             PostVisibilityPolicy visibility,
             @Nullable Category category,
@@ -119,6 +125,7 @@ public class Post extends CommonDomainModel {
         setTags(tags);
         this.title = title;
         this.content = content;
+        this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = intro;
         this.visibilityPolish = visibility;
     }

@@ -11,6 +11,7 @@ public record UpdatePostCommand(
         Long postId,
         String title,
         String content,
+        @Nullable String postThumbnailImageName,
         String intro,
         Visibility visibility,
         String password,

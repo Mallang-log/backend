@@ -8,6 +8,7 @@ import java.util.List;
 public record UpdatePostRequest(
         String title,
         String content,
+        @Nullable String postThumbnailImageName,
         String intro,
         Visibility visibility,
         String password,
@@ -21,6 +22,7 @@ public record UpdatePostRequest(
                 .postId(postId)
                 .title(title)
                 .content(content)
+                .postThumbnailImageName(postThumbnailImageName)
                 .intro(intro)
                 .visibility(visibility)
                 .password(password)

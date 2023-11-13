@@ -220,7 +220,9 @@ class PostServiceTest {
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
-                    "수정제목", "수정내용", "수정인트로",
+                    "수정제목", "수정내용",
+                    "수정썸네일",
+                    "수정인트로",
                     PUBLIC, null,
                     null, List.of("태그2")));
 
@@ -229,6 +231,8 @@ class PostServiceTest {
                 Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
+                assertThat(post.getPostIntro()).isEqualTo("수정인트로");
                 assertThat(post.getTags()).extracting(Tag::getContent)
                         .containsExactly("태그2");
             });
@@ -244,7 +248,8 @@ class PostServiceTest {
             assertThatThrownBy(() ->
                     postService.update(
                             new UpdatePostCommand(otherMemberId, 포스트_ID,
-                                    "수정제목", "수정내용", "수정인트로",
+                                    "수정제목", "수정내용",
+                                    null, "수정인트로",
                                     PUBLIC, null,
                                     null, emptyList()))
             ).isInstanceOf(NoAuthorityUpdatePostException.class);
@@ -263,7 +268,8 @@ class PostServiceTest {
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
-                    "수정제목", "수정내용", "수정인트로",
+                    "수정제목", "수정내용",
+                    null, "수정인트로",
                     PUBLIC, null,
                     null, emptyList()));
 
@@ -283,7 +289,8 @@ class PostServiceTest {
             // when
             postService.update(
                     new UpdatePostCommand(memberId, 포스트_ID,
-                            "수정제목", "수정내용", "수정인트로",
+                            "수정제목", "수정내용",
+                            null, "수정인트로",
                             PUBLIC, null,
                             springCategoryId, emptyList()));
 
@@ -307,7 +314,8 @@ class PostServiceTest {
             postService.update(new UpdatePostCommand(
                     memberId,
                     포스트_ID,
-                    "수정제목", "수정내용", "수정인트로",
+                    "수정제목", "수정내용",
+                    null, "수정인트로",
                     PUBLIC, null,
                     nodeCategoryId, emptyList()));
 
@@ -333,7 +341,8 @@ class PostServiceTest {
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
                             memberId, 포스트_ID,
-                            "수정제목", "수정내용", "수정인트로",
+                            "수정제목", "수정내용",
+                            null, "수정인트로",
                             PUBLIC, null,
                             1000L, emptyList()
                     ))
@@ -341,7 +350,8 @@ class PostServiceTest {
             assertThatThrownBy(() ->
                     postService.update(new UpdatePostCommand(
                             memberId, 포스트_ID,
-                            "수정제목", "수정내용", "수정인트로",
+                            "수정제목", "수정내용",
+                            null, "수정인트로",
                             PUBLIC, null,
                             otherMemberSpringCategoryId, emptyList()
                     ))

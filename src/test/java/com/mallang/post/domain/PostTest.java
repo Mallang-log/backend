@@ -126,6 +126,35 @@ class PostTest {
         }
 
         @Test
+        void 썸네일_사진_설정이_가능하다() {
+            // given
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .postThumbnailImageName("thumbnail")
+                    .writer(mallang)
+                    .blog(blog)
+                    .build();
+
+            // when & then
+            assertThat(post.getPostThumbnailImageName()).isEqualTo("thumbnail");
+        }
+
+        @Test
+        void 썸네일은_없어도_된다() {
+            // given
+            Post post = Post.builder()
+                    .title("제목")
+                    .content("내용")
+                    .writer(mallang)
+                    .blog(blog)
+                    .build();
+
+            // when & then
+            assertThat(post.getPostThumbnailImageName()).isNull();
+        }
+
+        @Test
         void 작성자가_생성한_카테고리가_아닌_경우_예외() {
             // when & then
             assertThatThrownBy(() ->
@@ -169,7 +198,8 @@ class PostTest {
                     .build();
 
             // when
-            post.update(mallang.getId(), "수정제목", "수정내용", new PostIntro("수정인트로"),
+            post.update(mallang.getId(), "수정제목", "수정내용",
+                    "postThumbnailImageName", new PostIntro("수정인트로"),
                     new PostVisibilityPolicy(PRIVATE), null,
                     List.of("태그2")
             );
@@ -195,7 +225,8 @@ class PostTest {
 
             // when
             assertThatThrownBy(() ->
-                    post.update(otherMember.getId(), "수정제목", "수정내용", new PostIntro("수정인트로"),
+                    post.update(otherMember.getId(), "수정제목", "수정내용",
+                            "postThumbnailImageName", new PostIntro("수정인트로"),
                             new PostVisibilityPolicy(PUBLIC), null,
                             emptyList())
             ).isInstanceOf(NoAuthorityUpdatePostException.class);

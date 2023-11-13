@@ -17,6 +17,7 @@ public record CreatePostCommand(
         Long blogId,
         String title,
         String content,
+        @Nullable String postThumbnailImageName,
         String intro,
         Visibility visibility,
         @Nullable String password,
@@ -27,6 +28,7 @@ public record CreatePostCommand(
         return Post.builder()
                 .title(title)
                 .content(content)
+                .postThumbnailImageName(postThumbnailImageName)
                 .order(postIdInBlog)
                 .writer(member)
                 .visibilityPolish(new PostVisibilityPolicy(visibility, password))

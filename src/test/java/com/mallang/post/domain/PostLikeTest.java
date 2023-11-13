@@ -292,7 +292,11 @@ class PostLikeTest {
                         .build();
                 PostLike postLike = new PostLike(post, other);
                 postLike.click(postLikeValidator, null);
-                post.update(mallang.getId(), "up", "up", new PostIntro("update"),
+                post.update(mallang.getId(),
+                        "up",
+                        "up",
+                        null,
+                        new PostIntro("update"),
                         new PostVisibilityPolicy(PRIVATE, null),
                         null, emptyList());
 

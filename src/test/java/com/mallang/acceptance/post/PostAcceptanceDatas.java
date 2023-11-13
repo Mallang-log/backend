@@ -27,6 +27,7 @@ public class PostAcceptanceDatas {
             String 카테고리_이름,
             String 제목,
             String 내용,
+            String 썸네일_이미지_이름,
             Visibility 공개_범위,
             boolean 보호_여부,
             boolean 좋아요_클릭_여부,
@@ -34,7 +35,7 @@ public class PostAcceptanceDatas {
     ) {
         return 예상_포스트_단일_조회_응답(포스트_ID, 작성자_닉네임,
                 카테고리_ID, 카테고리_이름,
-                제목, 내용, 공개_범위,
+                제목, 내용, 썸네일_이미지_이름, 공개_범위,
                 보호_여부, 좋아요_클릭_여부, 0, 태그들);
     }
 
@@ -45,6 +46,7 @@ public class PostAcceptanceDatas {
             String 카테고리_이름,
             String 제목,
             String 내용,
+            String 썸네일_이미지_이름,
             Visibility 공개_범위,
             boolean 보호_여부,
             boolean 좋아요_클릭_여부,
@@ -58,6 +60,7 @@ public class PostAcceptanceDatas {
                 .tagDetailInfos(new TagDetailInfos(Arrays.asList(태그들)))
                 .isLiked(좋아요_클릭_여부)
                 .title(제목)
+                .postThumbnailImageName(썸네일_이미지_이름)
                 .visibility(공개_범위)
                 .isProtected(보호_여부)
                 .content(내용)
@@ -72,6 +75,7 @@ public class PostAcceptanceDatas {
             String 카테고리_이름,
             String 제목,
             String 내용,
+            String 썸네일_이미지_이름,
             String 인트로,
             Visibility 공개_범위,
             String... 태그들
@@ -84,6 +88,7 @@ public class PostAcceptanceDatas {
                 .title(제목)
                 .content(내용)
                 .intro(인트로)
+                .postThumbnailImageName(썸네일_이미지_이름)
                 .visibility(공개_범위)
                 .build();
     }
