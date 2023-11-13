@@ -56,28 +56,31 @@ class CommentServiceTest {
     @Autowired
     private TransactionHelper transactionHelper;
 
-    private Long memberId;
+    private Long postWriterId;
+    private Long other1Id;
+    private Long other2Id;
     private Long blogId;
     private Long postId;
+
+    @BeforeEach
+    void setUp() {
+        postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
+        other1Id = memberServiceTestHelper.회원을_저장한다("other1");
+        other2Id = memberServiceTestHelper.회원을_저장한다("other2");
+        blogId = blogServiceTestHelper.블로그_개설후_ID_반환(postWriterId, "mallang");
+        postId = postServiceTestHelper.포스트를_저장한다(postWriterId, blogId, "포스트", "내용");
+    }
 
     @Nested
     class 댓글_작성_시 {
 
-        @BeforeEach
-        void setUp() {
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang");
-            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
-        }
-
         @Test
         void 로그인한_사용자가_댓글을_작성한다() {
             // given
-            Long 댓글작성자_ID = memberServiceTestHelper.회원을_저장한다("댓글작성자");
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(postId)
                     .content("댓글입니다.")
-                    .memberId(댓글작성자_ID)
+                    .memberId(other1Id)
                     .secret(false)
                     .build();
 
@@ -91,11 +94,10 @@ class CommentServiceTest {
         @Test
         void 로그인한_사용자는_비밀_댓글_작성이_가능하다() {
             // given
-            Long 댓글작성자_ID = memberServiceTestHelper.회원을_저장한다("댓글작성자");
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(postId)
                     .content("댓글입니다.")
-                    .memberId(댓글작성자_ID)
+                    .memberId(other1Id)
                     .secret(true)
                     .build();
 
@@ -126,7 +128,7 @@ class CommentServiceTest {
         @Test
         void 대댓글을_작성할_수_있다() {
             // given
-            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", false, memberId);
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", false, postWriterId);
             WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
                     .postId(postId)
                     .content("대댓글입니다.")
@@ -151,12 +153,11 @@ class CommentServiceTest {
         @Test
         void 다른_사람의_댓글에_대댓글을_달_수_있다() {
             // given
-            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, memberId);
-            Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(postId)
                     .content("대댓글입니다.")
-                    .memberId(동훈_ID)
+                    .memberId(other1Id)
                     .parentCommentId(말랑_댓글_ID)
                     .build();
 
@@ -176,12 +177,12 @@ class CommentServiceTest {
         @Test
         void 대댓글에_대해서는_댓글을_달_수_없다() {
             // given
-            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, memberId);
-            Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(postId, "대댓글", false, memberId, 말랑_댓글_ID);
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
+            Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(postId, "대댓글", false, postWriterId, 말랑_댓글_ID);
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(postId)
                     .content("대댓글입니다.")
-                    .memberId(memberId)
+                    .memberId(postWriterId)
                     .parentCommentId(대댓글_ID)
                     .build();
 
@@ -200,12 +201,12 @@ class CommentServiceTest {
         @Test
         void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외() {
             // given
-            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "내용");
-            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, memberId);
+            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(postWriterId, blogId, "포스트2", "내용");
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(포스트2_ID)
                     .content("대댓글입니다.")
-                    .memberId(memberId)
+                    .memberId(postWriterId)
                     .parentCommentId(말랑_댓글_ID)
                     .build();
 
@@ -225,27 +226,15 @@ class CommentServiceTest {
     @Nested
     class 댓글_수정_시 {
 
-        private Long postWriterId;
-        private Long postId;
-
-        @BeforeEach
-        void setUp() {
-            postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(postWriterId, "postwriter");
-            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, blogId, "제목", "내용");
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        }
-
         @Test
         void 댓글이_수정된다() {
             // given
-            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
-            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, other1Id);
             UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(false)
-                    .memberId(memberId)
+                    .memberId(other1Id)
                     .build();
 
             // when
@@ -259,13 +248,12 @@ class CommentServiceTest {
         @Test
         void 인증된_사용자의_경우_비공개_여부도_수정할_수_있다() {
             // given
-            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
-            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, other1Id);
             UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)
-                    .memberId(memberId)
+                    .memberId(other1Id)
                     .build();
 
             // when
@@ -280,14 +268,12 @@ class CommentServiceTest {
         @Test
         void 자신의_댓글이_아닌_경우_예외() {
             // given
-            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
-            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("otherMember");
-            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, other1Id);
             UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)
-                    .memberId(otherMemberId)
+                    .memberId(other2Id)
                     .build();
 
             // when
@@ -342,8 +328,7 @@ class CommentServiceTest {
         @Test
         void 포스트_주인도_댓글을_수정할수는_없다() {
             // given
-            Long memberId = memberServiceTestHelper.회원을_저장한다("1");
-            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, other1Id);
             UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
@@ -366,24 +351,14 @@ class CommentServiceTest {
     @Nested
     class 댓글_제거_시 {
 
-        private Long postWriterId;
-        private Long postId;
-
-        @BeforeEach
-        void setUp() {
-            postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
-            Long postWriterBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(postWriterId, "postwriter");
-            postId = postServiceTestHelper.포스트를_저장한다(postWriterId, postWriterBlogId, "제목", "내용");
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        }
-
         @Test
         void 댓글_작성자는_자신의_댓글을_제거할_수_있다() {
             // given
-            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false,
+                    postWriterId);
             DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
-                    .memberId(memberId)
+                    .memberId(postWriterId)
                     .build();
 
             // when
@@ -398,11 +373,10 @@ class CommentServiceTest {
         @Test
         void 자신의_댓글이_아닌_경우_예외() {
             // given
-            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("otherMember");
-            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, postWriterId);
             DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
                     .commentId(commentId)
-                    .memberId(otherMemberId)
+                    .memberId(other1Id)
                     .build();
 
             // when
@@ -455,7 +429,7 @@ class CommentServiceTest {
         @Test
         void 포스트_작성자는_모든_댓글을_제거할_수_있다() {
             // given
-            Long comment1Id = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, memberId);
+            Long comment1Id = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, other1Id);
             Long comment2Id = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
             DeleteAuthenticatedCommentCommand command1 = DeleteAuthenticatedCommentCommand.builder()
                     .commentId(comment1Id)
@@ -482,7 +456,7 @@ class CommentServiceTest {
         @Test
         void 대댓글_제거_시_부모_댓글과의_관계도_끊어진다() {
             // given
-            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", false, memberId);
+            Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", false, postWriterId);
             Long 대댓글_ID = commentServiceTestHelper.비인증_대댓글을_작성한다(postId, "대댓글", "hi", "12", 말랑_댓글_ID);
             DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
                     .commentId(대댓글_ID)
@@ -529,7 +503,8 @@ class CommentServiceTest {
         void 댓글_제거_시_자식_댓글이_존재한다면_부모와의_연관관계는_유지되며_논리적으로만_제거시킨다() {
             // given
             Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "말랑 댓글", "hi", "1");
-            Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(postId, "대댓글", false, memberId, 댓글_ID);
+            Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(postId, "대댓글", false, postWriterId,
+                    댓글_ID);
             DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
                     .commentId(댓글_ID)
                     .password("1")
