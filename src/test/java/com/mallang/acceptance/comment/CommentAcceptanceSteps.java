@@ -1,5 +1,6 @@
 package com.mallang.acceptance.comment;
 
+import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,14 +9,47 @@ import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentReques
 import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
+import com.mallang.comment.query.data.AuthenticatedCommentData;
 import com.mallang.comment.query.data.CommentData;
+import com.mallang.comment.query.data.UnAuthenticatedCommentData;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class CommentAcceptanceSteps {
+
+    public static final boolean 공개 = false;
+    public static final boolean 비공개 = true;
+    public static final boolean 삭제됨 = true;
+    public static final boolean 삭제되지_않음 = false;
+
+    public static Long 댓글_작성(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            boolean 비밀_여부
+    ) {
+        return 댓글_작성(세션_ID, 포스트_ID, 내용, 비밀_여부, null);
+    }
+
+    public static Long 댓글_작성(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            boolean 비밀_여부,
+            Long 부모_댓글_Id
+    ) {
+        return ID를_추출한다(댓글_작성_요청(
+                세션_ID,
+                포스트_ID,
+                내용,
+                비밀_여부,
+                부모_댓글_Id
+        ));
+    }
 
     public static ExtractableResponse<Response> 댓글_작성_요청(
             String 세션_ID,
@@ -39,6 +73,31 @@ public class CommentAcceptanceSteps {
                 .then()
                 .log().all()
                 .extract();
+    }
+
+    public static Long 비인증_댓글_작성(
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호
+    ) {
+        return 비인증_댓글_작성(포스트_ID, 내용, 이름, 암호, null);
+    }
+
+    public static Long 비인증_댓글_작성(
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호,
+            Long 부모_댓글_Id
+    ) {
+        return ID를_추출한다(비인증_댓글_작성_요청(
+                포스트_ID,
+                내용,
+                이름,
+                암호,
+                부모_댓글_Id
+        ));
     }
 
     public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
@@ -88,7 +147,6 @@ public class CommentAcceptanceSteps {
     }
 
     public static ExtractableResponse<Response> 인증된_댓글_수정_요청(String 세션_ID, Long 댓글_ID, String 수정_내용, boolean 비공개_여부) {
-
         return given(세션_ID)
                 .body(new UpdateAuthenticatedCommentRequest(수정_내용, 비공개_여부))
                 .put("/comments/{id}", 댓글_ID)
@@ -130,6 +188,10 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(Long 포스트_ID) {
+        return 특정_포스팅의_댓글_전체_조회(null, 포스트_ID);
+    }
+
     public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(String 세션_ID, Long 포스트_ID) {
         return given(세션_ID)
                 .queryParam("postId", 포스트_ID)
@@ -138,15 +200,7 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(Long 포스트_ID) {
-        return given()
-                .queryParam("postId", 포스트_ID)
-                .get("/comments")
-                .then().log().all()
-                .extract();
-    }
-
-    public static void 특정_포스트의_댓글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CommentData> 예상_데이터) {
+    public static void 특정_포스트의_댓글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<? extends CommentData> 예상_데이터) {
         List<CommentData> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
@@ -157,5 +211,50 @@ public class CommentAcceptanceSteps {
                         "children.writerData.memberId"
                 )
                 .isEqualTo(예상_데이터);
+    }
+
+    public static AuthenticatedCommentData 인증된_댓글_조회_데이터(
+            Long 댓글_ID,
+            String 내용,
+            boolean 비밀_댓글_여부,
+            AuthenticatedCommentData.WriterData 댓글_작성자_정보,
+            boolean 삭제_여부,
+            CommentData... 대댓글들
+    ) {
+        return AuthenticatedCommentData.builder()
+                .id(댓글_ID)
+                .content(내용)
+                .secret(비밀_댓글_여부)
+                .writerData(댓글_작성자_정보)
+                .deleted(삭제_여부)
+                .children(Arrays.asList(대댓글들))
+                .build();
+    }
+
+    public static UnAuthenticatedCommentData 비인증_댓글_조회_데이터(
+            Long 댓글_ID,
+            String 내용,
+            UnAuthenticatedCommentData.WriterData 댓글_작성자_정보,
+            boolean 삭제_여부,
+            CommentData... 대댓글들
+    ) {
+        return UnAuthenticatedCommentData.builder()
+                .id(댓글_ID)
+                .content(내용)
+                .writerData(댓글_작성자_정보)
+                .deleted(삭제_여부)
+                .children(Arrays.asList(대댓글들))
+                .build();
+    }
+
+    public static AuthenticatedCommentData.WriterData 인증된_댓글_작성자_데이터(
+            String 닉네임,
+            String 프로필_사진_URL
+    ) {
+        return new AuthenticatedCommentData.WriterData(null, 닉네임, 프로필_사진_URL);
+    }
+
+    public static UnAuthenticatedCommentData.WriterData 비인증_댓글_작성자_데이터(String 별명) {
+        return new UnAuthenticatedCommentData.WriterData(별명);
     }
 }

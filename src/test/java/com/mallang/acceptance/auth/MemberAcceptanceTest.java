@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("회원 인수테스트 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-public class MemberAcceptanceTest extends AcceptanceTest {
+class MemberAcceptanceTest extends AcceptanceTest {
 
     @Nested
     class 내_정보_조회_시 {

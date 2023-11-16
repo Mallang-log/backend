@@ -8,7 +8,7 @@ import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.회원_정보_조회_결과_데이터;
-import static com.mallang.acceptance.blog.BlogAcceptanceTestHelper.블로그_개설;
+import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.구독중인_블로그_조회_결과_검증;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독_요청;
 import static com.mallang.acceptance.subsribe.BlogSubscribeAcceptanceSteps.블로그_구독_취소_요청;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("블로그 구독 인수테스트")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-public class BlogSubscribeAcceptanceTest extends AcceptanceTest {
+class BlogSubscribeAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;

@@ -555,7 +555,7 @@ class AuthenticatedCommentTest {
                         .secret(false)
                         .writer(other)
                         .build();
-                
+
                 // when & then
                 assertDoesNotThrow(() ->
                         comment.delete(postWriter, commentDeleteService, null)

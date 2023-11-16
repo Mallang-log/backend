@@ -18,8 +18,8 @@ public class PostLikeAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 좋아요_취소_요청(String 말랑_세션_ID, Long 포스트_ID) {
-        return given(말랑_세션_ID)
+    public static ExtractableResponse<Response> 좋아요_취소_요청(String 세션_ID, Long 포스트_ID) {
+        return given(세션_ID)
                 .body(new CancelPostLikeRequest(포스트_ID))
                 .delete("/post-likes")
                 .then().log().all()

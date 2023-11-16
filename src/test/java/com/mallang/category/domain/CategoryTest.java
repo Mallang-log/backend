@@ -36,7 +36,6 @@ class CategoryTest {
     private final Blog mallangBlog = new Blog("mallang-log", mallang);
     private final Blog otherBlog = new Blog("other-log", otherMember);
 
-
     @Nested
     class 생성_시 {
 
