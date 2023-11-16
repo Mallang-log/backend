@@ -1,5 +1,8 @@
 package com.mallang.comment.query;
 
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
@@ -21,16 +24,14 @@ public class CommentDataValidator {
         Post post = postRepository.getById(postId);
         PostVisibilityPolicy visibilityPolish = post.getVisibilityPolish();
         Visibility visibility = visibilityPolish.getVisibility();
-        if (visibility == Visibility.PUBLIC) {
+        if (visibility == PUBLIC) {
             return;
         }
         if (post.getWriter().getId().equals(memberId)) {
             return;
         }
-        if (visibility == Visibility.PROTECTED) {
-            if (visibilityPolish.getPassword().equals(postPassword)) {
-                return;
-            }
+        if (visibility == PROTECTED && (visibilityPolish.getPassword().equals(postPassword))) {
+            return;
         }
         throw new NoAuthorityAccessPostException();
     }

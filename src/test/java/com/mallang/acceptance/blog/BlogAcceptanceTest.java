@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("블로그 인수테스트")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-public class BlogAcceptanceTest extends AcceptanceTest {
+class BlogAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 블로그를_개설한다() {
