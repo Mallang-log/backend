@@ -1,39 +1,34 @@
-package com.mallang.auth.infrastructure.oauth.github;
+package com.mallang.auth.infrastructure.oauth.github
 
-import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.OauthServerType;
-import com.mallang.auth.domain.oauth.OauthMemberClient;
-import com.mallang.auth.infrastructure.oauth.github.client.GithubApiClient;
-import com.mallang.auth.infrastructure.oauth.github.dto.GithubMemberResponse;
-import com.mallang.auth.infrastructure.oauth.github.dto.GithubToken;
-import com.mallang.auth.infrastructure.oauth.github.dto.GithubTokenRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import com.mallang.auth.domain.Member
+import com.mallang.auth.domain.OauthServerType
+import com.mallang.auth.domain.OauthServerType.GITHUB
+import com.mallang.auth.domain.oauth.OauthMemberClient
+import com.mallang.auth.infrastructure.oauth.github.client.GithubApiClient
+import com.mallang.auth.infrastructure.oauth.github.dto.GithubTokenRequest
+import org.springframework.stereotype.Component
 
-@RequiredArgsConstructor
 @Component
-public class GithubMemberClient implements OauthMemberClient {
+class GithubMemberClient(
+        private val githubApiClient: GithubApiClient,
+        private val githubOauthConfig: GithubOauthConfig
+) : OauthMemberClient {
 
-    private final GithubApiClient githubApiClient;
-    private final GithubOauthConfig githubOauthConfig;
+    override fun supportServer(): OauthServerType = GITHUB
 
-    @Override
-    public OauthServerType supportServer() {
-        return OauthServerType.GITHUB;
+
+    override fun fetch(authCode: String): Member {
+        val token = githubApiClient.fetchToken(tokenRequestParams(authCode))
+        val githubMemberResponse = githubApiClient.fetchMember("Bearer " + token.accessToken)
+        return githubMemberResponse.toMember()
     }
 
-    @Override
-    public Member fetch(String authCode) {
-        GithubToken token = githubApiClient.fetchToken(tokenRequestParams(authCode));
-        GithubMemberResponse githubMemberResponse = githubApiClient.fetchMember("Bearer " + token.accessToken());
-        return githubMemberResponse.toMember();
-    }
-
-    private GithubTokenRequest tokenRequestParams(String authCode) {
-        return new GithubTokenRequest(
-                githubOauthConfig.clientId(),
-                githubOauthConfig.clientSecret(),
+    private fun tokenRequestParams(authCode: String): GithubTokenRequest {
+        return GithubTokenRequest(
+                githubOauthConfig.clientId,
+                githubOauthConfig.clientSecret,
                 authCode,
-                githubOauthConfig.redirectUri());
+                githubOauthConfig.redirectUri
+        )
     }
 }

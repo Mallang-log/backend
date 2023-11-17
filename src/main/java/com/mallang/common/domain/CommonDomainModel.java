@@ -10,13 +10,11 @@ import jakarta.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -32,5 +30,14 @@ public class CommonDomainModel extends AbstractAggregateRoot<CommonDomainModel> 
     @Override
     public List<Object> domainEvents() {
         return new ArrayList<>(super.domainEvents());
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 }

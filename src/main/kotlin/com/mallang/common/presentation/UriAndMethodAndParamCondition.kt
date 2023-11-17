@@ -1,50 +1,35 @@
-package com.mallang.common.presentation;
+package com.mallang.common.presentation
 
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.HttpMethod
+import org.springframework.util.PathMatcher
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import lombok.Builder;
-import org.springframework.http.HttpMethod;
-import org.springframework.util.PathMatcher;
-
-@Builder
-public record UriAndMethodAndParamCondition(
-        Set<String> uriPatterns,
-        Set<HttpMethod> httpMethods,
-        Map<String, String> params
+data class UriAndMethodAndParamCondition(
+        val uriPatterns: Set<String>,
+        val httpMethods: Set<HttpMethod>,
+        val params: Map<String, String> = mutableMapOf()
 ) {
 
-    public boolean match(PathMatcher pathMatcher, HttpServletRequest request) {
-        return matchURI(pathMatcher, request)
+    fun match(pathMatcher: PathMatcher, request: HttpServletRequest): Boolean {
+        return (matchURI(pathMatcher, request)
                 && matchMethod(request)
-                && matchParamIfRequired(request);
+                && matchParamIfRequired(request))
     }
 
-    private boolean matchURI(PathMatcher pathMatcher, HttpServletRequest request) {
-        return uriPatterns.stream()
-                .anyMatch(pattern -> pathMatcher.match(pattern, request.getRequestURI()));
+    private fun matchURI(pathMatcher: PathMatcher, request: HttpServletRequest): Boolean {
+        return uriPatterns.any { pattern: String -> pathMatcher.match(pattern, request.requestURI) }
     }
 
-    private boolean matchMethod(HttpServletRequest request) {
-        return httpMethods.contains(HttpMethod.valueOf(request.getMethod()));
+    private fun matchMethod(request: HttpServletRequest): Boolean {
+        return httpMethods.contains(HttpMethod.valueOf(request.method))
     }
 
-    private boolean matchParamIfRequired(HttpServletRequest request) {
+    private fun matchParamIfRequired(request: HttpServletRequest): Boolean {
         if (matchParamIsNotRequired()) {
-            return true;
+            return true
         }
-        for (Entry<String, String> entry : params.entrySet()) {
-            String value = request.getParameter(entry.getKey());
-            if (!entry.getValue().equals(value)) {
-                return false;
-            }
-        }
-        return true;
+        return params.all { (key, value) -> value == request.getParameter(key) }
     }
 
-    private boolean matchParamIsNotRequired() {
-        return params == null || params.isEmpty();
-    }
+    private fun matchParamIsNotRequired(): Boolean = params.isEmpty()
 }

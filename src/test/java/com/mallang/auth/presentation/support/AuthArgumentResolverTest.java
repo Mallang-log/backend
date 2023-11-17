@@ -99,7 +99,7 @@ class AuthArgumentResolverTest {
         // when & then
         assertThatThrownBy(() -> {
             authArgumentResolver
-                    .resolveArgument(null, null, null, null);
+                    .resolveArgument(mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
         });
     }
 }

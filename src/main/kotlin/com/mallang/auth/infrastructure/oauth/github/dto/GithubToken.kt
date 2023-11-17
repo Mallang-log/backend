@@ -1,11 +1,10 @@
-package com.mallang.auth.infrastructure.oauth.github.dto;
+package com.mallang.auth.infrastructure.oauth.github.dto
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 
-@JsonNaming(SnakeCaseStrategy.class)
-public record GithubToken(
-        String tokenType,
-        String accessToken
-) {
-}
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+data class GithubToken(
+        val tokenType: String,
+        val accessToken: String
+)

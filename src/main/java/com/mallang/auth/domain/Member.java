@@ -7,14 +7,10 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Table(name = "member",
         uniqueConstraints = {
@@ -34,4 +30,22 @@ public class Member extends CommonDomainModel {
     private OauthId oauthId;
     private String nickname;
     private String profileImageUrl;
+
+    public Member(OauthId oauthId, String nickname, String profileImageUrl) {
+        this.oauthId = oauthId;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public OauthId getOauthId() {
+        return oauthId;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
 }

@@ -1,24 +1,16 @@
-package com.mallang.auth.infrastructure.oauth.github.dto;
+package com.mallang.auth.infrastructure.oauth.github.dto
 
-import static com.mallang.auth.domain.OauthServerType.GITHUB;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
+import com.mallang.auth.domain.Member
+import com.mallang.auth.domain.OauthId
+import com.mallang.auth.domain.OauthServerType.GITHUB
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.OauthId;
-
-@JsonNaming(SnakeCaseStrategy.class)
-public record GithubMemberResponse(
-        String id,
-        String name,
-        String avatarUrl
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+data class GithubMemberResponse(
+        val id: String,
+        val name: String,
+        val avatarUrl: String
 ) {
-
-    public Member toMember() {
-        return Member.builder()
-                .oauthId(new OauthId(id, GITHUB))
-                .nickname(name)
-                .profileImageUrl(avatarUrl)
-                .build();
-    }
+    fun toMember(): Member = Member(OauthId(id, GITHUB), name, avatarUrl);
 }

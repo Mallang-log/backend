@@ -1,30 +1,24 @@
-package com.mallang.auth.infrastructure.oauth.github;
+package com.mallang.auth.infrastructure.oauth.github
 
-import com.mallang.auth.domain.OauthServerType;
-import com.mallang.auth.domain.oauth.AuthCodeRequestUrlProvider;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
+import com.mallang.auth.domain.OauthServerType
+import com.mallang.auth.domain.OauthServerType.GITHUB
+import com.mallang.auth.domain.oauth.AuthCodeRequestUrlProvider
+import org.springframework.stereotype.Component
+import org.springframework.web.util.UriComponentsBuilder
 
-@RequiredArgsConstructor
 @Component
-public class GithubAuthCodeRequestUrlProvider implements AuthCodeRequestUrlProvider {
+class GithubAuthCodeRequestUrlProvider(
+        private val githubOauthConfig: GithubOauthConfig
+) : AuthCodeRequestUrlProvider {
 
-    private final GithubOauthConfig githubOauthConfig;
+    override fun supportServer(): OauthServerType = GITHUB
 
-    @Override
-    public OauthServerType supportServer() {
-        return OauthServerType.GITHUB;
-    }
-
-    @Override
-    public String provide() {
-        return UriComponentsBuilder
-                .fromUriString("https://github.com/login/oauth/authorize")
-                .queryParam("response_type", "code")
-                .queryParam("client_id", githubOauthConfig.clientId())
-                .queryParam("redirect_uri", githubOauthConfig.redirectUri())
-                .queryParam("scope", String.join(",", githubOauthConfig.scope()))
-                .toUriString();
-    }
+    override fun provide(): String =
+            UriComponentsBuilder
+                    .fromUriString("https://github.com/login/oauth/authorize")
+                    .queryParam("response_type", "code")
+                    .queryParam("client_id", githubOauthConfig.clientId)
+                    .queryParam("redirect_uri", githubOauthConfig.redirectUri)
+                    .queryParam("scope", githubOauthConfig.scope.joinToString(","))
+                    .toUriString()
 }

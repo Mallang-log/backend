@@ -1,78 +1,71 @@
-package com.mallang.auth.config;
+package com.mallang.auth.config
 
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import com.mallang.auth.presentation.support.AuthArgumentResolver
+import com.mallang.auth.presentation.support.AuthInterceptor
+import com.mallang.auth.presentation.support.ExtractAuthenticationInterceptor
+import com.mallang.auth.presentation.support.OptionalAuthArgumentResolver
+import com.mallang.common.presentation.UriAndMethodAndParamCondition
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod.*
+import org.springframework.web.method.support.HandlerMethodArgumentResolver
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-import com.mallang.auth.presentation.support.AuthArgumentResolver;
-import com.mallang.auth.presentation.support.AuthInterceptor;
-import com.mallang.auth.presentation.support.ExtractAuthenticationInterceptor;
-import com.mallang.auth.presentation.support.OptionalAuthArgumentResolver;
-import com.mallang.common.presentation.UriAndMethodAndParamCondition;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-@RequiredArgsConstructor
 @Configuration
-public class AuthConfig implements WebMvcConfigurer {
+class AuthConfig(
+        private val authInterceptor: AuthInterceptor,
+        private val extractAuthenticationInterceptor: ExtractAuthenticationInterceptor,
+        private val authArgumentResolver: AuthArgumentResolver,
+        private val optionalAuthArgumentResolver: OptionalAuthArgumentResolver
+) : WebMvcConfigurer {
 
-    private final AuthInterceptor authInterceptor;
-    private final ExtractAuthenticationInterceptor extractAuthenticationInterceptor;
-    private final AuthArgumentResolver authArgumentResolver;
-    private final OptionalAuthArgumentResolver optionalAuthArgumentResolver;
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(extractAuthenticationInterceptor)
                 .addPathPatterns("/**")
-                .order(0);
+                .order(0)
         registry.addInterceptor(setUpAuthInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/oauth/**")
-                .order(1);
+                .order(1)
     }
 
-    private AuthInterceptor setUpAuthInterceptor() {
-        authInterceptor.setNoAuthRequiredConditions(
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/members/**"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/posts/**"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/categories"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/comments/**"))
-                        .httpMethods(Set.of(POST, PUT, DELETE))
-                        .params(Map.of("unauthenticated", "true"))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/comments"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/blog-subscribes/*"))
-                        .httpMethods(Set.of(GET))
-                        .build()
-        );
-        return authInterceptor;
+    private fun setUpAuthInterceptor(): AuthInterceptor {
+        this.authInterceptor.setNoAuthRequiredConditions(
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/members/**"),
+                        httpMethods = mutableSetOf(GET)
+                ),
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/posts/**"),
+                        httpMethods = mutableSetOf(GET)
+                ),
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/categories"),
+                        httpMethods = mutableSetOf(GET)
+                ),
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/categories"),
+                        httpMethods = mutableSetOf(GET)
+                ),
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/comments/**"),
+                        httpMethods = mutableSetOf(POST, PUT, DELETE),
+                        params = mapOf("unauthenticated" to "true")
+                ),
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/comments"),
+                        httpMethods = mutableSetOf(GET)
+                ),
+                UriAndMethodAndParamCondition(
+                        uriPatterns = setOf("/blog-subscribes/*"),
+                        httpMethods = mutableSetOf(GET)
+                )
+        )
+        return authInterceptor
     }
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(authArgumentResolver);
-        resolvers.add(optionalAuthArgumentResolver);
+    override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
+        resolvers.add(authArgumentResolver)
+        resolvers.add(optionalAuthArgumentResolver)
     }
 }
