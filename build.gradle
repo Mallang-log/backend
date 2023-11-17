@@ -105,8 +105,8 @@ def excludeCoverage = [
         '**/command/**',
         '**/request/**',
         '**/data/**',
-        '**/dao/support/*Support*',
-        '**/domain/*Repository*',
+        '**/dao/support/*Support**',
+        '**/domain/*Repository**',
         '**/auth/infrastructure/oauth/*/**',
         '**/auth/presentation/OauthController*',
 ] + Qdomains
@@ -153,8 +153,8 @@ jacocoTestCoverageVerification {
                     '*.command.*',
                     '*.request.*',
                     '*.data.*',
-                    '*.dao.support.*Support',
-                    '*.domain.*Repository',
+                    '*.dao.support.*Support*',
+                    '*.domain.*Repository*',
                     '*.auth.infrastructure.oauth.*.*',
                     '*.OauthController',
             ] + QdomainsInVerification

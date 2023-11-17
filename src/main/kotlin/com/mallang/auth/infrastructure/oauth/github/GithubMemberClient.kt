@@ -16,9 +16,8 @@ class GithubMemberClient(
 
     override fun supportServer(): OauthServerType = GITHUB
 
-
-    override fun fetch(authCode: String): Member {
-        val token = githubApiClient.fetchToken(tokenRequestParams(authCode))
+    override fun fetch(code: String): Member {
+        val token = githubApiClient.fetchToken(tokenRequestParams(code))
         val githubMemberResponse = githubApiClient.fetchMember("Bearer " + token.accessToken)
         return githubMemberResponse.toMember()
     }
