@@ -46,7 +46,7 @@ class OauthServiceTest {
     @Test
     void 로그인_시_가입되지_않았다면_회원가입시킨다() {
         // given
-        Member 동훈 = 동훈();
+        Member 동훈 = 동훈(1L);
         given(oauthMemberClientComposite.fetch(GITHUB, "code"))
                 .willReturn(동훈);
         given(memberRepository.findByOauthId(동훈.getOauthId()))
@@ -64,7 +64,7 @@ class OauthServiceTest {
     @Test
     void 로그인_시_이미_가입되었다면_로그인만_시킨다() {
         // given
-        Member 동훈 = 동훈();
+        Member 동훈 = 동훈(1L);
         given(oauthMemberClientComposite.fetch(GITHUB, "code"))
                 .willReturn(동훈);
         given(memberRepository.findByOauthId(동훈.getOauthId()))

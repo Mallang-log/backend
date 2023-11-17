@@ -23,7 +23,7 @@ class AuthArgumentResolver(
             @Nullable mavContainer: ModelAndViewContainer?,
             webRequest: NativeWebRequest,
             @Nullable binderFactory: WebDataBinderFactory?
-    ): Any {
+    ): Long {
         return authContext.getMemberId()
     }
 }

@@ -2,7 +2,7 @@ package com.mallang.auth.presentation
 
 import com.mallang.auth.presentation.support.Auth
 import com.mallang.auth.query.MemberQueryService
-import com.mallang.auth.query.data.MemberProfileData
+import com.mallang.auth.query.dao.model.MemberProfileQueryModel
 import lombok.RequiredArgsConstructor
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,15 +19,15 @@ class MemberController(
 
     @GetMapping("/{id}")
     fun findProfile(
-            @PathVariable("id") memberId: Long
-    ): ResponseEntity<MemberProfileData> {
-        return ResponseEntity.ok(memberQueryService.findProfile(memberId))
+            @PathVariable("id") memberId: Long? // TODO non null
+    ): ResponseEntity<MemberProfileQueryModel> {
+        return ResponseEntity.ok(memberQueryService.findProfile(memberId!!))
     }
 
     @GetMapping("/my")
     fun findMyProfile(
             @Auth memberId: Long?
-    ): ResponseEntity<MemberProfileData> {
-        return ResponseEntity.ok(memberQueryService.findProfile(memberId))
+    ): ResponseEntity<MemberProfileQueryModel> {
+        return ResponseEntity.ok(memberQueryService.findProfile(memberId!!))
     }
 }

@@ -3,7 +3,7 @@ package com.mallang.acceptance.auth;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.query.data.MemberProfileData;
+import com.mallang.auth.query.dao.model.MemberProfileQueryModel;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
@@ -28,17 +28,17 @@ public class MemberAcceptanceSteps {
                 .extract();
     }
 
-    public static MemberProfileData 회원_정보_조회_결과_데이터(
+    public static MemberProfileQueryModel 회원_정보_조회_결과_데이터(
             ExtractableResponse<Response> 응답
     ) {
-        return 응답.response().as(MemberProfileData.class);
+        return 응답.response().as(MemberProfileQueryModel.class);
     }
 
     public static void 회원_정보_조회_결과를_검증한다(
             ExtractableResponse<Response> 응답,
-            MemberProfileData 예상
+            MemberProfileQueryModel 예상
     ) {
-        MemberProfileData 회원_정보 = 응답.response().as(MemberProfileData.class);
+        MemberProfileQueryModel 회원_정보 = 응답.response().as(MemberProfileQueryModel.class);
         assertThat(회원_정보)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
