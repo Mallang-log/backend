@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
+import org.springframework.web.context.request.NativeWebRequest;
 
 @DisplayName("인증 ArgumentResolver(AuthArgumentResolver) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -83,7 +84,7 @@ class AuthArgumentResolverTest {
 
         // when
         Long id = (Long) authArgumentResolver
-                .resolveArgument(null, null, null, null);
+                .resolveArgument(mock(MethodParameter.class), null, mock(NativeWebRequest.class), null);
 
         // then
         assertThat(id).isEqualTo(1L);

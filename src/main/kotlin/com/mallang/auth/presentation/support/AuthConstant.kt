@@ -1,6 +1,3 @@
-package com.mallang.auth.presentation.support;
+package com.mallang.auth.presentation.support
 
-public class AuthConstant {
-
-    public static final String MEMBER_ID = "memberId";
-}
+const val MEMBER_ID = "memberId"

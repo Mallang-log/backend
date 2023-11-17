@@ -1,26 +1,19 @@
-package com.mallang.auth.presentation.support;
+package com.mallang.auth.presentation.support
 
-import static com.mallang.auth.presentation.support.AuthConstant.MEMBER_ID;
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.stereotype.Component
+import org.springframework.web.servlet.HandlerInterceptor
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-@RequiredArgsConstructor
 @Component
-public class ExtractAuthenticationInterceptor implements HandlerInterceptor {
+class ExtractAuthenticationInterceptor(
+        private val authContext: AuthContext
+) : HandlerInterceptor {
 
-    private final AuthContext authContext;
-
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        Optional.ofNullable(request.getSession(false))
-                .map(it -> it.getAttribute(MEMBER_ID))
-                .map(id -> (Long) id)
-                .ifPresent(authContext::setMemberId);
-        return true;
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        request.getSession(false)
+                ?.getAttribute(MEMBER_ID)
+                ?.let { memberId -> authContext.setMemberId(memberId as Long) }
+        return true
     }
 }

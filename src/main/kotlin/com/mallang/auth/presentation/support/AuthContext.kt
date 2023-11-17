@@ -1,27 +1,25 @@
-package com.mallang.auth.presentation.support;
+package com.mallang.auth.presentation.support
 
-import com.mallang.auth.exception.IncorrectUseAuthAtException;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
+import com.mallang.auth.exception.IncorrectUseAuthAtException
+import org.springframework.stereotype.Component
+import org.springframework.web.context.annotation.RequestScope
+
 
 @RequestScope
 @Component
-public class AuthContext {
+class AuthContext(
+        private var memberId: Long? = null
+) {
 
-    private Long memberId;
-
-    public boolean unAuthenticated() {
-        return memberId == null;
+    fun unAuthenticated(): Boolean {
+        return memberId == null
     }
 
-    public Long getMemberId() {
-        if (unAuthenticated()) {
-            throw new IncorrectUseAuthAtException();
-        }
-        return memberId;
+    fun getMemberId(): Long {
+        return memberId ?: throw IncorrectUseAuthAtException()
     }
 
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
+    fun setMemberId(memberId: Long) {
+        this.memberId = memberId
     }
 }

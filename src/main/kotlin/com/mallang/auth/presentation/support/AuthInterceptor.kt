@@ -1,41 +1,34 @@
-package com.mallang.auth.presentation.support;
+package com.mallang.auth.presentation.support
 
-import com.mallang.auth.exception.NoAuthenticationSessionException;
-import com.mallang.common.presentation.UriAndMethodAndParamCondition;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.stereotype.Component;
-import org.springframework.util.PathMatcher;
-import org.springframework.web.servlet.HandlerInterceptor;
+import com.mallang.auth.exception.NoAuthenticationSessionException
+import com.mallang.common.presentation.UriAndMethodAndParamCondition
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.ObjectProvider
+import org.springframework.stereotype.Component
+import org.springframework.util.PathMatcher
+import org.springframework.web.servlet.HandlerInterceptor
 
-@RequiredArgsConstructor
 @Component
-public class AuthInterceptor implements HandlerInterceptor {
+class AuthInterceptor(
+        private val pathMatcher: ObjectProvider<PathMatcher>,
+        private val authContext: AuthContext,
+        private val noAuthRequiredConditions: MutableSet<UriAndMethodAndParamCondition> = HashSet()
+) : HandlerInterceptor {
 
-    private final ObjectProvider<PathMatcher> pathMatcher;
-    private final AuthContext authContext;
-    private final Set<UriAndMethodAndParamCondition> noAuthRequiredConditions = new HashSet<>();
-
-    public void setNoAuthRequiredConditions(UriAndMethodAndParamCondition... noAuthRequiredConditions) {
-        this.noAuthRequiredConditions.clear();
-        this.noAuthRequiredConditions.addAll(Arrays.asList(noAuthRequiredConditions));
+    fun setNoAuthRequiredConditions(vararg noAuthRequiredConditions: UriAndMethodAndParamCondition) {
+        this.noAuthRequiredConditions.clear()
+        this.noAuthRequiredConditions.addAll(noAuthRequiredConditions.asList())
     }
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         if (authenticationRequired(request) && authContext.unAuthenticated()) {
-            throw new NoAuthenticationSessionException();
+            throw NoAuthenticationSessionException()
         }
-        return true;
+        return true
     }
 
-    private boolean authenticationRequired(HttpServletRequest request) {
-        return noAuthRequiredConditions.stream()
-                .noneMatch(it -> it.match(pathMatcher.getIfAvailable(), request));
+    private fun authenticationRequired(request: HttpServletRequest): Boolean {
+        return noAuthRequiredConditions.none { it.match(pathMatcher.getIfAvailable(), request) }
     }
 }
