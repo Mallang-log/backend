@@ -13,9 +13,6 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
-import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
-import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
@@ -139,7 +136,7 @@ class CategoryServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     categoryService.create(command)
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
+            ).isInstanceOf(NotFoundCategoryException.class);
         }
 
         @Test
@@ -300,7 +297,7 @@ class CategoryServiceTest {
             // when
             assertThatThrownBy(() ->
                     categoryService.update(command)
-            ).isInstanceOf(NoAuthorityUpdateCategoryException.class);
+            ).isInstanceOf(NotFoundCategoryException.class);
 
             // then
             Category category = categoryServiceTestHelper.카테고리를_조회한다(categoryId);
@@ -323,7 +320,7 @@ class CategoryServiceTest {
             // when
             assertThatThrownBy(() ->
                     categoryService.update(command)
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
+            ).isInstanceOf(NotFoundCategoryException.class);
 
             // then
             transactionHelper.doAssert(() -> {
@@ -423,7 +420,7 @@ class CategoryServiceTest {
             // when
             assertThatThrownBy(() ->
                     categoryService.delete(command)
-            ).isInstanceOf(NoAuthorityDeleteCategoryException.class);
+            ).isInstanceOf(NotFoundCategoryException.class);
 
             // then
             assertThat(categoryServiceTestHelper.카테고리를_조회한다(categoryId)).isNotNull();

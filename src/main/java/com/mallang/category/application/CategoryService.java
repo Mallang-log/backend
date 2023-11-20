@@ -27,28 +27,28 @@ public class CategoryService {
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getById(command.blogId());
-        Category parentCategory = getParentCategory(command.parentCategoryId());
+        Blog blog = blogRepository.getByIdAndOwnerId(command.blogId(), command.memberId());
+        Category parentCategory = getParentCategory(command.parentCategoryId(), command.memberId());
         Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
         return categoryRepository.save(category).getId();
     }
 
-    private @Nullable Category getParentCategory(@Nullable Long parentCategoryId) {
+    public void update(UpdateCategoryCommand command) {
+        Category category = categoryRepository.getByIdAndOwnerId(command.categoryId(), command.memberId());
+        Category parentCategory = getParentCategory(command.parentCategoryId(), command.memberId());
+        category.update(command.name(), parentCategory, categoryValidator);
+    }
+
+    private @Nullable Category getParentCategory(@Nullable Long parentCategoryId, Long memberId) {
         if (parentCategoryId == null) {
             return null;
         }
-        return categoryRepository.getById(parentCategoryId);
-    }
-
-    public void update(UpdateCategoryCommand command) {
-        Category category = categoryRepository.getById(command.categoryId());
-        Category parentCategory = getParentCategory(command.parentCategoryId());
-        category.update(command.memberId(), command.name(), parentCategory, categoryValidator);
+        return categoryRepository.getByIdAndOwnerId(parentCategoryId, memberId);
     }
 
     public void delete(DeleteCategoryCommand command) {
-        Category category = categoryRepository.getById(command.categoryId());
-        category.delete(command.memberId());
+        Category category = categoryRepository.getByIdAndOwnerId(command.categoryId(), command.memberId());
+        category.delete();
         categoryRepository.delete(category);
     }
 }

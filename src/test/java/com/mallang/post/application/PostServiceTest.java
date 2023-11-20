@@ -7,9 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.application.CategoryServiceTestHelper;
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.common.EventsTestUtils;
@@ -21,8 +19,7 @@ import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.Tag;
-import com.mallang.post.exception.NoAuthorityDeletePostException;
-import com.mallang.post.exception.NoAuthorityUpdatePostException;
+import com.mallang.post.exception.NotFoundPostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -135,50 +132,6 @@ class PostServiceTest {
         }
 
         @Test
-        void 다른_사람의_블로그에_글을_쓰려는_경우_예외() {
-            // given
-            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("다른");
-            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(otherMemberId, "other-log");
-
-            // when
-            CreatePostCommand command = CreatePostCommand.builder()
-                    .memberId(memberId)
-                    .blogId(otherBlogId)
-                    .title("포스트 1")
-                    .content("content")
-                    .intro("intro")
-                    .visibility(PUBLIC)
-                    .build();
-
-            // then
-            assertThatThrownBy(() ->
-                    postService.create(command)
-            ).isInstanceOf(IsNotBlogOwnerException.class);
-        }
-
-        @Test
-        void 자신이_만든_카테고리가_아니면_예외() {
-            // given
-            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("다른");
-            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(otherMemberId, "other-log");
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, otherBlogId, "Spring");
-            CreatePostCommand command = CreatePostCommand.builder()
-                    .memberId(memberId)
-                    .blogId(blogId)
-                    .title("포스트 1")
-                    .content("content")
-                    .intro("intro")
-                    .visibility(PUBLIC)
-                    .categoryId(categoryId)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() ->
-                    postService.create(command)
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
-        }
-
-        @Test
         void 태그를_함께_저장한다() {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
@@ -252,7 +205,7 @@ class PostServiceTest {
                                     null, "수정인트로",
                                     PUBLIC, null,
                                     null, emptyList()))
-            ).isInstanceOf(NoAuthorityUpdatePostException.class);
+            ).isInstanceOf(NotFoundPostException.class);
 
             // then
             Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
@@ -327,40 +280,6 @@ class PostServiceTest {
                 assertThat(post.getCategory().getName()).isEqualTo("Node");
             });
         }
-
-        @Test
-        void 다른_사람의_카테고리거나_없는_카테고리로는_변경할_수_없다() {
-            // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
-            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
-            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(otherMemberId, "other-log");
-            Long otherMemberSpringCategoryId =
-                    categoryServiceTestHelper.최상위_카테고리를_저장한다(otherMemberId, otherBlogId, "Spring");
-
-            // when
-            assertThatThrownBy(() ->
-                    postService.update(new UpdatePostCommand(
-                            memberId, 포스트_ID,
-                            "수정제목", "수정내용",
-                            null, "수정인트로",
-                            PUBLIC, null,
-                            1000L, emptyList()
-                    ))
-            ).isInstanceOf(NotFoundCategoryException.class);
-            assertThatThrownBy(() ->
-                    postService.update(new UpdatePostCommand(
-                            memberId, 포스트_ID,
-                            "수정제목", "수정내용",
-                            null, "수정인트로",
-                            PUBLIC, null,
-                            otherMemberSpringCategoryId, emptyList()
-                    ))
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
-
-            // then
-            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
-            assertThat(post.getTitle()).isEqualTo("포스트");
-        }
     }
 
     @Autowired
@@ -387,15 +306,13 @@ class PostServiceTest {
         }
 
         @Test
-        void 자신이_작성한_글이_아닌_경우_예외() {
+        void 자신이_작성한_글이_아닌_경우_아무것도_지워지지_않는다() {
             // when
-            assertThatThrownBy(() -> {
-                postService.delete(new DeletePostCommand(otherId, List.of(myPostId1)));
-            }).isInstanceOf(NoAuthorityDeletePostException.class);
+            postService.delete(new DeletePostCommand(otherId, List.of(myPostId1)));
 
             // then
             assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isTrue();
-            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(0);
+            assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isZero();
         }
 
         @Test

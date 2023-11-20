@@ -7,22 +7,17 @@ import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.category.domain.Category;
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
-import com.mallang.post.exception.NoAuthorityDeletePostException;
-import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -153,33 +148,6 @@ class PostTest {
             // when & then
             assertThat(post.getPostThumbnailImageName()).isNull();
         }
-
-        @Test
-        void 작성자가_생성한_카테고리가_아닌_경우_예외() {
-            // when & then
-            assertThatThrownBy(() ->
-                    Post.builder()
-                            .title("제목")
-                            .content("내용")
-                            .writer(mallang)
-                            .blog(blog)
-                            .category(otherMemberCategory)
-                            .build()
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
-        }
-
-        @Test
-        void 자신의_블로그가_아니라면_예외() {
-            // when & then
-            assertThatThrownBy(() ->
-                    Post.builder()
-                            .title("제목")
-                            .content("내용")
-                            .writer(mallang)
-                            .blog(otherBlog)
-                            .build()
-            ).isInstanceOf(IsNotBlogOwnerException.class);
-        }
     }
 
     @Nested
@@ -198,7 +166,7 @@ class PostTest {
                     .build();
 
             // when
-            post.update(mallang.getId(), "수정제목", "수정내용",
+            post.update("수정제목", "수정내용",
                     "postThumbnailImageName", new PostIntro("수정인트로"),
                     new PostVisibilityPolicy(PRIVATE), null,
                     List.of("태그2")
@@ -211,29 +179,6 @@ class PostTest {
             assertThat(post.getTags())
                     .extracting(Tag::getContent)
                     .containsExactly("태그2");
-        }
-
-        @Test
-        void 작성자가_아니면_예외() {
-            // given
-            Post post = Post.builder()
-                    .title("제목")
-                    .content("내용")
-                    .writer(mallang)
-                    .blog(blog)
-                    .build();
-
-            // when
-            assertThatThrownBy(() ->
-                    post.update(otherMember.getId(), "수정제목", "수정내용",
-                            "postThumbnailImageName", new PostIntro("수정인트로"),
-                            new PostVisibilityPolicy(PUBLIC), null,
-                            emptyList())
-            ).isInstanceOf(NoAuthorityUpdatePostException.class);
-
-            // then
-            assertThat(post.getTitle()).isEqualTo("제목");
-            assertThat(post.getContent()).isEqualTo("내용");
         }
     }
 
@@ -251,28 +196,17 @@ class PostTest {
         void 해당_글_작성자만_삭제할_수_있다() {
             // when & then
             assertDoesNotThrow(() -> {
-                post.delete(mallang.getId());
+                post.delete();
             });
         }
 
         @Test
         void 포스트_삭제_이벤트가_발행된다() {
             // when
-            post.delete(mallang.getId());
+            post.delete();
 
             // then
             assertThat(post.domainEvents().get(0)).isInstanceOf(PostDeleteEvent.class);
-        }
-
-        @Test
-        void 해당_글_작성자가_아니면_예외() {
-            // when
-            assertThatThrownBy(() -> {
-                post.delete(mallang.getId() + 1);
-            }).isInstanceOf(NoAuthorityDeletePostException.class);
-
-            // then
-            assertThat(post.domainEvents()).isEmpty();
         }
     }
 
@@ -296,10 +230,10 @@ class PostTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(mallang.getId(), null);
+                    post.validatePostAccessibility(mallang, null);
                 });
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(100L, null);
+                    post.validatePostAccessibility(otherMember, null);
                 });
                 assertDoesNotThrow(() -> {
                     post.validatePostAccessibility(null, null);
@@ -331,7 +265,7 @@ class PostTest {
             void 글_작성자라면_접근할_수_있다() {
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(mallang.getId(), null);
+                    post.validatePostAccessibility(mallang, null);
                 });
             }
 
@@ -339,7 +273,7 @@ class PostTest {
             void 글_작성자가_아니며_비밀번호도_일치하지_않으면_접근할_수_없다() {
                 // when & then
                 assertThatThrownBy(() -> {
-                    post.validatePostAccessibility(2L, "12345");
+                    post.validatePostAccessibility(otherMember, "12345");
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
             }
         }
@@ -360,7 +294,7 @@ class PostTest {
             void 포스트_작성자만_접근할_수_있다() {
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(mallang.getId(), null);
+                    post.validatePostAccessibility(mallang, null);
                 });
             }
 
@@ -368,7 +302,7 @@ class PostTest {
             void 포스트_작성자가_아니면_접근할_수_없다() {
                 // when & then
                 assertThatThrownBy(() -> {
-                    post.validatePostAccessibility(2L, null);
+                    post.validatePostAccessibility(otherMember, null);
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
             }
         }

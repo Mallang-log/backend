@@ -15,9 +15,6 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
-import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
-import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -49,20 +46,6 @@ class CategoryTest {
 
             // then
             assertThat(하위.getParent()).isEqualTo(최상위);
-        }
-
-        @Test
-        void 하위_카테고리를_생성한_회원은_상위_카테고리를_생성한_회원과_같아야한다() {
-            // given
-            Category 최상위 = Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
-
-            // when
-            assertThatThrownBy(() ->
-                    Category.create("하위", otherMember, otherBlog, 최상위, categoryValidator)
-            ).isInstanceOf(NoAuthorityUseCategoryException.class);
-
-            // then
-            assertThat(최상위.getChildren()).isEmpty();
         }
 
         @Test
@@ -115,7 +98,7 @@ class CategoryTest {
         @Test
         void 이름을_변경할_수_있다() {
             // when
-            rootCategory.update(mallang.getId(), "말랑", null, categoryValidator);
+            rootCategory.update("말랑", null, categoryValidator);
 
             // then
             assertThat(rootCategory.getName()).isEqualTo("말랑");
@@ -127,7 +110,7 @@ class CategoryTest {
             Category childChildCategory = 하위_카테고리("하위의 하위", mallang, mallangBlog, childCategory);
 
             // when
-            childCategory.update(mallang.getId(), "자식 to Root", null, categoryValidator);
+            childCategory.update("자식 to Root", null, categoryValidator);
 
             // then
             assertThat(childCategory.getParent()).isNull();
@@ -141,7 +124,7 @@ class CategoryTest {
             Category childChildCategory = 하위_카테고리("하위의 하위", mallang, mallangBlog, childCategory);
 
             // when
-            childCategory.update(mallang.getId(), "자식 to otherRoot", otherRootCategory, categoryValidator);
+            childCategory.update("자식 to otherRoot", otherRootCategory, categoryValidator);
 
             // then
             assertThat(childCategory.getParent()).isEqualTo(otherRootCategory);
@@ -152,7 +135,7 @@ class CategoryTest {
         void 자기_자신이_부모여서는_안된다() {
             // when & then
             assertThatThrownBy(() ->
-                    rootCategory.update(mallang.getId(), "name", rootCategory, categoryValidator)
+                    rootCategory.update("name", rootCategory, categoryValidator)
             ).isInstanceOf(CategoryHierarchyViolationException.class);
         }
 
@@ -160,22 +143,8 @@ class CategoryTest {
         void 자신보다_낮은_카테고리를_부모로_둘_수_없다() {
             // when & then
             assertThatThrownBy(() ->
-                    rootCategory.update(mallang.getId(), "name", childCategory, categoryValidator)
+                    rootCategory.update("name", childCategory, categoryValidator)
             ).isInstanceOf(CategoryHierarchyViolationException.class);
-        }
-
-        @Test
-        void 자신의_카테고리가_아니라면_수정할_수_없다() {
-            // given
-            Category category = 루트_카테고리("root", mallang, mallangBlog);
-
-            // when
-            assertThatThrownBy(() ->
-                    category.update(otherMember.getId(), "말랑", null, categoryValidator)
-            ).isInstanceOf(NoAuthorityUpdateCategoryException.class);
-
-            // then
-            assertThat(category.getName()).isEqualTo("root");
         }
 
         @Test
@@ -185,7 +154,7 @@ class CategoryTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    child2.update(mallang.getId(), childCategory.getName(), rootCategory, categoryValidator)
+                    child2.update(childCategory.getName(), rootCategory, categoryValidator)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
 
@@ -198,7 +167,7 @@ class CategoryTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    childCategory.update(mallang.getId(), "최상위", null, categoryValidator)
+                    childCategory.update("최상위", null, categoryValidator)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
@@ -210,25 +179,17 @@ class CategoryTest {
         private final Category childCategory = 하위_카테고리("하위", mallang, mallangBlog, rootCategory);
 
         @Test
-        void 자신의_카테고리가_아니면_제거할_수_없다() {
-            // when & then
-            assertThatThrownBy(() ->
-                    childCategory.delete(otherMember.getId())
-            ).isInstanceOf(NoAuthorityDeleteCategoryException.class);
-        }
-
-        @Test
         void 하위_카테고리가_존재하면_제거할_수_없다() {
             // when & then
             assertThatThrownBy(() ->
-                    rootCategory.delete(mallang.getId())
+                    rootCategory.delete()
             ).isInstanceOf(ChildCategoryExistException.class);
         }
 
         @Test
         void 부모_카테고리의_하위_카테고리에서도_제거된다() {
             // when
-            childCategory.delete(mallang.getId());
+            childCategory.delete();
 
             // then
             assertThat(rootCategory.getChildren()).isEmpty();
@@ -237,7 +198,7 @@ class CategoryTest {
         @Test
         void 제거_이벤트가_발핼된다() {
             // when
-            childCategory.delete(mallang.getId());
+            childCategory.delete();
 
             // then
             assertThat(childCategory.domainEvents().get(0))
