@@ -58,7 +58,7 @@ class PostServiceTest {
     private ApplicationEvents events;
 
     private Long memberId;
-    private Long blogId;
+    private String blogName;
 
     @Nested
     class 포스트_저장_시 {
@@ -66,7 +66,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang-log");
+            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
         }
 
         @Test
@@ -74,7 +74,7 @@ class PostServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogId(blogId)
+                    .blogName(blogName)
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
@@ -91,10 +91,10 @@ class PostServiceTest {
         @Test
         void 카테고리를_설정할_수_있다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "Spring");
+            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogId(blogId)
+                    .blogName(blogName)
                     .title("포스트 1")
                     .content("content")
                     .intro("intro")
@@ -117,7 +117,7 @@ class PostServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogId(blogId)
+                    .blogName(blogName)
                     .title("포스트 1")
                     .content("content")
                     .intro("intro")
@@ -136,7 +136,7 @@ class PostServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogId(blogId)
+                    .blogName(blogName)
                     .title("포스트 1")
                     .content("content")
                     .intro("intro")
@@ -163,13 +163,13 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang-log");
+            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
         }
 
         @Test
         void 내가_쓴_포스트를_수정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", "태그1");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
@@ -195,7 +195,7 @@ class PostServiceTest {
         void 다른_사람의_포스트는_수정할_수_없다() {
             // given
             Long otherMemberId = memberServiceTestHelper.회원을_저장한다("동훈");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
 
             // when
             assertThatThrownBy(() ->
@@ -216,8 +216,8 @@ class PostServiceTest {
         @Test
         void 포스트_수정_시_있던_카테고리릴_없앨_수_있다() {
             // given
-            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "Spring");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", springCategoryId);
+            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
@@ -236,8 +236,8 @@ class PostServiceTest {
         @Test
         void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
-            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "Spring");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
 
             // when
             postService.update(
@@ -259,9 +259,9 @@ class PostServiceTest {
         @Test
         void 기존_카테고리를_다른_카테고리로_변경할_수_있다() {
             // given
-            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "Spring");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", springCategoryId);
-            Long nodeCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "Node");
+            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
+            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
+            Long nodeCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Node");
 
             // when
             postService.update(new UpdatePostCommand(
@@ -296,13 +296,13 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang-log");
-            myPostId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "내 글 1", "내 글 1 입니다.");
-            myPostId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "내 글 2", "내 글 2 입니다.");
+            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
+            myPostId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
+            myPostId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
             commentServiceTestHelper.댓글을_작성한다(myPostId1, "dw", false, memberId);
             otherId = memberServiceTestHelper.회원을_저장한다("other");
-            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(otherId, "other-log");
-            otherPostId = postServiceTestHelper.포스트를_저장한다(otherId, otherBlogId, "다른사람 글 1", "다른사람 글 1 입니다.");
+            String otherBlogName = blogServiceTestHelper.블로그_개설(otherId, "other-log").getName();
+            otherPostId = postServiceTestHelper.포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
         }
 
         @Test

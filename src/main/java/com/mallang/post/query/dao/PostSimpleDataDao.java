@@ -32,7 +32,7 @@ public class PostSimpleDataDao {
                 .leftJoin(post.tags, tag)
                 .where(
                         filterPrivatePost(memberId),
-                        blogEq(cond.blogId()),
+                        blogEq(cond.blogName()),
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
@@ -55,11 +55,11 @@ public class PostSimpleDataDao {
                 );
     }
 
-    private BooleanExpression blogEq(@Nullable Long blogId) {
-        if (blogId == null) {
+    private BooleanExpression blogEq(@Nullable String blogName) {
+        if (ObjectUtils.isEmpty(blogName)) {
             return null;
         }
-        return post.blog.id.eq(blogId);
+        return post.blog.name.value.eq(blogName);
     }
 
     private BooleanExpression hasCategory(@Nullable Long categoryId) {
@@ -83,9 +83,10 @@ public class PostSimpleDataDao {
     }
 
     private BooleanExpression writerIdEq(@Nullable Long writerId) {
-        return writerId == null
-                ? null
-                : post.writer.id.eq(writerId);
+        if (writerId == null) {
+            return null;
+        }
+        return post.writer.id.eq(writerId);
     }
 
     private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content,

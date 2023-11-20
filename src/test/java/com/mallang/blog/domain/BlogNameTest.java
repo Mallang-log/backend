@@ -136,7 +136,7 @@ class BlogNameTest {
         BlogName blogName = new BlogName(name);
 
         // then
-        assertThat(blogName.getName()).isEqualTo("correct");
+        assertThat(blogName.getValue()).isEqualTo("correct");
     }
 
     @Test

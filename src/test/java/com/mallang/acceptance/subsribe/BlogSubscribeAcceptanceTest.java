@@ -31,25 +31,25 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private Long 말랑_블로그_ID;
-    private Long 동훈_블로그_ID;
+    private String 말랑_블로그_이름;
+    private String 동훈_블로그_이름;
 
     @BeforeEach
     protected void setUp() {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-blog");
-        동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghun-blog");
+        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-blog");
+        동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-blog");
     }
 
     @Nested
-    class 블로그_구독_시 {
+    class 블로그_구독_시 extends AcceptanceTest {
 
         @Test
         void 블로그를_구독한다() {
             // when
-            var 응답 = 블로그_구독_요청(말랑_세션_ID, 동훈_블로그_ID);
+            var 응답 = 블로그_구독_요청(말랑_세션_ID, 동훈_블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
@@ -58,7 +58,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
         @Test
         void 자신의_블로그를_구독하면_예외() {
             // when
-            var 응답 = 블로그_구독_요청(말랑_세션_ID, 말랑_블로그_ID);
+            var 응답 = 블로그_구독_요청(말랑_세션_ID, 말랑_블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 잘못된_요청);
@@ -67,10 +67,10 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
         @Test
         void 이미_구독한_블로그라면_예외() {
             // given
-            블로그_구독_요청(말랑_세션_ID, 동훈_블로그_ID);
+            블로그_구독_요청(말랑_세션_ID, 동훈_블로그_이름);
 
             // when
-            var 응답 = 블로그_구독_요청(말랑_세션_ID, 동훈_블로그_ID);
+            var 응답 = 블로그_구독_요청(말랑_세션_ID, 동훈_블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 중복됨);
@@ -78,15 +78,15 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 블로그_구독_취소_시 {
+    class 블로그_구독_취소_시 extends AcceptanceTest {
 
         @Test
         void 구독한_블로그를_구독_취소한다() {
             // given
-            블로그_구독_요청(말랑_세션_ID, 동훈_블로그_ID);
+            블로그_구독_요청(말랑_세션_ID, 동훈_블로그_이름);
 
             // when
-            var 응답 = 블로그_구독_취소_요청(말랑_세션_ID, 동훈_블로그_ID);
+            var 응답 = 블로그_구독_취소_요청(말랑_세션_ID, 동훈_블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -95,7 +95,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
         @Test
         void 구독하지_않은_블로그라면_예외() {
             // when
-            var 응답 = 블로그_구독_취소_요청(말랑_세션_ID, 말랑_블로그_ID);
+            var 응답 = 블로그_구독_취소_요청(말랑_세션_ID, 말랑_블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 잘못된_요청);
@@ -103,7 +103,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_회원이_구독중인_블로그_조회_시 {
+    class 특정_회원이_구독중인_블로그_조회_시 extends AcceptanceTest {
 
         @Test
         void 조회된다() {
@@ -126,7 +126,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_블로그를_구독중인_구독자_조회_시 {
+    class 특정_블로그를_구독중인_구독자_조회_시 extends AcceptanceTest {
 
         @Test
         void 조회된다() {
