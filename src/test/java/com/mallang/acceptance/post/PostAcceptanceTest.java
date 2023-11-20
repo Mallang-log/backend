@@ -55,7 +55,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 포스트_단일_조회_시 {
+    class 포스트_단일_조회_시 extends AcceptanceTest {
 
         @Test
         void 포스트를_단일_조회한다() {
@@ -245,7 +245,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 포스트_검색_시 {
+    class 포스트_검색_시 extends AcceptanceTest {
 
         @Test
         void 포스트를_전체_조회한다() {

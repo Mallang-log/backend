@@ -48,7 +48,7 @@ class CommentDataValidatorTest {
             .blog(blog)
             .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
             .build();
-    
+
     @Test
     void 공개_포스트면_문제없다() {
         // given

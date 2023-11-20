@@ -134,7 +134,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 카테고리_제거_시 {
+    class 카테고리_제거_시 extends AcceptanceTest {
 
         @Test
         void 카테고리는_제거되며_해당_카테고리를_가진_포스트는_카테고리_없음_상태가_된다() {

@@ -45,7 +45,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 좋아요_시 {
+    class 좋아요_시 extends AcceptanceTest {
 
         @Test
         void 로그인하지_않았다면_좋아요를_누를_수_없다() {
@@ -85,10 +85,10 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 {
+        class 보호된_포스트인_경우 extends AcceptanceTest {
 
             @Nested
-            class 블로그_주인인_경우 {
+            class 블로그_주인인_경우 extends AcceptanceTest {
 
                 @Test
                 void 좋아요를_누를_수_있다() {
@@ -104,7 +104,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 {
+            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_일치하지_않으면_좋아요를_누를_수_없다() {
@@ -135,7 +135,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 {
+        class 비공개_포스트인_경우 extends AcceptanceTest {
 
             @Test
             void 블로그_주인은_누를_수_있다() {
@@ -165,7 +165,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 좋아요_취소_시 {
+    class 좋아요_취소_시 extends AcceptanceTest {
 
         @Test
         void 좋아요를_취소한다() {
@@ -193,10 +193,10 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 {
+        class 보호된_포스트인_경우 extends AcceptanceTest {
 
             @Nested
-            class 블로그_주인인_경우 {
+            class 블로그_주인인_경우 extends AcceptanceTest {
 
                 @Test
                 void 좋아요를_취소할_수_있다() {
@@ -213,7 +213,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 {
+            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_다르면_취소할_수_없다() {
@@ -252,7 +252,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 {
+        class 비공개_포스트인_경우 extends AcceptanceTest {
 
             @Test
             void 블로그_주인은_취소할_수_있다() {
