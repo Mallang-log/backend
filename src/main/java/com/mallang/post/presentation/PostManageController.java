@@ -6,6 +6,7 @@ import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.PostManageQueryService;
+import com.mallang.post.query.data.PostManageDetailData;
 import com.mallang.post.query.data.PostManageSearchCond;
 import com.mallang.post.query.data.PostManageSimpleData;
 import java.net.URI;
@@ -56,6 +57,14 @@ public class PostManageController {
     ) {
         postService.delete(request.toCommand(memberId));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostManageDetailData> getById(
+            @PathVariable(name = "id") Long postId,
+            @Auth Long memberId
+    ) {
+        return ResponseEntity.ok(postManageQueryService.findById(memberId, postId));
     }
 
     @GetMapping

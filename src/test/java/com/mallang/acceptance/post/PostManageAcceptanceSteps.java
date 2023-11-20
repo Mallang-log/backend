@@ -12,6 +12,7 @@ import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
+import com.mallang.post.query.data.PostManageDetailData;
 import com.mallang.post.query.data.PostManageSimpleData;
 import com.mallang.post.query.data.PostManageSimpleData.CategoryManageSimpleInfo;
 import io.restassured.common.mapper.TypeRef;
@@ -173,7 +174,7 @@ public class PostManageAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 내_글_관리_목록_조회_요청(
+    public static ExtractableResponse<Response> 내_관리_글_목록_조회_요청(
             String 세션_ID,
             String 블로그_이름,
             Long 카테고리_ID,
@@ -186,6 +187,7 @@ public class PostManageAcceptanceSteps {
                 .queryParam("categoryId", 카테고리_ID)
                 .queryParam("title", 제목)
                 .queryParam("content", 내용)
+                .queryParam("visibility", 공개여부)
                 .get("/manage/posts")
                 .then().log().all()
                 .extract();
@@ -196,21 +198,41 @@ public class PostManageAcceptanceSteps {
             Long 카테고리_ID,
             String 카테고리_이름,
             String 제목,
-            Visibility 공개_범위
+            Visibility 공개_범위,
+            String 비밀번호
     ) {
         return PostManageSimpleData.builder()
                 .id(포스트_ID)
                 .categoryInfo(new CategoryManageSimpleInfo(카테고리_ID, 카테고리_이름))
                 .title(제목)
                 .visibility(공개_범위)
+                .password(비밀번호)
                 .build();
     }
 
-    public static void 내_글_관리_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostManageSimpleData> 예상_데이터) {
+    public static void 내_관리_글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostManageSimpleData> 예상_데이터) {
         List<PostManageSimpleData> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields("createdDate")
                 .isEqualTo(예상_데이터);
+    }
+
+    public static ExtractableResponse<Response> 내_관리_글_단일_조회_요청(String 세션_ID, Long 포스트_ID) {
+        return given(세션_ID)
+                .get("/manage/posts/{id}", 포스트_ID)
+                .then()
+                .log().all()
+                .extract();
+    }
+
+    public static void 내_관리_글_단일_조회_응답을_검증한다(
+            ExtractableResponse<Response> 응답,
+            PostManageDetailData postManageDetailData
+    ) {
+        PostManageDetailData actual = 응답.as(PostManageDetailData.class);
+        assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("createdDate")
+                .isEqualTo(postManageDetailData);
     }
 }
