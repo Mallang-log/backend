@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.IncorrectAccessPostException;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
 import org.junit.jupiter.api.DisplayName;
@@ -70,55 +68,6 @@ class PostDataValidatorTest {
             // when & then
             assertDoesNotThrow(() -> {
                 postDataValidator.validateAccessPost(null, postDetailData);
-            });
-        }
-    }
-
-    @Nested
-    class 보호_글_접근_검증_시 {
-
-        @ParameterizedTest
-        @EnumSource(mode = Mode.EXCLUDE, value = Visibility.class, names = {"PROTECTED"})
-        void 보호_글이_아니면_예외(Visibility visibility) {
-            // given
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(1L, "mallang", "url"))
-                    .visibility(visibility)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> {
-                postDataValidator.validateAccessProtectedPost(postDetailData, "11234");
-            }).isInstanceOf(IncorrectAccessPostException.class);
-        }
-
-        @Test
-        void 비밀번호가_일치하지_않으면_예외() {
-            // given
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(1L, "mallang", "url"))
-                    .visibility(Visibility.PROTECTED)
-                    .password("1234")
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> {
-                postDataValidator.validateAccessProtectedPost(postDetailData, "11234");
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
-        }
-
-        @Test
-        void 비밀번호가_일치하면_성공() {
-            // given
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(1L, "mallang", "url"))
-                    .visibility(Visibility.PROTECTED)
-                    .password("1234")
-                    .build();
-
-            // when & then
-            assertDoesNotThrow(() -> {
-                postDataValidator.validateAccessProtectedPost(postDetailData, "1234");
             });
         }
     }

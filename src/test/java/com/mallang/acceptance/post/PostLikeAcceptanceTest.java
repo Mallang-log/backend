@@ -12,7 +12,6 @@ import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_�
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.공개_포스트_생성_데이터;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.보호_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.보호된_포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.비공개_포스트_생성_데이터;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_생성;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_수정_요청;
@@ -54,7 +53,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
 
             // when
-            var 응답 = 포스트_좋아요_요청(없음(), 포스트_ID);
+            var 응답 = 포스트_좋아요_요청(없음(), 포스트_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 인증되지_않음);
@@ -66,7 +65,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
             // when
-            var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+            var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
@@ -76,10 +75,10 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         void 이미_좋아요를_누른_포스트에는_중복해서_좋아요를_누를_수_없다() {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
-            포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+            포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
             // when
-            var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 중복됨);
@@ -97,7 +96,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
 
                     // when
-                    var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+                    var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
                     // then
                     응답_상태를_검증한다(응답, 생성됨);
@@ -109,27 +108,26 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             class 블로그_주인이_아닌_경우 {
 
                 @Test
-                void 보호된_글에_접근하지_않고서는_좋아요를_누를_수_없다() {
+                void 입력한_비밀번호가_포스트의_비밀번호와_일치하지_않으면_좋아요를_누를_수_없다() {
                     // given
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
                     // when
-                    var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+                    var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
 
                     // then
                     응답_상태를_검증한다(응답, 권한_없음);
                 }
 
                 @Test
-                void 보호된_글에_접근한_뒤에는_좋아요를_누를_수_있다() {
+                void 입력한_비밀번호가_포스트의_비밀번호와_일치하면_좋아요를_누를_수_있다() {
                     // given
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-                    보호된_포스트_단일_조회_요청(동훈_세션_ID, 포스트_ID, "1234");
 
                     // when
-                    var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+                    var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, "1234");
 
                     // then
                     응답_상태를_검증한다(응답, 생성됨);
@@ -146,7 +144,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_ID));
 
                 // when
-                var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+                var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
                 // then
                 응답_상태를_검증한다(응답, 생성됨);
@@ -159,7 +157,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
                 // when
-                var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+                var 응답 = 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
 
                 // then
                 응답_상태를_검증한다(응답, 권한_없음);
@@ -174,10 +172,10 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         void 좋아요를_취소한다() {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
-            포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+            포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
             // when
-            var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -189,7 +187,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
 
             // when
-            var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 찾을수_없음);
@@ -205,10 +203,10 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 void 좋아요를_취소할_수_있다() {
                     // given
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
-                    포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+                    포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
                     // when
-                    var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID);
+                    var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID, null);
 
                     // then
                     응답_상태를_검증한다(응답, 본문_없음);
@@ -219,35 +217,34 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             class 블로그_주인이_아닌_경우 {
 
                 @Test
-                void 보호된_글에_접근하지_않고서는_취소할_수_없다() {
+                void 입력한_비밀번호가_포스트의_비밀번호와_다르면_취소할_수_없다() {
                     // given
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-                    포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+                    포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
                     포스트_수정_요청(말랑_세션_ID, 포스트_ID,
                             "업데이트", "업데이트", 없음(), "포스트 인트로",
                             PROTECTED, "1234", 없음());
 
                     // when
-                    var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID);
+                    var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID, null);
 
                     // then
                     응답_상태를_검증한다(응답, 권한_없음);
                 }
 
                 @Test
-                void 보호된_글에_접근한_뒤에는_취소할_수_있다() {
+                void 입력한_비밀번호가_포스트의_비밀번호와_일치하면_취소할_수_있다() {
                     // given
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-                    포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+                    포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
                     포스트_수정_요청(말랑_세션_ID, 포스트_ID,
                             "업데이트", "업데이트", 없음(), "포스트 인트로",
                             PROTECTED, "1234", 없음());
-                    보호된_포스트_단일_조회_요청(동훈_세션_ID, 포스트_ID, "1234");
 
                     // when
-                    var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID);
+                    var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID, "1234");
 
                     // then
                     응답_상태를_검증한다(응답, 본문_없음);
@@ -262,10 +259,10 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             void 블로그_주인은_취소할_수_있다() {
                 // given
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_ID));
-                포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+                포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
                 // when
-                var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID);
+                var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID, null);
 
                 // then
                 응답_상태를_검증한다(응답, 본문_없음);
@@ -276,13 +273,13 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 // given
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-                포스트_좋아요_요청(동훈_세션_ID, 포스트_ID);
+                포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
                 포스트_수정_요청(말랑_세션_ID, 포스트_ID,
                         "업데이트", "업데이트", 없음(), "포스트 인트로",
                         PRIVATE, 없음(), 없음());
 
                 // when
-                var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID);
+                var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID, null);
 
                 // then
                 응답_상태를_검증한다(응답, 권한_없음);

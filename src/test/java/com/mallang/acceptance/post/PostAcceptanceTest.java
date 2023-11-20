@@ -7,7 +7,6 @@ import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
-import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
@@ -19,7 +18,6 @@ import static com.mallang.acceptance.comment.CommentAcceptanceSteps.비공개;
 import static com.mallang.acceptance.comment.CommentAcceptanceSteps.비인증_댓글_작성;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.공개_포스트_생성_데이터;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.보호되지_않음;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.보호된_포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.보호됨;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.좋아요_눌림;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.좋아요_안눌림;
@@ -37,7 +35,6 @@ import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.포스트_좋�
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import java.util.List;
@@ -113,7 +110,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
         // then
         응답_상태를_검증한다(응답, 정상_처리);
-        var 조회_결과 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID);
+        var 조회_결과 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID, null);
         var 예상_데이터 = 포스트_단일_조회_데이터(
                 포스트_ID,
                 "말랑",
@@ -136,18 +133,18 @@ class PostAcceptanceTest extends AcceptanceTest {
         var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_ID));
         var 다른_회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("다른회원");
 
-        var 댓글1_ID = 비인증_댓글_작성(포스트_ID, "댓글", "비인증", "1234");
-        var 댓글2_ID = 댓글_작성(다른_회원_세션_ID, 포스트_ID, "댓글", 비공개);
-        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글1_ID);
-        댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글", 공개, 댓글1_ID);
-        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글2_ID);
+        var 댓글1_ID = 비인증_댓글_작성(포스트_ID, "댓글", "비인증", "1234", null);
+        var 댓글2_ID = 댓글_작성(다른_회원_세션_ID, 포스트_ID, "댓글", 비공개, null);
+        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글1_ID, null);
+        댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글", 공개, 댓글1_ID, null);
+        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글2_ID, null);
 
         // when
         var 응답 = 포스트_삭제_요청(말랑_세션_ID, 포스트_ID);
 
         // then
         응답_상태를_검증한다(응답, 본문_없음);
-        응답_상태를_검증한다(포스트_단일_조회_요청(포스트_ID), 찾을수_없음);
+        응답_상태를_검증한다(포스트_단일_조회_요청(null, 포스트_ID, null), 찾을수_없음);
     }
 
     @Nested
@@ -170,7 +167,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_단일_조회_요청(포스트_ID);
+            var 응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
 
             // then
             var 예상_데이터 = 포스트_단일_조회_데이터(
@@ -196,7 +193,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 없는_ID = 100L;
 
             // when
-            var 응답 = 포스트_단일_조회_요청(없는_ID);
+            var 응답 = 포스트_단일_조회_요청(null, 없는_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 찾을수_없음);
@@ -216,11 +213,11 @@ class PostAcceptanceTest extends AcceptanceTest {
                     없음(),
                     없음()
             );
-            포스트_좋아요_요청(말랑_세션_ID, 포스트_ID);
+            포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
             // when
-            var 좋아요_눌린_응답 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID);
-            var 좋아요_안눌린_응답 = 포스트_단일_조회_요청(포스트_ID);
+            var 좋아요_눌린_응답 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID, null);
+            var 좋아요_안눌린_응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
 
             // then
             포스트_단일_조회_응답을_검증한다(좋아요_눌린_응답,
@@ -253,7 +250,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID, null);
 
             // then
             포스트_단일_조회_응답을_검증한다(응답,
@@ -279,7 +276,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_단일_조회_요청(포스트_ID);
+            var 응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
@@ -301,7 +298,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID, null);
 
             // then
             포스트_단일_조회_응답을_검증한다(응답,
@@ -327,7 +324,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_단일_조회_요청(포스트_ID);
+            var 응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
 
             // then
             포스트_단일_조회_응답을_검증한다(응답,
@@ -337,59 +334,6 @@ class PostAcceptanceTest extends AcceptanceTest {
                             "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
                             "",
                             PROTECTED, 보호됨, 좋아요_안눌림, 0));
-        }
-    }
-
-    @Nested
-    class 보호된_포스트_조회_시 {
-
-        @Test
-        void 보호된_포스트가_아니라면_예외() {
-            // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_ID));
-
-            // when
-            var 응답 = 보호된_포스트_단일_조회_요청(포스트_ID, "1234");
-
-            // then
-            응답_상태를_검증한다(응답, 잘못된_요청);
-            assertThat(응답.sessionId()).isNull();
-        }
-
-        @Test
-        void 비밀번호가_일치하지_않으면_조회할_수_없다() {
-            // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
-                    "첫 포스트",
-                    "첫 포스트",
-                    null,
-                    "첫 포스트 인트로",
-                    PROTECTED,
-                    "1234",
-                    없음()
-            );
-
-            // when
-            var 응답 = 보호된_포스트_단일_조회_요청(포스트_ID, "123");
-
-            // then
-            응답_상태를_검증한다(응답, 권한_없음);
-            assertThat(응답.sessionId()).isNull();
-        }
-
-        @Test
-        void 비밀번호가_일치하면_조회되며_세션에_저장된다() {
-            // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
-                    "첫 포스트", "첫 포스트", null, "첫 포스트 인트로",
-                    PROTECTED, "1234", 없음());
-
-            // when
-            var 응답 = 보호된_포스트_단일_조회_요청(포스트_ID, "1234");
-
-            // then
-            응답_상태를_검증한다(응답, 정상_처리);
-            assertThat(응답.sessionId()).isNotNull();
         }
     }
 

@@ -1,7 +1,6 @@
 package com.mallang.post.query;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.IncorrectAccessPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.query.data.PostDetailData;
 import org.springframework.stereotype.Component;
@@ -14,15 +13,6 @@ public class PostDataValidator {
             return;
         }
         if (!postDetailData.writerInfo().writerId().equals(memberId)) {
-            throw new NoAuthorityAccessPostException();
-        }
-    }
-
-    public void validateAccessProtectedPost(PostDetailData postDetailData, String password) {
-        if (postDetailData.visibility() != Visibility.PROTECTED) {
-            throw new IncorrectAccessPostException();
-        }
-        if (!postDetailData.password().equals(password)) {
             throw new NoAuthorityAccessPostException();
         }
     }

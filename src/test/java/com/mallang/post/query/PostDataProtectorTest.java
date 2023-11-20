@@ -38,17 +38,55 @@ class PostDataProtectorTest {
                     .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
                     .content("content")
                     .visibility(PROTECTED)
+                    .password("1234")
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId, postDetailData);
+            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId, null, postDetailData);
 
             // then
             assertThat(protectedData.content()).isEqualTo("content");
         }
 
         @Test
-        void 글의_주인이_아닌_다른_사람이_보호_글을_조회한다면_보호된다() {
+        void 보호글의_경우_비밀번호가_달라도_주인이라면_볼_수_있다() {
+            // given
+            Long memberId = 1L;
+            PostDetailData postDetailData = PostDetailData.builder()
+                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+                    .content("content")
+                    .visibility(PROTECTED)
+                    .password("1234")
+                    .build();
+
+            // when
+            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId, "12345", postDetailData);
+
+            // then
+            assertThat(protectedData.content()).isEqualTo("content");
+        }
+
+        @Test
+        void 보호글의_경우_글의_주인이_아닌_경우_비밀번호가_일치하면_볼_수_있다() {
+            // given
+            Long memberId = 1L;
+            PostDetailData postDetailData = PostDetailData.builder()
+                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+                    .content("content")
+                    .postThumbnailImageName("thumb")
+                    .visibility(PROTECTED)
+                    .password("1234")
+                    .build();
+
+            // when
+            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId + 1, "1234", postDetailData);
+
+            // then
+            assertThat(protectedData.content()).isEqualTo("content");
+        }
+
+        @Test
+        void 보호글의_경우_글의_주인이_아니며_비밀번호가_다르다면_보호된다() {
             // given
             Long memberId = 1L;
             PostDetailData postDetailData = PostDetailData.builder()
@@ -59,7 +97,7 @@ class PostDataProtectorTest {
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId + 1, postDetailData);
+            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId + 1, null, postDetailData);
 
             // then
             assertThat(protectedData.content()).isEqualTo("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.");
@@ -68,7 +106,7 @@ class PostDataProtectorTest {
 
         @ParameterizedTest
         @EnumSource(mode = Mode.EXCLUDE, value = Visibility.class, names = {"PROTECTED"})
-        void 보호되지_않은_글은_모두에게_전체_공개될_수_있다(Visibility visibility) {
+        void 공개_글은_모두에게_전체_공개될_수_있다(Visibility visibility) {
             // given
             Long memberId = 1L;
             PostDetailData postDetailData = PostDetailData.builder()
@@ -78,7 +116,7 @@ class PostDataProtectorTest {
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(null, postDetailData);
+            PostDetailData protectedData = postDataProtector.protectIfRequired(null, null, postDetailData);
 
             // then
             assertThat(protectedData.content()).isEqualTo("content");
