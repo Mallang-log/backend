@@ -4,7 +4,6 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.blog.exception.IsNotBlogOwnerException;
 import com.mallang.common.domain.CommonDomainModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,11 +33,5 @@ public class Blog extends CommonDomainModel {
 
     public void open(BlogValidator blogValidator) {
         blogValidator.validateOpen(this.owner.getId(), this.name);
-    }
-
-    public void validateOwner(Long memberId) {
-        if (!getOwner().getId().equals(memberId)) {
-            throw new IsNotBlogOwnerException();
-        }
     }
 }

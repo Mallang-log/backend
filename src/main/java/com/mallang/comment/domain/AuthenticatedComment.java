@@ -41,7 +41,7 @@ public class AuthenticatedComment extends Comment {
 
     @Override
     public void write(@Nullable String postPassword) {
-        post.validatePostAccessibility(writer.getId(), postPassword);
+        post.validatePostAccessibility(writer, postPassword);
     }
 
     public void update(
@@ -50,14 +50,14 @@ public class AuthenticatedComment extends Comment {
             boolean secret,
             @Nullable String postPassword
     ) {
-        post.validatePostAccessibility(writer.getId(), postPassword);
+        post.validatePostAccessibility(writer, postPassword);
         validateWriter(writer);
         super.update(content);
         this.secret = secret;
     }
 
     public void delete(Member member, CommentDeleteService commentDeleteService, @Nullable String postPassword) {
-        post.validatePostAccessibility(member.getId(), postPassword);
+        post.validatePostAccessibility(member, postPassword);
         if (!isPostOwner(member)) {
             validateWriter(member);
         }

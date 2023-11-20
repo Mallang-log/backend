@@ -9,8 +9,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class CategoryFixture {
 
+    public static Long id = 1L;
+    public static Long childId = 1L;
+
     public static Category 루트_카테고리(String name, Member member, Blog blog) {
-        return 루트_카테고리(null, name, member, blog);
+        return 루트_카테고리(id++, name, member, blog);
     }
 
     public static Category 루트_카테고리(Long id, String name, Member member, Blog blog) {
@@ -20,7 +23,7 @@ public class CategoryFixture {
     }
 
     public static Category 하위_카테고리(String name, Member member, Blog blog, Category parent) {
-        return 하위_카테고리(null, name, member, blog, parent);
+        return 하위_카테고리(parent.getId() + childId++, name, member, blog, parent);
     }
 
     public static Category 하위_카테고리(Long id, String name, Member member, Blog blog, Category parent) {

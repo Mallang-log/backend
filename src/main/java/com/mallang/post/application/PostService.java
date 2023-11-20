@@ -33,18 +33,17 @@ public class PostService {
 
     public Long create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getById(command.blogId());
-        Category category = getCategoryByIdIfPresent(command.categoryId());
+        Blog blog = blogRepository.getByIdAndOwnerId(command.blogId(), command.memberId());
+        Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
         Long postIdInBlog = postOrderInBlogGenerator.generate(blog);
         Post post = command.toPost(member, blog, category, postIdInBlog);
         return postRepository.save(post).getId();
     }
 
     public void update(UpdatePostCommand command) {
-        Post post = postRepository.getById(command.postId());
-        Category category = getCategoryByIdIfPresent(command.categoryId());
+        Post post = postRepository.getByIdAndWriterId(command.postId(), command.memberId());
+        Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
         post.update(
-                command.memberId(),
                 command.title(),
                 command.content(),
                 command.postThumbnailImageName(),
@@ -56,17 +55,17 @@ public class PostService {
     }
 
     public void delete(DeletePostCommand command) {
-        List<Post> posts = postRepository.findAllByIdIn(command.postIds());
+        List<Post> posts = postRepository.findAllByIdInAndWriterId(command.postIds(), command.memberId());
         for (Post post : posts) {
-            post.delete(command.memberId());
+            post.delete();
             postRepository.delete(post);
         }
     }
 
-    private Category getCategoryByIdIfPresent(@Nullable Long id) {
+    private Category getCategoryByIdAndOwnerIdIfPresent(@Nullable Long id, Long ownerId) {
         if (id == null) {
             return null;
         }
-        return categoryRepository.getById(id);
+        return categoryRepository.getByIdAndOwnerId(id, ownerId);
     }
 }

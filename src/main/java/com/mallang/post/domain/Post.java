@@ -8,15 +8,11 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.common.execption.MallangLogException;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
-import com.mallang.post.exception.NoAuthorityDeletePostException;
-import com.mallang.post.exception.NoAuthorityUpdatePostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -97,7 +93,6 @@ public class Post extends CommonDomainModel {
             @Nullable Category category,
             List<String> tags
     ) {
-        blog.validateOwner(writer.getId());
         this.order = order;
         this.blog = blog;
         this.title = title;
@@ -106,12 +101,11 @@ public class Post extends CommonDomainModel {
         this.postIntro = postIntro;
         this.visibilityPolish = visibilityPolish;
         this.writer = writer;
-        setCategory(category);
+        this.category = category;
         setTags(tags);
     }
 
     public void update(
-            Long memberId,
             String title,
             String content,
             String postThumbnailImageName,
@@ -120,38 +114,17 @@ public class Post extends CommonDomainModel {
             @Nullable Category category,
             List<String> tags
     ) {
-        validateOwner(memberId, new NoAuthorityUpdatePostException());
-        setCategory(category);
         setTags(tags);
         this.title = title;
         this.content = content;
         this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = intro;
         this.visibilityPolish = visibility;
-    }
-
-    public void delete(Long memberId) {
-        validateOwner(memberId, new NoAuthorityDeletePostException());
-        registerEvent(new PostDeleteEvent(getId()));
-    }
-
-    private void setCategory(@Nullable Category category) {
-        if (category == null) {
-            removeCategory();
-            return;
-        }
-        validateOwner(category.getOwner().getId(), new NoAuthorityUseCategoryException());
         this.category = category;
     }
 
-    public void removeCategory() {
-        this.category = null;
-    }
-
-    private void validateOwner(Long memberId, MallangLogException e) {
-        if (!writer.getId().equals(memberId)) {
-            throw e;
-        }
+    public void delete() {
+        registerEvent(new PostDeleteEvent(getId()));
     }
 
     private void setTags(List<String> tags) {
@@ -183,12 +156,12 @@ public class Post extends CommonDomainModel {
         this.likeCount--;
     }
 
-    public void validatePostAccessibility(@Nullable Long memberId,
+    public void validatePostAccessibility(@Nullable Member member,
                                           @Nullable String postPassword) {
         if (visibilityPolish.getVisibility() == Visibility.PUBLIC) {
             return;
         }
-        if (getWriter().getId().equals(memberId)) {
+        if (getWriter().equals(member)) {
             return;
         }
         if (visibilityPolish.getVisibility() == Visibility.PROTECTED) {
@@ -197,6 +170,10 @@ public class Post extends CommonDomainModel {
             }
         }
         throw new NoAuthorityAccessPostException();
+    }
+
+    public void removeCategory() {
+        this.category = null;
     }
 
     public String getPostIntro() {

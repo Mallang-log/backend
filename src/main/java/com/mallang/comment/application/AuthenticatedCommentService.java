@@ -11,6 +11,7 @@ import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +29,17 @@ public class AuthenticatedCommentService {
     public Long write(WriteAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Member writer = memberRepository.getById(command.memberId());
-        Comment parent = commentRepository.getParentComment(command.parentCommentId());
-        AuthenticatedComment comment = AuthenticatedComment.builder()
-                .post(post)
-                .writer(writer)
-                .content(command.content())
-                .secret(command.secret())
-                .parent(parent)
-                .build();
+        Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
+        AuthenticatedComment comment = command.toComment(post, writer, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
+    }
+
+    private Comment getParentCommentByIdAndPostId(@Nullable Long parentCommentId, Long postId) {
+        if (parentCommentId == null) {
+            return null;
+        }
+        return commentRepository.getByIdAndPostId(parentCommentId, postId);
     }
 
     public void update(UpdateAuthenticatedCommentCommand command) {

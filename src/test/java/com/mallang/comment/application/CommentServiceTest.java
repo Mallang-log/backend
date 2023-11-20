@@ -15,7 +15,6 @@ import com.mallang.comment.domain.AuthenticatedComment;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.UnAuthenticatedComment;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
-import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
 import com.mallang.common.ServiceTest;
@@ -213,7 +212,7 @@ class CommentServiceTest {
             // when
             assertThatThrownBy(() ->
                     authenticatedCommentService.write(command)
-            ).isInstanceOf(DifferentPostFromParentCommentException.class);
+            ).isInstanceOf(NotFoundCommentException.class);
 
             // then
             transactionHelper.doAssert(() -> {

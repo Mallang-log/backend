@@ -1,7 +1,6 @@
 package com.mallang.comment.domain;
 
 import com.mallang.comment.exception.NotFoundCommentException;
-import jakarta.annotation.Nullable;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,12 +22,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 .orElseThrow(NotFoundCommentException::new);
     }
 
-    default Comment getParentComment(@Nullable Long parentCommentId) {
-        if (parentCommentId == null) {
-            return null;
-        }
-        return getById(parentCommentId);
+    default Comment getByIdAndPostId(Long id, Long postId) {
+        return findByIdAndPostId(id, postId)
+                .orElseThrow(NotFoundCommentException::new);
     }
+
+    Optional<Comment> findByIdAndPostId(Long id, Long postId);
 
     @Override
     @EntityGraph(attributePaths = {"parent"})

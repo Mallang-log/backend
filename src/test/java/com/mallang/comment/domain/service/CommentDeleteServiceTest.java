@@ -18,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("댓글 제거 도메인 서비스(CommentDeleteService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -55,6 +56,8 @@ class CommentDeleteServiceTest {
                 .secret(true)
                 .parent(parentComment)
                 .build();
+        ReflectionTestUtils.setField(parentComment, "id", 1L);
+        ReflectionTestUtils.setField(childComment, "id", 2L);
 
         // when
         commentDeleteService.delete(parentComment);
@@ -80,6 +83,8 @@ class CommentDeleteServiceTest {
                 .password("1234")
                 .parent(parentComment)
                 .build();
+        ReflectionTestUtils.setField(parentComment, "id", 1L);
+        ReflectionTestUtils.setField(childComment, "id", 2L);
 
         // when
         commentDeleteService.delete(childComment);
@@ -105,6 +110,8 @@ class CommentDeleteServiceTest {
                 .secret(true)
                 .parent(parentComment)
                 .build();
+        ReflectionTestUtils.setField(parentComment, "id", 1L);
+        ReflectionTestUtils.setField(childComment, "id", 2L);
         parentComment.delete(member, "1234", commentDeleteService, null);
 
         // when
@@ -131,6 +138,8 @@ class CommentDeleteServiceTest {
                 .password("1234")
                 .parent(parentComment)
                 .build();
+        ReflectionTestUtils.setField(parentComment, "id", 1L);
+        ReflectionTestUtils.setField(childComment, "id", 2L);
 
         // when
         commentDeleteService.delete(childComment);
@@ -163,6 +172,9 @@ class CommentDeleteServiceTest {
                 .password("1234")
                 .parent(parentComment)
                 .build();
+        ReflectionTestUtils.setField(parentComment, "id", 1L);
+        ReflectionTestUtils.setField(childComment, "id", 2L);
+        ReflectionTestUtils.setField(otherChildComment, "id", 3L);
         parentComment.delete(member, commentDeleteService, null);
 
         // when

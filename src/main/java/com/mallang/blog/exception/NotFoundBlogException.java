@@ -7,6 +7,10 @@ import com.mallang.common.execption.MallangLogException;
 
 public class NotFoundBlogException extends MallangLogException {
 
+    public NotFoundBlogException(String message) {
+        super(new ErrorCode(NOT_FOUND, message));
+    }
+
     public NotFoundBlogException() {
         super(new ErrorCode(NOT_FOUND, "존재하지 않는 블로그입니다."));
     }
