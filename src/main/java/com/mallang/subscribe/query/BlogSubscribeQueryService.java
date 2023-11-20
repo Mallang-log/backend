@@ -17,8 +17,8 @@ public class BlogSubscribeQueryService {
     private final SubscriberDataDao subscriberDataDao;
     private final SubscribingBlogDataDao subscribingBlogDataDao;
 
-    public List<SubscriberData> findSubscribers(Long blogId) {
-        return subscriberDataDao.findSubscribers(blogId);
+    public List<SubscriberData> findSubscribers(String blogName) {
+        return subscriberDataDao.findSubscribers(blogName);
     }
 
     public List<SubscribingBlogData> findSubscribingBlogs(Long memberId) {

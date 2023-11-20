@@ -34,4 +34,8 @@ public class Blog extends CommonDomainModel {
     public void open(BlogValidator blogValidator) {
         blogValidator.validateOpen(this.owner.getId(), this.name);
     }
+
+    public String getName() {
+        return name.getValue();
+    }
 }

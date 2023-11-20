@@ -3,9 +3,9 @@ package com.mallang.subscribe.presentation.request;
 import com.mallang.subscribe.application.command.BlogUnsubscribeCommand;
 
 public record BlogUnsubscribeRequest(
-        Long blogId
+        String blogName
 ) {
     public BlogUnsubscribeCommand toCommand(Long subscriberId) {
-        return new BlogUnsubscribeCommand(subscriberId, blogId);
+        return new BlogUnsubscribeCommand(subscriberId, blogName);
     }
 }

@@ -14,7 +14,7 @@ import lombok.Builder;
 @Builder
 public record CreatePostCommand(
         Long memberId,
-        Long blogId,
+        String blogName,
         String title,
         String content,
         @Nullable String postThumbnailImageName,
@@ -26,13 +26,13 @@ public record CreatePostCommand(
 ) {
     public Post toPost(Member member, Blog blog, Category category, Long postIdInBlog) {
         return Post.builder()
+                .blog(blog)
                 .title(title)
                 .content(content)
                 .postThumbnailImageName(postThumbnailImageName)
                 .order(postIdInBlog)
                 .writer(member)
                 .visibilityPolish(new PostVisibilityPolicy(visibility, password))
-                .blog(blog)
                 .category(category)
                 .postIntro(new PostIntro(intro))
                 .tags(tags)

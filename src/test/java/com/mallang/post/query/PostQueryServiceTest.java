@@ -59,12 +59,12 @@ class PostQueryServiceTest {
     private PostQueryService postQueryService;
 
     private Long memberId;
-    private Long blogId;
+    private String blogName;
 
     @BeforeEach
     void setUp() {
         memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang");
+        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang").getName();
     }
 
     @Nested
@@ -73,7 +73,7 @@ class PostQueryServiceTest {
         @Test
         void 포스트를_조회한다() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트 1", "content");
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트 1", "content");
 
             // when
             PostDetailData response = postQueryService.getById(null, null, id);
@@ -89,7 +89,7 @@ class PostQueryServiceTest {
         @Test
         void 좋아요_눌렀는지_여부가_반영된다() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트 1", "content");
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트 1", "content");
             postLikeService.click(new ClickPostLikeCommand(id, memberId, null));
 
             // when
@@ -104,7 +104,7 @@ class PostQueryServiceTest {
         @Test
         void 블로그_주인은_비공개_글을_볼_수_있다() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName,
                     "포스트 1", "content",
                     new PostVisibilityPolicy(Visibility.PRIVATE, null));
 
@@ -122,7 +122,7 @@ class PostQueryServiceTest {
         @Test
         void 블로그_주인이_아니라면_비공개_글_조회시_예외() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName,
                     "포스트 1", "content",
                     new PostVisibilityPolicy(Visibility.PRIVATE, null));
 
@@ -135,7 +135,7 @@ class PostQueryServiceTest {
         @Test
         void 블로그_주인은_보호글을_볼_수_있다() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName,
                     "포스트 1", "content",
                     new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
 
@@ -153,7 +153,7 @@ class PostQueryServiceTest {
         @Test
         void 블로그_주인이_아닌_경우_비밀번호가_일치하면_보호글을_볼_수_있다() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName,
                     "포스트 1", "content",
                     new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
 
@@ -171,7 +171,7 @@ class PostQueryServiceTest {
         @Test
         void 블로그_주인이_아니며_비밀번호가_일치하지_않는_경우_보호글_조회시_내용이_보호된다() {
             // given
-            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogId,
+            Long id = postServiceTestHelper.포스트를_저장한다(memberId, blogName,
                     "포스트 1", "content",
                     new PostVisibilityPolicy(Visibility.PROTECTED, "1234"));
 
@@ -193,8 +193,8 @@ class PostQueryServiceTest {
         @Test
         void 포스트를_전체_조회한다() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "content1");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "content2");
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "content1");
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2");
             PostSearchCond cond = PostSearchCond.builder().build();
 
             // when
@@ -227,23 +227,23 @@ class PostQueryServiceTest {
             Long otherId = memberServiceTestHelper.회원을_저장한다("other");
             Blog blog = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log");
             Blog otherBlog = blogServiceTestHelper.블로그_개설(otherId, "other-log");
-            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
+            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(),
                     "mallang-public", "mallang-public",
                     new PostVisibilityPolicy(PUBLIC, null));
-            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
+            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(),
                     "mallang-protected", "mallang-protected",
                     new PostVisibilityPolicy(PROTECTED, "1234"));
-            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getId(),
+            postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(),
                     "mallang-private", "mallang-private",
                     new PostVisibilityPolicy(PRIVATE, null));
 
-            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
+            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(),
                     "ohter-public", "ohter-public",
                     new PostVisibilityPolicy(PUBLIC, null));
-            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
+            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(),
                     "ohter-protected", "ohter-protected",
                     new PostVisibilityPolicy(PROTECTED, "1234"));
-            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getId(),
+            postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(),
                     "ohter-private", "ohter-private",
                     new PostVisibilityPolicy(PRIVATE, null));
 
@@ -267,13 +267,13 @@ class PostQueryServiceTest {
         @Test
         void 특정_카테고리의_포스트만_조회한다() {
             // given
-            Long 스프링 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "스프링");
-            Long 노드 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "노드");
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "content1", 스프링);
-            postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "content2", 노드);
+            Long 스프링 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "스프링");
+            Long 노드 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "노드");
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "content1", 스프링);
+            postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", 노드);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
-                    .blogId(blogId)
+                    .blogName(blogName)
                     .build();
 
             // when
@@ -297,13 +297,13 @@ class PostQueryServiceTest {
         @Test
         void 최상위_카테고리로_조회_시_하위_카테고리도_포함되면_조회한다() {
             // given
-            Long 스프링 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogId, "스프링");
-            Long JPA = categoryServiceTestHelper.하위_카테고리를_저장한다(memberId, blogId, "JPA", 스프링);
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "content1", 스프링);
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "content2", JPA);
+            Long 스프링 = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "스프링");
+            Long JPA = categoryServiceTestHelper.하위_카테고리를_저장한다(memberId, blogName, "JPA", 스프링);
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "content1", 스프링);
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", JPA);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
-                    .blogId(blogId)
+                    .blogName(blogName)
                     .build();
 
             // when
@@ -334,8 +334,8 @@ class PostQueryServiceTest {
         @Test
         void 특정_태그의_포스트만_조회한다() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "content1", "tag1");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "content2", "tag1", "tag2");
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "content1", "tag1");
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", "tag1", "tag2");
             PostSearchCond cond = PostSearchCond.builder()
                     .tag("tag2")
                     .build();
@@ -362,9 +362,9 @@ class PostQueryServiceTest {
         void 특정_작성자의_포스트만_조회한다() {
             // given
             Long findWriterId = memberServiceTestHelper.회원을_저장한다("말랑말랑");
-            Long otherBlogId = blogServiceTestHelper.블로그_개설후_ID_반환(findWriterId, "other");
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(findWriterId, otherBlogId, "포스트1", "content1", "tag1");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "content2", "tag1", "tag2");
+            String otherBlogName = blogServiceTestHelper.블로그_개설(findWriterId, "other").getName();
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1");
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "content2", "tag1", "tag2");
             PostSearchCond cond = PostSearchCond.builder()
                     .writerId(findWriterId)
                     .build();
@@ -390,9 +390,9 @@ class PostQueryServiceTest {
         @Test
         void 제목으로_조회() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "안녕");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "안녕하세요");
-            Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "안녕", "히히");
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "안녕");
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "안녕하세요");
+            Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "안녕", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .title("안녕")
                     .build();
@@ -417,9 +417,9 @@ class PostQueryServiceTest {
         @Test
         void 내용으로_조회() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "안녕");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "안녕하세요");
-            Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "안녕", "히히");
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "안녕");
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "안녕하세요");
+            Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "안녕", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .content("안녕")
                     .build();
@@ -451,9 +451,9 @@ class PostQueryServiceTest {
         @Test
         void 내용_and_제목으로_조회() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트1", "안녕");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트2", "안녕하세요");
-            Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "안녕히", "히히");
+            Long post1Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트1", "안녕");
+            Long post2Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트2", "안녕하세요");
+            Long post3Id = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "안녕히", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .titleOrContent("안녕")
                     .build();

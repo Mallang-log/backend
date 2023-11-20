@@ -13,8 +13,8 @@ public class BlogName {
 
     private static final Pattern pattern = Pattern.compile("^(?![-_])(?!.*--)[a-z0-9-_]{4,32}(?<![-_])$");
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(name = "name", nullable = false, unique = true)
+    private String value;
 
     protected BlogName() {
     }
@@ -22,7 +22,7 @@ public class BlogName {
     public BlogName(String name) {
         name = name.strip();
         validateDomainName(name);
-        this.name = name;
+        this.value = name;
     }
 
     private void validateDomainName(String name) {
@@ -39,11 +39,11 @@ public class BlogName {
         if (!(o instanceof BlogName blogName)) {
             return false;
         }
-        return Objects.equals(getName(), blogName.getName());
+        return Objects.equals(getValue(), blogName.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName());
+        return Objects.hash(getValue());
     }
 }

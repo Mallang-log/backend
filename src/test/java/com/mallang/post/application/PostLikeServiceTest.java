@@ -41,14 +41,14 @@ class PostLikeServiceTest {
     private PostLikeService postLikeService;
 
     private Long memberId;
-    private Long blogId;
+    private String blogName;
     private Long postId;
 
     @BeforeEach
     void setUp() {
         memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang-log");
-        postId = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용", "태그1");
+        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
+        postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
     }
 
     @Nested

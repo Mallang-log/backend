@@ -52,9 +52,8 @@ class CommentEventHandlerTest {
             Long memberId = memberServiceTestHelper.회원을_저장한다("말랑");
             Long ohterMemberId = memberServiceTestHelper.회원을_저장한다("ohter");
             Blog blog = blogServiceTestHelper.블로그_개설(memberId, "mallang-log");
-            Long blogId = blog.getId();
-            Long postId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "제목", "내용");
-            Long postId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "제목2", "내용1");
+            Long postId1 = postServiceTestHelper.포스트를_저장한다(memberId, blog.getName(), "제목", "내용");
+            Long postId2 = postServiceTestHelper.포스트를_저장한다(memberId, blog.getName(), "제목2", "내용1");
             Long post1Comment1 = commentServiceTestHelper.댓글을_작성한다(postId1, "댓1", true, ohterMemberId);
             commentServiceTestHelper.대댓글을_작성한다(postId1, "댓1", true, memberId, post1Comment1);
             commentServiceTestHelper.비인증_대댓글을_작성한다(postId1, "댓1", "익1", "1234", post1Comment1);

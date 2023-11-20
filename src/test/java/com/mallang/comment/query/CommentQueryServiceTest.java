@@ -41,7 +41,7 @@ class CommentQueryServiceTest {
     private CommentQueryService commentQueryService;
 
     private Long memberId;
-    private Long blogId;
+    private String blogName;
     private Long postId;
 
     @Nested
@@ -50,8 +50,8 @@ class CommentQueryServiceTest {
         @BeforeEach
         void setUp() {
             memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogId = blogServiceTestHelper.블로그_개설후_ID_반환(memberId, "mallang");
-            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogId, "포스트", "내용");
+            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang").getName();
+            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
         }
 
         @Test

@@ -37,12 +37,12 @@ class SubscribingBlogDataDaoTest {
     void 특정_회원이_구독중인_블로그_모두_조회() {
         // given
         Long 주인_ID = memberServiceTestHelper.회원을_저장한다("주인");
-        Long 주인_블로그_ID = blogServiceTestHelper.블로그_개설(주인_ID, "owner-blog").getId();
+        String 주인_블로그_이름 = blogServiceTestHelper.블로그_개설(주인_ID, "owner-blog").getName();
         Long 구독자1_ID = memberServiceTestHelper.회원을_저장한다("구독자1");
         Long 다른블로그주인_ID = memberServiceTestHelper.회원을_저장한다("다른블로그주인");
-        Long 다른_블로그_ID = blogServiceTestHelper.블로그_개설(다른블로그주인_ID, "other-blog").getId();
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_ID));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 다른_블로그_ID));
+        String 다른_블로그_이름 = blogServiceTestHelper.블로그_개설(다른블로그주인_ID, "other-blog").getName();
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_이름));
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 다른_블로그_이름));
 
         // when
         List<SubscribingBlogData> result = subscribingBlogDataDao.findSubscribingBlogs(구독자1_ID);
