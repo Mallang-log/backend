@@ -2,6 +2,7 @@ package com.mallang.acceptance.comment;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.given;
+import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.comment.presentation.request.DeleteUnAuthenticatedCommentRequest;
@@ -15,6 +16,7 @@ import com.mallang.comment.query.data.UnAuthenticatedCommentData;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,9 +32,10 @@ public class CommentAcceptanceSteps {
             String 세션_ID,
             Long 포스트_ID,
             String 내용,
-            boolean 비밀_여부
+            boolean 비밀_여부,
+            @Nullable String 포스트_비밀번호
     ) {
-        return 댓글_작성(세션_ID, 포스트_ID, 내용, 비밀_여부, null);
+        return 댓글_작성(세션_ID, 포스트_ID, 내용, 비밀_여부, null, 포스트_비밀번호);
     }
 
     public static Long 댓글_작성(
@@ -40,14 +43,16 @@ public class CommentAcceptanceSteps {
             Long 포스트_ID,
             String 내용,
             boolean 비밀_여부,
-            Long 부모_댓글_Id
+            Long 부모_댓글_Id,
+            @Nullable String 포스트_비밀번호
     ) {
         return ID를_추출한다(댓글_작성_요청(
                 세션_ID,
                 포스트_ID,
                 내용,
                 비밀_여부,
-                부모_댓글_Id
+                부모_댓글_Id,
+                포스트_비밀번호
         ));
     }
 
@@ -55,9 +60,10 @@ public class CommentAcceptanceSteps {
             String 세션_ID,
             Long 포스트_ID,
             String 내용,
-            boolean 비밀_여부
+            boolean 비밀_여부,
+            @Nullable String 포스트_비밀번호
     ) {
-        return 댓글_작성_요청(세션_ID, 포스트_ID, 내용, 비밀_여부, null);
+        return 댓글_작성_요청(세션_ID, 포스트_ID, 내용, 비밀_여부, null, 포스트_비밀번호);
     }
 
     public static ExtractableResponse<Response> 댓글_작성_요청(
@@ -65,9 +71,11 @@ public class CommentAcceptanceSteps {
             Long 포스트_ID,
             String 내용,
             boolean 비밀_여부,
-            Long 부모_댓글_ID
+            Long 부모_댓글_ID,
+            @Nullable String 포스트_비밀번호
     ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .body(new WriteAuthenticatedCommentRequest(포스트_ID, 내용, 비밀_여부, 부모_댓글_ID))
                 .post("/comments")
                 .then()
@@ -79,9 +87,10 @@ public class CommentAcceptanceSteps {
             Long 포스트_ID,
             String 내용,
             String 이름,
-            String 암호
+            String 암호,
+            @Nullable String 포스트_비밀번호
     ) {
-        return 비인증_댓글_작성(포스트_ID, 내용, 이름, 암호, null);
+        return 비인증_댓글_작성(포스트_ID, 내용, 이름, 암호, null, 포스트_비밀번호);
     }
 
     public static Long 비인증_댓글_작성(
@@ -89,14 +98,16 @@ public class CommentAcceptanceSteps {
             String 내용,
             String 이름,
             String 암호,
-            Long 부모_댓글_Id
+            Long 부모_댓글_Id,
+            @Nullable String 포스트_비밀번호
     ) {
         return ID를_추출한다(비인증_댓글_작성_요청(
                 포스트_ID,
                 내용,
                 이름,
                 암호,
-                부모_댓글_Id
+                부모_댓글_Id,
+                포스트_비밀번호
         ));
     }
 
@@ -104,9 +115,10 @@ public class CommentAcceptanceSteps {
             Long 포스트_ID,
             String 내용,
             String 이름,
-            String 암호
+            String 암호,
+            @Nullable String 포스트_비밀번호
     ) {
-        return 비인증_댓글_작성_요청(포스트_ID, 내용, 이름, 암호, null);
+        return 비인증_댓글_작성_요청(포스트_ID, 내용, 이름, 암호, null, 포스트_비밀번호);
     }
 
     public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
@@ -114,19 +126,10 @@ public class CommentAcceptanceSteps {
             String 내용,
             String 이름,
             String 암호,
-            Long 부모_댓글_ID
+            Long 부모_댓글_ID,
+            @Nullable String 포스트_비밀번호
     ) {
-        return 비인증_댓글_작성_요청(null, 포스트_ID, 내용, 이름, 암호, 부모_댓글_ID);
-    }
-
-    public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
-            String 세션_ID,
-            Long 포스트_ID,
-            String 내용,
-            String 이름,
-            String 암호
-    ) {
-        return 비인증_댓글_작성_요청(세션_ID, 포스트_ID, 내용, 이름, 암호, null);
+        return 비인증_댓글_작성_요청(null, 포스트_ID, 내용, 이름, 암호, 부모_댓글_ID, 포스트_비밀번호);
     }
 
     public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
@@ -135,9 +138,22 @@ public class CommentAcceptanceSteps {
             String 내용,
             String 이름,
             String 암호,
-            Long 부모_댓글_ID
+            @Nullable String 포스트_비밀번호
+    ) {
+        return 비인증_댓글_작성_요청(세션_ID, 포스트_ID, 내용, 이름, 암호, null, 포스트_비밀번호);
+    }
+
+    public static ExtractableResponse<Response> 비인증_댓글_작성_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 내용,
+            String 이름,
+            String 암호,
+            Long 부모_댓글_ID,
+            @Nullable String 포스트_비밀번호
     ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .body(new WriteAnonymousCommentRequest(포스트_ID, 내용, 이름, 암호, 부모_댓글_ID))
                 .queryParam("unauthenticated", true)
                 .post("/comments")
@@ -146,16 +162,29 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 인증된_댓글_수정_요청(String 세션_ID, Long 댓글_ID, String 수정_내용, boolean 비공개_여부) {
+    public static ExtractableResponse<Response> 인증된_댓글_수정_요청(
+            String 세션_ID,
+            Long 댓글_ID,
+            String 수정_내용,
+            boolean 비공개_여부,
+            @Nullable String 포스트_비밀번호
+    ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .body(new UpdateAuthenticatedCommentRequest(수정_내용, 비공개_여부))
                 .put("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 비인증_댓글_수정_요청(Long 댓글_ID, String 암호, String 수정_내용) {
+    public static ExtractableResponse<Response> 비인증_댓글_수정_요청(
+            Long 댓글_ID,
+            String 암호,
+            String 수정_내용,
+            @Nullable String 포스트_비밀번호
+    ) {
         return given()
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .body(new UpdateUnAuthenticatedCommentRequest(수정_내용, 암호))
                 .queryParam("unauthenticated", true)
                 .put("/comments/{id}", 댓글_ID)
@@ -163,15 +192,25 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 인증된_댓글_삭제_요청(String 세션_ID, Long 댓글_ID) {
+    public static ExtractableResponse<Response> 인증된_댓글_삭제_요청(
+            String 세션_ID,
+            Long 댓글_ID,
+            @Nullable String 포스트_비밀번호
+    ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .delete("/comments/{id}", 댓글_ID)
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 비인증_댓글_삭제_요청(Long 댓글_ID, String 암호) {
+    public static ExtractableResponse<Response> 비인증_댓글_삭제_요청(
+            Long 댓글_ID,
+            String 암호,
+            @Nullable String 포스트_비밀번호
+    ) {
         return given()
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .queryParam("unauthenticated", true)
                 .body(new DeleteUnAuthenticatedCommentRequest(null, 암호))
                 .delete("/comments/{id}", 댓글_ID)
@@ -179,8 +218,13 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 비인증_댓글_삭제_요청(String 세션_ID, Long 댓글_ID) {
+    public static ExtractableResponse<Response> 비인증_댓글_삭제_요청(
+            String 세션_ID,
+            Long 댓글_ID,
+            @Nullable String 포스트_비밀번호
+    ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .queryParam("unauthenticated", true)
                 .body(new DeleteUnAuthenticatedCommentRequest(null, null))
                 .delete("/comments/{id}", 댓글_ID)
@@ -188,12 +232,20 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(Long 포스트_ID) {
-        return 특정_포스팅의_댓글_전체_조회(null, 포스트_ID);
+    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(
+            Long 포스트_ID,
+            @Nullable String 포스트_비밀번호
+    ) {
+        return 특정_포스팅의_댓글_전체_조회(null, 포스트_ID, 포스트_비밀번호);
     }
 
-    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(String 세션_ID, Long 포스트_ID) {
+    public static ExtractableResponse<Response> 특정_포스팅의_댓글_전체_조회(
+            String 세션_ID,
+            Long 포스트_ID,
+            @Nullable String 포스트_비밀번호
+    ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .queryParam("postId", 포스트_ID)
                 .get("/comments")
                 .then().log().all()

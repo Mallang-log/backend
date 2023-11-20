@@ -6,7 +6,7 @@ import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
-import static com.mallang.post.presentation.support.PostPresentationConstant.PROTECTED_PASSWORD_HEADER;
+import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
@@ -24,6 +24,7 @@ import com.mallang.post.query.data.PostSimpleData.WriterSimpleInfo;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -179,21 +180,17 @@ public class PostAcceptanceSteps {
     }
 
     public static void 포스트_내용_검증(Long 포스트_ID, PostDetailData 예상_데이터) {
-        var 포스트_조회_응답 = 포스트_단일_조회_요청(포스트_ID);
+        var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
         포스트_단일_조회_응답을_검증한다(포스트_조회_응답, 예상_데이터);
     }
 
     public static ExtractableResponse<Response> 포스트_단일_조회_요청(
-            Long 포스트_ID
-    ) {
-        return 포스트_단일_조회_요청(null, 포스트_ID);
-    }
-
-    public static ExtractableResponse<Response> 포스트_단일_조회_요청(
-            String 세션_ID,
-            Long 포스트_ID
+            @Nullable String 세션_ID,
+            Long 포스트_ID,
+            @Nullable String 비밀번호
     ) {
         return given(세션_ID)
+                .cookie(POST_PASSWORD_COOKIE, 비밀번호)
                 .get("/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
@@ -209,22 +206,6 @@ public class PostAcceptanceSteps {
                 )
                 .isEqualTo(예상_데이터);
         assertThat(postDetailData.password()).isNull();
-    }
-
-    public static ExtractableResponse<Response> 보호된_포스트_단일_조회_요청(
-            Long 포스트_ID, String 비밀번호
-    ) {
-        return 보호된_포스트_단일_조회_요청(null, 포스트_ID, 비밀번호);
-    }
-
-    public static ExtractableResponse<Response> 보호된_포스트_단일_조회_요청(
-            String 세션_ID, Long 포스트_ID, String 비밀번호
-    ) {
-        return given(세션_ID)
-                .header(PROTECTED_PASSWORD_HEADER, 비밀번호)
-                .get("/posts/{id}", 포스트_ID)
-                .then().log().all()
-                .extract();
     }
 
     public static ExtractableResponse<Response> 포스트_전체_조회_요청(
