@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class AuthenticatedCommentData extends CommentData {
+public final class AuthenticatedCommentData extends CommentData {
 
     private WriterData writerData;
     private boolean secret;

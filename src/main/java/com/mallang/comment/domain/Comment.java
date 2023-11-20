@@ -5,7 +5,6 @@ import static jakarta.persistence.FetchType.LAZY;
 import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
-import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
@@ -21,7 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,16 +60,9 @@ public abstract class Comment extends CommonDomainModel {
     }
 
     private void beChild(Comment parent) {
-        validateSamePost(parent);
         validateCommentDepthConstraint(parent);
         this.parent = parent;
         parent.getChildren().add(this);
-    }
-
-    private void validateSamePost(Comment parent) {
-        if (!Objects.equals(post, parent.post)) {
-            throw new DifferentPostFromParentCommentException();
-        }
     }
 
     private void validateCommentDepthConstraint(Comment parent) {

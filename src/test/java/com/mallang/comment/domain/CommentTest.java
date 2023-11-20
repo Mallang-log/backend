@@ -13,7 +13,6 @@ import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
-import com.mallang.comment.exception.DifferentPostFromParentCommentException;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
@@ -146,35 +145,6 @@ class CommentTest {
 
             // then
             assertThat(child.getChildren()).isEmpty();
-        }
-
-        @Test
-        void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외() {
-            // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
-                    .content("내용")
-                    .post(post)
-                    .writer(member)
-                    .secret(false)
-                    .build();
-            Post otherPost = Post.builder()
-                    .writer(postWriter)
-                    .blog(blog)
-                    .build();
-
-            // when
-            assertThatThrownBy(() ->
-                    AuthenticatedComment.builder()
-                            .content("내용")
-                            .post(otherPost)
-                            .writer(member)
-                            .secret(true)
-                            .parent(parent)
-                            .build()
-            ).isInstanceOf(DifferentPostFromParentCommentException.class);
-
-            // then
-            assertThat(parent.getChildren()).isEmpty();
         }
     }
 

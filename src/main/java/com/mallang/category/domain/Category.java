@@ -9,11 +9,7 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
-import com.mallang.category.exception.NoAuthorityDeleteCategoryException;
-import com.mallang.category.exception.NoAuthorityUpdateCategoryException;
-import com.mallang.category.exception.NoAuthorityUseCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.common.execption.MallangLogException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -47,7 +43,6 @@ public class Category extends CommonDomainModel {
     private List<Category> children = new ArrayList<>();
 
     private Category(String name, Member owner, Blog blog) {
-        blog.validateOwner(owner.getId());
         this.name = name;
         this.owner = owner;
         this.blog = blog;
@@ -65,14 +60,12 @@ public class Category extends CommonDomainModel {
         return category;
     }
 
-    public void update(Long memberId, String name, Category parent, CategoryValidator validator) {
-        validateOwner(memberId, new NoAuthorityUpdateCategoryException());
+    public void update(String name, Category parent, CategoryValidator validator) {
         this.name = name;
         setParent(parent, validator);
     }
 
-    public void delete(Long memberId) {
-        validateOwner(memberId, new NoAuthorityDeleteCategoryException());
+    public void delete() {
         validateNoChildren();
         unlinkFromParent();
         registerEvent(new CategoryDeletedEvent(getId()));
@@ -103,15 +96,8 @@ public class Category extends CommonDomainModel {
     }
 
     private void beChild(Category parent) {
-        validateOwner(parent.getOwner().getId(), new NoAuthorityUseCategoryException());
         validateHierarchy(parent);
         link(parent);
-    }
-
-    private void validateOwner(Long memberId, MallangLogException e) {
-        if (!owner.getId().equals(memberId)) {
-            throw e;
-        }
     }
 
     private void validateHierarchy(Category parent) {

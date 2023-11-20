@@ -24,7 +24,8 @@ import lombok.Data;
         @JsonSubTypes.Type(value = UnAuthenticatedCommentData.class, name = UNAUTHENTICATED_COMMENT_DATA_TYPE),
 })
 @Data
-public abstract class CommentData {
+public abstract sealed class CommentData
+        permits AuthenticatedCommentData, UnAuthenticatedCommentData {
 
     protected Long id;
     protected String content;

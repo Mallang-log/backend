@@ -24,8 +24,8 @@ class BlogSubscribeValidatorTest {
 
     private final BlogSubscribeRepository blogSubscribeRepository = mock(BlogSubscribeRepository.class);
     private final BlogSubscribeValidator blogSubscribeValidator = new BlogSubscribeValidator(blogSubscribeRepository);
-    private final Member member = MemberFixture.말랑();
-    private final Member other = MemberFixture.회원("other");
+    private final Member member = MemberFixture.말랑(1L);
+    private final Member other = MemberFixture.회원(2L, "other");
     private final Blog mallangBlog = new Blog("mallang-log", member);
 
     @Nested
