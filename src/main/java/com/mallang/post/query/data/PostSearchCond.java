@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record PostSearchCond(
-        @Nullable Long blogId,
+        @Nullable String blogName,
         @Nullable Long writerId,
         @Nullable Long categoryId,
         @Nullable String tag,

@@ -32,7 +32,7 @@ public class PostSimpleDataDao {
                 .leftJoin(post.tags, tag)
                 .where(
                         filterPrivatePost(memberId),
-                        blogEq(cond.blogId()),
+                        blogEq(cond.blogName()),
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
@@ -55,11 +55,11 @@ public class PostSimpleDataDao {
                 );
     }
 
-    private BooleanExpression blogEq(@Nullable Long blogId) {
-        if (blogId == null) {
+    private BooleanExpression blogEq(@Nullable String blogName) {
+        if (ObjectUtils.isEmpty(blogName)) {
             return null;
         }
-        return post.blog.id.eq(blogId);
+        return post.blog.name.value.eq(blogName);
     }
 
     private BooleanExpression hasCategory(@Nullable Long categoryId) {

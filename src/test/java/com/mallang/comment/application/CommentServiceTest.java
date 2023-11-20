@@ -58,7 +58,7 @@ class CommentServiceTest {
     private Long postWriterId;
     private Long other1Id;
     private Long other2Id;
-    private Long blogId;
+    private String blogName;
     private Long postId;
 
     @BeforeEach
@@ -66,8 +66,8 @@ class CommentServiceTest {
         postWriterId = memberServiceTestHelper.회원을_저장한다("말랑");
         other1Id = memberServiceTestHelper.회원을_저장한다("other1");
         other2Id = memberServiceTestHelper.회원을_저장한다("other2");
-        blogId = blogServiceTestHelper.블로그_개설후_ID_반환(postWriterId, "mallang");
-        postId = postServiceTestHelper.포스트를_저장한다(postWriterId, blogId, "포스트", "내용");
+        blogName = blogServiceTestHelper.블로그_개설(postWriterId, "mallang").getName();
+        postId = postServiceTestHelper.포스트를_저장한다(postWriterId, blogName, "포스트", "내용");
     }
 
     @Nested
@@ -200,7 +200,7 @@ class CommentServiceTest {
         @Test
         void 대댓글을_다는_경우_부모_댓글과_Post_가_다르면_예외() {
             // given
-            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(postWriterId, blogId, "포스트2", "내용");
+            Long 포스트2_ID = postServiceTestHelper.포스트를_저장한다(postWriterId, blogName, "포스트2", "내용");
             Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
             WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
                     .postId(포스트2_ID)

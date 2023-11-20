@@ -39,8 +39,8 @@ class PostAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private Long 말랑_블로그_ID;
-    private Long 동훈_블로그_ID;
+    private String 말랑_블로그_이름;
+    private String 동훈_블로그_이름;
     private Long 카테고리_ID;
 
     @Override
@@ -49,9 +49,9 @@ class PostAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-        동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghun-log");
-        카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_ID, "Spring", 없음());
+        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+        동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
+        카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
     }
 
     @Nested
@@ -62,7 +62,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "썸네일",
@@ -111,7 +111,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "포스트 썸네일",
@@ -146,7 +146,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "포스트 썸네일",
@@ -172,7 +172,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "첫 포스트 썸네일",
@@ -194,7 +194,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "이미지이름",
@@ -220,7 +220,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "첫 포스트 인트로",
@@ -250,17 +250,17 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 포스트를_전체_조회한다() {
             // given
-            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트1", "이건 첫번째 포스트이네요.", "썸넬1", "첫 포스트 인트로",
                     PUBLIC,
                     없음(),
                     없음());
-            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트2", "이번에는 이것 저것들에 대해 알아보아요", "썸넬2", "2 포스트 인트로",
                     PUBLIC,
                     없음(),
                     카테고리_ID, "태그1");
-            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트3", "잘 알아보았어요!", null, "3 포스트 인트로",
                     PUBLIC,
                     없음(),
@@ -290,28 +290,28 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 비공개_포스트인_경우_주인에게만_조회되며_나머지_포스트는_모든_사람이_조회할_수_있다() {
             // given
-            Long 말랑_공개_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            Long 말랑_공개_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "mallang-public", "mallang-public-content",
                     null, "mallang 첫 포스트 인트로",
                     PUBLIC, 없음(), 없음());
-            Long 말랑_보호_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            Long 말랑_보호_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "mallang-protected", "mallang-protected-content",
                     null, "mallang 2 포스트 인트로",
                     PROTECTED, "1234", 없음());
-            Long 말랑_비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            Long 말랑_비공개_포스트_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "mallang-private", "mallang-private-content",
                     null, "mallang 3 포스트 인트로",
                     PRIVATE, 없음(), 없음());
 
-            Long 동훈_공개_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_ID,
+            Long 동훈_공개_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_이름,
                     "donghun-public", "donghun-public-content",
                     null, "donghun 첫 포스트 인트로",
                     PUBLIC, 없음(), 없음());
-            Long 동훈_보호_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_ID,
+            Long 동훈_보호_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_이름,
                     "donghun-protected", "donghun-protected-content",
                     null, "donghun 2 포스트 인트로",
                     PROTECTED, "123455", 없음());
-            Long 동훈_비공개_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_ID,
+            Long 동훈_비공개_포스트_ID = 포스트_생성(동훈_세션_ID, 동훈_블로그_이름,
                     "donghun-private", "donghun-private-content",
                     null, "donghun 3 포스트 인트로",
                     PRIVATE, 없음(), 없음());
@@ -364,24 +364,24 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 특정_카테고리로_검색하면_해당_카테고리와_하위_카테고리에_해당하는_포스트가_조회된다() {
             // given
-            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트1", "이건 첫번째 포스트이네요.", 없음(), "첫 포스트 인트로",
                     PUBLIC,
                     없음(),
                     없음());
-            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트2", "이번에는 이것 저것들에 대해 알아보아요", 없음(), "2 포스트 인트로",
                     PUBLIC,
                     없음(),
                     카테고리_ID);
-            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트3", "잘 알아보았어요!", 없음(), "3 포스트 인트로",
                     PUBLIC,
                     없음(),
                     카테고리_ID);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(카테고리_ID, 말랑_블로그_ID, 없음(), 없음(), 없음(), 없음(), 없음());
+            var 응답 = 포스트_전체_조회_요청(카테고리_ID, 말랑_블로그_이름, 없음(), 없음(), 없음(), 없음(), 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -402,21 +402,21 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 태그로_필터링() {
             // given
-            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트1", "이건 첫번째 포스트이네요.", 없음(), "첫 포스트 인트로",
                     PUBLIC, 없음(), 없음(),
                     "tag1", "tag2", "tag3");
-            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트2", "이번에는 이것 저것들에 대해 알아보아요", 없음(), "2 포스트 인트로",
                     PUBLIC, 없음(),
                     카테고리_ID, "tag1", "tag2", "tag4");
-            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_ID,
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
                     "포스트3", "잘 알아보았어요!", 없음(), "3 포스트 인트로",
                     PUBLIC, 없음(),
                     카테고리_ID, "tag2", "tag3");
 
             // when
-            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_ID, "tag1", 없음(), 없음(), 없음(), 없음());
+            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_이름, "tag1", 없음(), 없음(), 없음(), 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -439,7 +439,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트1_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "포스트1",
                     "포스트1입니다.",
                     없음(),
@@ -450,7 +450,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
             var 포스트2_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "포스 트2",
                     "포스트2입니다.",
                     없음(),
@@ -461,7 +461,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_ID, 없음(), 없음(), "포스트", 없음(), 없음());
+            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_이름, 없음(), 없음(), "포스트", 없음(), 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -479,7 +479,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트1_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "포스트 1",
                     "포스트 1입니다.",
                     없음(),
@@ -489,7 +489,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     없음());
             var 포스트2_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "포스트 2",
                     "포스트 2입니다.",
                     없음(),
@@ -499,7 +499,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     없음());
 
             // when
-            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_ID, 없음(), 없음(), 없음(), "포스트 2", 없음());
+            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_이름, 없음(), 없음(), 없음(), "포스트 2", 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -517,7 +517,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트1_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "포스트 1",
                     "포스트 1입니다.",
                     없음(),
@@ -528,7 +528,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
             var 포스트2_ID = 포스트_생성(
                     말랑_세션_ID,
-                    말랑_블로그_ID,
+                    말랑_블로그_이름,
                     "2번째",
                     "포스트 2입니다.",
                     없음(),
@@ -539,7 +539,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_ID, 없음(), 없음(), 없음(), 없음(), "포스트");
+            var 응답 = 포스트_전체_조회_요청(없음(), 말랑_블로그_이름, 없음(), 없음(), 없음(), 없음(), "포스트");
 
             // then
             var 예상_데이터 = List.of(

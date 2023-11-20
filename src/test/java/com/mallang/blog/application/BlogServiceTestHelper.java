@@ -6,6 +6,7 @@ import com.mallang.blog.domain.BlogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("NonAsciiCharacters")
 @RequiredArgsConstructor
@@ -16,11 +17,10 @@ public class BlogServiceTestHelper {
     private final BlogService blogService;
     private final BlogRepository blogRepository;
 
-    public Long 블로그_개설후_ID_반환(Long memberId, String name) {
-        return blogService.open(new OpenBlogCommand(memberId, name));
-    }
-
+    @Transactional
     public Blog 블로그_개설(Long memberId, String name) {
-        return blogRepository.getById(blogService.open(new OpenBlogCommand(memberId, name)));
+        Blog blog = blogRepository.getById(blogService.open(new OpenBlogCommand(memberId, name)));
+        blog.getName();  // 초기화
+        return blog;
     }
 }

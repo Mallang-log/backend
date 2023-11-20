@@ -24,9 +24,9 @@ public class PostManageAcceptanceSteps {
     public static boolean 좋아요_안눌림 = false;
     public static boolean 보호되지_않음 = false;
 
-    public static CreatePostRequest 공개_포스트_생성_데이터(Long 블로그_ID) {
+    public static CreatePostRequest 공개_포스트_생성_데이터(String 블로그_이름) {
         return new CreatePostRequest(
-                블로그_ID,
+                블로그_이름,
                 "제목",
                 "내용",
                 "섬네일",
@@ -37,9 +37,9 @@ public class PostManageAcceptanceSteps {
                 Collections.emptyList());
     }
 
-    public static CreatePostRequest 보호_포스트_생성_데이터(Long 블로그_ID) {
+    public static CreatePostRequest 보호_포스트_생성_데이터(String 블로그_이름) {
         return new CreatePostRequest(
-                블로그_ID,
+                블로그_이름,
                 "제목",
                 "내용",
                 "섬네일",
@@ -50,9 +50,9 @@ public class PostManageAcceptanceSteps {
                 Collections.emptyList());
     }
 
-    public static CreatePostRequest 비공개_포스트_생성_데이터(Long 블로그_ID) {
+    public static CreatePostRequest 비공개_포스트_생성_데이터(String 블로그_이름) {
         return new CreatePostRequest(
-                블로그_ID,
+                블로그_이름,
                 "제목",
                 "내용",
                 "섬네일",
@@ -65,7 +65,7 @@ public class PostManageAcceptanceSteps {
 
     public static Long 포스트_생성(
             String 세션_ID,
-            Long 블로그_ID,
+            String 블로그_이름,
             String 포스트_제목,
             String 포스트_내용,
             String 썸네일_이미지_이름,
@@ -76,7 +76,7 @@ public class PostManageAcceptanceSteps {
             String... 태그들
     ) {
         return 포스트_생성(세션_ID, new CreatePostRequest(
-                블로그_ID,
+                블로그_이름,
                 포스트_제목,
                 포스트_내용,
                 썸네일_이미지_이름,
@@ -96,7 +96,7 @@ public class PostManageAcceptanceSteps {
 
     public static ExtractableResponse<Response> 포스트_생성_요청(
             String 세션_ID,
-            Long 블로그_ID,
+            String 블로그_이름,
             String 포스트_제목,
             String 포스트_내용,
             String 썸네일_이미지_이름,
@@ -107,7 +107,7 @@ public class PostManageAcceptanceSteps {
             String... 태그들
     ) {
         CreatePostRequest request = new CreatePostRequest(
-                블로그_ID,
+                블로그_이름,
                 포스트_제목,
                 포스트_내용,
                 썸네일_이미지_이름,

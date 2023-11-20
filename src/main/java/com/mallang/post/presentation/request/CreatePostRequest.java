@@ -6,7 +6,7 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 
 public record CreatePostRequest(
-        Long blogId,
+        String blogName,
         String title,
         String content,
         @Nullable String postThumbnailImageName,
@@ -20,7 +20,7 @@ public record CreatePostRequest(
     public CreatePostCommand toCommand(Long memberId) {
         return CreatePostCommand.builder()
                 .memberId(memberId)
-                .blogId(blogId)
+                .blogName(blogName)
                 .title(title)
                 .content(content)
                 .postThumbnailImageName(postThumbnailImageName)

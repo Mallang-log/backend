@@ -19,7 +19,7 @@ public class SubscriberDataDao {
     private final JPAQueryFactory query;
 
     public List<SubscriberData> findSubscribers(
-            Long blogId
+            String blogName
     ) {
         return query.select(Projections.constructor(SubscriberData.class,
                         member.id,
@@ -30,7 +30,7 @@ public class SubscriberDataDao {
                 .from(blogSubscribe)
                 .join(blogSubscribe.subscriber, member)
                 .where(
-                        blogSubscribe.blog.id.eq(blogId)
+                        blogSubscribe.blog.name.value.eq(blogName)
                 )
                 .orderBy(blogSubscribe.createdDate.desc())
                 .fetch();

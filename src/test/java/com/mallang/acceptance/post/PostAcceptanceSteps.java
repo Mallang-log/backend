@@ -59,20 +59,20 @@ public class PostAcceptanceSteps {
 
     public static ExtractableResponse<Response> 포스트_전체_조회_요청(
             Long 카테고리_ID,
-            Long 블로그_ID,
+            String 블로그_이름,
             String 태그,
             Long 작성자_ID,
             String 제목,
             String 내용,
             String 제목_또는_내용
     ) {
-        return 포스트_전체_조회_요청(null, 카테고리_ID, 블로그_ID, 태그, 작성자_ID, 제목, 내용, 제목_또는_내용);
+        return 포스트_전체_조회_요청(null, 카테고리_ID, 블로그_이름, 태그, 작성자_ID, 제목, 내용, 제목_또는_내용);
     }
 
     public static ExtractableResponse<Response> 포스트_전체_조회_요청(
             String 세션_ID,
             Long 카테고리_ID,
-            Long 블로그_ID,
+            String 블로그_이름,
             String 태그,
             Long 작성자_ID,
             String 제목,
@@ -81,7 +81,7 @@ public class PostAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .queryParam("categoryId", 카테고리_ID)
-                .queryParam("blogId", 블로그_ID)
+                .queryParam("blogName", 블로그_이름)
                 .queryParam("tag", 태그)
                 .queryParam("writerId", 작성자_ID)
                 .queryParam("title", 제목)

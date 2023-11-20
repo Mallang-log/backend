@@ -24,7 +24,7 @@ public class SubscribingBlogDataDao {
     ) {
         return query.select(Projections.constructor(SubscribingBlogData.class,
                         blog.id,
-                        blog.name.name,
+                        blog.name.value,
                         member.id,
                         member.nickname,
                         member.profileImageUrl,

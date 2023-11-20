@@ -42,8 +42,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private Long 말랑_블로그_ID;
-    private Long 동훈_블로그_ID;
+    private String 말랑_블로그_이름;
+    private String 동훈_블로그_이름;
     private Long 카테고리_ID;
 
     @Override
@@ -52,9 +52,9 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-        동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghun-log");
-        카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_ID, "Spring", 없음());
+        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+        동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
+        카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
     }
 
     @Test
@@ -62,7 +62,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         // when
         var 응답 = 포스트_생성_요청(
                 말랑_세션_ID,
-                말랑_블로그_ID,
+                말랑_블로그_이름,
                 "첫 포스트",
                 "첫 포스트이네요.",
                 "포스트 썸네일 이름",
@@ -82,7 +82,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
     @Test
     void 포스트를_업데이트한다() {
         // given
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_ID));
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
 
         // when
         var 응답 = 포스트_수정_요청(
@@ -120,7 +120,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
     @Test
     void 포스트를_삭제한다() {
         // given
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_ID));
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
         var 다른_회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("다른회원");
 
         var 댓글1_ID = 비인증_댓글_작성(포스트_ID, "댓글", "비인증", "1234", null);

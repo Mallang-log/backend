@@ -36,19 +36,19 @@ class CategoryQueryServiceTest {
     void 특정_블로그의_카테고리를_전체_조회한다() {
         // given
         Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
-        Long 동훈_블로그_ID = blogServiceTestHelper.블로그_개설후_ID_반환(동훈_ID, "donghun");
-        categoryServiceTestHelper.최상위_카테고리를_저장한다(동훈_ID, 동훈_블로그_ID, "Node");
+        String 동훈_블로그_이름 = blogServiceTestHelper.블로그_개설(동훈_ID, "donghun").getName();
+        categoryServiceTestHelper.최상위_카테고리를_저장한다(동훈_ID, 동훈_블로그_이름, "Node");
 
         Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
-        Long 말랑_블로그_ID = blogServiceTestHelper.블로그_개설후_ID_반환(말랑_ID, "mallang");
-        Long springId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "Spring");
-        Long jpaId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "JPA", springId);
-        Long n1Id = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "N + 1", jpaId);
-        Long securityId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "Security", springId);
-        Long oAuthId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "OAuth", securityId);
-        Long csrfId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "CSRF", securityId);
-        Long algorithmId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "Algorithm");
-        Long dfsId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_ID, "DFS", algorithmId);
+        String 말랑_블로그_이름 = blogServiceTestHelper.블로그_개설(말랑_ID, "mallang").getName();
+        Long springId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Spring");
+        Long jpaId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "JPA", springId);
+        Long n1Id = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "N + 1", jpaId);
+        Long securityId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Security", springId);
+        Long oAuthId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "OAuth", securityId);
+        Long csrfId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "CSRF", securityId);
+        Long algorithmId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Algorithm");
+        Long dfsId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "DFS", algorithmId);
         List<CategoryData> expected = List.of(
                 new CategoryData(springId, "Spring", List.of(
                         new CategoryData(jpaId, "JPA", List.of(
@@ -65,7 +65,7 @@ class CategoryQueryServiceTest {
         );
 
         // when
-        List<CategoryData> allByMemberId = categoryQueryService.findAllByBlogId(말랑_블로그_ID);
+        List<CategoryData> allByMemberId = categoryQueryService.findAllByBlogName(말랑_블로그_이름);
 
         // then
         assertThat(allByMemberId).usingRecursiveComparison()
