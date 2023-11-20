@@ -10,13 +10,13 @@ import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.공개_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.보호_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.비공개_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_생성;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_수정_요청;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.좋아요_취소_요청;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.포스트_좋아요_요청;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.공개_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.보호_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.비공개_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_수정_요청;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 
@@ -102,7 +102,6 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                     응답_상태를_검증한다(응답, 생성됨);
                 }
             }
-
 
             @Nested
             class 블로그_주인이_아닌_경우 {

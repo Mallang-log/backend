@@ -23,7 +23,7 @@ import static com.mallang.acceptance.post.PostAcceptanceSteps.보호되지_않�
 import static com.mallang.acceptance.post.PostAcceptanceSteps.좋아요_안눌림;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_내용_검증;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_생성;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;

@@ -29,11 +29,11 @@ import static com.mallang.acceptance.comment.CommentAcceptanceSteps.인증된_�
 import static com.mallang.acceptance.comment.CommentAcceptanceSteps.인증된_댓글_조회_데이터;
 import static com.mallang.acceptance.comment.CommentAcceptanceSteps.특정_포스트의_댓글_전체_조회_응답을_검증한다;
 import static com.mallang.acceptance.comment.CommentAcceptanceSteps.특정_포스팅의_댓글_전체_조회;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.공개_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.보호_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.비공개_포스트_생성_데이터;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_생성;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_수정_요청;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.공개_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.보호_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.비공개_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_수정_요청;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 
