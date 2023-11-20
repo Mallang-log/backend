@@ -101,7 +101,7 @@ public class Post extends CommonDomainModel {
         this.postIntro = postIntro;
         this.visibilityPolish = visibilityPolish;
         this.writer = writer;
-        setCategory(category);
+        this.category = category;
         setTags(tags);
     }
 
@@ -114,29 +114,17 @@ public class Post extends CommonDomainModel {
             @Nullable Category category,
             List<String> tags
     ) {
-        setCategory(category);
         setTags(tags);
         this.title = title;
         this.content = content;
         this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = intro;
         this.visibilityPolish = visibility;
+        this.category = category;
     }
 
     public void delete() {
         registerEvent(new PostDeleteEvent(getId()));
-    }
-
-    private void setCategory(@Nullable Category category) {
-        if (category == null) {
-            removeCategory();
-            return;
-        }
-        this.category = category;
-    }
-
-    public void removeCategory() {
-        this.category = null;
     }
 
     private void setTags(List<String> tags) {
@@ -182,6 +170,10 @@ public class Post extends CommonDomainModel {
             }
         }
         throw new NoAuthorityAccessPostException();
+    }
+
+    public void removeCategory() {
+        this.category = null;
     }
 
     public String getPostIntro() {
