@@ -30,13 +30,7 @@ public class AuthenticatedCommentService {
         Post post = postRepository.getById(command.postId());
         Member writer = memberRepository.getById(command.memberId());
         Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
-        AuthenticatedComment comment = AuthenticatedComment.builder()
-                .post(post)
-                .writer(writer)
-                .content(command.content())
-                .secret(command.secret())
-                .parent(parent)
-                .build();
+        AuthenticatedComment comment = command.toComment(post, writer, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
     }

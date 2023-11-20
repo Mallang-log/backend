@@ -29,13 +29,7 @@ public class UnAuthenticatedCommentService {
     public Long write(WriteUnAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
-        UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
-                .post(post)
-                .content(command.content())
-                .nickname(command.nickname())
-                .parent(parent)
-                .password(command.password())
-                .build();
+        UnAuthenticatedComment comment = command.toCommand(post, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
     }
