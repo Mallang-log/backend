@@ -1,4 +1,4 @@
-package com.mallang.post.domain;
+package com.mallang.post.domain.like;
 
 import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.auth.MemberFixture.회원;
@@ -14,6 +14,8 @@ import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
+import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostIntro;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
@@ -49,7 +51,7 @@ class PostLikeTest {
             PostLike postLike = new PostLike(post, mallang);
 
             // when
-            postLike.click(postLikeValidator, null);
+            postLike.like(postLikeValidator, null);
 
             // then
             assertThat(post.getLikeCount()).isEqualTo(1);
@@ -65,7 +67,7 @@ class PostLikeTest {
 
             // when
             assertThatThrownBy(() -> {
-                postLike.click(postLikeValidator, null);
+                postLike.like(postLikeValidator, null);
             }).isInstanceOf(AlreadyLikedPostException.class);
 
             // then
@@ -82,7 +84,7 @@ class PostLikeTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    postLike.click(postLikeValidator, null);
+                    postLike.like(postLikeValidator, null);
                 });
                 assertThat(post.getLikeCount()).isEqualTo(1);
             }
@@ -106,7 +108,7 @@ class PostLikeTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    postLike.click(postLikeValidator, "1234");
+                    postLike.like(postLikeValidator, "1234");
                 });
                 assertThat(post.getLikeCount()).isEqualTo(1);
             }
@@ -118,7 +120,7 @@ class PostLikeTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    postLike.click(postLikeValidator, null);
+                    postLike.like(postLikeValidator, null);
                 });
                 assertThat(post.getLikeCount()).isEqualTo(1);
             }
@@ -130,7 +132,7 @@ class PostLikeTest {
 
                 // when & then
                 assertThatThrownBy(() -> {
-                    postLike.click(postLikeValidator, "12345");
+                    postLike.like(postLikeValidator, "12345");
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
                 assertThat(post.getLikeCount()).isZero();
             }
@@ -154,7 +156,7 @@ class PostLikeTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    postLike.click(postLikeValidator, null);
+                    postLike.like(postLikeValidator, null);
                 });
                 assertThat(post.getLikeCount()).isEqualTo(1);
             }
@@ -166,7 +168,7 @@ class PostLikeTest {
 
                 // when & then
                 assertThatThrownBy(() -> {
-                    postLike.click(postLikeValidator, null);
+                    postLike.like(postLikeValidator, null);
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
                 assertThat(post.getLikeCount()).isZero();
             }
@@ -180,7 +182,7 @@ class PostLikeTest {
         void 취소_시_포스트의_좋아요_수가_1_감소한다() {
             // given
             PostLike postLike = new PostLike(post, mallang);
-            postLike.click(postLikeValidator, null);
+            postLike.like(postLikeValidator, null);
 
             // when
             postLike.cancel(null);
@@ -196,7 +198,7 @@ class PostLikeTest {
             void 누구나_접근_가능하다() {
                 // given
                 PostLike postLike = new PostLike(post, other);
-                postLike.click(postLikeValidator, null);
+                postLike.like(postLikeValidator, null);
 
                 // when
                 postLike.cancel(null);
@@ -221,7 +223,7 @@ class PostLikeTest {
             void 비밀번호가_일치하면_접근할_수_있다() {
                 // given
                 PostLike postLike = new PostLike(post, other);
-                postLike.click(postLikeValidator, "1234");
+                postLike.like(postLikeValidator, "1234");
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -234,7 +236,7 @@ class PostLikeTest {
             void 글_작성자라면_접근할_수_있다() {
                 // given
                 PostLike postLike = new PostLike(post, mallang);
-                postLike.click(postLikeValidator, null);
+                postLike.like(postLikeValidator, null);
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -247,7 +249,7 @@ class PostLikeTest {
             void 글_작성자가_아니며_비밀번호도_일치하지_않으면_접근할_수_없다() {
                 // given
                 PostLike postLike = new PostLike(post, other);
-                postLike.click(postLikeValidator, "1234");
+                postLike.like(postLikeValidator, "1234");
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -271,7 +273,7 @@ class PostLikeTest {
                         .blog(blog)
                         .build();
                 PostLike postLike = new PostLike(post, mallang);
-                postLike.click(postLikeValidator, null);
+                postLike.like(postLikeValidator, null);
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -291,7 +293,7 @@ class PostLikeTest {
                         .blog(blog)
                         .build();
                 PostLike postLike = new PostLike(post, other);
-                postLike.click(postLikeValidator, null);
+                postLike.like(postLikeValidator, null);
                 post.update(
                         "up",
                         "up",

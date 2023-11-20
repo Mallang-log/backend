@@ -1,6 +1,7 @@
-package com.mallang.post.domain;
+package com.mallang.post.domain.like;
 
 import com.mallang.auth.domain.Member;
+import com.mallang.post.domain.Post;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.mallang.post.domain;
+package com.mallang.post.domain.like;
 
 import static com.mallang.auth.MemberFixture.말랑;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
+import com.mallang.post.domain.Post;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

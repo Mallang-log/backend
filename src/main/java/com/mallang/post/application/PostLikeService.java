@@ -5,10 +5,10 @@ import com.mallang.auth.domain.MemberRepository;
 import com.mallang.post.application.command.CancelPostLikeCommand;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostLike;
-import com.mallang.post.domain.PostLikeRepository;
-import com.mallang.post.domain.PostLikeValidator;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.like.PostLike;
+import com.mallang.post.domain.like.PostLikeRepository;
+import com.mallang.post.domain.like.PostLikeValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ public class PostLikeService {
         Post post = postRepository.getById(command.postId());
         Member member = memberRepository.getById(command.memberId());
         PostLike postLike = new PostLike(post, member);
-        postLike.click(postLikeValidator, command.postPassword());
+        postLike.like(postLikeValidator, command.postPassword());
         postLikeRepository.save(postLike);
     }
 
