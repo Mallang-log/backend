@@ -3,17 +3,26 @@ package com.mallang.post.query;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostSimpleData;
+import jakarta.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PostDataProtector {
 
-    public PostDetailData protectIfRequired(Long memberId, PostDetailData postDetailData) {
+    public PostDetailData protectIfRequired(
+            @Nullable Long memberId,
+            @Nullable String postPassword,
+            PostDetailData postDetailData
+    ) {
         if (isNotProtected(postDetailData.visibility())) {
             return postDetailData;
         }
         if (postDetailData.writerInfo().writerId().equals(memberId)) {
+            return postDetailData;
+        }
+        if (postDetailData.password() != null && Objects.equals(postDetailData.password(), postPassword)) {
             return postDetailData;
         }
         return new PostDetailData(

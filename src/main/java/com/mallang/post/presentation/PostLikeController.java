@@ -1,14 +1,15 @@
 package com.mallang.post.presentation;
 
+import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
 import static org.springframework.http.HttpStatus.CREATED;
 
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.presentation.request.CancelPostLikeRequest;
 import com.mallang.post.presentation.request.ClickPostLikeRequest;
-import com.mallang.post.presentation.support.OptionalPostPassword;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class PostLikeController {
     @PostMapping
     public ResponseEntity<Void> click(
             @Auth Long memberId,
-            @OptionalPostPassword String postPassword,
+            @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody ClickPostLikeRequest request
     ) {
         postLikeService.click(request.toCommand(memberId, postPassword));
@@ -35,7 +36,7 @@ public class PostLikeController {
     @DeleteMapping
     public ResponseEntity<Void> cancel(
             @Auth Long memberId,
-            @OptionalPostPassword String postPassword,
+            @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody CancelPostLikeRequest request
     ) {
         postLikeService.cancel(request.toCommand(memberId, postPassword));
