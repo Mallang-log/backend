@@ -21,6 +21,9 @@ import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_�
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.공개_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_글_관리_목록_조회_요청;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_글_관리_전체_조회_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_글_관리_전체_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_삭제_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성_요청;
@@ -29,10 +32,13 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("포스트 관리 인수테스트")
@@ -135,5 +141,106 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         // then
         응답_상태를_검증한다(응답, 본문_없음);
         응답_상태를_검증한다(포스트_단일_조회_요청(null, 포스트_ID, null), 찾을수_없음);
+    }
+
+    @Nested
+    class 내_글_관리_목록_조회_API extends AcceptanceTest {
+
+        @Test
+        void 내_포스트를_전체_조회한다() {
+            // given
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트1", "이건 첫번째 포스트이네요.", "썸넬1", "첫 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    없음());
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트2", "이번에는 이것 저것들에 대해 알아보아요", "썸넬2", "2 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    카테고리_ID, "태그1");
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트3", "잘 알아보았어요!", null, "3 포스트 인트로",
+                    PRIVATE,
+                    없음(),
+                    카테고리_ID, "태그1", "태그2");
+
+            // when
+            var 응답 = 내_글_관리_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 없음(), 없음(), 없음(), 없음());
+
+            // then
+            var 예상_데이터 = List.of(
+                    내_글_관리_전체_조회_데이터(포스트3_ID,
+                            카테고리_ID, "Spring",
+                            "포스트3", PRIVATE),
+                    내_글_관리_전체_조회_데이터(포스트2_ID,
+                            카테고리_ID, "Spring",
+                            "포스트2", PUBLIC),
+                    내_글_관리_전체_조회_데이터(포스트1_ID,
+                            없음(), 없음(),
+                            "포스트1", PUBLIC)
+            );
+            내_글_관리_전체_조회_응답을_검증한다(응답, 예상_데이터);
+        }
+
+        @Test
+        void 내_블로그가_아닌_경우_빈_리스트_조회() {
+            // given
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트1", "이건 첫번째 포스트이네요.", "썸넬1", "첫 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    없음());
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트2", "이번에는 이것 저것들에 대해 알아보아요", "썸넬2", "2 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    카테고리_ID, "태그1");
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트3", "잘 알아보았어요!", null, "3 포스트 인트로",
+                    PRIVATE,
+                    없음(),
+                    카테고리_ID, "태그1", "태그2");
+
+            // when
+            var 응답1 = 내_글_관리_목록_조회_요청(동훈_세션_ID, 말랑_블로그_이름, 없음(), 없음(), 없음(), 없음());
+            var 응답2 = 내_글_관리_목록_조회_요청(말랑_세션_ID, 동훈_블로그_이름, 없음(), 없음(), 없음(), 없음());
+
+            // then
+            내_글_관리_전체_조회_응답을_검증한다(응답1, Collections.emptyList());
+            내_글_관리_전체_조회_응답을_검증한다(응답2, Collections.emptyList());
+        }
+
+        @Test
+        void 카테고리_필터링_시_카테고리_없음으로도_조회할_수_있다() {
+            // given
+            var 카테고리_없음_조건 = -1L;
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트1", "이건 첫번째 포스트이네요.", "썸넬1", "첫 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    없음());
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트2", "이번에는 이것 저것들에 대해 알아보아요", "썸넬2", "2 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    카테고리_ID, "태그1");
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 말랑_블로그_이름,
+                    "포스트3", "잘 알아보았어요!", null, "3 포스트 인트로",
+                    PRIVATE,
+                    없음(),
+                    카테고리_ID, "태그1", "태그2");
+
+            // when
+            var 응답 = 내_글_관리_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 카테고리_없음_조건, 없음(), 없음(), 없음());
+
+            // then
+            var 예상_데이터 = List.of(
+                    내_글_관리_전체_조회_데이터(포스트1_ID,
+                            없음(), 없음(),
+                            "포스트1", PUBLIC)
+            );
+            내_글_관리_전체_조회_응답을_검증한다(응답, 예상_데이터);
+        }
     }
 }

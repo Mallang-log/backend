@@ -5,10 +5,16 @@ import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
+import com.mallang.post.query.PostManageQueryService;
+import com.mallang.post.query.data.PostManageSearchCond;
+import com.mallang.post.query.data.PostManageSimpleData;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostManageController {
 
     private final PostService postService;
+    private final PostManageQueryService postManageQueryService;
 
     @PostMapping
     public ResponseEntity<Void> create(
@@ -49,5 +56,13 @@ public class PostManageController {
     ) {
         postService.delete(request.toCommand(memberId));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostManageSimpleData>> search(
+            @Auth Long memberId,
+            @ModelAttribute PostManageSearchCond cond
+    ) {
+        return ResponseEntity.ok(postManageQueryService.search(memberId, cond));
     }
 }

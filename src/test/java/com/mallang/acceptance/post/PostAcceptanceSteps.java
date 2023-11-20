@@ -153,5 +153,4 @@ public class PostAcceptanceSteps {
                 .visibility(공개_범위)
                 .build();
     }
-
 }

@@ -83,9 +83,10 @@ public class PostSimpleDataDao {
     }
 
     private BooleanExpression writerIdEq(@Nullable Long writerId) {
-        return writerId == null
-                ? null
-                : post.writer.id.eq(writerId);
+        if (writerId == null) {
+            return null;
+        }
+        return post.writer.id.eq(writerId);
     }
 
     private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content,
