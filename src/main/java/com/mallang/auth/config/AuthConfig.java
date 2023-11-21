@@ -42,32 +42,20 @@ public class AuthConfig implements WebMvcConfigurer {
     private AuthInterceptor setUpAuthInterceptor() {
         authInterceptor.setNoAuthRequiredConditions(
                 UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/members/**"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/posts/**"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/categories"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of("/comments/**"))
                         .httpMethods(Set.of(POST, PUT, DELETE))
                         .params(Map.of("unauthenticated", "true"))
                         .build(),
                 UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/comments"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/blog-subscribes/*"))
-                        .httpMethods(Set.of(GET))
-                        .build(),
-                UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/post-stars/**"))
+                        .uriPatterns(Set.of(
+                                "/members/*",
+                                "/posts/**",
+                                "/categories",
+                                "/comments",
+                                "/blog-subscribes/*",
+                                "/post-stars",
+                                "/abouts"
+                        ))
                         .httpMethods(Set.of(GET))
                         .build()
         );
