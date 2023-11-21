@@ -1,9 +1,10 @@
-package com.mallang.post.domain;
+package com.mallang.post.domain.like;
 
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -30,7 +31,7 @@ public class PostLike extends CommonDomainModel {
         this.member = member;
     }
 
-    public void click(PostLikeValidator postLikeValidator, @Nullable String postPassword) {
+    public void like(PostLikeValidator postLikeValidator, @Nullable String postPassword) {
         post.validatePostAccessibility(member, postPassword);
         postLikeValidator.validateClickLike(post, member);
         post.clickLike();

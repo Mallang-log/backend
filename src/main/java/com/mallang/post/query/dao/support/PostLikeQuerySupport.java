@@ -1,6 +1,6 @@
 package com.mallang.post.query.dao.support;
 
-import com.mallang.post.domain.PostLike;
+import com.mallang.post.domain.like.PostLike;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
