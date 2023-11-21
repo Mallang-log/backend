@@ -18,7 +18,6 @@ import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
-import com.mallang.post.domain.Tag;
 import com.mallang.post.exception.NotFoundPostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -151,7 +150,6 @@ class PostServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postServiceTestHelper.포스트를_조회한다(id);
                 assertThat(post.getTags())
-                        .extracting(Tag::getContent)
                         .containsExactly("tag1", "tag2", "tag3");
             });
         }
@@ -186,7 +184,7 @@ class PostServiceTest {
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
                 assertThat(post.getPostIntro()).isEqualTo("수정인트로");
-                assertThat(post.getTags()).extracting(Tag::getContent)
+                assertThat(post.getTags())
                         .containsExactly("태그2");
             });
         }

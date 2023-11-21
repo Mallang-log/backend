@@ -3,6 +3,7 @@ package com.mallang.post.query.data;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.star.PostStar;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -10,30 +11,33 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record PostSimpleData(
-        Long id,
+public record StaredPostData(
+        Long starId,
+        LocalDateTime staredData,
+        Long postId,
         String title,
         String content,
         String intro,
         @Nullable String postThumbnailImageName,
         Visibility visibility,
-        int likeCount,
-        LocalDateTime createdDate,
+        LocalDateTime postCreatedDate,
         WriterSimpleInfo writerInfo,
         CategorySimpleInfo categoryInfo,
         TagSimpleInfos tagSimpleInfos
 ) {
 
-    public static PostSimpleData from(Post post) {
-        return PostSimpleData.builder()
-                .id(post.getId())
+    public static StaredPostData from(PostStar postStar) {
+        Post post = postStar.getPost();
+        return StaredPostData.builder()
+                .starId(postStar.getId())
+                .staredData(postStar.getCreatedDate())
+                .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .postThumbnailImageName(post.getPostThumbnailImageName())
                 .intro(post.getPostIntro())
+                .postThumbnailImageName(post.getPostThumbnailImageName())
                 .visibility(post.getVisibilityPolish().getVisibility())
-                .likeCount(post.getLikeCount())
-                .createdDate(post.getCreatedDate())
+                .postCreatedDate(post.getCreatedDate())
                 .writerInfo(WriterSimpleInfo.from(post))
                 .categoryInfo(CategorySimpleInfo.from(post))
                 .tagSimpleInfos(TagSimpleInfos.from(post))
