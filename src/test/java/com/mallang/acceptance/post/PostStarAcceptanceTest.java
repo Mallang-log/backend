@@ -25,9 +25,9 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
-import com.mallang.auth.query.data.MemberProfileData;
+import com.mallang.auth.query.response.MemberResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
-import com.mallang.post.query.data.StaredPostData;
+import com.mallang.post.query.response.StaredPostResponse;
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        동훈_ID = 내_정보_조회_요청(동훈_세션_ID).as(MemberProfileData.class).id();
+        동훈_ID = 내_정보_조회_요청(동훈_세션_ID).as(MemberResponse.class).id();
     }
 
     @Nested
@@ -294,10 +294,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(null, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::title)
+                    .extracting(StaredPostResponse::title)
                     .containsExactly("포스트3", "포스트2", "포스트1");
         }
 
@@ -321,10 +321,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(동훈_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
+                    .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "보호되어 있는 글입니다.");
         }
 
@@ -348,10 +348,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
+                    .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "내용1");
         }
 
@@ -374,10 +374,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
+                    .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2");
         }
 
@@ -405,10 +405,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
+                    .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "내용1");
         }
     }

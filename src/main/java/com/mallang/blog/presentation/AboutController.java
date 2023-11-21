@@ -6,7 +6,7 @@ import com.mallang.blog.presentation.request.DeleteAboutRequest;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
 import com.mallang.blog.query.AboutQueryService;
-import com.mallang.blog.query.data.AboutResponse;
+import com.mallang.blog.query.response.AboutResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

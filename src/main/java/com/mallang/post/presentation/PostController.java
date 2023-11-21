@@ -4,9 +4,9 @@ import static com.mallang.post.presentation.support.PostPresentationConstant.POS
 
 import com.mallang.auth.presentation.support.OptionalAuth;
 import com.mallang.post.query.PostQueryService;
-import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.data.PostSearchCond;
-import com.mallang.post.query.data.PostSimpleData;
+import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.post.query.response.PostDetailResponse;
+import com.mallang.post.query.response.PostSearchResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class PostController {
     private final PostQueryService postQueryService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDetailData> getById(
+    public ResponseEntity<PostDetailResponse> getById(
             @OptionalAuth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @PathVariable(name = "id") Long id
@@ -34,7 +34,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostSimpleData>> search(
+    public ResponseEntity<List<PostSearchResponse>> search(
             @OptionalAuth Long memberId,
             @ModelAttribute PostSearchCond postSearchCond
     ) {

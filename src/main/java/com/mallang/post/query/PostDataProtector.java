@@ -1,9 +1,9 @@
 package com.mallang.post.query;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.data.PostSimpleData;
-import com.mallang.post.query.data.StaredPostData;
+import com.mallang.post.query.response.PostDetailResponse;
+import com.mallang.post.query.response.PostSearchResponse;
+import com.mallang.post.query.response.StaredPostResponse;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
@@ -12,85 +12,85 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostDataProtector {
 
-    public PostDetailData protectIfRequired(
+    public PostDetailResponse protectIfRequired(
             @Nullable Long memberId,
             @Nullable String postPassword,
-            PostDetailData postDetailData
+            PostDetailResponse postDetailResponse
     ) {
-        if (isNotProtected(postDetailData.visibility())) {
-            return postDetailData;
+        if (isNotProtected(postDetailResponse.visibility())) {
+            return postDetailResponse;
         }
-        if (postDetailData.writerInfo().writerId().equals(memberId)) {
-            return postDetailData;
+        if (postDetailResponse.writer().writerId().equals(memberId)) {
+            return postDetailResponse;
         }
-        if (postDetailData.password() != null && Objects.equals(postDetailData.password(), postPassword)) {
-            return postDetailData;
+        if (postDetailResponse.password() != null && Objects.equals(postDetailResponse.password(), postPassword)) {
+            return postDetailResponse;
         }
-        return new PostDetailData(
-                postDetailData.id(),
-                postDetailData.title(),
+        return new PostDetailResponse(
+                postDetailResponse.id(),
+                postDetailResponse.title(),
                 "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
                 "",
-                postDetailData.visibility(),
+                postDetailResponse.visibility(),
                 true,
-                postDetailData.password(),
-                postDetailData.likeCount(),
-                postDetailData.isLiked(),
-                postDetailData.createdDate(),
-                postDetailData.writerInfo(),
-                postDetailData.categoryInfo(),
-                postDetailData.tagDetailInfos()
+                postDetailResponse.password(),
+                postDetailResponse.likeCount(),
+                postDetailResponse.isLiked(),
+                postDetailResponse.createdDate(),
+                postDetailResponse.writer(),
+                postDetailResponse.category(),
+                postDetailResponse.tags()
         );
     }
 
-    public List<PostSimpleData> protectIfRequired(Long memberId, List<PostSimpleData> result) {
+    public List<PostSearchResponse> protectIfRequired(Long memberId, List<PostSearchResponse> result) {
         return result.stream()
                 .map(it -> protectIfRequired(memberId, it))
                 .toList();
     }
 
-    private PostSimpleData protectIfRequired(Long memberId, PostSimpleData postSimpleData) {
-        if (isNotProtected(postSimpleData.visibility())) {
-            return postSimpleData;
+    private PostSearchResponse protectIfRequired(Long memberId, PostSearchResponse postSearchResponse) {
+        if (isNotProtected(postSearchResponse.visibility())) {
+            return postSearchResponse;
         }
-        if (postSimpleData.writerInfo().writerId().equals(memberId)) {
-            return postSimpleData;
+        if (postSearchResponse.writer().writerId().equals(memberId)) {
+            return postSearchResponse;
         }
-        return new PostSimpleData(
-                postSimpleData.id(),
-                postSimpleData.title(),
+        return new PostSearchResponse(
+                postSearchResponse.id(),
+                postSearchResponse.title(),
                 "보호되어 있는 글입니다.",
                 "",
                 "",
-                postSimpleData.visibility(),
-                postSimpleData.likeCount(),
-                postSimpleData.createdDate(),
-                postSimpleData.writerInfo(),
-                postSimpleData.categoryInfo(),
-                postSimpleData.tagSimpleInfos()
+                postSearchResponse.visibility(),
+                postSearchResponse.likeCount(),
+                postSearchResponse.createdDate(),
+                postSearchResponse.writer(),
+                postSearchResponse.category(),
+                postSearchResponse.tags()
         );
     }
 
-    public List<StaredPostData> protectStaredIfRequired(
+    public List<StaredPostResponse> protectStaredIfRequired(
             @Nullable Long requesterId,
-            List<StaredPostData> result
+            List<StaredPostResponse> result
     ) {
         return result.stream()
                 .map(it -> protectStaredIfRequired(requesterId, it))
                 .toList();
     }
 
-    private StaredPostData protectStaredIfRequired(
+    private StaredPostResponse protectStaredIfRequired(
             @Nullable Long requesterId,
-            StaredPostData data
+            StaredPostResponse data
     ) {
         if (isNotProtected(data.visibility())) {
             return data;
         }
-        if (data.writerInfo().writerId().equals(requesterId)) {
+        if (data.writer().writerId().equals(requesterId)) {
             return data;
         }
-        return new StaredPostData(
+        return new StaredPostResponse(
                 data.starId(),
                 data.staredData(),
                 data.postId(),
@@ -100,9 +100,9 @@ public class PostDataProtector {
                 "",
                 data.visibility(),
                 data.postCreatedDate(),
-                data.writerInfo(),
-                data.categoryInfo(),
-                data.tagSimpleInfos()
+                data.writer(),
+                data.category(),
+                data.tags()
         );
     }
 

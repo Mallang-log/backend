@@ -1,10 +1,10 @@
 package com.mallang.post.query;
 
-import com.mallang.post.query.dao.PostDetailDataDao;
-import com.mallang.post.query.dao.PostSimpleDataDao;
-import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.data.PostSearchCond;
-import com.mallang.post.query.data.PostSimpleData;
+import com.mallang.post.query.dao.PostDetailDao;
+import com.mallang.post.query.dao.PostSearchDao;
+import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.post.query.response.PostDetailResponse;
+import com.mallang.post.query.response.PostSearchResponse;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostQueryService {
 
-    private final PostDetailDataDao postDetailDataDao;
-    private final PostSimpleDataDao postSimpleDataDao;
+    private final PostDetailDao postDetailDao;
+    private final PostSearchDao postSearchDao;
     private final PostDataValidator postDataValidator;
     private final PostDataProtector postDataProtector;
 
-    public PostDetailData getById(@Nullable Long memberId, @Nullable String postPassword, Long id) {
-        PostDetailData postDetailData = postDetailDataDao.find(memberId, id);
-        postDataValidator.validateAccessPost(memberId, postDetailData);
-        return postDataProtector.protectIfRequired(memberId, postPassword, postDetailData);
+    public PostDetailResponse getById(@Nullable Long memberId, @Nullable String postPassword, Long id) {
+        PostDetailResponse postDetailResponse = postDetailDao.find(memberId, id);
+        postDataValidator.validateAccessPost(memberId, postDetailResponse);
+        return postDataProtector.protectIfRequired(memberId, postPassword, postDetailResponse);
     }
 
-    public List<PostSimpleData> search(@Nullable Long memberId, PostSearchCond cond) {
-        List<PostSimpleData> result = postSimpleDataDao.search(memberId, cond);
+    public List<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond) {
+        List<PostSearchResponse> result = postSearchDao.search(memberId, cond);
         return postDataProtector.protectIfRequired(memberId, result);
     }
 }

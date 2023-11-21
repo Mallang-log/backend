@@ -1,10 +1,10 @@
 package com.mallang.comment.query;
 
-import static com.mallang.comment.query.data.AuthenticatedCommentData.WriterData.ANONYMOUS;
+import static com.mallang.comment.query.response.AuthCommentResponse.WriterResponse.ANONYMOUS;
 
-import com.mallang.comment.query.data.AuthenticatedCommentData;
-import com.mallang.comment.query.data.CommentData;
-import com.mallang.comment.query.data.UnAuthenticatedCommentData;
+import com.mallang.comment.query.response.AuthCommentResponse;
+import com.mallang.comment.query.response.CommentResponse;
+import com.mallang.comment.query.response.UnAuthCommentResponse;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import jakarta.annotation.Nullable;
@@ -19,39 +19,39 @@ public class CommentDataPostProcessor {
 
     private final PostRepository postRepository;
 
-    public List<CommentData> processDeleted(List<CommentData> datas) {
+    public List<CommentResponse> processDeleted(List<CommentResponse> datas) {
         return datas.stream()
                 .map(this::processDeleted)
                 .toList();
     }
 
-    private CommentData processDeleted(CommentData data) {
+    private CommentResponse processDeleted(CommentResponse data) {
         if (!data.isDeleted()) {
             return data;
         }
-        if (data instanceof UnAuthenticatedCommentData unAuth) {
-            return UnAuthenticatedCommentData.builder()
+        if (data instanceof UnAuthCommentResponse unAuth) {
+            return UnAuthCommentResponse.builder()
                     .id(data.getId())
                     .content("삭제된 댓글입니다.")
-                    .writerData(unAuth.getWriterData())
+                    .writer(unAuth.getWriter())
                     .createdDate(unAuth.getCreatedDate())
                     .deleted(unAuth.isDeleted())
                     .children(unAuth.getChildren())
                     .build();
         }
-        AuthenticatedCommentData authed = (AuthenticatedCommentData) data;
-        return AuthenticatedCommentData.builder()
+        AuthCommentResponse authed = (AuthCommentResponse) data;
+        return AuthCommentResponse.builder()
                 .id(data.getId())
                 .content("삭제된 댓글입니다.")
                 .secret(authed.isSecret())
-                .writerData(authed.getWriterData())
+                .writer(authed.getWriter())
                 .createdDate(authed.getCreatedDate())
                 .deleted(authed.isDeleted())
                 .children(authed.getChildren())
                 .build();
     }
 
-    public List<CommentData> processSecret(List<CommentData> datas, Long postId, @Nullable Long memberId) {
+    public List<CommentResponse> processSecret(List<CommentResponse> datas, Long postId, @Nullable Long memberId) {
         if (isPostWriter(postId, memberId)) {
             return datas;
         }
@@ -65,22 +65,22 @@ public class CommentDataPostProcessor {
         return Objects.equals(post.getWriter().getId(), memberId);
     }
 
-    private CommentData processSecret(CommentData data, @Nullable Long memberId) {
-        if (data instanceof UnAuthenticatedCommentData) {
+    private CommentResponse processSecret(CommentResponse data, @Nullable Long memberId) {
+        if (data instanceof UnAuthCommentResponse) {
             return data;
         }
-        AuthenticatedCommentData authed = (AuthenticatedCommentData) data;
+        AuthCommentResponse authed = (AuthCommentResponse) data;
         if (!authed.isSecret()) {
             return data;
         }
-        if (authed.getWriterData().memberId().equals(memberId)) {
+        if (authed.getWriter().memberId().equals(memberId)) {
             return data;
         }
-        return AuthenticatedCommentData.builder()
+        return AuthCommentResponse.builder()
                 .id(data.getId())
                 .content("비밀 댓글입니다.")
                 .secret(true)
-                .writerData(ANONYMOUS)
+                .writer(ANONYMOUS)
                 .createdDate(authed.getCreatedDate())
                 .deleted(authed.isDeleted())
                 .children(authed.getChildren().stream()

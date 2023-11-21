@@ -6,9 +6,9 @@ import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.PostManageQueryService;
-import com.mallang.post.query.data.PostManageDetailData;
-import com.mallang.post.query.data.PostManageSearchCond;
-import com.mallang.post.query.data.PostManageSimpleData;
+import com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond;
+import com.mallang.post.query.response.PostManageDetailResponse;
+import com.mallang.post.query.response.PostManageSearchResponse;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +60,7 @@ public class PostManageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostManageDetailData> getById(
+    public ResponseEntity<PostManageDetailResponse> getById(
             @PathVariable(name = "id") Long postId,
             @Auth Long memberId
     ) {
@@ -68,7 +68,7 @@ public class PostManageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostManageSimpleData>> search(
+    public ResponseEntity<List<PostManageSearchResponse>> search(
             @Auth Long memberId,
             @ModelAttribute PostManageSearchCond cond
     ) {

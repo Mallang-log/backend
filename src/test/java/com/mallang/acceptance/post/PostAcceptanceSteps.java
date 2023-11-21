@@ -5,14 +5,11 @@ import static com.mallang.post.presentation.support.PostPresentationConstant.POS
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.data.PostDetailData.CategoryDetailInfo;
-import com.mallang.post.query.data.PostDetailData.TagDetailInfos;
-import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
-import com.mallang.post.query.data.PostSimpleData;
-import com.mallang.post.query.data.PostSimpleData.CategorySimpleInfo;
-import com.mallang.post.query.data.PostSimpleData.TagSimpleInfos;
-import com.mallang.post.query.data.PostSimpleData.WriterSimpleInfo;
+import com.mallang.post.query.response.PostDetailResponse;
+import com.mallang.post.query.response.PostSearchResponse;
+import com.mallang.post.query.response.PostSearchResponse.CategoryResponse;
+import com.mallang.post.query.response.PostSearchResponse.TagResponses;
+import com.mallang.post.query.response.PostSearchResponse.WriterResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -40,21 +37,21 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static void 포스트_내용_검증(Long 포스트_ID, PostDetailData 예상_데이터) {
+    public static void 포스트_내용_검증(Long 포스트_ID, PostDetailResponse 예상_데이터) {
         var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
         포스트_단일_조회_응답을_검증한다(포스트_조회_응답, 예상_데이터);
     }
 
-    public static void 포스트_단일_조회_응답을_검증한다(ExtractableResponse<Response> 응답, PostDetailData 예상_데이터) {
-        PostDetailData postDetailData = 응답.as(PostDetailData.class);
-        assertThat(postDetailData).usingRecursiveComparison()
+    public static void 포스트_단일_조회_응답을_검증한다(ExtractableResponse<Response> 응답, PostDetailResponse 예상_데이터) {
+        PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
+        assertThat(postDetailResponse).usingRecursiveComparison()
                 .ignoringFields(
-                        "writerInfo.writerId",
-                        "writerInfo.writerProfileImageUrl",
+                        "writer.writerId",
+                        "writer.writerProfileImageUrl",
                         "createdDate"
                 )
                 .isEqualTo(예상_데이터);
-        assertThat(postDetailData.password()).isNull();
+        assertThat(postDetailResponse.password()).isNull();
     }
 
     public static ExtractableResponse<Response> 포스트_전체_조회_요청(
@@ -92,15 +89,15 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static void 포스트_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostSimpleData> 예상_데이터) {
-        List<PostSimpleData> responses = 응답.as(new TypeRef<>() {
+    public static void 포스트_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostSearchResponse> 예상_데이터) {
+        List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
-                .ignoringFields("writerInfo.writerId", "writerInfo.writerProfileImageUrl", "createdDate")
+                .ignoringFields("writer.writerId", "writer.writerProfileImageUrl", "createdDate")
                 .isEqualTo(예상_데이터);
     }
 
-    public static PostDetailData 포스트_단일_조회_데이터(
+    public static PostDetailResponse 포스트_단일_조회_데이터(
             Long 포스트_ID,
             String 작성자_닉네임,
             Long 카테고리_ID,
@@ -114,11 +111,11 @@ public class PostAcceptanceSteps {
             int 좋아요_수,
             String... 태그들
     ) {
-        return PostDetailData.builder()
+        return PostDetailResponse.builder()
                 .id(포스트_ID)
-                .writerInfo(new WriterDetailInfo(null, 작성자_닉네임, null))
-                .categoryInfo(new CategoryDetailInfo(카테고리_ID, 카테고리_이름))
-                .tagDetailInfos(new TagDetailInfos(Arrays.asList(태그들)))
+                .writer(new PostDetailResponse.WriterResponse(null, 작성자_닉네임, null))
+                .category(new PostDetailResponse.CategoryResponse(카테고리_ID, 카테고리_이름))
+                .tags(new PostDetailResponse.TagResponses(Arrays.asList(태그들)))
                 .isLiked(좋아요_클릭_여부)
                 .title(제목)
                 .postThumbnailImageName(썸네일_이미지_이름)
@@ -129,7 +126,7 @@ public class PostAcceptanceSteps {
                 .build();
     }
 
-    public static PostSimpleData 포스트_전체_조회_데이터(
+    public static PostSearchResponse 포스트_전체_조회_데이터(
             Long 포스트_ID,
             String 작성자_닉네임,
             Long 카테고리_ID,
@@ -141,11 +138,11 @@ public class PostAcceptanceSteps {
             Visibility 공개_범위,
             String... 태그들
     ) {
-        return PostSimpleData.builder()
+        return PostSearchResponse.builder()
                 .id(포스트_ID)
-                .writerInfo(new WriterSimpleInfo(null, 작성자_닉네임, null))
-                .categoryInfo(new CategorySimpleInfo(카테고리_ID, 카테고리_이름))
-                .tagSimpleInfos(new TagSimpleInfos(Arrays.asList(태그들)))
+                .writer(new WriterResponse(null, 작성자_닉네임, null))
+                .category(new CategoryResponse(카테고리_ID, 카테고리_이름))
+                .tags(new TagResponses(Arrays.asList(태그들)))
                 .title(제목)
                 .content(내용)
                 .intro(인트로)

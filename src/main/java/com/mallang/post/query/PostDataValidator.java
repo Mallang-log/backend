@@ -2,17 +2,17 @@ package com.mallang.post.query;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
-import com.mallang.post.query.data.PostDetailData;
+import com.mallang.post.query.response.PostDetailResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PostDataValidator {
 
-    public void validateAccessPost(Long memberId, PostDetailData postDetailData) {
-        if (postDetailData.visibility() != Visibility.PRIVATE) {
+    public void validateAccessPost(Long memberId, PostDetailResponse postDetailResponse) {
+        if (postDetailResponse.visibility() != Visibility.PRIVATE) {
             return;
         }
-        if (!postDetailData.writerInfo().writerId().equals(memberId)) {
+        if (!postDetailResponse.writer().writerId().equals(memberId)) {
             throw new NoAuthorityAccessPostException();
         }
     }

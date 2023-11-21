@@ -35,9 +35,9 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.acceptance.AcceptanceTest;
-import com.mallang.post.query.data.PostManageDetailData;
-import com.mallang.post.query.data.PostManageDetailData.CategoryDetailInfo;
-import com.mallang.post.query.data.PostManageDetailData.TagDetailInfos;
+import com.mallang.post.query.response.PostManageDetailResponse;
+import com.mallang.post.query.response.PostManageDetailResponse.CategoryResponse;
+import com.mallang.post.query.response.PostManageDetailResponse.TagResponses;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -409,7 +409,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
 
             // then
             내_관리_글_단일_조회_응답을_검증한다(응답,
-                    new PostManageDetailData(포스트1_ID,
+                    new PostManageDetailResponse(포스트1_ID,
                             "포스트1",
                             "첫 포스트 인트로",
                             "이건 첫번째 포스트이네요.",
@@ -417,8 +417,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
                             PROTECTED,
                             "12345",
                             null,
-                            new CategoryDetailInfo(Spring_카테고리_ID, "Spring"),
-                            new TagDetailInfos(List.of("태그1", "태그2", "태그3", "태그4"))));
+                            new CategoryResponse(Spring_카테고리_ID, "Spring"),
+                            new TagResponses(List.of("태그1", "태그2", "태그3", "태그4"))));
         }
 
         @Test

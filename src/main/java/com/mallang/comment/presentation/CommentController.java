@@ -13,7 +13,7 @@ import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequ
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
 import com.mallang.comment.query.CommentQueryService;
-import com.mallang.comment.query.data.CommentData;
+import com.mallang.comment.query.response.CommentResponse;
 import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
@@ -106,12 +106,12 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentData>> findAll(
+    public ResponseEntity<List<CommentResponse>> findAll(
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @Nullable @OptionalAuth Long memberId,
             @RequestParam(value = "postId", required = true) Long postId
     ) {
-        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
+        List<CommentResponse> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
         return ResponseEntity.ok(result);
     }
 }

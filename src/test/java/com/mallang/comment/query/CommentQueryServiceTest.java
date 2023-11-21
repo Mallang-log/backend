@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.comment.application.CommentServiceTestHelper;
-import com.mallang.comment.query.data.AuthenticatedCommentData;
-import com.mallang.comment.query.data.CommentData;
-import com.mallang.comment.query.data.UnAuthenticatedCommentData;
+import com.mallang.comment.query.response.AuthCommentResponse;
+import com.mallang.comment.query.response.CommentResponse;
+import com.mallang.comment.query.response.UnAuthCommentResponse;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.PostServiceTestHelper;
 import java.util.List;
@@ -62,21 +62,21 @@ class CommentQueryServiceTest {
             commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentData> result = commentQueryService.findAllByPostId(postId, null, null);
+            List<CommentResponse> result = commentQueryService.findAllByPostId(postId, null, null);
 
             // then
             assertThat(result)
-                    .extracting(CommentData::getContent)
+                    .extracting(CommentResponse::getContent)
                     .containsExactly("댓글1", "비밀 댓글입니다.", "댓글3");
             assertThat(result)
-                    .filteredOn(it -> it instanceof AuthenticatedCommentData)
-                    .map(it -> (AuthenticatedCommentData) it)
-                    .extracting(it -> it.getWriterData().nickname())
+                    .filteredOn(it -> it instanceof AuthCommentResponse)
+                    .map(it -> (AuthCommentResponse) it)
+                    .extracting(it -> it.getWriter().nickname())
                     .containsExactly("말랑", "익명");
             assertThat(result)
-                    .filteredOn(it -> it instanceof UnAuthenticatedCommentData)
-                    .map(it -> (UnAuthenticatedCommentData) it)
-                    .extracting(it -> it.getWriterData().nickname())
+                    .filteredOn(it -> it instanceof UnAuthCommentResponse)
+                    .map(it -> (UnAuthCommentResponse) it)
+                    .extracting(it -> it.getWriter().nickname())
                     .containsExactly("랑말");
         }
 
@@ -92,11 +92,11 @@ class CommentQueryServiceTest {
             commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentData> result = commentQueryService.findAllByPostId(postId, dong, null);
+            List<CommentResponse> result = commentQueryService.findAllByPostId(postId, dong, null);
 
             // then
             assertThat(result)
-                    .extracting(CommentData::getContent)
+                    .extracting(CommentResponse::getContent)
                     .containsExactly("동훈 댓글", "헤헤 댓글", "[비밀] 동훈 댓글2", "비밀 댓글입니다.", "댓글3");
         }
 
@@ -112,11 +112,11 @@ class CommentQueryServiceTest {
             commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId, null);
+            List<CommentResponse> result = commentQueryService.findAllByPostId(postId, memberId, null);
 
             // then
             assertThat(result)
-                    .extracting(CommentData::getContent)
+                    .extracting(CommentResponse::getContent)
                     .containsExactly("동훈 댓글", "헤헤 댓글", "[비밀] 동훈 댓글2", "[비밀] 헤헤 댓글2", "댓글3");
         }
     }

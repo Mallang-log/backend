@@ -6,7 +6,7 @@ import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
 import com.mallang.category.query.CategoryQueryService;
-import com.mallang.category.query.data.CategoryData;
+import com.mallang.category.query.response.CategoryResponse;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -58,10 +58,10 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryData>> findAllByBlog(
+    public ResponseEntity<List<CategoryResponse>> findAllByBlog(
             @RequestParam(name = "blogName", required = true) String blogName
     ) {
-        List<CategoryData> result = categoryQueryService.findAllByBlogName(blogName);
+        List<CategoryResponse> result = categoryQueryService.findAllByBlogName(blogName);
         return ResponseEntity.ok(result);
     }
 }

@@ -12,9 +12,9 @@ import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
-import com.mallang.post.query.data.PostManageDetailData;
-import com.mallang.post.query.data.PostManageSimpleData;
-import com.mallang.post.query.data.PostManageSimpleData.CategoryManageSimpleInfo;
+import com.mallang.post.query.response.PostManageDetailResponse;
+import com.mallang.post.query.response.PostManageSearchResponse;
+import com.mallang.post.query.response.PostManageSearchResponse.CategoryResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -193,7 +193,7 @@ public class PostManageAcceptanceSteps {
                 .extract();
     }
 
-    public static PostManageSimpleData 내_글_관리_전체_조회_데이터(
+    public static PostManageSearchResponse 내_글_관리_전체_조회_데이터(
             Long 포스트_ID,
             Long 카테고리_ID,
             String 카테고리_이름,
@@ -201,17 +201,17 @@ public class PostManageAcceptanceSteps {
             Visibility 공개_범위,
             String 비밀번호
     ) {
-        return PostManageSimpleData.builder()
+        return PostManageSearchResponse.builder()
                 .id(포스트_ID)
-                .categoryInfo(new CategoryManageSimpleInfo(카테고리_ID, 카테고리_이름))
+                .category(new CategoryResponse(카테고리_ID, 카테고리_이름))
                 .title(제목)
                 .visibility(공개_범위)
                 .password(비밀번호)
                 .build();
     }
 
-    public static void 내_관리_글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostManageSimpleData> 예상_데이터) {
-        List<PostManageSimpleData> responses = 응답.as(new TypeRef<>() {
+    public static void 내_관리_글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostManageSearchResponse> 예상_데이터) {
+        List<PostManageSearchResponse> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields("createdDate")
@@ -228,11 +228,11 @@ public class PostManageAcceptanceSteps {
 
     public static void 내_관리_글_단일_조회_응답을_검증한다(
             ExtractableResponse<Response> 응답,
-            PostManageDetailData postManageDetailData
+            PostManageDetailResponse postManageDetailResponse
     ) {
-        PostManageDetailData actual = 응답.as(PostManageDetailData.class);
+        PostManageDetailResponse actual = 응답.as(PostManageDetailResponse.class);
         assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("createdDate")
-                .isEqualTo(postManageDetailData);
+                .isEqualTo(postManageDetailResponse);
     }
 }

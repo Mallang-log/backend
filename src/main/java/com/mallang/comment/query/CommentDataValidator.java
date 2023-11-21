@@ -1,13 +1,9 @@
 package com.mallang.comment.query;
 
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
-
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,23 +12,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommentDataValidator {
 
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
     public void validateAccessPost(Long postId,
                                    @Nullable Long memberId,
                                    @Nullable String postPassword) {
         Post post = postRepository.getById(postId);
-        PostVisibilityPolicy visibilityPolish = post.getVisibilityPolish();
-        Visibility visibility = visibilityPolish.getVisibility();
-        if (visibility == PUBLIC) {
-            return;
+        Member member = null;
+        if (memberId != null) {
+            member = memberRepository.getById(memberId);
         }
-        if (post.getWriter().getId().equals(memberId)) {
-            return;
-        }
-        if (visibility == PROTECTED && (visibilityPolish.getPassword().equals(postPassword))) {
-            return;
-        }
-        throw new NoAuthorityAccessPostException();
+        post.validatePostAccessibility(member, postPassword);
     }
 }

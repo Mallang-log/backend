@@ -1,7 +1,7 @@
 package com.mallang.post.query;
 
-import com.mallang.post.query.dao.StaredPostDataDao;
-import com.mallang.post.query.data.StaredPostData;
+import com.mallang.post.query.dao.StaredPostDao;
+import com.mallang.post.query.response.StaredPostResponse;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostStarQueryService {
 
-    private final StaredPostDataDao staredPostDataDao;
+    private final StaredPostDao staredPostDao;
     private final PostDataProtector postDataProtector;
 
-    public List<StaredPostData> findAllByMemberId(Long targetMemberId, @Nullable Long requesterId) {
-        List<StaredPostData> staredPostData = staredPostDataDao.find(targetMemberId);
+    public List<StaredPostResponse> findAllByMemberId(Long targetMemberId, @Nullable Long requesterId) {
+        List<StaredPostResponse> staredPostData = staredPostDao.find(targetMemberId);
         return postDataProtector.protectStaredIfRequired(requesterId, staredPostData);
     }
 }

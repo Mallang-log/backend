@@ -28,7 +28,7 @@ class CommentDeleteServiceTest {
     private final CommentRepository commentRepository = mock(CommentRepository.class);
     private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
 
-    private final Member postWriter = 회원(1L, "postWriter");
+    private final Member postWriter = 회원(1L, "writer");
     private final Blog blog = Blog.builder()
             .name("mallang")
             .owner(postWriter)

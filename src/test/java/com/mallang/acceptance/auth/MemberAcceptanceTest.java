@@ -7,7 +7,7 @@ import static com.mallang.acceptance.auth.MemberAcceptanceSteps.회원_정보_�
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.회원_정보_조회_요청;
 
 import com.mallang.acceptance.AcceptanceTest;
-import com.mallang.auth.query.data.MemberProfileData;
+import com.mallang.auth.query.response.MemberResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -31,7 +31,7 @@ class MemberAcceptanceTest extends AcceptanceTest {
             var 응답 = 내_정보_조회_요청(말랑_세션_ID);
 
             // then
-            회원_정보_조회_결과를_검증한다(응답, new MemberProfileData(null, "mallang", "mallang"));
+            회원_정보_조회_결과를_검증한다(응답, new MemberResponse(null, "mallang", "mallang"));
         }
 
         @Nested

@@ -10,9 +10,10 @@ import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentReques
 import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
 import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
 import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
-import com.mallang.comment.query.data.AuthenticatedCommentData;
-import com.mallang.comment.query.data.CommentData;
-import com.mallang.comment.query.data.UnAuthenticatedCommentData;
+import com.mallang.comment.query.response.AuthCommentResponse;
+import com.mallang.comment.query.response.CommentResponse;
+import com.mallang.comment.query.response.UnAuthCommentResponse;
+import com.mallang.comment.query.response.UnAuthCommentResponse.WriterResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -252,61 +253,62 @@ public class CommentAcceptanceSteps {
                 .extract();
     }
 
-    public static void 특정_포스트의_댓글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<? extends CommentData> 예상_데이터) {
-        List<CommentData> responses = 응답.as(new TypeRef<>() {
+    public static void 특정_포스트의_댓글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답,
+                                                 List<? extends CommentResponse> 예상_데이터) {
+        List<CommentResponse> responses = 응답.as(new TypeRef<>() {
         });
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields(
                         "createdDate",
-                        "writerData.memberId",
+                        "writer.memberId",
                         "children.createdDate",
-                        "children.writerData.memberId"
+                        "children.writer.memberId"
                 )
                 .isEqualTo(예상_데이터);
     }
 
-    public static AuthenticatedCommentData 인증된_댓글_조회_데이터(
+    public static AuthCommentResponse 인증된_댓글_조회_데이터(
             Long 댓글_ID,
             String 내용,
             boolean 비밀_댓글_여부,
-            AuthenticatedCommentData.WriterData 댓글_작성자_정보,
+            AuthCommentResponse.WriterResponse 댓글_작성자_정보,
             boolean 삭제_여부,
-            CommentData... 대댓글들
+            CommentResponse... 대댓글들
     ) {
-        return AuthenticatedCommentData.builder()
+        return AuthCommentResponse.builder()
                 .id(댓글_ID)
                 .content(내용)
                 .secret(비밀_댓글_여부)
-                .writerData(댓글_작성자_정보)
+                .writer(댓글_작성자_정보)
                 .deleted(삭제_여부)
                 .children(Arrays.asList(대댓글들))
                 .build();
     }
 
-    public static UnAuthenticatedCommentData 비인증_댓글_조회_데이터(
+    public static UnAuthCommentResponse 비인증_댓글_조회_데이터(
             Long 댓글_ID,
             String 내용,
-            UnAuthenticatedCommentData.WriterData 댓글_작성자_정보,
+            WriterResponse 댓글_작성자_정보,
             boolean 삭제_여부,
-            CommentData... 대댓글들
+            CommentResponse... 대댓글들
     ) {
-        return UnAuthenticatedCommentData.builder()
+        return UnAuthCommentResponse.builder()
                 .id(댓글_ID)
                 .content(내용)
-                .writerData(댓글_작성자_정보)
+                .writer(댓글_작성자_정보)
                 .deleted(삭제_여부)
                 .children(Arrays.asList(대댓글들))
                 .build();
     }
 
-    public static AuthenticatedCommentData.WriterData 인증된_댓글_작성자_데이터(
+    public static AuthCommentResponse.WriterResponse 인증된_댓글_작성자_데이터(
             String 닉네임,
             String 프로필_사진_URL
     ) {
-        return new AuthenticatedCommentData.WriterData(null, 닉네임, 프로필_사진_URL);
+        return new AuthCommentResponse.WriterResponse(null, 닉네임, 프로필_사진_URL);
     }
 
-    public static UnAuthenticatedCommentData.WriterData 비인증_댓글_작성자_데이터(String 별명) {
-        return new UnAuthenticatedCommentData.WriterData(별명);
+    public static WriterResponse 비인증_댓글_작성자_데이터(String 별명) {
+        return new WriterResponse(별명);
     }
 }

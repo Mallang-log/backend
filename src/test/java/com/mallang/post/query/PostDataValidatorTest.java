@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
+import com.mallang.post.query.response.PostDetailResponse;
+import com.mallang.post.query.response.PostDetailResponse.WriterResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -29,14 +29,14 @@ class PostDataValidatorTest {
         void 비공개_글인_경우_글의_작성자가_아닌_경우_볼_수_없다() {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new WriterResponse(memberId, "mallang", "url"))
                     .visibility(Visibility.PRIVATE)
                     .build();
 
             // when & then
             assertThatThrownBy(() -> {
-                postDataValidator.validateAccessPost(1000L, postDetailData);
+                postDataValidator.validateAccessPost(1000L, postDetailResponse);
             });
         }
 
@@ -44,14 +44,14 @@ class PostDataValidatorTest {
         void 글의_주인은_비공개_글을_볼_수_있다() {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new WriterResponse(memberId, "mallang", "url"))
                     .visibility(Visibility.PRIVATE)
                     .build();
 
             // when & then
             assertDoesNotThrow(() -> {
-                postDataValidator.validateAccessPost(memberId, postDetailData);
+                postDataValidator.validateAccessPost(memberId, postDetailResponse);
             });
         }
 
@@ -60,14 +60,14 @@ class PostDataValidatorTest {
         void 비공개_글이_아니라면_누구나_볼_수_있다(Visibility visibility) {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new WriterResponse(memberId, "mallang", "url"))
                     .visibility(visibility)
                     .build();
 
             // when & then
             assertDoesNotThrow(() -> {
-                postDataValidator.validateAccessPost(null, postDetailData);
+                postDataValidator.validateAccessPost(null, postDetailResponse);
             });
         }
     }
