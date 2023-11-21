@@ -28,4 +28,12 @@ public class PostStarAcceptanceSteps {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 특정_회원의_즐겨찾기_포스트_목록_조회_요청(String 세션_ID, Long 대상_회원_ID) {
+        return given(세션_ID)
+                .queryParam("memberId", 대상_회원_ID)
+                .get("/post-stars")
+                .then().log().all()
+                .extract();
+    }
 }

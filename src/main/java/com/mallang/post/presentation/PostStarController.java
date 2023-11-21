@@ -4,16 +4,22 @@ import static com.mallang.post.presentation.support.PostPresentationConstant.POS
 import static org.springframework.http.HttpStatus.CREATED;
 
 import com.mallang.auth.presentation.support.Auth;
+import com.mallang.auth.presentation.support.OptionalAuth;
 import com.mallang.post.application.PostStarService;
 import com.mallang.post.presentation.request.CancelPostStarRequest;
 import com.mallang.post.presentation.request.StarPostRequest;
+import com.mallang.post.query.PostStarQueryService;
+import com.mallang.post.query.data.StaredPostData;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostStarController {
 
     private final PostStarService postStarService;
+    private final PostStarQueryService postStarQueryService;
 
     @PostMapping
     public ResponseEntity<Void> click(
@@ -40,5 +47,13 @@ public class PostStarController {
     ) {
         postStarService.cancel(request.toCommand(memberId));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StaredPostData>> findAllByMemberId(
+            @OptionalAuth Long requesterId,
+            @RequestParam("memberId") Long targetMemberId
+    ) {
+        return ResponseEntity.ok(postStarQueryService.findAllByMemberId(targetMemberId, requesterId));
     }
 }
