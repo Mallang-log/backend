@@ -29,5 +29,4 @@ public class PostLikeAcceptanceSteps {
                 .then().log().all()
                 .extract();
     }
-
 }
