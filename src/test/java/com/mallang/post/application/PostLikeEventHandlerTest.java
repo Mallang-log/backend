@@ -1,17 +1,12 @@
 package com.mallang.post.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.command.CancelPostLikeCommand;
 import com.mallang.post.application.command.ClickPostLikeCommand;
-import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
-import com.mallang.post.exception.AlreadyLikedPostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -20,11 +15,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("포스트 좋아요 서비스(PostLikeService) 은(는)")
+@DisplayName("포스트 좋아요 이벤트 핸들러(PostLikeEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ServiceTest
-class PostLikeServiceTest {
+class PostLikeEventHandlerTest {
 
     @Autowired
     private MemberServiceTestHelper memberServiceTestHelper;
@@ -34,9 +29,6 @@ class PostLikeServiceTest {
 
     @Autowired
     private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private PostRepository postRepository;
 
     @Autowired
     private PostLikeService postLikeService;
@@ -56,44 +48,17 @@ class PostLikeServiceTest {
     }
 
     @Nested
-    class 좋아요_시 {
+    class 포스트_삭제_시 {
 
         @Test
-        void 회원이_이미_해당_포스트에_좋아요를_누른_경우_예외() {
-            // given
-            postLikeService.like(new ClickPostLikeCommand(postId, memberId, null));
-            ClickPostLikeCommand command = new ClickPostLikeCommand(postId, memberId, null);
-
-            // when
-            assertThatThrownBy(() -> {
-                postLikeService.like(command);
-            }).isInstanceOf(AlreadyLikedPostException.class);
-
-            // then
-            Post post = postRepository.getById(postId);
-            assertThat(post.getLikeCount()).isEqualTo(1);
-        }
-
-        @Test
-        void 해당_포스트에_좋아요를_누른_적이_없으면_좋아요를_누른다() {
-            // when
+        void 좋아요도_삭제되어야_한다() {
             postLikeService.like(new ClickPostLikeCommand(postId, memberId, null));
 
+            // when
+            postServiceTestHelper.포스트를_삭제한다(memberId, postId);
+
             // then
-            Post post = postRepository.getById(postId);
-            assertThat(post.getLikeCount()).isEqualTo(1);
+            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();
         }
-    }
-
-    @Test
-    void 좋아요_취소_시_좋아요가_제거된다() {
-        postLikeService.like(new ClickPostLikeCommand(postId, memberId, null));
-
-        // when
-        postLikeService.cancel(new CancelPostLikeCommand(postId, memberId, null));
-        // then
-        Post post = postRepository.getById(postId);
-        assertThat(post.getLikeCount()).isZero();
-        assertThat(postLikeRepository.findAll()).isEmpty();
     }
 }
