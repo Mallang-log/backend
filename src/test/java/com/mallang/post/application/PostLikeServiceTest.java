@@ -94,6 +94,7 @@ class PostLikeServiceTest {
         // then
         Post post = postRepository.getById(postId);
         assertThat(post.getLikeCount()).isZero();
+        assertThat(postLikeRepository.findAll()).isEmpty();
     }
 
     @Nested
