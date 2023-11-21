@@ -3,6 +3,7 @@ package com.mallang.post.query;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.data.PostDetailData;
 import com.mallang.post.query.data.PostSimpleData;
+import com.mallang.post.query.data.StaredPostData;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
@@ -42,10 +43,6 @@ public class PostDataProtector {
         );
     }
 
-    private boolean isNotProtected(Visibility visibility) {
-        return visibility != Visibility.PROTECTED;
-    }
-
     public List<PostSimpleData> protectIfRequired(Long memberId, List<PostSimpleData> result) {
         return result.stream()
                 .map(it -> protectIfRequired(memberId, it))
@@ -72,5 +69,44 @@ public class PostDataProtector {
                 postSimpleData.categoryInfo(),
                 postSimpleData.tagSimpleInfos()
         );
+    }
+
+    public List<StaredPostData> protectStaredIfRequired(
+            @Nullable Long requesterId,
+            List<StaredPostData> result
+    ) {
+        return result.stream()
+                .map(it -> protectStaredIfRequired(requesterId, it))
+                .toList();
+    }
+
+    private StaredPostData protectStaredIfRequired(
+            @Nullable Long requesterId,
+            StaredPostData data
+    ) {
+        if (isNotProtected(data.visibility())) {
+            return data;
+        }
+        if (data.writerInfo().writerId().equals(requesterId)) {
+            return data;
+        }
+        return new StaredPostData(
+                data.starId(),
+                data.staredData(),
+                data.postId(),
+                data.title(),
+                "보호되어 있는 글입니다.",
+                "",
+                "",
+                data.visibility(),
+                data.postCreatedDate(),
+                data.writerInfo(),
+                data.categoryInfo(),
+                data.tagSimpleInfos()
+        );
+    }
+
+    private boolean isNotProtected(Visibility visibility) {
+        return visibility != Visibility.PROTECTED;
     }
 }
