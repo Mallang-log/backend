@@ -4,10 +4,13 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
+import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -54,6 +57,22 @@ public class PostServiceTestHelper {
                 공개범위.getPassword(),
                 카테고리_ID,
                 Arrays.asList(태그들)
+        ));
+    }
+
+    public void 포스트_공개여부를_업데이트한다(Long 회원_ID, Long postId, Visibility visibility, String password) {
+        Post post = postRepository.getById(postId);
+        postService.update(new UpdatePostCommand(
+                회원_ID,
+                postId,
+                post.getTitle(),
+                post.getContent(),
+                post.getPostThumbnailImageName(),
+                post.getPostIntro(),
+                visibility,
+                password,
+                null,
+                Collections.emptyList()
         ));
     }
 
