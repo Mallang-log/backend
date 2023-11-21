@@ -3,7 +3,6 @@ package com.mallang.post.query.data;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.Tag;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -73,9 +72,7 @@ public record PostSimpleData(
             List<String> tagContents
     ) {
         private static TagSimpleInfos from(Post post) {
-            return new TagSimpleInfos(post.getTags().stream()
-                    .map(Tag::getContent)
-                    .toList());
+            return new TagSimpleInfos(post.getTags());
         }
     }
 }

@@ -73,7 +73,6 @@ class PostTest {
 
             // when & then
             assertThat(taggedPost.getTags())
-                    .extracting(Tag::getContent)
                     .containsExactly("tag1", "tag2");
         }
 
@@ -177,7 +176,6 @@ class PostTest {
             assertThat(post.getContent()).isEqualTo("수정내용");
             assertThat(post.getVisibilityPolish().getVisibility()).isEqualTo(PRIVATE);
             assertThat(post.getTags())
-                    .extracting(Tag::getContent)
                     .containsExactly("태그2");
         }
     }

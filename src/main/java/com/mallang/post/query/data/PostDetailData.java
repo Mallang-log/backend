@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.Tag;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -81,9 +80,7 @@ public record PostDetailData(
             List<String> tagContents
     ) {
         private static TagDetailInfos from(Post post) {
-            return new TagDetailInfos(post.getTags().stream()
-                    .map(Tag::getContent)
-                    .toList());
+            return new TagDetailInfos(post.getTags());
         }
     }
 }

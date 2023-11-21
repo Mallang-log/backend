@@ -179,4 +179,10 @@ public class Post extends CommonDomainModel {
     public String getPostIntro() {
         return postIntro.getIntro();
     }
+
+    public List<String> getTags() {
+        return tags.stream()
+                .map(Tag::getContent)
+                .toList();
+    }
 }
