@@ -23,7 +23,7 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
     private final PostLikeValidator postLikeValidator;
 
-    public void click(ClickPostLikeCommand command) {
+    public void like(ClickPostLikeCommand command) {
         Post post = postRepository.getById(command.postId());
         Member member = memberRepository.getById(command.memberId());
         PostLike postLike = new PostLike(post, member);

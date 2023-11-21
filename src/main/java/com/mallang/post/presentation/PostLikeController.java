@@ -29,7 +29,7 @@ public class PostLikeController {
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody ClickPostLikeRequest request
     ) {
-        postLikeService.click(request.toCommand(memberId, postPassword));
+        postLikeService.like(request.toCommand(memberId, postPassword));
         return ResponseEntity.status(CREATED).build();
     }
 
