@@ -100,6 +100,7 @@ def excludeCoverage = [
         '**/auth/infrastructure/oauth/*/**',
         '**/auth/presentation/OauthController*',
         '**/common/domain/CommonDomainModel*',
+        '**/common/log/**',
 ] + Qdomains
 
 jacocoTestReport {
@@ -149,6 +150,7 @@ jacocoTestCoverageVerification {
                     '*.auth.infrastructure.oauth.*.*',
                     '*.OauthController',
                     '*.common.domain.CommonDomainModel*',
+                    '*.common.log.*',
             ] + QdomainsInVerification
 
             limit {

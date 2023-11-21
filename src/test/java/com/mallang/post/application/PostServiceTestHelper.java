@@ -3,10 +3,12 @@ package com.mallang.post.application;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.post.application.command.CreatePostCommand;
+import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -53,6 +55,10 @@ public class PostServiceTestHelper {
                 카테고리_ID,
                 Arrays.asList(태그들)
         ));
+    }
+
+    public void 포스트를_삭제한다(Long memberId, Long postId) {
+        postService.delete(new DeletePostCommand(memberId, List.of(postId)));
     }
 
     public Post 포스트를_조회한다(Long 포스트_ID) {
