@@ -1,6 +1,7 @@
 package com.mallang.acceptance.blog;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
+import static com.mallang.acceptance.AcceptanceSteps.given;
 import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
@@ -12,11 +13,13 @@ import static com.mallang.acceptance.blog.AboutAcceptanceSteps.블로그_소개_
 import static com.mallang.acceptance.blog.AboutAcceptanceSteps.블로그_소개_수정_요청;
 import static com.mallang.acceptance.blog.AboutAcceptanceSteps.블로그_소개_작성_요청;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.blog.presentation.request.DeleteAboutRequest;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
+import com.mallang.blog.query.data.AboutResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -143,6 +146,27 @@ public class AboutAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 찾을수_없음);
+        }
+    }
+
+    @Nested
+    class 소개_조회_API {
+
+        @Test
+        void 소개를_조회한다() {
+            // given
+            var 소개_ID = ID를_추출한다(블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청));
+
+            // when
+            var 응답 = given()
+                    .queryParam("blogName", 말랑_블로그_이름)
+                    .get("/abouts")
+                    .then().log().all()
+                    .extract();
+
+            // then
+            AboutResponse aboutResponse = 응답.as(AboutResponse.class);
+            assertThat(aboutResponse.id()).isEqualTo(소개_ID);
         }
     }
 }

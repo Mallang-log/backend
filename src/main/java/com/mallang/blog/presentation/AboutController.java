@@ -5,15 +5,19 @@ import com.mallang.blog.application.AboutService;
 import com.mallang.blog.presentation.request.DeleteAboutRequest;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
+import com.mallang.blog.query.AboutQueryService;
+import com.mallang.blog.query.data.AboutResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AboutController {
 
     private final AboutService aboutService;
+    private final AboutQueryService aboutQueryService;
 
     @PostMapping
     public ResponseEntity<Long> write(
@@ -50,5 +55,12 @@ public class AboutController {
     ) {
         aboutService.delete(request.toCommand(aboutId, memberId));
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<AboutResponse> findByBlogName(
+            @RequestParam(name = "blogName") String blogName
+    ) {
+        return ResponseEntity.ok(aboutQueryService.findByBlogName(blogName));
     }
 }
