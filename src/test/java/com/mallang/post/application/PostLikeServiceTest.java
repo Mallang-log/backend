@@ -10,6 +10,7 @@ import com.mallang.post.application.command.CancelPostLikeCommand;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +40,9 @@ class PostLikeServiceTest {
 
     @Autowired
     private PostLikeService postLikeService;
+
+    @Autowired
+    private PostLikeRepository postLikeRepository;
 
     private Long memberId;
     private String blogName;
@@ -87,9 +91,23 @@ class PostLikeServiceTest {
 
         // when
         postLikeService.cancel(new CancelPostLikeCommand(postId, memberId, null));
-
         // then
         Post post = postRepository.getById(postId);
         assertThat(post.getLikeCount()).isZero();
+    }
+
+    @Nested
+    class 포스트_삭제_시 {
+
+        @Test
+        void 좋아요도_삭제되어야_한다() {
+            postLikeService.click(new ClickPostLikeCommand(postId, memberId, null));
+
+            // when
+            postServiceTestHelper.포스트를_삭제한다(memberId, postId);
+
+            // then
+            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();
+        }
     }
 }
