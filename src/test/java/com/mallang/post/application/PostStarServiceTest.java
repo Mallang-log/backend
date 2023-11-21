@@ -15,7 +15,7 @@ import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.exception.AlreadyLikedPostException;
+import com.mallang.post.exception.AlreadyStarPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -102,7 +102,7 @@ class PostStarServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 postStarService.star(command);
-            }).isInstanceOf(AlreadyLikedPostException.class);
+            }).isInstanceOf(AlreadyStarPostException.class);
         }
 
         @Test

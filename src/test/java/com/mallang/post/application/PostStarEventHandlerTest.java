@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.command.ClickPostLikeCommand;
-import com.mallang.post.domain.like.PostLikeRepository;
+import com.mallang.post.application.command.StarPostCommand;
+import com.mallang.post.domain.star.PostStarRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("포스트 좋아요 이벤트 핸들러(PostLikeEventHandler) 은(는)")
+@DisplayName("포스트 즐겨찾기 이벤트 핸들러(PostStarEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ServiceTest
-class PostLikeEventHandlerTest {
+class PostStarEventHandlerTest {
 
     @Autowired
     private MemberServiceTestHelper memberServiceTestHelper;
@@ -31,10 +31,10 @@ class PostLikeEventHandlerTest {
     private PostServiceTestHelper postServiceTestHelper;
 
     @Autowired
-    private PostLikeService postLikeService;
+    private PostStarService postStarService;
 
     @Autowired
-    private PostLikeRepository postLikeRepository;
+    private PostStarRepository postStarRepository;
 
     private Long memberId;
     private String blogName;
@@ -52,13 +52,13 @@ class PostLikeEventHandlerTest {
 
         @Test
         void 해당_포스트에_눌린_좋아요를_모두_제거한다() {
-            postLikeService.like(new ClickPostLikeCommand(postId, memberId, null));
+            postStarService.star(new StarPostCommand(postId, memberId, null));
 
             // when
             postServiceTestHelper.포스트를_삭제한다(memberId, postId);
 
             // then
-            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();
+            assertThat(postStarRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();
         }
     }
 }
