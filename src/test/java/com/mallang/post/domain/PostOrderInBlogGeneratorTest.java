@@ -2,7 +2,6 @@ package com.mallang.post.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.blog.domain.Blog;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -20,16 +19,16 @@ class PostOrderInBlogGeneratorTest extends ServiceTest {
         Long mallangId = 회원을_저장한다("말랑");
         Long otherId = 회원을_저장한다("몰랑");
         Long thirdId = 회원을_저장한다("third");
-        Blog blog = 블로그_개설(mallangId, "mallang-log");
-        Blog otherBlog = 블로그_개설(otherId, "other-log");
-        Blog thirdBlog = 블로그_개설(thirdId, "third-log");
-        포스트를_저장한다(mallangId, blog.getName(), "글1", "1");
-        포스트를_저장한다(mallangId, blog.getName(), "글2", "1");
-        포스트를_저장한다(otherId, otherBlog.getName(), "글1", "1");
+        Long blogId = 블로그_개설(mallangId, "mallang-log");
+        Long otherBlogId = 블로그_개설(otherId, "other-log");
+        Long thirdBlogId = 블로그_개설(thirdId, "third-log");
+        포스트를_저장한다(mallangId, blogId, "글1", "1");
+        포스트를_저장한다(mallangId, blogId, "글2", "1");
+        포스트를_저장한다(otherId, otherBlogId, "글1", "1");
 
         // when & then
-        assertThat(postOrderInBlogGenerator.generate(blog)).isEqualTo(3);
-        assertThat(postOrderInBlogGenerator.generate(otherBlog)).isEqualTo(2);
-        assertThat(postOrderInBlogGenerator.generate(thirdBlog)).isEqualTo(1);
+        assertThat(postOrderInBlogGenerator.generate(blogRepository.getById(blogId))).isEqualTo(3);
+        assertThat(postOrderInBlogGenerator.generate(blogRepository.getById(otherBlogId))).isEqualTo(2);
+        assertThat(postOrderInBlogGenerator.generate(blogRepository.getById(thirdBlogId))).isEqualTo(1);
     }
 }

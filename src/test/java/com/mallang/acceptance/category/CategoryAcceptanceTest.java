@@ -42,8 +42,8 @@ class CategoryAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private String 말랑_블로그_이름;
-    private String 동훈_블로그_이름;
+    private Long 말랑_블로그_ID;
+    private Long 동훈_블로그_ID;
     private CreateCategoryRequest Spring_카테고리_생성_요청;
 
     @Override
@@ -51,10 +51,10 @@ class CategoryAcceptanceTest extends AcceptanceTest {
     protected void setUp() {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
-        Spring_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "Spring", null);
+        동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghun-log");
+        Spring_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_ID, "Spring", null);
     }
 
     @Nested
@@ -75,7 +75,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             // given
             var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
             var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
-            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "Jpa", 상위_카테고리_ID);
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_ID, "Jpa", 상위_카테고리_ID);
 
             // when
             var 응답 = 카테고리_생성_요청(말랑_세션_ID, JPA_카테고리_생성_요청);
@@ -90,7 +90,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             // given
             var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
             var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
-            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(동훈_블로그_이름, "Jpa", 상위_카테고리_ID);
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(동훈_블로그_ID, "Jpa", 상위_카테고리_ID);
 
             // when
             var 응답 = 카테고리_생성_요청(동훈_세션_ID, JPA_카테고리_생성_요청);
@@ -107,7 +107,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         void 카테고리를_업데이트한다() {
             // given
             var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
-            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "JPA", Spring_카테고리_ID);
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_ID, "JPA", Spring_카테고리_ID);
             var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, JPA_카테고리_생성_요청);
 
             // when
@@ -127,7 +127,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
-            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "JPA", Spring_카테고리_ID);
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_ID, "JPA", Spring_카테고리_ID);
             JPA_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, JPA_카테고리_생성_요청));
         }
 
@@ -135,7 +135,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         void 카테고리는_제거되며_해당_카테고리를_가진_포스트는_카테고리_없음_상태가_된다() {
             // given
             CreatePostRequest 포스트_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "제목",
                     "내용",
                     null,
@@ -181,15 +181,15 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         @Test
         void 특정_블로그의_카테고리를_조회한다() {
             // given
-            카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Node", 없음());
+            카테고리_생성(동훈_세션_ID, 동훈_블로그_ID, "Node", 없음());
             var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, Spring_카테고리_생성_요청);
-            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "JPA", Spring_카테고리_ID));
-            var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "N + 1", JPA_카테고리_ID));
-            var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "Security", Spring_카테고리_ID));
-            var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "OAuth", Security_카테고리_ID));
-            var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "CSRF", Security_카테고리_ID));
-            var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "Algorithm", 없음()));
-            var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "DFS", Algorithm_카테고리_ID));
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "JPA", Spring_카테고리_ID));
+            var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "N + 1", JPA_카테고리_ID));
+            var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "Security", Spring_카테고리_ID));
+            var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "OAuth", Security_카테고리_ID));
+            var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "CSRF", Security_카테고리_ID));
+            var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "Algorithm", 없음()));
+            var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_ID, "DFS", Algorithm_카테고리_ID));
             var 예상_응답 = List.of(
                     new CategoryResponse(Spring_카테고리_ID, "Spring", List.of(
                             new CategoryResponse(JPA_카테고리_ID, "JPA", List.of(
@@ -207,7 +207,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             );
 
             // when
-            var 응답 = 블로그의_카테고리_조회_요청(말랑_블로그_이름);
+            var 응답 = 블로그의_카테고리_조회_요청(말랑_블로그_ID);
 
             // then
             카테고리_조회_응답을_검증한다(응답, 예상_응답);

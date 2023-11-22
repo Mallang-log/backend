@@ -11,7 +11,6 @@ import com.mallang.blog.application.AboutService;
 import com.mallang.blog.application.BlogService;
 import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.domain.AboutRepository;
-import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.domain.CategoryRepository;
@@ -164,31 +163,31 @@ public abstract class ServiceTest {
         return memberRepository.save(member).getId();
     }
 
-    protected Blog 블로그_개설(Long memberId, String name) {
-        return blogRepository.getById(blogService.open(new OpenBlogCommand(memberId, name)));
+    protected Long 블로그_개설(Long memberId, String name) {
+        return blogService.open(new OpenBlogCommand(memberId, name));
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, String... 태그들) {
-        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, PUBLIC, null, null, 태그들);
+    protected Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, PUBLIC, null, null, 태그들);
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
-        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, PUBLIC, null, 카테고리_ID, 태그들);
+    protected Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, PUBLIC, null, 카테고리_ID, 태그들);
     }
 
     protected Long 포스트를_저장한다(Long 회원_ID,
-                             String 블로그_이름,
+                             Long 블로그_ID,
                              String 제목,
                              String 내용,
                              PostVisibilityPolicy 공개범위,
                              String... 태그들
     ) {
-        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, 공개범위.getVisibility(), 공개범위.getPassword(), null, 태그들);
+        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, 공개범위.getVisibility(), 공개범위.getPassword(), null, 태그들);
     }
 
     protected Long 포스트를_저장한다(
             Long 회원_ID,
-            String 블로그_이름,
+            Long 블로그_ID,
             String 제목,
             String 내용,
             Visibility visibility,
@@ -198,7 +197,7 @@ public abstract class ServiceTest {
     ) {
         return postService.create(new CreatePostCommand(
                 회원_ID,
-                블로그_이름,
+                블로그_ID,
                 제목,
                 내용,
                 null,

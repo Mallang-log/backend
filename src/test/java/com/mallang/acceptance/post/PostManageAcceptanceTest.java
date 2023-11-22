@@ -51,8 +51,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private String 말랑_블로그_이름;
-    private String 동훈_블로그_이름;
+    private Long 말랑_블로그_ID;
+    private Long 동훈_블로그_ID;
     private Long Spring_카테고리_ID;
     private Long JPA_카테고리_ID;
     private Long Front_카테고리_ID;
@@ -63,17 +63,17 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
-        동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
-        Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-        JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
-        Front_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Front", 없음());
+        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghun-log");
+        Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_ID, "Spring", 없음());
+        JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_ID, "JPA", Spring_카테고리_ID);
+        Front_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_ID, "Front", 없음());
     }
 
     @Test
     void 포스트를_작성한다() {
         // when
-        CreatePostRequest 요청 = new CreatePostRequest(말랑_블로그_이름,
+        CreatePostRequest 요청 = new CreatePostRequest(말랑_블로그_ID,
                 "첫 포스트",
                 "첫 포스트이네요.",
                 "포스트 썸네일 이름",
@@ -92,7 +92,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
     @Test
     void 포스트를_업데이트한다() {
         // given
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_ID));
 
         // when
         UpdatePostRequest 포스트_업데이트_요청 = new UpdatePostRequest("업데이트 제목",
@@ -130,7 +130,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
     @Test
     void 포스트를_삭제한다() {
         // given
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_ID));
         var 다른_회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("다른회원");
 
         // when
@@ -151,7 +151,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             CreatePostRequest public_spring_포스트_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "Spring 입니다",
                     "첫 포스트이네요.",
                     "포스트 썸네일 이름",
@@ -163,7 +163,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             );
             public_spring_포스트_ID = 포스트_생성(말랑_세션_ID, public_spring_포스트_요청);
 
-            CreatePostRequest protected_jpa_포스트_요청 = new CreatePostRequest(말랑_블로그_이름,
+            CreatePostRequest protected_jpa_포스트_요청 = new CreatePostRequest(말랑_블로그_ID,
                     "Jpa 입니다",
                     "이번에는 이것 저것들에 대해 알아보아요",
                     "썸넬2",
@@ -175,7 +175,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             );
             protected_jpa_포스트_ID = 포스트_생성(말랑_세션_ID, protected_jpa_포스트_요청);
 
-            CreatePostRequest private_front_포스트_요청 = new CreatePostRequest(말랑_블로그_이름,
+            CreatePostRequest private_front_포스트_요청 = new CreatePostRequest(말랑_블로그_ID,
                     "Front 입니다",
                     "잘 알아보았어요!",
                     null,
@@ -191,7 +191,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 내_포스트를_전체_조회한다() {
             // when
-            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 없음(), 없음(), 없음(), 없음());
+            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, 없음(), 없음(), 없음(), 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -227,8 +227,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         void 내_블로그가_아닌_경우_빈_리스트_조회() {
 
             // when
-            var 응답1 = 내_관리_글_목록_조회_요청(동훈_세션_ID, 말랑_블로그_이름, 없음(), 없음(), 없음(), 없음());
-            var 응답2 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 동훈_블로그_이름, 없음(), 없음(), 없음(), 없음());
+            var 응답1 = 내_관리_글_목록_조회_요청(동훈_세션_ID, 말랑_블로그_ID, 없음(), 없음(), 없음(), 없음());
+            var 응답2 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 동훈_블로그_ID, 없음(), 없음(), 없음(), 없음());
 
             // then
             내_관리_글_전체_조회_응답을_검증한다(응답1, emptyList());
@@ -238,8 +238,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 카테고리로_조회_시_하위_카테고리도_모두_포함하여_조회한다() {
             // when
-            var Spring_조회_응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, Spring_카테고리_ID, 없음(), 없음(), 없음());
-            var JPA_조회_응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, JPA_카테고리_ID, 없음(), 없음(), 없음());
+            var Spring_조회_응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, Spring_카테고리_ID, 없음(), 없음(), 없음());
+            var JPA_조회_응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, JPA_카테고리_ID, 없음(), 없음(), 없음());
 
             // then
             내_관리_글_전체_조회_응답을_검증한다(Spring_조회_응답, List.of(
@@ -276,7 +276,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         void 카테고리_필터링_시_카테고리_없음으로도_조회할_수_있다() {
             // given
             var 카테고리_없음_조건 = -1L;
-            CreatePostRequest 카테고리_없는_포스트_생성_요청 = new CreatePostRequest(말랑_블로그_이름,
+            CreatePostRequest 카테고리_없는_포스트_생성_요청 = new CreatePostRequest(말랑_블로그_ID,
                     "카테고리 없는거입니다.",
                     "포스트이네요.",
                     null,
@@ -289,7 +289,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             var 카테고리_없음_포스트_ID = 포스트_생성(말랑_세션_ID, 카테고리_없는_포스트_생성_요청);
 
             // when
-            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 카테고리_없음_조건, 없음(), 없음(), 없음());
+            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, 카테고리_없음_조건, 없음(), 없음(), 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -308,7 +308,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 제목으로_검색할_수_있다() {
             // when
-            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 없음(), "PA", 없음(), 없음());
+            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, 없음(), "PA", 없음(), 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -328,7 +328,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 내용으로_검색할_수_있다() {
             // when
-            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 없음(), 없음(), "알아보", 없음());
+            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, 없음(), 없음(), "알아보", 없음());
 
             // then
             var 예상_데이터 = List.of(
@@ -355,7 +355,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 공개범위로_검색할_수_있다() {
             // when
-            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 없음(), 없음(), 없음(), PRIVATE);
+            var 응답 = 내_관리_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_ID, 없음(), 없음(), 없음(), PRIVATE);
 
             // then
             var 예상_데이터 = List.of(
@@ -380,7 +380,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             CreatePostRequest public_spring_포스트_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트1",
                     "이건 첫번째 포스트이네요.",
                     "썸넬1",

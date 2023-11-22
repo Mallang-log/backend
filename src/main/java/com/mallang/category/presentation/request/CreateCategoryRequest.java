@@ -4,7 +4,7 @@ import com.mallang.category.application.command.CreateCategoryCommand;
 import jakarta.annotation.Nullable;
 
 public record CreateCategoryRequest(
-        String blogName,
+        Long blogId,
         String name,
         @Nullable Long parentCategoryId
 ) {
@@ -12,7 +12,7 @@ public record CreateCategoryRequest(
     public CreateCategoryCommand toCommand(Long memberId) {
         return CreateCategoryCommand.builder()
                 .name(name)
-                .blogName(blogName)
+                .blogId(blogId)
                 .memberId(memberId)
                 .parentCategoryId(parentCategoryId)
                 .build();

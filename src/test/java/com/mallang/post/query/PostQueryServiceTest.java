@@ -34,8 +34,8 @@ class PostQueryServiceTest extends ServiceTest {
 
     private Long mallangId;
     private Long donghunId;
-    private String mallangBlogName;
-    private String donghunBlogName;
+    private Long mallangBlogId;
+    private Long donghunBlogId;
 
     private CreatePostCommand 말랑_public_포스트_작성_요청;
     private CreatePostCommand 말랑_protected_포스트_작성_요청;
@@ -48,11 +48,11 @@ class PostQueryServiceTest extends ServiceTest {
     void setUp() {
         mallangId = 회원을_저장한다("말랑");
         donghunId = 회원을_저장한다("동훈");
-        mallangBlogName = 블로그_개설(mallangId, "mallang-log").getName();
-        donghunBlogName = 블로그_개설(donghunId, "donghun-log").getName();
+        mallangBlogId = 블로그_개설(mallangId, "mallang-log");
+        donghunBlogId = 블로그_개설(donghunId, "donghun-log");
         말랑_public_포스트_작성_요청 = new CreatePostCommand(
                 mallangId,
-                mallangBlogName,
+                mallangBlogId,
                 "mallang-public",
                 "mallang-public",
                 null,
@@ -64,7 +64,7 @@ class PostQueryServiceTest extends ServiceTest {
         );
         말랑_protected_포스트_작성_요청 = new CreatePostCommand(
                 mallangId,
-                mallangBlogName,
+                mallangBlogId,
                 "mallang-protected",
                 "mallang-protected",
                 null,
@@ -76,7 +76,7 @@ class PostQueryServiceTest extends ServiceTest {
         );
         말랑_private_포스트_작성_요청 = new CreatePostCommand(
                 mallangId,
-                mallangBlogName,
+                mallangBlogId,
                 "mallang-private",
                 "mallang-private",
                 null,
@@ -88,7 +88,7 @@ class PostQueryServiceTest extends ServiceTest {
         );
         동훈_public_포스트_작성_요청 = new CreatePostCommand(
                 donghunId,
-                donghunBlogName,
+                donghunBlogId,
                 "donghun-public",
                 "donghun-public",
                 null,
@@ -100,7 +100,7 @@ class PostQueryServiceTest extends ServiceTest {
         );
         동훈_protected_포스트_작성_요청 = new CreatePostCommand(
                 donghunId,
-                donghunBlogName,
+                donghunBlogId,
                 "donghun-protected",
                 "donghun-protected",
                 null,
@@ -112,7 +112,7 @@ class PostQueryServiceTest extends ServiceTest {
         );
         동훈_private_포스트_작성_요청 = new CreatePostCommand(
                 donghunId,
-                donghunBlogName,
+                donghunBlogId,
                 "donghun-private",
                 "donghun-private",
                 null,
@@ -289,13 +289,13 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_카테고리의_포스트만_조회한다() {
             // given
-            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
-            Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "노드", null));
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
-            포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", 노드);
+            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogId, "스프링", null));
+            Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogId, "노드", null));
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트1", "content1", 스프링);
+            포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "content2", 노드);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
-                    .blogName(mallangBlogName)
+                    .blogId(mallangBlogId)
                     .build();
 
             // when
@@ -320,13 +320,13 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 최상위_카테고리로_조회_시_하위_카테고리도_포함되면_조회한다() {
             // given
-            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
-            Long JPA = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "JPA", 스프링));
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA);
+            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogId, "스프링", null));
+            Long JPA = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogId, "JPA", 스프링));
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트1", "content1", 스프링);
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "content2", JPA);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
-                    .blogName(mallangBlogName)
+                    .blogId(mallangBlogId)
                     .build();
 
             // when
@@ -358,8 +358,8 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_태그의_포스트만_조회한다() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", "tag1");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트1", "content1", "tag1");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "content2", "tag1",
                     "tag2");
             PostSearchCond cond = PostSearchCond.builder()
                     .tag("tag2")
@@ -388,9 +388,9 @@ class PostQueryServiceTest extends ServiceTest {
         void 특정_작성자의_포스트만_조회한다() {
             // given
             Long findWriterId = 회원을_저장한다("말랑말랑");
-            String otherBlogName = 블로그_개설(findWriterId, "other").getName();
-            Long post1Id = 포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
+            Long otherBlogId = 블로그_개설(findWriterId, "other");
+            Long post1Id = 포스트를_저장한다(findWriterId, otherBlogId, "포스트1", "content1", "tag1");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "content2", "tag1",
                     "tag2");
             PostSearchCond cond = PostSearchCond.builder()
                     .writerId(findWriterId)
@@ -418,9 +418,9 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 제목으로_조회() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트1", "안녕");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "안녕하세요");
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogId, "안녕", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .title("안녕")
                     .build();
@@ -446,9 +446,9 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 내용으로_조회() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트1", "안녕");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "안녕하세요");
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogId, "안녕", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .content("안녕")
                     .build();
@@ -481,9 +481,9 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 내용_and_제목으로_조회() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트1", "안녕");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogId, "포스트2", "안녕하세요");
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogId, "안녕히", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .titleOrContent("안녕")
                     .build();
