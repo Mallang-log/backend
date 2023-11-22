@@ -1,7 +1,7 @@
 package com.mallang.category.query;
 
-import com.mallang.category.query.dao.CategoryDataDao;
-import com.mallang.category.query.data.CategoryData;
+import com.mallang.category.query.dao.CategoryDao;
+import com.mallang.category.query.response.CategoryResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CategoryQueryService {
 
-    private final CategoryDataDao categoryDataDao;
+    private final CategoryDao categoryDao;
 
-    public List<CategoryData> findAllByBlogName(String blogName) {
-        return categoryDataDao.findAllByBlogName(blogName);
+    public List<CategoryResponse> findAllByBlogName(String blogName) {
+        return categoryDao.findAllByBlogName(blogName);
     }
 }

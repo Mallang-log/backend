@@ -1,7 +1,7 @@
 package com.mallang.blog.query;
 
-import com.mallang.blog.query.dao.AboutResponseDao;
-import com.mallang.blog.query.data.AboutResponse;
+import com.mallang.blog.query.dao.AboutDao;
+import com.mallang.blog.query.response.AboutResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AboutQueryService {
 
-    private final AboutResponseDao aboutResponseDao;
+    private final AboutDao aboutDao;
 
     public AboutResponse findByBlogName(String blogName) {
-        return aboutResponseDao.find(blogName);
+        return aboutDao.find(blogName);
     }
 }

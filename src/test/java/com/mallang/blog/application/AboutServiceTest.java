@@ -7,14 +7,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.application.command.DeleteAboutCommand;
 import com.mallang.blog.application.command.UpdateAboutCommand;
 import com.mallang.blog.application.command.WriteAboutCommand;
 import com.mallang.blog.domain.About;
-import com.mallang.blog.domain.AboutRepository;
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.exception.AlreadyExistAboutException;
 import com.mallang.blog.exception.NotFoundAboutException;
 import com.mallang.blog.exception.NotFoundBlogException;
@@ -25,25 +22,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("소개 서비스(AboutService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class AboutServiceTest {
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private BlogRepository blogRepository;
-
-    @Autowired
-    private AboutRepository aboutRepository;
-
-    @Autowired
-    private AboutService aboutService;
+class AboutServiceTest extends ServiceTest {
 
     private Member member;
     private Member other;

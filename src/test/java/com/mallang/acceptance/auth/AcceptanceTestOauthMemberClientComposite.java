@@ -25,6 +25,7 @@ public class AcceptanceTestOauthMemberClientComposite extends OauthMemberClientC
                 .oauthId(new OauthId(authCode, oauthServerType))
                 .nickname(authCode)
                 .profileImageUrl(authCode)
+                .profileImageUrl(authCode)
                 .build();
     }
 }

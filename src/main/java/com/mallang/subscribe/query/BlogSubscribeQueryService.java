@@ -1,9 +1,9 @@
 package com.mallang.subscribe.query;
 
-import com.mallang.subscribe.query.dao.SubscriberDataDao;
-import com.mallang.subscribe.query.dao.SubscribingBlogDataDao;
-import com.mallang.subscribe.query.data.SubscriberData;
-import com.mallang.subscribe.query.data.SubscribingBlogData;
+import com.mallang.subscribe.query.dao.SubscriberDao;
+import com.mallang.subscribe.query.dao.SubscribingBlogDao;
+import com.mallang.subscribe.query.response.SubscriberResponse;
+import com.mallang.subscribe.query.response.SubscribingBlogResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BlogSubscribeQueryService {
 
-    private final SubscriberDataDao subscriberDataDao;
-    private final SubscribingBlogDataDao subscribingBlogDataDao;
+    private final SubscriberDao subscriberDao;
+    private final SubscribingBlogDao subscribingBlogDataDao;
 
-    public List<SubscriberData> findSubscribers(String blogName) {
-        return subscriberDataDao.findSubscribers(blogName);
+    public List<SubscriberResponse> findSubscribers(String blogName) {
+        return subscriberDao.findSubscribers(blogName);
     }
 
-    public List<SubscribingBlogData> findSubscribingBlogs(Long memberId) {
+    public List<SubscribingBlogResponse> findSubscribingBlogs(Long memberId) {
         return subscribingBlogDataDao.findSubscribingBlogs(memberId);
     }
 }

@@ -1,7 +1,7 @@
 package com.mallang.comment.application.command;
 
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
@@ -9,14 +9,14 @@ import lombok.Builder;
 @Builder
 public record WriteUnAuthenticatedCommentCommand(
         Long postId,
-        @Nullable String postPassword,
         String content,
         String nickname,
         String password,
-        @Nullable Long parentCommentId
+        @Nullable Long parentCommentId,
+        @Nullable String postPassword
 ) {
-    public UnAuthenticatedComment toCommand(Post post, Comment parent) {
-        return UnAuthenticatedComment.builder()
+    public UnAuthComment toCommand(Post post, Comment parent) {
+        return UnAuthComment.builder()
                 .post(post)
                 .content(content)
                 .nickname(nickname)

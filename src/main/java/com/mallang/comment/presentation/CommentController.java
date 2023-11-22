@@ -4,16 +4,16 @@ import static com.mallang.post.presentation.support.PostPresentationConstant.POS
 
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.auth.presentation.support.OptionalAuth;
-import com.mallang.comment.application.AuthenticatedCommentService;
-import com.mallang.comment.application.UnAuthenticatedCommentService;
-import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
-import com.mallang.comment.presentation.request.DeleteUnAuthenticatedCommentRequest;
-import com.mallang.comment.presentation.request.UpdateAuthenticatedCommentRequest;
-import com.mallang.comment.presentation.request.UpdateUnAuthenticatedCommentRequest;
-import com.mallang.comment.presentation.request.WriteAnonymousCommentRequest;
-import com.mallang.comment.presentation.request.WriteAuthenticatedCommentRequest;
+import com.mallang.comment.application.AuthCommentService;
+import com.mallang.comment.application.UnAuthCommentService;
+import com.mallang.comment.application.command.DeleteAuthCommentCommand;
+import com.mallang.comment.presentation.request.DeleteUnAuthCommentRequest;
+import com.mallang.comment.presentation.request.UpdateAuthCommentRequest;
+import com.mallang.comment.presentation.request.UpdateUnAuthCommentRequest;
+import com.mallang.comment.presentation.request.WriteAuthCommentRequest;
+import com.mallang.comment.presentation.request.WriteUnAuthCommentRequest;
 import com.mallang.comment.query.CommentQueryService;
-import com.mallang.comment.query.data.CommentData;
+import com.mallang.comment.query.response.CommentResponse;
 import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
@@ -35,26 +35,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommentController {
 
-    private final AuthenticatedCommentService authenticatedCommentService;
-    private final UnAuthenticatedCommentService unAuthenticatedCommentService;
+    private final AuthCommentService authCommentService;
+    private final UnAuthCommentService unAuthCommentService;
     private final CommentQueryService commentQueryService;
 
     @PostMapping
     public ResponseEntity<Void> write(
             @Auth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
-            @RequestBody WriteAuthenticatedCommentRequest request
+            @RequestBody WriteAuthCommentRequest request
     ) {
-        Long id = authenticatedCommentService.write(request.toCommand(memberId, postPassword));
+        Long id = authCommentService.write(request.toCommand(memberId, postPassword));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
     @PostMapping(params = "unauthenticated=true")
     public ResponseEntity<Void> unAuthenticatedWrite(
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
-            @RequestBody WriteAnonymousCommentRequest request
+            @RequestBody WriteUnAuthCommentRequest request
     ) {
-        Long id = unAuthenticatedCommentService.write(request.toCommand(postPassword));
+        Long id = unAuthCommentService.write(request.toCommand(postPassword));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
@@ -63,9 +63,9 @@ public class CommentController {
             @PathVariable("id") Long commentId,
             @Auth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
-            @RequestBody UpdateAuthenticatedCommentRequest request
+            @RequestBody UpdateAuthCommentRequest request
     ) {
-        authenticatedCommentService.update(request.toCommand(commentId, memberId, postPassword));
+        authCommentService.update(request.toCommand(commentId, memberId, postPassword));
         return ResponseEntity.ok().build();
     }
 
@@ -73,9 +73,9 @@ public class CommentController {
     public ResponseEntity<Void> update(
             @PathVariable("id") Long commentId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
-            @RequestBody UpdateUnAuthenticatedCommentRequest request
+            @RequestBody UpdateUnAuthCommentRequest request
     ) {
-        unAuthenticatedCommentService.update(request.toCommand(commentId, postPassword));
+        unAuthCommentService.update(request.toCommand(commentId, postPassword));
         return ResponseEntity.ok().build();
     }
 
@@ -85,12 +85,12 @@ public class CommentController {
             @Auth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword
     ) {
-        DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
+        DeleteAuthCommentCommand command = DeleteAuthCommentCommand.builder()
                 .postPassword(postPassword)
                 .memberId(memberId)
                 .commentId(commentId)
                 .build();
-        authenticatedCommentService.delete(command);
+        authCommentService.delete(command);
         return ResponseEntity.ok().build();
     }
 
@@ -99,19 +99,19 @@ public class CommentController {
             @PathVariable("id") Long commentId,
             @OptionalAuth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
-            @RequestBody DeleteUnAuthenticatedCommentRequest request
+            @RequestBody DeleteUnAuthCommentRequest request
     ) {
-        unAuthenticatedCommentService.delete(request.toCommand(memberId, commentId, postPassword));
+        unAuthCommentService.delete(request.toCommand(memberId, commentId, postPassword));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentData>> findAll(
+    public ResponseEntity<List<CommentResponse>> findAll(
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @Nullable @OptionalAuth Long memberId,
             @RequestParam(value = "postId", required = true) Long postId
     ) {
-        List<CommentData> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
+        List<CommentResponse> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
         return ResponseEntity.ok(result);
     }
 }
