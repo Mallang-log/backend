@@ -83,10 +83,9 @@ public class PostSearchDao {
 
     private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content,
                                                      @Nullable String titleOrContent) {
-        if (!ObjectUtils.isEmpty(title) || !ObjectUtils.isEmpty(content)) {
-            if (!ObjectUtils.isEmpty(titleOrContent)) {
-                throw new BadPostSearchCondException("제목이나 내용을 검색하는 경우 제목 + 내용으로는 검색할 수 없습니다");
-            }
+        if ((!ObjectUtils.isEmpty(title) || !ObjectUtils.isEmpty(content))
+                && (!ObjectUtils.isEmpty(titleOrContent))) {
+            throw new BadPostSearchCondException("제목이나 내용을 검색하는 경우 제목 + 내용으로는 검색할 수 없습니다");
         }
         if (!ObjectUtils.isEmpty(title)) {
             return post.title.containsIgnoreCase(title);

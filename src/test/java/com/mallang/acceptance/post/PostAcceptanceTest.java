@@ -172,7 +172,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             assertThat(postDetailResponse.id()).isEqualTo(보호_포스트_ID);
             assertThat(postDetailResponse.isProtected()).isFalse();
             assertThat(postDetailResponse.content()).isEqualTo("[보호] 내용");
-            assertThat(postDetailResponse.password()).isEqualTo(null);
+            assertThat(postDetailResponse.password()).isNull();
         }
 
         @Test
