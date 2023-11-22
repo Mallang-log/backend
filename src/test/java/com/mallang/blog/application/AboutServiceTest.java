@@ -45,7 +45,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 첫_작성이라면_작성된다() {
             // given
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
+            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getId(), "안녕하세요");
 
             // when & then
             assertDoesNotThrow(() -> {
@@ -56,7 +56,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 블로그에_이미_작성된_소개가_있으면_예외() {
             // given
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
+            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getId(), "안녕하세요");
             aboutService.write(command);
 
             // when & then
@@ -68,7 +68,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 타인의_블로그에_작서하려는_경우_예외() {
             // given
-            WriteAboutCommand command = new WriteAboutCommand(other.getId(), blog.getName(), "안녕하세요");
+            WriteAboutCommand command = new WriteAboutCommand(other.getId(), blog.getId(), "안녕하세요");
 
             // when & then
             assertThatThrownBy(() ->
@@ -84,14 +84,14 @@ class AboutServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
+            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getId(), "안녕하세요");
             aboutId = aboutService.write(command);
         }
 
         @Test
         void 자신의_소개라면_수정된다() {
             // given
-            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, member.getId(), blog.getName(), "수정");
+            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, member.getId(), blog.getId(), "수정");
 
             // when
             aboutService.update(command);
@@ -104,7 +104,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 자신의_소개가_아니면_예외() {
             // given
-            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, other.getId(), blog.getName(), "수정");
+            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, other.getId(), blog.getId(), "수정");
 
             // when & then
             assertThatThrownBy(() -> {
@@ -120,14 +120,14 @@ class AboutServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
+            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getId(), "안녕하세요");
             aboutId = aboutService.write(command);
         }
 
         @Test
         void 자신의_소개라면_삭제된다() {
             // given
-            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, member.getId(), blog.getName());
+            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, member.getId(), blog.getId());
 
             // when
             aboutService.delete(command);
@@ -139,7 +139,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 자신의_소개가_아니면_예외() {
             // given
-            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, other.getId(), blog.getName());
+            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, other.getId(), blog.getId());
 
             // when & then
             assertThatThrownBy(() -> {

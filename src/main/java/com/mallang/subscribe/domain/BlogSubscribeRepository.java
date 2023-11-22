@@ -5,8 +5,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.subscribe.exception.NotFoundBlogSubscribeException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface BlogSubscribeRepository extends JpaRepository<BlogSubscribe, Long> {
 
@@ -15,11 +13,7 @@ public interface BlogSubscribeRepository extends JpaRepository<BlogSubscribe, Lo
         return findById(id).orElseThrow(() -> new NotFoundBlogSubscribeException(id));
     }
 
-    @Query("SELECT bs FROM BlogSubscribe bs WHERE bs.subscriber.id = :subscriberId AND bs.blog.name.value = :blogName")
-    Optional<BlogSubscribe> findBySubscriberIdAndBlogName(
-            @Param("subscriberId") Long subscriberId,
-            @Param("blogName") String blogName
-    );
+    Optional<BlogSubscribe> findBySubscriberIdAndBlogId(Long subscriberId, Long blogId);
 
     boolean existsBySubscriberAndBlog(Member subscriber, Blog blog);
 }

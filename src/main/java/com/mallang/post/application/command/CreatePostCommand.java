@@ -14,7 +14,7 @@ import lombok.Builder;
 @Builder
 public record CreatePostCommand(
         Long memberId,
-        String blogName,
+        Long blogId,
         String title,
         String content,
         @Nullable String postThumbnailImageName,

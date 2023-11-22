@@ -17,10 +17,10 @@ public class BlogSubscribeAcceptanceSteps {
 
     public static ExtractableResponse<Response> 블로그_구독_요청(
             String 세션_ID,
-            String 블로그_이름
+            Long 블로그_ID
     ) {
         return given(세션_ID)
-                .body(new BlogSubscribeRequest(블로그_이름))
+                .body(new BlogSubscribeRequest(블로그_ID))
                 .post("/blog-subscribes")
                 .then().log().all()
                 .extract();
@@ -28,10 +28,10 @@ public class BlogSubscribeAcceptanceSteps {
 
     public static ExtractableResponse<Response> 블로그_구독_취소_요청(
             String 세션_ID,
-            String 블로그_이름
+            Long 블로그_ID
     ) {
         return given(세션_ID)
-                .body(new BlogUnsubscribeRequest(블로그_이름))
+                .body(new BlogUnsubscribeRequest(블로그_ID))
                 .delete("/blog-subscribes")
                 .then().log().all()
                 .extract();
@@ -56,9 +56,9 @@ public class BlogSubscribeAcceptanceSteps {
                 .containsExactly(블로그_이름들);
     }
 
-    public static ExtractableResponse<Response> 특정_블로그를_구독중인_구독자_조회_요청(String 블로그_이름) {
+    public static ExtractableResponse<Response> 특정_블로그를_구독중인_구독자_조회_요청(Long 블로그_ID) {
         return given()
-                .param("blogName", 블로그_이름)
+                .param("blogId", 블로그_ID)
                 .get("/blog-subscribes/subscribers")
                 .then().log().all()
                 .extract();

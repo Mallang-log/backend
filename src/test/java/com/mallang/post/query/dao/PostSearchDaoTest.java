@@ -5,7 +5,6 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.blog.domain.Blog;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
@@ -29,25 +28,25 @@ class PostSearchDaoTest extends ServiceTest {
     void setUp() {
         mallangId = 회원을_저장한다("말랑");
         otherId = 회원을_저장한다("other");
-        Blog blog = 블로그_개설(mallangId, "mallang-log");
-        Blog otherBlog = 블로그_개설(otherId, "other-log");
-        포스트를_저장한다(mallangId, blog.getName(),
+        Long blogId = 블로그_개설(mallangId, "mallang-log");
+        Long otherBlogId = 블로그_개설(otherId, "other-log");
+        포스트를_저장한다(mallangId, blogId,
                 "mallang-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
-        포스트를_저장한다(mallangId, blog.getName(),
+        포스트를_저장한다(mallangId, blogId,
                 "mallang-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        포스트를_저장한다(mallangId, blog.getName(),
+        포스트를_저장한다(mallangId, blogId,
                 "mallang-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
 
-        포스트를_저장한다(otherId, otherBlog.getName(),
+        포스트를_저장한다(otherId, otherBlogId,
                 "ohter-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
-        포스트를_저장한다(otherId, otherBlog.getName(),
+        포스트를_저장한다(otherId, otherBlogId,
                 "ohter-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        포스트를_저장한다(otherId, otherBlog.getName(),
+        포스트를_저장한다(otherId, otherBlogId,
                 "ohter-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
     }

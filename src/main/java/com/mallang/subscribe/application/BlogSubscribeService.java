@@ -26,7 +26,7 @@ public class BlogSubscribeService {
 
     public Long subscribe(BlogSubscribeCommand command) {
         Member member = memberRepository.getById(command.subscriberId());
-        Blog blog = blogRepository.getByName(command.blogName());
+        Blog blog = blogRepository.getById(command.blogId());
         BlogSubscribe blogSubscribe = new BlogSubscribe(member, blog);
         blogSubscribe.subscribe(blogSubscribeValidator);
         return blogSubscribeRepository.save(blogSubscribe).getId();
@@ -34,7 +34,7 @@ public class BlogSubscribeService {
 
     public void unsubscribe(BlogUnsubscribeCommand command) {
         BlogSubscribe subscribe = blogSubscribeRepository
-                .findBySubscriberIdAndBlogName(command.subscriberId(), command.blogName())
+                .findBySubscriberIdAndBlogId(command.subscriberId(), command.blogId())
                 .orElseThrow(UnsubscribeUnsubscribedBlogException::new);
         blogSubscribeRepository.delete(subscribe);
     }
