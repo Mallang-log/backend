@@ -1,5 +1,6 @@
 package com.mallang.post.query.dao;
 
+import static com.mallang.category.domain.QCategory.category;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
@@ -32,6 +33,7 @@ public class PostManageSearchDao {
 
     public Page<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond, Pageable pageable) {
         JPAQuery<Long> countQuery = query.select(post.countDistinct())
+                .from(post)
                 .where(
                         memberAndBlogEq(memberId, cond.blogName()),
                         hasCategory(cond.categoryId()),
@@ -41,6 +43,7 @@ public class PostManageSearchDao {
                 );
         List<Post> result = query.selectFrom(post)
                 .distinct()
+                .leftJoin(post.category, category).fetchJoin()
                 .where(
                         memberAndBlogEq(memberId, cond.blogName()),
                         hasCategory(cond.categoryId()),

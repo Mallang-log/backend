@@ -28,11 +28,12 @@ class SubscribingBlogDaoTest extends ServiceTest {
         blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 다른_블로그_이름));
 
         // when
-        List<SubscribingBlogResponse> result = subscribingBlogDao.findSubscribingBlogs(구독자1_ID);
+        List<SubscribingBlogResponse> result = subscribingBlogDao.findSubscribingBlogs(구독자1_ID, pageable)
+                .getContent();
 
         // then
-        assertThat(result).hasSize(2);
         assertThat(result)
+                .hasSize(2)
                 .extracting(SubscribingBlogResponse::blogName)
                 .containsExactly("other-blog", "owner-blog");
     }

@@ -1,6 +1,7 @@
 package com.mallang.subscribe.presentation;
 
 import com.mallang.auth.presentation.support.Auth;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.subscribe.application.BlogSubscribeService;
 import com.mallang.subscribe.presentation.request.BlogSubscribeRequest;
 import com.mallang.subscribe.presentation.request.BlogUnsubscribeRequest;
@@ -8,8 +9,9 @@ import com.mallang.subscribe.query.BlogSubscribeQueryService;
 import com.mallang.subscribe.query.response.SubscriberResponse;
 import com.mallang.subscribe.query.response.SubscribingBlogResponse;
 import java.net.URI;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,16 +48,18 @@ public class BlogSubscribeController {
     }
 
     @GetMapping("/subscribers")
-    public List<SubscriberResponse> findSubscribers(
-            @RequestParam(name = "blogName", required = true) String blogName
+    public ResponseEntity<PageResponse<SubscriberResponse>> findSubscribers(
+            @RequestParam(name = "blogName", required = true) String blogName,
+            @PageableDefault(size = 10) Pageable pageable
     ) {
-        return blogSubscribeQueryService.findSubscribers(blogName);
+        return ResponseEntity.ok(PageResponse.from(blogSubscribeQueryService.findSubscribers(blogName, pageable)));
     }
 
     @GetMapping("/subscribing-blogs")
-    public List<SubscribingBlogResponse> findSubscribingBlogs(
-            @RequestParam(name = "memberId", required = true) Long memberId
+    public ResponseEntity<PageResponse<SubscribingBlogResponse>> findSubscribingBlogs(
+            @RequestParam(name = "memberId", required = true) Long memberId,
+            @PageableDefault(size = 10) Pageable pageable
     ) {
-        return blogSubscribeQueryService.findSubscribingBlogs(memberId);
+        return ResponseEntity.ok(PageResponse.from(blogSubscribeQueryService.findSubscribingBlogs(memberId, pageable)));
     }
 }

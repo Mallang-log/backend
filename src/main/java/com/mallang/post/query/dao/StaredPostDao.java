@@ -27,8 +27,7 @@ public class StaredPostDao {
 
     public Page<StaredPostResponse> find(Long memberId, Pageable pageable) {
         JPAQuery<Long> countQuery = query.select(postStar.countDistinct())
-                .join(postStar.post, post).fetchJoin()
-                .join(postStar.member, member).fetchJoin()
+                .from(postStar)
                 .where(
                         filterPrivatePost(memberId),
                         member.id.eq(memberId)

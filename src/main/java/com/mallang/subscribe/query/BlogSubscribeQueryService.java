@@ -4,8 +4,9 @@ import com.mallang.subscribe.query.dao.SubscriberDao;
 import com.mallang.subscribe.query.dao.SubscribingBlogDao;
 import com.mallang.subscribe.query.response.SubscriberResponse;
 import com.mallang.subscribe.query.response.SubscribingBlogResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,11 +18,11 @@ public class BlogSubscribeQueryService {
     private final SubscriberDao subscriberDao;
     private final SubscribingBlogDao subscribingBlogDataDao;
 
-    public List<SubscriberResponse> findSubscribers(String blogName) {
-        return subscriberDao.findSubscribers(blogName);
+    public Page<SubscriberResponse> findSubscribers(String blogName, Pageable pageable) {
+        return subscriberDao.findSubscribers(blogName, pageable);
     }
 
-    public List<SubscribingBlogResponse> findSubscribingBlogs(Long memberId) {
-        return subscribingBlogDataDao.findSubscribingBlogs(memberId);
+    public Page<SubscribingBlogResponse> findSubscribingBlogs(Long memberId, Pageable pageable) {
+        return subscribingBlogDataDao.findSubscribingBlogs(memberId, pageable);
     }
 }

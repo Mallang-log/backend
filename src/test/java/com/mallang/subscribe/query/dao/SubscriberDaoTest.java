@@ -33,7 +33,8 @@ class SubscriberDaoTest extends ServiceTest {
         blogSubscribeService.subscribe(new BlogSubscribeCommand(다른블로그구독자1_ID, 다른_블로그_이름));
 
         // when
-        List<SubscriberResponse> result = subscriberDao.findSubscribers(주인_블로그_이름);
+        List<SubscriberResponse> result = subscriberDao.findSubscribers(주인_블로그_이름, pageable)
+                .getContent();
 
         // then
         assertThat(result).hasSize(3);

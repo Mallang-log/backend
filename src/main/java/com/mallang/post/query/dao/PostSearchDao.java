@@ -1,5 +1,7 @@
 package com.mallang.post.query.dao;
 
+import static com.mallang.auth.domain.QMember.member;
+import static com.mallang.category.domain.QCategory.category;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
@@ -32,7 +34,7 @@ public class PostSearchDao {
 
     public Page<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond, Pageable pageable) {
         JPAQuery<Long> countQuery = query.select(post.countDistinct())
-                .leftJoin(post.tags, tag)
+                .from(post)
                 .where(
                         filterPrivatePost(memberId),
                         blogEq(cond.blogName()),
@@ -44,6 +46,8 @@ public class PostSearchDao {
         List<Post> result = query.selectFrom(post)
                 .distinct()
                 .leftJoin(post.tags, tag)
+                .join(post.writer, member).fetchJoin()
+                .leftJoin(post.category, category).fetchJoin()
                 .where(
                         filterPrivatePost(memberId),
                         blogEq(cond.blogName()),
