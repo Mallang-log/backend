@@ -1,6 +1,7 @@
 package com.mallang.post.presentation;
 
 import com.mallang.auth.presentation.support.Auth;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.application.PostService;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
@@ -10,8 +11,9 @@ import com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import java.net.URI;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,10 +70,11 @@ public class PostManageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostManageSearchResponse>> search(
+    public ResponseEntity<PageResponse<PostManageSearchResponse>> search(
             @Auth Long memberId,
-            @ModelAttribute PostManageSearchCond cond
+            @ModelAttribute PostManageSearchCond cond,
+            @PageableDefault(size = 15) Pageable pageable
     ) {
-        return ResponseEntity.ok(postManageQueryService.search(memberId, cond));
+        return ResponseEntity.ok(PageResponse.from(postManageQueryService.search(memberId, cond, pageable)));
     }
 }

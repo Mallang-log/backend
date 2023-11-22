@@ -8,6 +8,7 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
@@ -123,9 +124,10 @@ public class PostManageAcceptanceSteps {
     }
 
     public static void 내_관리_글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostManageSearchResponse> 예상_데이터) {
-        List<PostManageSearchResponse> responses = 응답.as(new TypeRef<>() {
+        PageResponse<PostManageSearchResponse> responses = 응답.as(new TypeRef<>() {
         });
-        assertThat(responses).usingRecursiveComparison()
+        assertThat(responses.content())
+                .usingRecursiveComparison()
                 .ignoringFields("createdDate")
                 .isEqualTo(예상_데이터);
     }

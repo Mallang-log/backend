@@ -4,15 +4,20 @@ import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
 import com.mallang.category.query.support.CategoryQuerySupport;
+import com.mallang.post.domain.Post;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -25,8 +30,17 @@ public class PostManageSearchDao {
     private final JPAQueryFactory query;
     private final CategoryQuerySupport categoryQuerySupport;
 
-    public List<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond) {
-        return query.selectFrom(post)
+    public Page<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond, Pageable pageable) {
+        JPAQuery<Long> countQuery = query.select(post.countDistinct())
+                .where(
+                        memberAndBlogEq(memberId, cond.blogName()),
+                        hasCategory(cond.categoryId()),
+                        titleContains(cond.title()),
+                        contentContains(cond.content()),
+                        visibilityEq(cond.visibility())
+                );
+        List<Post> result = query.selectFrom(post)
+                .distinct()
                 .where(
                         memberAndBlogEq(memberId, cond.blogName()),
                         hasCategory(cond.categoryId()),
@@ -35,10 +49,11 @@ public class PostManageSearchDao {
                         visibilityEq(cond.visibility())
                 )
                 .orderBy(post.id.desc())
-                .fetch()
-                .stream()
-                .map(PostManageSearchResponse::from)
-                .toList();
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne)
+                .map(PostManageSearchResponse::from);
     }
 
     private BooleanExpression memberAndBlogEq(Long memberId, String blogName) {

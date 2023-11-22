@@ -53,6 +53,8 @@ public class PostSearchDao {
                         titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
                 )
                 .orderBy(post.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
         return getPage(result, pageable, countQuery::fetchOne)
                 .map(PostSearchResponse::from);
