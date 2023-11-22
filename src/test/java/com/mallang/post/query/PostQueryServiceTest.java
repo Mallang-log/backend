@@ -250,7 +250,8 @@ class PostQueryServiceTest extends ServiceTest {
             PostSearchCond cond = PostSearchCond.builder().build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).hasSize(2)
@@ -270,8 +271,9 @@ class PostQueryServiceTest extends ServiceTest {
 
             // when
             List<PostSearchResponse> search = postQueryService.search(mallangId,
-                    new PostSearchCond(null, null, null, null,
-                            null, null, null));
+                            new PostSearchCond(null, null, null, null,
+                                    null, null, null), pageable)
+                    .getContent();
 
             // then
             assertThat(search)
@@ -297,7 +299,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -327,7 +330,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -362,7 +366,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -392,7 +397,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -420,7 +426,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -447,7 +454,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -481,7 +489,8 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond);
+            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+                    .getContent();
 
             // then
             assertThat(responses).usingRecursiveComparison()
@@ -520,7 +529,7 @@ class PostQueryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    postQueryService.search(null, cond)
+                    postQueryService.search(null, cond, pageable)
             ).isInstanceOf(BadPostSearchCondException.class);
         }
     }

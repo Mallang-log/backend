@@ -5,8 +5,9 @@ import com.mallang.post.query.dao.PostManageSearchDao;
 import com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageSearchResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,7 @@ public class PostManageQueryService {
         return postManageDetailDao.find(memberId, id);
     }
 
-    public List<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond) {
-        return postManageSearchDao.search(memberId, cond);
+    public Page<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond, Pageable pageable) {
+        return postManageSearchDao.search(memberId, cond, pageable);
     }
 }

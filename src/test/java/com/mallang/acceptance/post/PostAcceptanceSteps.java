@@ -4,6 +4,7 @@ import static com.mallang.acceptance.AcceptanceSteps.given;
 import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import io.restassured.common.mapper.TypeRef;
@@ -80,9 +81,10 @@ public class PostAcceptanceSteps {
     }
 
     public static void 포스트_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostSearchResponse> 예상_데이터) {
-        List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+        PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
         });
-        assertThat(responses).usingRecursiveComparison()
+        assertThat(responses.content())
+                .usingRecursiveComparison()
                 .ignoringFields("writer.writerId", "writer.writerProfileImageUrl", "createdDate")
                 .isEqualTo(예상_데이터);
     }

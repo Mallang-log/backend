@@ -9,13 +9,13 @@ import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.query.response.StaredPostResponse;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
 
 @DisplayName("포스트 즐겨찾기 조회 서비스(PostStarQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -65,7 +65,7 @@ class PostStarQueryServiceTest extends ServiceTest {
             postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
 
             // when
-            List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, null);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, null, pageable);
 
             // then
             assertThat(result)
@@ -83,10 +83,11 @@ class PostStarQueryServiceTest extends ServiceTest {
             포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
 
             // when
-            List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, otherMemberId);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, otherMemberId,
+                    pageable);
 
             // then
-            assertThat(result)
+            assertThat(result.getContent())
                     .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "보호되어 있는 글입니다.");
         }
@@ -101,10 +102,10 @@ class PostStarQueryServiceTest extends ServiceTest {
             포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
 
             // when
-            List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId, pageable);
 
             // then
-            assertThat(result)
+            assertThat(result.getContent())
                     .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "내용1");
         }
@@ -119,10 +120,10 @@ class PostStarQueryServiceTest extends ServiceTest {
             포스트_공개여부를_업데이트한다(memberId, post1Id, PRIVATE, null);
 
             // when
-            List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId, pageable);
 
             // then
-            assertThat(result)
+            assertThat(result.getContent())
                     .extracting(StaredPostResponse::title)
                     .containsExactly("포스트3", "포스트2");
         }

@@ -3,6 +3,7 @@ package com.mallang.acceptance.subsribe;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.subscribe.presentation.request.BlogSubscribeRequest;
 import com.mallang.subscribe.presentation.request.BlogUnsubscribeRequest;
 import com.mallang.subscribe.query.response.SubscriberResponse;
@@ -10,7 +11,6 @@ import com.mallang.subscribe.query.response.SubscribingBlogResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class BlogSubscribeAcceptanceSteps {
@@ -49,9 +49,9 @@ public class BlogSubscribeAcceptanceSteps {
             ExtractableResponse<Response> 응답,
             String... 블로그_이름들
     ) {
-        List<SubscribingBlogResponse> result = 응답.response().as(new TypeRef<>() {
+        PageResponse<SubscribingBlogResponse> result = 응답.response().as(new TypeRef<>() {
         });
-        assertThat(result)
+        assertThat(result.content())
                 .extracting(SubscribingBlogResponse::blogName)
                 .containsExactly(블로그_이름들);
     }
@@ -68,9 +68,9 @@ public class BlogSubscribeAcceptanceSteps {
             ExtractableResponse<Response> 응답,
             String... 구독자_이름들
     ) {
-        List<SubscriberResponse> result = 응답.response().as(new TypeRef<>() {
+        PageResponse<SubscriberResponse> result = 응답.response().as(new TypeRef<>() {
         });
-        assertThat(result)
+        assertThat(result.content())
                 .extracting(SubscriberResponse::subscriberNickname)
                 .containsExactly(구독자_이름들);
     }
