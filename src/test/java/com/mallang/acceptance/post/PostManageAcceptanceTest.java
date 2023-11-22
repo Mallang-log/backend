@@ -154,7 +154,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 내_글_관리_목록_조회_API extends AcceptanceTest {
+    class 내_글_관리_목록_조회_API {
 
         @Test
         void 내_포스트를_전체_조회한다() {
@@ -392,7 +392,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 내_관리_글_단일_조회_API extends AcceptanceTest {
+    class 내_관리_글_단일_조회_API {
 
         @Test
         void 나의_글을_관리용으로_단일_조회한다() {

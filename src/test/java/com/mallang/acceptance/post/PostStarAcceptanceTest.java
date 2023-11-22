@@ -58,7 +58,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 즐겨찾기_시 extends AcceptanceTest {
+    class 즐겨찾기_시 {
 
         @Test
         void 로그인하지_않았다면_즐겨찾기를_누를_수_없다() {
@@ -97,10 +97,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 extends AcceptanceTest {
+        class 보호된_포스트인_경우 {
 
             @Nested
-            class 블로그_주인인_경우 extends AcceptanceTest {
+            class 블로그_주인인_경우 {
 
                 @Test
                 void 즐겨찾기를_누를_수_있다() {
@@ -116,7 +116,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
+            class 블로그_주인이_아닌_경우 {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_일치하지_않으면_즐겨찾기를_누를_수_없다() {
@@ -145,7 +145,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 extends AcceptanceTest {
+        class 비공개_포스트인_경우 {
 
             @Test
             void 블로그_주인은_누를_수_있다() {
@@ -174,7 +174,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 즐겨찾기_취소_시 extends AcceptanceTest {
+    class 즐겨찾기_취소_시 {
 
         @Test
         void 즐겨찾기를_취소한다() {
@@ -237,7 +237,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_회원의_즐겨찾기_목록_조회_API extends AcceptanceTest {
+    class 특정_회원의_즐겨찾기_목록_조회_API {
 
         private CreatePostRequest 포스트1_데이터;
         private CreatePostRequest 포스트2_데이터;

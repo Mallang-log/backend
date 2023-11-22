@@ -66,7 +66,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 포스트에_댓글_작성_시 extends AcceptanceTest {
+    class 댓글_작성_API {
 
         @Test
         void 비인증으로_댓글을_작성한다() {
@@ -140,10 +140,10 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 extends AcceptanceTest {
+        class 보호된_포스트인_경우 {
 
             @Nested
-            class 블로그_주인인_경우 extends AcceptanceTest {
+            class 블로그_주인인_경우 {
 
                 @Test
                 void 작성_가능하다() {
@@ -159,7 +159,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
+            class 블로그_주인이_아닌_경우 {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_다르다면_쓸_수_없다() {
@@ -217,7 +217,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 extends AcceptanceTest {
+        class 비공개_포스트인_경우 {
 
             @Test
             void 블로그_주인은_작성_가능하다() {
@@ -246,7 +246,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 댓글_수정_시 extends AcceptanceTest {
+    class 댓글_수정_API {
 
         @Test
         void 자신의_댓글을_수정한다() {
@@ -321,10 +321,10 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 extends AcceptanceTest {
+        class 보호된_포스트인_경우 {
 
             @Nested
-            class 블로그_주인인_경우 extends AcceptanceTest {
+            class 블로그_주인인_경우 {
 
                 @Test
                 void 수정_가능하다() {
@@ -341,7 +341,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
+            class 블로그_주인이_아닌_경우 {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_다르다면_수정할_수_없다() {
@@ -378,7 +378,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 extends AcceptanceTest {
+        class 비공개_포스트인_경우 {
 
             @Test
             void 블로그_주인은_수정_가능하다() {
@@ -411,7 +411,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 댓글_삭제_시 extends AcceptanceTest {
+    class 댓글_삭제_API {
 
         @Test
         void 자신의_댓글을_삭제한다() {
@@ -555,10 +555,10 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 extends AcceptanceTest {
+        class 보호된_포스트인_경우 {
 
             @Nested
-            class 블로그_주인인_경우 extends AcceptanceTest {
+            class 블로그_주인인_경우 {
 
                 @Test
                 void 삭제_가능하다() {
@@ -575,7 +575,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
+            class 블로그_주인이_아닌_경우 {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_다르다면_삭제할_수_없다() {
@@ -612,7 +612,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 extends AcceptanceTest {
+        class 비공개_포스트인_경우 {
 
             @Test
             void 블로그_주인은_삭제_가능하다() {
@@ -645,7 +645,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_포스트의_댓글_전체_조회_시 extends AcceptanceTest {
+    class 특정_포스트의_댓글_전체_조회_API {
 
         private String 후후_세션_ID;
 
@@ -799,10 +799,10 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 extends AcceptanceTest {
+        class 보호된_포스트인_경우 {
 
             @Nested
-            class 블로그_주인인_경우 extends AcceptanceTest {
+            class 블로그_주인인_경우 {
 
                 @Test
                 void 조회_가능하다() {
@@ -834,7 +834,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
+            class 블로그_주인이_아닌_경우 {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_다르다면_조회할_수_없다() {
@@ -888,7 +888,7 @@ class CommentAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 extends AcceptanceTest {
+        class 비공개_포스트인_경우 {
 
             @Test
             void 블로그_주인은_조회_가능하다() {
