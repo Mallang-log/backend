@@ -18,12 +18,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DisplayName("포스트 조회 데이터 보호기(PostDataProtector) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostDataProtectorTest {
 
+    private final Pageable pageable = PageRequest.of(0, 100);
     private final PostDataProtector postDataProtector = new PostDataProtector();
 
     @Nested
@@ -131,51 +136,55 @@ class PostDataProtectorTest {
         @Test
         void 검색_결과_중_보호된_글은_주인만_볼_수_있으며_주인이_아니라면_보호되어_반환된다() {
             // given
-            List<PostSearchResponse> result = List.of(
-                    PostSearchResponse.builder()
-                            .writer(new WriterResponse(1L, "mallang", "url"))
-                            .title("mallang-public")
-                            .content("mallang-public")
-                            .postThumbnailImageName("thumb-mallang-public")
-                            .intro("intro")
-                            .visibility(PUBLIC)
-                            .build(),
-                    PostSearchResponse.builder()
-                            .writer(new WriterResponse(1L, "mallang", "url"))
-                            .title("mallang-protected")
-                            .content("mallang-protected")
-                            .postThumbnailImageName("thumb-mallang-protected")
-                            .intro("intro")
-                            .visibility(PROTECTED)
-                            .build(),
-                    PostSearchResponse.builder()
-                            .writer(new WriterResponse(1L, "mallang", "url"))
-                            .title("mallang-private")
-                            .content("mallang-private")
-                            .postThumbnailImageName("thumb-mallang-private")
-                            .intro("intro")
-                            .visibility(PRIVATE)
-                            .build(),
+            Page<PostSearchResponse> result = new PageImpl<>(
+                    List.of(
+                            PostSearchResponse.builder()
+                                    .writer(new WriterResponse(1L, "mallang", "url"))
+                                    .title("mallang-public")
+                                    .content("mallang-public")
+                                    .postThumbnailImageName("thumb-mallang-public")
+                                    .intro("intro")
+                                    .visibility(PUBLIC)
+                                    .build(),
+                            PostSearchResponse.builder()
+                                    .writer(new WriterResponse(1L, "mallang", "url"))
+                                    .title("mallang-protected")
+                                    .content("mallang-protected")
+                                    .postThumbnailImageName("thumb-mallang-protected")
+                                    .intro("intro")
+                                    .visibility(PROTECTED)
+                                    .build(),
+                            PostSearchResponse.builder()
+                                    .writer(new WriterResponse(1L, "mallang", "url"))
+                                    .title("mallang-private")
+                                    .content("mallang-private")
+                                    .postThumbnailImageName("thumb-mallang-private")
+                                    .intro("intro")
+                                    .visibility(PRIVATE)
+                                    .build(),
 
-                    PostSearchResponse.builder()
-                            .writer(new WriterResponse(2L, "other", "url"))
-                            .title("other-public")
-                            .content("other-public")
-                            .postThumbnailImageName("thumb-other-public")
-                            .intro("intro")
-                            .visibility(PUBLIC)
-                            .build(),
-                    PostSearchResponse.builder()
-                            .writer(new WriterResponse(2L, "other", "url"))
-                            .title("other-protected")
-                            .content("other-protected")
-                            .postThumbnailImageName("thumb-other-protected")
-                            .intro("intro")
-                            .visibility(PROTECTED)
-                            .build());
+                            PostSearchResponse.builder()
+                                    .writer(new WriterResponse(2L, "other", "url"))
+                                    .title("other-public")
+                                    .content("other-public")
+                                    .postThumbnailImageName("thumb-other-public")
+                                    .intro("intro")
+                                    .visibility(PUBLIC)
+                                    .build(),
+                            PostSearchResponse.builder()
+                                    .writer(new WriterResponse(2L, "other", "url"))
+                                    .title("other-protected")
+                                    .content("other-protected")
+                                    .postThumbnailImageName("thumb-other-protected")
+                                    .intro("intro")
+                                    .visibility(PROTECTED)
+                                    .build()),
+                    pageable,
+                    5
+            );
 
             // when
-            List<PostSearchResponse> protect = postDataProtector.protectIfRequired(1L, result);
+            Page<PostSearchResponse> protect = postDataProtector.protectIfRequired(1L, result);
 
             // then
             List<PostSearchResponse> expected = List.of(
@@ -220,7 +229,8 @@ class PostDataProtectorTest {
                             .intro("")
                             .visibility(PROTECTED)
                             .build());
-            assertThat(protect).usingRecursiveComparison()
+            assertThat(protect.getContent())
+                    .usingRecursiveComparison()
                     .isEqualTo(expected);
         }
     }

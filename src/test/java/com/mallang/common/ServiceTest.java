@@ -52,6 +52,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
@@ -60,9 +62,11 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 @SpringBootTest
 public abstract class ServiceTest {
 
+    protected final Pageable pageable = PageRequest.of(0, 100);
+
     @Autowired
     protected TransactionHelper transactionHelper;
-    
+
     @Autowired
     protected MemberRepository memberRepository;
 

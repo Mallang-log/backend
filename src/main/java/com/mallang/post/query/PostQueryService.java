@@ -6,8 +6,9 @@ import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import jakarta.annotation.Nullable;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +28,8 @@ public class PostQueryService {
         return postDataProtector.protectIfRequired(memberId, postPassword, postDetailResponse);
     }
 
-    public List<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond) {
-        List<PostSearchResponse> result = postSearchDao.search(memberId, cond);
+    public Page<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond, Pageable pageable) {
+        Page<PostSearchResponse> result = postSearchDao.search(memberId, cond, pageable);
         return postDataProtector.protectIfRequired(memberId, result);
     }
 }

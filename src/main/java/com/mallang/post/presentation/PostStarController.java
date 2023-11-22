@@ -5,13 +5,15 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.auth.presentation.support.OptionalAuth;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.application.PostStarService;
 import com.mallang.post.presentation.request.CancelPostStarRequest;
 import com.mallang.post.presentation.request.StarPostRequest;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.post.query.response.StaredPostResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,10 +52,12 @@ public class PostStarController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StaredPostResponse>> findAllByMemberId(
+    public ResponseEntity<PageResponse<StaredPostResponse>> findAllByMemberId(
             @OptionalAuth Long requesterId,
-            @RequestParam("memberId") Long targetMemberId
+            @RequestParam("memberId") Long targetMemberId,
+            @PageableDefault(size = 9) Pageable pageable
     ) {
-        return ResponseEntity.ok(postStarQueryService.findAllByMemberId(targetMemberId, requesterId));
+        return ResponseEntity.ok(
+                PageResponse.from(postStarQueryService.findAllByMemberId(targetMemberId, requesterId, pageable)));
     }
 }
