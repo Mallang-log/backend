@@ -3,8 +3,6 @@ package com.mallang.category.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.application.command.UpdateCategoryCommand;
@@ -16,7 +14,6 @@ import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
-import com.mallang.common.TransactionHelper;
 import com.mallang.common.domain.CommonDomainModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,32 +21,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.event.ApplicationEvents;
 
 @DisplayName("카테고리 서비스(CategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class CategoryServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private CategoryServiceTestHelper categoryServiceTestHelper;
-
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private ApplicationEvents events;
-
-    @Autowired
-    private TransactionHelper transactionHelper;
+class CategoryServiceTest extends ServiceTest {
 
     private Long mallangId;
     private String mallangBlogName;

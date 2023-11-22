@@ -7,13 +7,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CancelPostStarCommand;
 import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyStarPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
@@ -23,29 +20,12 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @DisplayName("포스트 즐겨찾기 서비스(PostStarService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostStarServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private PostStarService postStarService;
+class PostStarServiceTest extends ServiceTest {
 
     private Long memberId;
     private Long otherMemberId;

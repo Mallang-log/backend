@@ -5,11 +5,8 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.Blog;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostSearchResponse;
@@ -19,25 +16,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("포스트 전체 조회 DAO(PostSearchDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostSearchDaoTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private PostSearchDao postSearchDao;
+class PostSearchDaoTest extends ServiceTest {
 
     private Long mallangId;
     private Long otherId;

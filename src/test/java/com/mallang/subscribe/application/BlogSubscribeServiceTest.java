@@ -3,12 +3,9 @@ package com.mallang.subscribe.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
 import com.mallang.subscribe.application.command.BlogSubscribeCommand;
 import com.mallang.subscribe.application.command.BlogUnsubscribeCommand;
-import com.mallang.subscribe.domain.BlogSubscribeRepository;
 import com.mallang.subscribe.exception.AlreadySubscribedException;
 import com.mallang.subscribe.exception.SelfSubscribeException;
 import com.mallang.subscribe.exception.UnsubscribeUnsubscribedBlogException;
@@ -18,25 +15,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("블로그 구독 서비스 (BlogSubscribeService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class BlogSubscribeServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private BlogSubscribeRepository blogSubscribeRepository;
-
-    @Autowired
-    private BlogSubscribeService blogSubscribeService;
+class BlogSubscribeServiceTest extends ServiceTest {
 
     private Long mallangId;
     private Long otherId;

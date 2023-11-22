@@ -2,9 +2,6 @@ package com.mallang.post.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -12,29 +9,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 
 @DisplayName("포스트 이벤트 핸들러(PostEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostEventHandlerTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private CategoryServiceTestHelper categoryServiceTestHelper;
-
-    @Autowired
-    private ApplicationEventPublisher publisher;
+class PostEventHandlerTest extends ServiceTest {
 
     @Nested
     class 카테고리_삭제_이벤트를_받아 {

@@ -2,14 +2,10 @@ package com.mallang.comment.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.comment.query.response.AuthCommentResponse;
 import com.mallang.comment.query.response.CommentResponse;
 import com.mallang.comment.query.response.UnAuthCommentResponse;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.PostServiceTestHelper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,28 +13,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("댓글 조회 서비스(CommentQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class CommentQueryServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private CommentServiceTestHelper commentServiceTestHelper;
-
-    @Autowired
-    private CommentQueryService commentQueryService;
+class CommentQueryServiceTest extends ServiceTest {
 
     private Long memberId;
     private String blogName;

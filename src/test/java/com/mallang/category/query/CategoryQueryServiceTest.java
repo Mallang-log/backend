@@ -2,9 +2,6 @@ package com.mallang.category.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.query.response.CategoryResponse;
 import com.mallang.common.ServiceTest;
 import java.util.List;
@@ -12,25 +9,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("카테고리 조회 서비스(CategoryQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class CategoryQueryServiceTest {
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private CategoryQueryService categoryQueryService;
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private CategoryServiceTestHelper categoryServiceTestHelper;
+class CategoryQueryServiceTest extends ServiceTest {
 
     @Test
     void 특정_블로그의_카테고리를_전체_조회한다() {

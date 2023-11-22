@@ -6,13 +6,7 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.PostLikeService;
-import com.mallang.post.application.PostService;
-import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.exception.BadPostSearchCondException;
@@ -31,34 +25,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("포스트 조회 서비스(PostQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostQueryServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private PostService postService;
-
-    @Autowired
-    private PostLikeService postLikeService;
-
-    @Autowired
-    private CategoryServiceTestHelper categoryServiceTestHelper;
-
-    @Autowired
-    private PostQueryService postQueryService;
+class PostQueryServiceTest extends ServiceTest {
 
     private Long mallangId;
     private Long donghunId;

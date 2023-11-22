@@ -5,14 +5,10 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.category.application.CategoryServiceTestHelper;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
-import com.mallang.common.TransactionHelper;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -27,34 +23,12 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.event.ApplicationEvents;
+
 
 @DisplayName("포스트 서비스(PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private CategoryServiceTestHelper categoryServiceTestHelper;
-
-    @Autowired
-    private PostService postService;
-
-    @Autowired
-    private TransactionHelper transactionHelper;
-
-    @Autowired
-    private ApplicationEvents events;
+class PostServiceTest extends ServiceTest {
 
     private Long memberId;
     private String blogName;

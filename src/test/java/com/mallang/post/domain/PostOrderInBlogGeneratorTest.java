@@ -2,34 +2,17 @@ package com.mallang.post.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.Blog;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.PostServiceTestHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("블로그의 포스트 ID 생성기(PostOrderInBlogGenerator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostOrderInBlogGeneratorTest {
-
-    @Autowired
-    private PostOrderInBlogGenerator postOrderInBlogGenerator;
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
+class PostOrderInBlogGeneratorTest extends ServiceTest {
 
     @Test
     void 특정_블로그의_포스트_수보다_1큰_값을_반환한다() {

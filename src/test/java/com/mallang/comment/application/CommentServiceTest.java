@@ -3,8 +3,6 @@ package com.mallang.comment.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.comment.application.command.DeleteAuthCommentCommand;
 import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
@@ -18,42 +16,17 @@ import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
 import com.mallang.common.ServiceTest;
-import com.mallang.common.TransactionHelper;
-import com.mallang.post.application.PostServiceTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("댓글 서비스(CommentService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class CommentServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private CommentServiceTestHelper commentServiceTestHelper;
-
-    @Autowired
-    private AuthCommentService authCommentService;
-
-    @Autowired
-    private UnAuthCommentService unAuthCommentService;
-
-    @Autowired
-    private TransactionHelper transactionHelper;
+class CommentServiceTest extends ServiceTest {
 
     private Long postWriterId;
     private Long other1Id;

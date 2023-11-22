@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.exception.BlogNameException;
 import com.mallang.blog.exception.DuplicateBlogNameException;
@@ -18,19 +17,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("블로그 서비스(BlogService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class BlogServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogService blogService;
+class BlogServiceTest extends ServiceTest {
 
     private Long 말랑_ID;
 

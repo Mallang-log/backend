@@ -2,13 +2,9 @@ package com.mallang.comment.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.CommentRepository;
 import com.mallang.common.ServiceTest;
-import com.mallang.post.application.PostServiceTestHelper;
 import com.mallang.post.domain.PostDeleteEvent;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -16,32 +12,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 
 @DisplayName("댓글 이벤트 핸들러(CommentEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class CommentEventHandlerTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private CommentServiceTestHelper commentServiceTestHelper;
-
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private ApplicationEventPublisher publisher;
+class CommentEventHandlerTest extends ServiceTest {
 
     @Nested
     class 포스트_삭제_이벤트를_받아 {

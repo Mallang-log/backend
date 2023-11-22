@@ -2,39 +2,19 @@ package com.mallang.post.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.StarPostCommand;
-import com.mallang.post.domain.star.PostStarRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("포스트 즐겨찾기 이벤트 핸들러(PostStarEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostStarEventHandlerTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private PostStarService postStarService;
-
-    @Autowired
-    private PostStarRepository postStarRepository;
+class PostStarEventHandlerTest extends ServiceTest {
 
     private Long memberId;
     private String blogName;
