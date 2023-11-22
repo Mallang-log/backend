@@ -27,11 +27,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.auth.query.response.MemberResponse;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.response.StaredPostResponse;
 import io.restassured.common.mapper.TypeRef;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -314,9 +314,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(null, 동훈_ID);
 
             // then
-            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
+            PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
-            assertThat(result)
+            assertThat(result.content())
                     .extracting(StaredPostResponse::title)
                     .containsExactly("포스트3", "포스트2", "포스트1");
         }
@@ -337,9 +337,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(동훈_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
+            PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
-            assertThat(result)
+            assertThat(result.content())
                     .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "보호되어 있는 글입니다.");
         }
@@ -360,9 +360,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
+            PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
-            assertThat(result)
+            assertThat(result.content())
                     .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "공개글에서 보호됨");
         }
@@ -382,9 +382,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
+            PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
-            assertThat(result)
+            assertThat(result.content())
                     .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2");
         }
@@ -405,9 +405,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
+            PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
-            assertThat(result)
+            assertThat(result.content())
                     .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "공개글에서 보호됨");
         }
