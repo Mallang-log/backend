@@ -30,7 +30,7 @@ class BlogServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            말랑_ID = 회원을_저장한다("말랑");
         }
 
         @Test
@@ -56,7 +56,7 @@ class BlogServiceTest extends ServiceTest {
         @Test
         void 중복된_이름을_가진_다른_블로그가_존재하면_예외() {
             // given
-            Long 안말랑_ID = memberServiceTestHelper.회원을_저장한다("안말랑");
+            Long 안말랑_ID = 회원을_저장한다("안말랑");
             blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog"));
 
             // when & then

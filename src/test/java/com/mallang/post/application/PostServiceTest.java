@@ -5,8 +5,8 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.comment.application.CommentServiceTestHelper;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreatePostCommand;
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 @DisplayName("포스트 서비스(PostService) 은(는)")
@@ -38,8 +37,8 @@ class PostServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
+            memberId = 회원을_저장한다("말랑");
+            blogName = 블로그_개설(memberId, "mallang-log").getName();
         }
 
         @Test
@@ -64,7 +63,9 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 카테고리를_설정할_수_있다() {
             // given
-            Long categoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
+            Long categoryId = categoryService.create(new CreateCategoryCommand(
+                    memberId, blogName, "Spring", null
+            ));
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
                     .blogName(blogName)
@@ -80,7 +81,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postServiceTestHelper.포스트를_조회한다(id);
+                Post post = postRepository.getById(id);
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
             });
         }
@@ -122,7 +123,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postServiceTestHelper.포스트를_조회한다(id);
+                Post post = postRepository.getById(id);
                 assertThat(post.getTags())
                         .containsExactly("tag1", "tag2", "tag3");
             });
@@ -134,14 +135,14 @@ class PostServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
+            memberId = 회원을_저장한다("말랑");
+            blogName = 블로그_개설(memberId, "mallang-log").getName();
         }
 
         @Test
         void 내가_쓴_포스트를_수정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
@@ -153,7 +154,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+                Post post = postRepository.getById(포스트_ID);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
@@ -166,8 +167,8 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 다른_사람의_포스트는_수정할_수_없다() {
             // given
-            Long otherMemberId = memberServiceTestHelper.회원을_저장한다("동훈");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long otherMemberId = 회원을_저장한다("동훈");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
 
             // when
             assertThatThrownBy(() ->
@@ -180,7 +181,7 @@ class PostServiceTest extends ServiceTest {
             ).isInstanceOf(NotFoundPostException.class);
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            Post post = postRepository.getById(포스트_ID);
             assertThat(post.getTitle()).isEqualTo("포스트");
             assertThat(post.getContent()).isEqualTo("내용");
         }
@@ -188,8 +189,10 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 포스트_수정_시_있던_카테고리릴_없앨_수_있다() {
             // given
-            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
+            Long springCategoryId = categoryService.create(new CreateCategoryCommand(
+                    memberId, blogName, "Spring", null
+            ));
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
@@ -199,7 +202,7 @@ class PostServiceTest extends ServiceTest {
                     null, emptyList()));
 
             // then
-            Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+            Post post = postRepository.getById(포스트_ID);
             assertThat(post.getTitle()).isEqualTo("수정제목");
             assertThat(post.getContent()).isEqualTo("수정내용");
             assertThat(post.getCategory()).isNull();
@@ -208,8 +211,10 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
-            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long springCategoryId = categoryService.create(new CreateCategoryCommand(
+                    memberId, blogName, "Spring", null
+            ));
 
             // when
             postService.update(
@@ -221,7 +226,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+                Post post = postRepository.getById(포스트_ID);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
@@ -231,9 +236,11 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 기존_카테고리를_다른_카테고리로_변경할_수_있다() {
             // given
-            Long springCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Spring");
-            Long 포스트_ID = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
-            Long nodeCategoryId = categoryServiceTestHelper.최상위_카테고리를_저장한다(memberId, blogName, "Node");
+            Long springCategoryId = categoryService.create(new CreateCategoryCommand(
+                    memberId, blogName, "Spring", null
+            ));
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
+            Long nodeCategoryId = categoryService.create(new CreateCategoryCommand(memberId, blogName, "Node", null));
 
             // when
             postService.update(new UpdatePostCommand(
@@ -246,16 +253,13 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postServiceTestHelper.포스트를_조회한다(포스트_ID);
+                Post post = postRepository.getById(포스트_ID);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Node");
             });
         }
     }
-
-    @Autowired
-    private CommentServiceTestHelper commentServiceTestHelper;
 
     @Nested
     class 포스트_제거_시 {
@@ -267,14 +271,14 @@ class PostServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
-            myPostId1 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
-            myPostId2 = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
-            commentServiceTestHelper.댓글을_작성한다(myPostId1, "dw", false, memberId);
-            otherId = memberServiceTestHelper.회원을_저장한다("other");
-            String otherBlogName = blogServiceTestHelper.블로그_개설(otherId, "other-log").getName();
-            otherPostId = postServiceTestHelper.포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
+            memberId = 회원을_저장한다("말랑");
+            blogName = 블로그_개설(memberId, "mallang-log").getName();
+            myPostId1 = 포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
+            myPostId2 = 포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
+            댓글을_작성한다(myPostId1, "dw", false, memberId);
+            otherId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherId, "other-log").getName();
+            otherPostId = 포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
         }
 
         @Test
@@ -283,7 +287,7 @@ class PostServiceTest extends ServiceTest {
             postService.delete(new DeletePostCommand(otherId, List.of(myPostId1)));
 
             // then
-            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isTrue();
+            assertThat(postRepository.existsById(myPostId1)).isTrue();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isZero();
         }
 
@@ -293,7 +297,7 @@ class PostServiceTest extends ServiceTest {
             postService.delete(new DeletePostCommand(memberId, List.of(myPostId1, 100000L)));
 
             // then
-            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
+            assertThat(postRepository.existsById(myPostId1)).isFalse();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(1);
         }
 
@@ -303,9 +307,9 @@ class PostServiceTest extends ServiceTest {
             postService.delete(new DeletePostCommand(memberId, List.of(myPostId1, myPostId2)));
 
             // then
-            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId1)).isFalse();
-            assertThat(postServiceTestHelper.포스트_존재여부_확인(myPostId2)).isFalse();
-            assertThat(postServiceTestHelper.포스트_존재여부_확인(otherPostId)).isTrue();
+            assertThat(postRepository.existsById(myPostId1)).isFalse();
+            assertThat(postRepository.existsById(myPostId2)).isFalse();
+            assertThat(postRepository.existsById(otherPostId)).isTrue();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(2);
         }
     }

@@ -2,6 +2,7 @@ package com.mallang.category.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.query.response.CategoryResponse;
 import com.mallang.common.ServiceTest;
 import java.util.List;
@@ -18,20 +19,20 @@ class CategoryQueryServiceTest extends ServiceTest {
     @Test
     void 특정_블로그의_카테고리를_전체_조회한다() {
         // given
-        Long 동훈_ID = memberServiceTestHelper.회원을_저장한다("동훈");
-        String 동훈_블로그_이름 = blogServiceTestHelper.블로그_개설(동훈_ID, "donghun").getName();
-        categoryServiceTestHelper.최상위_카테고리를_저장한다(동훈_ID, 동훈_블로그_이름, "Node");
+        Long 동훈_ID = 회원을_저장한다("동훈");
+        String 동훈_블로그_이름 = 블로그_개설(동훈_ID, "donghun").getName();
+        categoryService.create(new CreateCategoryCommand(동훈_ID, 동훈_블로그_이름, "Node", null));
 
-        Long 말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
-        String 말랑_블로그_이름 = blogServiceTestHelper.블로그_개설(말랑_ID, "mallang").getName();
-        Long springId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Spring");
-        Long jpaId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "JPA", springId);
-        Long n1Id = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "N + 1", jpaId);
-        Long securityId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Security", springId);
-        Long oAuthId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "OAuth", securityId);
-        Long csrfId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "CSRF", securityId);
-        Long algorithmId = categoryServiceTestHelper.최상위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "Algorithm");
-        Long dfsId = categoryServiceTestHelper.하위_카테고리를_저장한다(말랑_ID, 말랑_블로그_이름, "DFS", algorithmId);
+        Long 말랑_ID = 회원을_저장한다("말랑");
+        String 말랑_블로그_이름 = 블로그_개설(말랑_ID, "mallang").getName();
+        Long springId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "Spring", null));
+        Long jpaId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "JPA", springId));
+        Long n1Id = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "N + 1", jpaId));
+        Long securityId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "Security", springId));
+        Long oAuthId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "OAuth", securityId));
+        Long csrfId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "CSRF", securityId));
+        Long algorithmId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "Algorithm", null));
+        Long dfsId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "DFS", algorithmId));
         List<CategoryResponse> expected = List.of(
                 new CategoryResponse(springId, "Spring", List.of(
                         new CategoryResponse(jpaId, "JPA", List.of(

@@ -10,11 +10,11 @@ import lombok.Builder;
 @Builder
 public record WriteAuthenticatedCommentCommand(
         Long postId,
-        @Nullable String postPassword,
         String content,
         boolean secret,
         Long memberId,
-        @Nullable Long parentCommentId
+        @Nullable Long parentCommentId,
+        @Nullable String postPassword
 ) {
     public AuthComment toComment(Post post, Member writer, Comment parent) {
         return AuthComment.builder()

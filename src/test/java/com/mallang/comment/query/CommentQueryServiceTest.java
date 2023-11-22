@@ -28,17 +28,17 @@ class CommentQueryServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-            blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang").getName();
-            postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            memberId = 회원을_저장한다("말랑");
+            blogName = 블로그_개설(memberId, "mallang").getName();
+            postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
         }
 
         @Test
         void 인증되지_않은_요청인_경우_비밀_댓글은_비밀_댓글로_조회된다() {
             // given
-            commentServiceTestHelper.댓글을_작성한다(postId, "댓글1", false, memberId);
-            commentServiceTestHelper.댓글을_작성한다(postId, "[비밀] 댓글2", true, memberId);
-            commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId, "댓글1", false, memberId);
+            댓글을_작성한다(postId, "[비밀] 댓글2", true, memberId);
+            비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
             List<CommentResponse> result = commentQueryService.findAllByPostId(postId, null, null);
@@ -62,13 +62,13 @@ class CommentQueryServiceTest extends ServiceTest {
         @Test
         void 내가_쓴_비밀_댓글만_보여지게_조회() {
             // given
-            Long dong = memberServiceTestHelper.회원을_저장한다("동훈");
-            Long hehe = memberServiceTestHelper.회원을_저장한다("헤헤");
-            commentServiceTestHelper.댓글을_작성한다(postId, "동훈 댓글", false, dong);
-            commentServiceTestHelper.댓글을_작성한다(postId, "헤헤 댓글", false, hehe);
-            commentServiceTestHelper.댓글을_작성한다(postId, "[비밀] 동훈 댓글2", true, dong); // 제외
-            commentServiceTestHelper.댓글을_작성한다(postId, "[비밀] 헤헤 댓글2", true, hehe);
-            commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
+            Long dong = 회원을_저장한다("동훈");
+            Long hehe = 회원을_저장한다("헤헤");
+            댓글을_작성한다(postId, "동훈 댓글", false, dong);
+            댓글을_작성한다(postId, "헤헤 댓글", false, hehe);
+            댓글을_작성한다(postId, "[비밀] 동훈 댓글2", true, dong); // 제외
+            댓글을_작성한다(postId, "[비밀] 헤헤 댓글2", true, hehe);
+            비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
             List<CommentResponse> result = commentQueryService.findAllByPostId(postId, dong, null);
@@ -82,13 +82,13 @@ class CommentQueryServiceTest extends ServiceTest {
         @Test
         void 글_작성자는_모든_비밀_댓글을_볼_수_있다() {
             // given
-            Long dong = memberServiceTestHelper.회원을_저장한다("동훈");
-            Long hehe = memberServiceTestHelper.회원을_저장한다("헤헤");
-            commentServiceTestHelper.댓글을_작성한다(postId, "동훈 댓글", false, memberId);
-            commentServiceTestHelper.댓글을_작성한다(postId, "헤헤 댓글", false, hehe);
-            commentServiceTestHelper.댓글을_작성한다(postId, "[비밀] 동훈 댓글2", true, memberId); // 제외
-            commentServiceTestHelper.댓글을_작성한다(postId, "[비밀] 헤헤 댓글2", true, hehe);
-            commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
+            Long dong = 회원을_저장한다("동훈");
+            Long hehe = 회원을_저장한다("헤헤");
+            댓글을_작성한다(postId, "동훈 댓글", false, memberId);
+            댓글을_작성한다(postId, "헤헤 댓글", false, hehe);
+            댓글을_작성한다(postId, "[비밀] 동훈 댓글2", true, memberId); // 제외
+            댓글을_작성한다(postId, "[비밀] 헤헤 댓글2", true, hehe);
+            비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
 
             // when
             List<CommentResponse> result = commentQueryService.findAllByPostId(postId, memberId, null);

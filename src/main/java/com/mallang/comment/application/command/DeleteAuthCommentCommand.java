@@ -5,8 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record DeleteAuthCommentCommand(
-        @Nullable String postPassword,
         Long memberId,
-        Long commentId
+        Long commentId,
+        @Nullable String postPassword
 ) {
 }

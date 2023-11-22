@@ -9,11 +9,11 @@ import lombok.Builder;
 @Builder
 public record WriteUnAuthenticatedCommentCommand(
         Long postId,
-        @Nullable String postPassword,
         String content,
         String nickname,
         String password,
-        @Nullable Long parentCommentId
+        @Nullable Long parentCommentId,
+        @Nullable String postPassword
 ) {
     public UnAuthComment toCommand(Post post, Comment parent) {
         return UnAuthComment.builder()

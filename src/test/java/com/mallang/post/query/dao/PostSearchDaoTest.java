@@ -27,27 +27,27 @@ class PostSearchDaoTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        mallangId = memberServiceTestHelper.회원을_저장한다("말랑");
-        otherId = memberServiceTestHelper.회원을_저장한다("other");
-        Blog blog = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log");
-        Blog otherBlog = blogServiceTestHelper.블로그_개설(otherId, "other-log");
-        postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(),
+        mallangId = 회원을_저장한다("말랑");
+        otherId = 회원을_저장한다("other");
+        Blog blog = 블로그_개설(mallangId, "mallang-log");
+        Blog otherBlog = 블로그_개설(otherId, "other-log");
+        포스트를_저장한다(mallangId, blog.getName(),
                 "mallang-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
-        postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(),
+        포스트를_저장한다(mallangId, blog.getName(),
                 "mallang-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(),
+        포스트를_저장한다(mallangId, blog.getName(),
                 "mallang-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
 
-        postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(),
+        포스트를_저장한다(otherId, otherBlog.getName(),
                 "ohter-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
-        postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(),
+        포스트를_저장한다(otherId, otherBlog.getName(),
                 "ohter-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(),
+        포스트를_저장한다(otherId, otherBlog.getName(),
                 "ohter-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
     }

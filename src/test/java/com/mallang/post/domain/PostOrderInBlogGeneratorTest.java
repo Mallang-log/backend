@@ -17,15 +17,15 @@ class PostOrderInBlogGeneratorTest extends ServiceTest {
     @Test
     void 특정_블로그의_포스트_수보다_1큰_값을_반환한다() {
         // given
-        Long mallangId = memberServiceTestHelper.회원을_저장한다("말랑");
-        Long otherId = memberServiceTestHelper.회원을_저장한다("몰랑");
-        Long thirdId = memberServiceTestHelper.회원을_저장한다("third");
-        Blog blog = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log");
-        Blog otherBlog = blogServiceTestHelper.블로그_개설(otherId, "other-log");
-        Blog thirdBlog = blogServiceTestHelper.블로그_개설(thirdId, "third-log");
-        postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(), "글1", "1");
-        postServiceTestHelper.포스트를_저장한다(mallangId, blog.getName(), "글2", "1");
-        postServiceTestHelper.포스트를_저장한다(otherId, otherBlog.getName(), "글1", "1");
+        Long mallangId = 회원을_저장한다("말랑");
+        Long otherId = 회원을_저장한다("몰랑");
+        Long thirdId = 회원을_저장한다("third");
+        Blog blog = 블로그_개설(mallangId, "mallang-log");
+        Blog otherBlog = 블로그_개설(otherId, "other-log");
+        Blog thirdBlog = 블로그_개설(thirdId, "third-log");
+        포스트를_저장한다(mallangId, blog.getName(), "글1", "1");
+        포스트를_저장한다(mallangId, blog.getName(), "글2", "1");
+        포스트를_저장한다(otherId, otherBlog.getName(), "글1", "1");
 
         // when & then
         assertThat(postOrderInBlogGenerator.generate(blog)).isEqualTo(3);

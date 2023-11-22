@@ -36,22 +36,22 @@ class PostLikeServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
-        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
-        publicPostId = postServiceTestHelper.포스트를_저장한다(
+        memberId = 회원을_저장한다("말랑");
+        otherMemberId = 회원을_저장한다("other");
+        blogName = 블로그_개설(memberId, "mallang-log").getName();
+        publicPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PUBLIC, null));
-        protectedPostId = postServiceTestHelper.포스트를_저장한다(
+        protectedPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        privatePostId = postServiceTestHelper.포스트를_저장한다(
+        privatePostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
@@ -166,7 +166,7 @@ class PostLikeServiceTest extends ServiceTest {
         void 글_작성자는_보호된_글에_누른_좋아요를_취소할_수_있다() {
             // given
             postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
 
             // when
             postLikeService.cancel(new CancelPostLikeCommand(publicPostId, memberId, null));
@@ -180,7 +180,7 @@ class PostLikeServiceTest extends ServiceTest {
         void 보호된_글의_비밀번호와_입력한_비밀번호가_일치하면_좋아요를_취소한_수_있다() {
             // given
             postLikeService.like(new ClickPostLikeCommand(publicPostId, otherMemberId, null));
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
 
             // when
             postLikeService.cancel(new CancelPostLikeCommand(publicPostId, otherMemberId, "1234"));
@@ -194,7 +194,7 @@ class PostLikeServiceTest extends ServiceTest {
         void 보호된_글의_비밀번호와_입력한_비밀번호가_다르면_예외() {
             // given
             postLikeService.like(new ClickPostLikeCommand(publicPostId, otherMemberId, null));
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
 
             // when & then
             assertThatThrownBy(() -> {
@@ -207,7 +207,7 @@ class PostLikeServiceTest extends ServiceTest {
             // given
             postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
             postLikeService.like(new ClickPostLikeCommand(publicPostId, otherMemberId, null));
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
 
             // when & then
             assertDoesNotThrow(() -> {

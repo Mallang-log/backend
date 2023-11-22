@@ -8,6 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
 
+    default Blog getById(Long id) {
+        return findById(id).orElseThrow(NotFoundBlogException::new);
+    }
+
     default Blog getByName(String blogName) {
         return findByName(blogName).orElseThrow(NotFoundBlogException::new);
     }

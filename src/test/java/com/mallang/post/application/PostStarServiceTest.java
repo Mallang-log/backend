@@ -36,22 +36,22 @@ class PostStarServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
-        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
-        publicPostId = postServiceTestHelper.포스트를_저장한다(
+        memberId = 회원을_저장한다("말랑");
+        otherMemberId = 회원을_저장한다("other");
+        blogName = 블로그_개설(memberId, "mallang-log").getName();
+        publicPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PUBLIC, null));
-        protectedPostId = postServiceTestHelper.포스트를_저장한다(
+        protectedPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        privatePostId = postServiceTestHelper.포스트를_저장한다(
+        privatePostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
@@ -160,7 +160,7 @@ class PostStarServiceTest extends ServiceTest {
             // given
             postStarService.star(new StarPostCommand(protectedPostId, otherMemberId, "1234"));
             postStarService.star(new StarPostCommand(publicPostId, otherMemberId, null));
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
 
             // when & then
             assertDoesNotThrow(() -> {

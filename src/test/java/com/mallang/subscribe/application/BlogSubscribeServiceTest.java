@@ -27,9 +27,9 @@ class BlogSubscribeServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        mallangId = memberServiceTestHelper.회원을_저장한다("mallang");
-        otherId = memberServiceTestHelper.회원을_저장한다("other");
-        otherBlogName = blogServiceTestHelper.블로그_개설(otherId, "other-log").getName();
+        mallangId = 회원을_저장한다("mallang");
+        otherId = 회원을_저장한다("other");
+        otherBlogName = 블로그_개설(otherId, "other-log").getName();
     }
 
     @Nested
@@ -47,7 +47,7 @@ class BlogSubscribeServiceTest extends ServiceTest {
         @Test
         void 자신의_블로그를_구독하면_예외() {
             // given
-            String mallangBlogName = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log").getName();
+            String mallangBlogName = 블로그_개설(mallangId, "mallang-log").getName();
 
             // when & then
             assertThatThrownBy(() ->

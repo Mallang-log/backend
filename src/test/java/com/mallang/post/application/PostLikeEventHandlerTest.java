@@ -22,9 +22,9 @@ class PostLikeEventHandlerTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
-        postId = postServiceTestHelper.포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+        memberId = 회원을_저장한다("말랑");
+        blogName = 블로그_개설(memberId, "mallang-log").getName();
+        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
     }
 
     @Nested
@@ -35,7 +35,7 @@ class PostLikeEventHandlerTest extends ServiceTest {
             postLikeService.like(new ClickPostLikeCommand(postId, memberId, null));
 
             // when
-            postServiceTestHelper.포스트를_삭제한다(memberId, postId);
+            포스트를_삭제한다(memberId, postId);
 
             // then
             assertThat(postLikeRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();

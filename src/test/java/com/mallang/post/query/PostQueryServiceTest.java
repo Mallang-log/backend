@@ -6,6 +6,7 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.application.command.CreatePostCommand;
@@ -45,10 +46,10 @@ class PostQueryServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        mallangId = memberServiceTestHelper.회원을_저장한다("말랑");
-        donghunId = memberServiceTestHelper.회원을_저장한다("동훈");
-        mallangBlogName = blogServiceTestHelper.블로그_개설(mallangId, "mallang-log").getName();
-        donghunBlogName = blogServiceTestHelper.블로그_개설(donghunId, "donghun-log").getName();
+        mallangId = 회원을_저장한다("말랑");
+        donghunId = 회원을_저장한다("동훈");
+        mallangBlogName = 블로그_개설(mallangId, "mallang-log").getName();
+        donghunBlogName = 블로그_개설(donghunId, "donghun-log").getName();
         말랑_public_포스트_작성_요청 = new CreatePostCommand(
                 mallangId,
                 mallangBlogName,
@@ -286,10 +287,10 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_카테고리의_포스트만_조회한다() {
             // given
-            Long 스프링 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "스프링");
-            Long 노드 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "노드");
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
-            postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", 노드);
+            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
+            Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "노드", null));
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
+            포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", 노드);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
                     .blogName(mallangBlogName)
@@ -316,10 +317,10 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 최상위_카테고리로_조회_시_하위_카테고리도_포함되면_조회한다() {
             // given
-            Long 스프링 = categoryServiceTestHelper.최상위_카테고리를_저장한다(mallangId, mallangBlogName, "스프링");
-            Long JPA = categoryServiceTestHelper.하위_카테고리를_저장한다(mallangId, mallangBlogName, "JPA", 스프링);
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA);
+            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
+            Long JPA = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "JPA", 스프링));
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
                     .blogName(mallangBlogName)
@@ -353,8 +354,8 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_태그의_포스트만_조회한다() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", "tag1");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", "tag1");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
                     "tag2");
             PostSearchCond cond = PostSearchCond.builder()
                     .tag("tag2")
@@ -381,10 +382,10 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_작성자의_포스트만_조회한다() {
             // given
-            Long findWriterId = memberServiceTestHelper.회원을_저장한다("말랑말랑");
-            String otherBlogName = blogServiceTestHelper.블로그_개설(findWriterId, "other").getName();
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
+            Long findWriterId = 회원을_저장한다("말랑말랑");
+            String otherBlogName = 블로그_개설(findWriterId, "other").getName();
+            Long post1Id = 포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
                     "tag2");
             PostSearchCond cond = PostSearchCond.builder()
                     .writerId(findWriterId)
@@ -411,9 +412,9 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 제목으로_조회() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .title("안녕")
                     .build();
@@ -438,9 +439,9 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 내용으로_조회() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .content("안녕")
                     .build();
@@ -472,9 +473,9 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 내용_and_제목으로_조회() {
             // given
-            Long post1Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = postServiceTestHelper.포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히");
             PostSearchCond cond = PostSearchCond.builder()
                     .titleOrContent("안녕")
                     .build();

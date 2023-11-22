@@ -31,22 +31,22 @@ class PostStarQueryServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
-        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang").getName();
-        post1Id = postServiceTestHelper.포스트를_저장한다(
+        memberId = 회원을_저장한다("말랑");
+        otherMemberId = 회원을_저장한다("other");
+        blogName = 블로그_개설(memberId, "mallang").getName();
+        post1Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트1",
                 "내용1",
                 new PostVisibilityPolicy(PUBLIC, null));
-        post2Id = postServiceTestHelper.포스트를_저장한다(
+        post2Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트2",
                 "내용2",
                 new PostVisibilityPolicy(PUBLIC, null));
-        post3Id = postServiceTestHelper.포스트를_저장한다(
+        post3Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트3",
@@ -80,7 +80,7 @@ class PostStarQueryServiceTest extends ServiceTest {
             postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
             postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
 
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
 
             // when
             List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, otherMemberId);
@@ -98,7 +98,7 @@ class PostStarQueryServiceTest extends ServiceTest {
             postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
             postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
 
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
 
             // when
             List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId);
@@ -116,7 +116,7 @@ class PostStarQueryServiceTest extends ServiceTest {
             postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
             postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
 
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, post1Id, PRIVATE, null);
+            포스트_공개여부를_업데이트한다(memberId, post1Id, PRIVATE, null);
 
             // when
             List<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId);
