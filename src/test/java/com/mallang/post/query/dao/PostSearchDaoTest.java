@@ -58,7 +58,7 @@ class PostSearchDaoTest extends ServiceTest {
         List<PostSearchResponse> search = postSearchDao.search(mallangId, new PostSearchCond(
                 null, null, null, null,
                 null, null, null
-        ));
+        ), pageable).getContent();
 
         // then
         assertThat(search)

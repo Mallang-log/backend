@@ -20,6 +20,7 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostDetailResponse.CategoryResponse;
@@ -235,9 +236,9 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_전체_조회_요청(null, null, null, null, null, null, null);
 
             // then
-            List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+            PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
             });
-            assertThat(responses)
+            assertThat(responses.content())
                     .extracting(PostSearchResponse::id)
                     .containsExactly(포스트2_ID, 포스트1_ID);
         }
@@ -427,10 +428,10 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_전체_조회_요청(말랑_카테고리_ID, 말랑_블로그_이름, null, null, null, null, null);
 
             // then
-            List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+            PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
             });
-            assertThat(responses).hasSize(1);
-            assertThat(responses.get(0).id()).isEqualTo(포스트2_ID);
+            assertThat(responses.content()).hasSize(1);
+            assertThat(responses.content().get(0).id()).isEqualTo(포스트2_ID);
         }
 
         @Test
@@ -465,9 +466,9 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, "tag1", null, null, null, null);
 
             // then
-            List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+            PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
             });
-            assertThat(responses)
+            assertThat(responses.content())
                     .hasSize(1)
                     .extracting(PostSearchResponse::id)
                     .containsExactly(포스트1_ID);
@@ -505,9 +506,9 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, "포스트", null, null);
 
             // then
-            List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+            PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
             });
-            assertThat(responses)
+            assertThat(responses.content())
                     .hasSize(1)
                     .extracting(PostSearchResponse::id)
                     .containsExactly(포스트1_ID);
@@ -545,10 +546,10 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, null, "포스트 2", null);
 
             // then
-            List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+            PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
             });
-            assertThat(responses).hasSize(1);
-            assertThat(responses.get(0).id()).isEqualTo(포스트2_ID);
+            assertThat(responses.content()).hasSize(1);
+            assertThat(responses.content().get(0).id()).isEqualTo(포스트2_ID);
         }
 
         @Test
@@ -644,9 +645,9 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, null, null, "포스트");
 
             // then
-            List<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
+            PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
             });
-            assertThat(responses)
+            assertThat(responses.content())
                     .hasSize(2)
                     .extracting(PostSearchResponse::id)
                     .containsExactly(포스트2_ID, 포스트1_ID);

@@ -7,6 +7,7 @@ import com.mallang.post.query.response.StaredPostResponse;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,10 +44,9 @@ public class PostDataProtector {
         );
     }
 
-    public List<PostSearchResponse> protectIfRequired(Long memberId, List<PostSearchResponse> result) {
-        return result.stream()
-                .map(it -> protectIfRequired(memberId, it))
-                .toList();
+    public Page<PostSearchResponse> protectIfRequired(Long memberId, Page<PostSearchResponse> result) {
+        return result
+                .map(it -> protectIfRequired(memberId, it));
     }
 
     private PostSearchResponse protectIfRequired(Long memberId, PostSearchResponse postSearchResponse) {

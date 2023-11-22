@@ -3,16 +3,21 @@ package com.mallang.post.query.dao;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
+import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
 import com.mallang.category.query.support.CategoryQuerySupport;
+import com.mallang.post.domain.Post;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.query.response.PostSearchResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -25,8 +30,19 @@ public class PostSearchDao {
     private final JPAQueryFactory query;
     private final CategoryQuerySupport categoryQuerySupport;
 
-    public List<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond) {
-        return query.selectFrom(post)
+    public Page<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond, Pageable pageable) {
+        JPAQuery<Long> countQuery = query.select(post.countDistinct())
+                .leftJoin(post.tags, tag)
+                .where(
+                        filterPrivatePost(memberId),
+                        blogEq(cond.blogName()),
+                        hasCategory(cond.categoryId()),
+                        hasTag(cond.tag()),
+                        writerIdEq(cond.writerId()),
+                        titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
+                );
+        List<Post> result = query.selectFrom(post)
+                .distinct()
                 .leftJoin(post.tags, tag)
                 .where(
                         filterPrivatePost(memberId),
@@ -37,10 +53,9 @@ public class PostSearchDao {
                         titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
                 )
                 .orderBy(post.id.desc())
-                .fetch()
-                .stream()
-                .map(PostSearchResponse::from)
-                .toList();
+                .fetch();
+        return getPage(result, pageable, countQuery::fetchOne)
+                .map(PostSearchResponse::from);
     }
 
     private BooleanExpression filterPrivatePost(@Nullable Long memberId) {

@@ -3,12 +3,14 @@ package com.mallang.post.presentation;
 import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
 
 import com.mallang.auth.presentation.support.OptionalAuth;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +36,11 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostSearchResponse>> search(
+    public ResponseEntity<PageResponse<PostSearchResponse>> search(
             @OptionalAuth Long memberId,
-            @ModelAttribute PostSearchCond postSearchCond
+            @ModelAttribute PostSearchCond postSearchCond,
+            @PageableDefault(size = 9) Pageable pageable
     ) {
-        return ResponseEntity.ok(postQueryService.search(memberId, postSearchCond));
+        return ResponseEntity.ok(PageResponse.from(postQueryService.search(memberId, postSearchCond, pageable)));
     }
 }
