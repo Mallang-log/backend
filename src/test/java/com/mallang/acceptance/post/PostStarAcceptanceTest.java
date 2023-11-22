@@ -58,7 +58,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 즐겨찾기_시 {
+    class 즐겨찾기_API {
 
         @Test
         void 로그인하지_않았다면_즐겨찾기를_누를_수_없다() {
@@ -174,7 +174,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 즐겨찾기_취소_시 {
+    class 즐겨찾기_취소_API {
 
         @Test
         void 즐겨찾기를_취소한다() {

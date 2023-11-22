@@ -81,6 +81,10 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             응답_상태를_검증한다(응답, 생성됨);
             값이_존재한다(ID를_추출한다(응답));
         }
+    }
+
+    @Nested
+    class 카테고리_수정_API {
 
         @Test
         void 카테고리를_업데이트한다() {
@@ -98,41 +102,6 @@ class CategoryAcceptanceTest extends AcceptanceTest {
                     카테고리_조회_응답_데이터(JPA_카테고리_ID, "Node", 비어있음())
             );
             var 응답 = 블로그의_카테고리_조회_요청(말랑_블로그_이름);
-            카테고리_조회_응답을_검증한다(응답, 예상_응답);
-        }
-
-        @Test
-        void 특정_블로그의_카테고리를_조회한다() {
-            // given
-            카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Node", 없음());
-
-            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
-            var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "N + 1", JPA_카테고리_ID);
-            var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Security", Spring_카테고리_ID);
-            var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "OAuth", Security_카테고리_ID);
-            var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "CSRF", Security_카테고리_ID);
-            var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Algorithm", 없음());
-            var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "DFS", Algorithm_카테고리_ID);
-            var 예상_응답 = List.of(
-                    카테고리_조회_응답_데이터(Spring_카테고리_ID, "Spring", 하위_카테고리들(
-                            카테고리_조회_응답_데이터(JPA_카테고리_ID, "JPA", 하위_카테고리들(
-                                    카테고리_조회_응답_데이터(N1_카테고리_ID, "N + 1", 비어있음())
-                            )),
-                            카테고리_조회_응답_데이터(Security_카테고리_ID, "Security", 하위_카테고리들(
-                                    카테고리_조회_응답_데이터(OAuth_카테고리_ID, "OAuth", 비어있음()),
-                                    카테고리_조회_응답_데이터(CSRF_카테고리_ID, "CSRF", 비어있음())
-                            ))
-                    )),
-                    카테고리_조회_응답_데이터(Algorithm_카테고리_ID, "Algorithm", 하위_카테고리들(
-                            카테고리_조회_응답_데이터(DFS_카테고리_ID, "DFS", 비어있음())
-                    ))
-            );
-
-            // when
-            var 응답 = 블로그의_카테고리_조회_요청(말랑_블로그_이름);
-
-            // then
             카테고리_조회_응답을_검증한다(응답, 예상_응답);
         }
     }
@@ -194,4 +163,47 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             응답_상태를_검증한다(응답, 찾을수_없음);
         }
     }
+
+    @Nested
+    class 카테고리_조회_API {
+
+        @Test
+        void 특정_블로그의_카테고리를_조회한다() {
+            // given
+            카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Node", 없음());
+
+            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
+            var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "N + 1", JPA_카테고리_ID);
+            var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Security", Spring_카테고리_ID);
+            var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "OAuth", Security_카테고리_ID);
+            var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "CSRF", Security_카테고리_ID);
+            var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Algorithm", 없음());
+            var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "DFS", Algorithm_카테고리_ID);
+            var 예상_응답 = List.of(
+                    카테고리_조회_응답_데이터(Spring_카테고리_ID, "Spring", 하위_카테고리들(
+                            카테고리_조회_응답_데이터(JPA_카테고리_ID, "JPA", 하위_카테고리들(
+                                    카테고리_조회_응답_데이터(N1_카테고리_ID, "N + 1", 비어있음())
+                            )),
+                            카테고리_조회_응답_데이터(Security_카테고리_ID, "Security", 하위_카테고리들(
+                                    카테고리_조회_응답_데이터(OAuth_카테고리_ID, "OAuth", 비어있음()),
+                                    카테고리_조회_응답_데이터(CSRF_카테고리_ID, "CSRF", 비어있음())
+                            ))
+                    )),
+                    카테고리_조회_응답_데이터(Algorithm_카테고리_ID, "Algorithm", 하위_카테고리들(
+                            카테고리_조회_응답_데이터(DFS_카테고리_ID, "DFS", 비어있음())
+                    ))
+            );
+
+            // when
+            var 응답 = 블로그의_카테고리_조회_요청(말랑_블로그_이름);
+
+            // then
+            카테고리_조회_응답을_검증한다(응답, 예상_응답);
+        }
+    }
 }
+
+
+
+

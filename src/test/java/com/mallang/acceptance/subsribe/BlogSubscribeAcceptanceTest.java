@@ -44,7 +44,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 블로그_구독_시 {
+    class 블로그_구독_API {
 
         @Test
         void 블로그를_구독한다() {
@@ -78,7 +78,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 블로그_구독_취소_시 {
+    class 블로그_구독_취소_API {
 
         @Test
         void 구독한_블로그를_구독_취소한다() {
@@ -103,7 +103,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_회원이_구독중인_블로그_조회_시 {
+    class 특정_회원이_구독중인_블로그_조회_API {
 
         @Test
         void 조회된다() {
@@ -126,7 +126,7 @@ class BlogSubscribeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_블로그를_구독중인_구독자_조회_시 {
+    class 특정_블로그를_구독중인_구독자_조회_API {
 
         @Test
         void 조회된다() {

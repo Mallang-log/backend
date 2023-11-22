@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 class MemberAcceptanceTest extends AcceptanceTest {
 
     @Nested
-    class 내_정보_조회_시 {
+    class 내_정보_조회_API {
 
         @Test
         void 인증되었다면_조회된다() {
@@ -33,22 +33,22 @@ class MemberAcceptanceTest extends AcceptanceTest {
             // then
             회원_정보_조회_결과를_검증한다(응답, new MemberResponse(null, "mallang", "mallang"));
         }
+    }
 
-        @Nested
-        class 회원_정보_조회_시 {
+    @Nested
+    class 회원_정보_조회_API {
 
-            @Test
-            void 회원_정보를_조회한다() {
-                // given
-                var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("mallang");
-                var 정보 = 회원_정보_조회_결과_데이터(내_정보_조회_요청(말랑_세션_ID));
+        @Test
+        void 회원_정보를_조회한다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("mallang");
+            var 회원정보 = 회원_정보_조회_결과_데이터(내_정보_조회_요청(말랑_세션_ID));
 
-                // when
-                var 응답 = 회원_정보_조회_요청(정보.id());
+            // when
+            var 응답 = 회원_정보_조회_요청(회원정보.id());
 
-                // then
-                회원_정보_조회_결과를_검증한다(응답, 정보);
-            }
+            // then
+            회원_정보_조회_결과를_검증한다(응답, 회원정보);
         }
     }
 }

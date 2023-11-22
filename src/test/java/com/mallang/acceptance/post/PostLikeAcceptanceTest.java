@@ -45,7 +45,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 좋아요_시 {
+    class 좋아요_API {
 
         @Test
         void 로그인하지_않았다면_좋아요를_누를_수_없다() {
@@ -165,7 +165,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 좋아요_취소_시 {
+    class 좋아요_취소_API {
 
         @Test
         void 좋아요를_취소한다() {

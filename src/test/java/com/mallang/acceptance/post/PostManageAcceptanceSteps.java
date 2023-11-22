@@ -25,11 +25,6 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostManageAcceptanceSteps {
 
-    public static boolean 좋아요_눌림 = true;
-    public static boolean 보호됨 = true;
-    public static boolean 좋아요_안눌림 = false;
-    public static boolean 보호되지_않음 = false;
-
     public static CreatePostRequest 공개_포스트_생성_데이터(String 블로그_이름) {
         return new CreatePostRequest(
                 블로그_이름,
