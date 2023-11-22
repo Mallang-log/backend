@@ -14,7 +14,7 @@ public class CategoryQueryService {
 
     private final CategoryDao categoryDao;
 
-    public List<CategoryResponse> findAllByBlogName(String blogName) {
-        return categoryDao.findAllByBlogName(blogName);
+    public List<CategoryResponse> findAllByBlogId(Long blogId) {
+        return categoryDao.findAllByBlogId(blogId);
     }
 }

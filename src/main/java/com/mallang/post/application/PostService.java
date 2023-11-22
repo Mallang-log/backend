@@ -33,7 +33,7 @@ public class PostService {
 
     public Long create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwnerId(command.blogName(), command.memberId());
+        Blog blog = blogRepository.getByIdAndOwnerId(command.blogId(), command.memberId());
         Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
         Long postIdInBlog = postOrderInBlogGenerator.generate(blog);
         Post post = command.toPost(member, blog, category, postIdInBlog);

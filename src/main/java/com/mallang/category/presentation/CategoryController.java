@@ -59,9 +59,9 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> findAllByBlog(
-            @RequestParam(name = "blogName", required = true) String blogName
+            @RequestParam(name = "blogId", required = true) Long blogId
     ) {
-        List<CategoryResponse> result = categoryQueryService.findAllByBlogName(blogName);
+        List<CategoryResponse> result = categoryQueryService.findAllByBlogId(blogId);
         return ResponseEntity.ok(result);
     }
 }

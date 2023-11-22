@@ -35,7 +35,7 @@ public class PostManageSearchDao {
         JPAQuery<Long> countQuery = query.select(post.countDistinct())
                 .from(post)
                 .where(
-                        memberAndBlogEq(memberId, cond.blogName()),
+                        memberAndBlogEq(memberId, cond.blogId()),
                         hasCategory(cond.categoryId()),
                         titleContains(cond.title()),
                         contentContains(cond.content()),
@@ -45,7 +45,7 @@ public class PostManageSearchDao {
                 .distinct()
                 .leftJoin(post.category, category).fetchJoin()
                 .where(
-                        memberAndBlogEq(memberId, cond.blogName()),
+                        memberAndBlogEq(memberId, cond.blogId()),
                         hasCategory(cond.categoryId()),
                         titleContains(cond.title()),
                         contentContains(cond.content()),
@@ -59,8 +59,8 @@ public class PostManageSearchDao {
                 .map(PostManageSearchResponse::from);
     }
 
-    private BooleanExpression memberAndBlogEq(Long memberId, String blogName) {
-        return post.writer.id.eq(memberId).and(post.blog.name.value.eq(blogName));
+    private BooleanExpression memberAndBlogEq(Long memberId, Long blogId) {
+        return post.writer.id.eq(memberId).and(post.blog.id.eq(blogId));
     }
 
     private BooleanExpression hasCategory(@Nullable Long categoryId) {
@@ -97,7 +97,7 @@ public class PostManageSearchDao {
 
     @Builder
     public record PostManageSearchCond(
-            @NotNull String blogName,
+            @NotNull Long blogId,
             @Nullable String title,
             @Nullable String content,
             @Nullable Long categoryId,

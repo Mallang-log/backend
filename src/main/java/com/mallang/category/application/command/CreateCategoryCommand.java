@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record CreateCategoryCommand(
         Long memberId,
-        String blogName,
+        Long blogId,
         String name,
         @Nullable Long parentCategoryId
 ) {

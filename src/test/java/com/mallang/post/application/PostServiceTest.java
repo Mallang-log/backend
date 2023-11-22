@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 class PostServiceTest extends ServiceTest {
 
     private Long memberId;
-    private String blogName;
+    private Long blogId;
 
     @Nested
     class 포스트_저장_시 {
@@ -38,7 +38,7 @@ class PostServiceTest extends ServiceTest {
         @BeforeEach
         void setUp() {
             memberId = 회원을_저장한다("말랑");
-            blogName = 블로그_개설(memberId, "mallang-log").getName();
+            blogId = 블로그_개설(memberId, "mallang-log");
         }
 
         @Test
@@ -46,7 +46,7 @@ class PostServiceTest extends ServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogName(blogName)
+                    .blogId(blogId)
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
@@ -64,11 +64,11 @@ class PostServiceTest extends ServiceTest {
         void 카테고리를_설정할_수_있다() {
             // given
             Long categoryId = categoryService.create(new CreateCategoryCommand(
-                    memberId, blogName, "Spring", null
+                    memberId, blogId, "Spring", null
             ));
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogName(blogName)
+                    .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
                     .intro("intro")
@@ -91,7 +91,7 @@ class PostServiceTest extends ServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogName(blogName)
+                    .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
                     .intro("intro")
@@ -110,7 +110,7 @@ class PostServiceTest extends ServiceTest {
             // given
             CreatePostCommand command = CreatePostCommand.builder()
                     .memberId(memberId)
-                    .blogName(blogName)
+                    .blogId(blogId)
                     .title("포스트 1")
                     .content("content")
                     .intro("intro")
@@ -136,13 +136,13 @@ class PostServiceTest extends ServiceTest {
         @BeforeEach
         void setUp() {
             memberId = 회원을_저장한다("말랑");
-            blogName = 블로그_개설(memberId, "mallang-log").getName();
+            blogId = 블로그_개설(memberId, "mallang-log");
         }
 
         @Test
         void 내가_쓴_포스트를_수정할_수_있다() {
             // given
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogId, "포스트", "내용", "태그1");
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
@@ -168,7 +168,7 @@ class PostServiceTest extends ServiceTest {
         void 다른_사람의_포스트는_수정할_수_없다() {
             // given
             Long otherMemberId = 회원을_저장한다("동훈");
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogId, "포스트", "내용");
 
             // when
             assertThatThrownBy(() ->
@@ -190,9 +190,9 @@ class PostServiceTest extends ServiceTest {
         void 포스트_수정_시_있던_카테고리릴_없앨_수_있다() {
             // given
             Long springCategoryId = categoryService.create(new CreateCategoryCommand(
-                    memberId, blogName, "Spring", null
+                    memberId, blogId, "Spring", null
             ));
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogId, "포스트", "내용", springCategoryId);
 
             // when
             postService.update(new UpdatePostCommand(memberId, 포스트_ID,
@@ -211,9 +211,9 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogId, "포스트", "내용");
             Long springCategoryId = categoryService.create(new CreateCategoryCommand(
-                    memberId, blogName, "Spring", null
+                    memberId, blogId, "Spring", null
             ));
 
             // when
@@ -237,10 +237,10 @@ class PostServiceTest extends ServiceTest {
         void 기존_카테고리를_다른_카테고리로_변경할_수_있다() {
             // given
             Long springCategoryId = categoryService.create(new CreateCategoryCommand(
-                    memberId, blogName, "Spring", null
+                    memberId, blogId, "Spring", null
             ));
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
-            Long nodeCategoryId = categoryService.create(new CreateCategoryCommand(memberId, blogName, "Node", null));
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogId, "포스트", "내용", springCategoryId);
+            Long nodeCategoryId = categoryService.create(new CreateCategoryCommand(memberId, blogId, "Node", null));
 
             // when
             postService.update(new UpdatePostCommand(
@@ -272,13 +272,13 @@ class PostServiceTest extends ServiceTest {
         @BeforeEach
         void setUp() {
             memberId = 회원을_저장한다("말랑");
-            blogName = 블로그_개설(memberId, "mallang-log").getName();
-            myPostId1 = 포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
-            myPostId2 = 포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
+            blogId = 블로그_개설(memberId, "mallang-log");
+            myPostId1 = 포스트를_저장한다(memberId, blogId, "내 글 1", "내 글 1 입니다.");
+            myPostId2 = 포스트를_저장한다(memberId, blogId, "내 글 2", "내 글 2 입니다.");
             댓글을_작성한다(myPostId1, "dw", false, memberId);
             otherId = 회원을_저장한다("other");
-            String otherBlogName = 블로그_개설(otherId, "other-log").getName();
-            otherPostId = 포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
+            Long otherBlogId = 블로그_개설(otherId, "other-log");
+            otherPostId = 포스트를_저장한다(otherId, otherBlogId, "다른사람 글 1", "다른사람 글 1 입니다.");
         }
 
         @Test

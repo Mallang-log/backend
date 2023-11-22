@@ -43,8 +43,8 @@ class PostAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private String 말랑_블로그_이름;
-    private String 동훈_블로그_이름;
+    private Long 말랑_블로그_ID;
+    private Long 동훈_블로그_ID;
     private Long 말랑_카테고리_ID;
     private Long 동훈_카테고리_ID;
 
@@ -54,10 +54,10 @@ class PostAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
-        동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
-        말랑_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", null);
-        동훈_카테고리_ID = 카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Spring", null);
+        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        동훈_블로그_ID = 블로그_개설(동훈_세션_ID, "donghun-log");
+        말랑_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_ID, "Spring", null);
+        동훈_카테고리_ID = 카테고리_생성(동훈_세션_ID, 동훈_블로그_ID, "Spring", null);
     }
 
     @Nested
@@ -70,7 +70,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             CreatePostRequest 공개_포스트_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[공개] 제목",
                     "[공개] 내용",
                     "[공개] 섬네일",
@@ -81,7 +81,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     List.of("[공개] 태그")
             );
             CreatePostRequest 보호_포스트_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[보호] 제목",
                     "[보호] 내용",
                     "[보호] 섬네일",
@@ -92,7 +92,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     List.of("[보호] 태그")
             );
             CreatePostRequest 비공개_포스트_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[비공개] 제목",
                     "[비공개] 내용",
                     "[비공개] 섬네일",
@@ -208,7 +208,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 포스트를_전체_조회한다() {
             // given
             CreatePostRequest 포스트_작성_요청1 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[공개] 제목",
                     "[공개] 내용",
                     "[공개] 섬네일",
@@ -219,7 +219,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     List.of("[공개] 태그")
             );
             CreatePostRequest 포스트_작성_요청2 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[공개] 제목2",
                     "[공개] 내용2",
                     "[공개] 섬네일2",
@@ -247,7 +247,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 비공개_포스트인_경우_주인에게만_조회되며_나머지_포스트는_모든_사람이_조회할_수_있다() {
             // given
             CreatePostRequest 말랑_공개_포스트_작성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[공개] 말랑 제목",
                     "[공개] 말랑 내용",
                     "[공개] 말랑 썸네일",
@@ -258,7 +258,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 말랑_보호_포스트_작성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[보호] 말랑 제목",
                     "[보호] 말랑 내용",
                     "[보호] 말랑 썸네일",
@@ -269,7 +269,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 말랑_비공개_포스트_작성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "[비공개] 말랑 제목",
                     "[비공개] 말랑 내용",
                     "[비공개] 말랑 썸네일",
@@ -280,7 +280,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 동훈_공개_포스트_작성_요청 = new CreatePostRequest(
-                    동훈_블로그_이름,
+                    동훈_블로그_ID,
                     "[공개] 동훈 제목",
                     "[공개] 동훈 내용",
                     "[공개] 동훈 썸네일",
@@ -291,7 +291,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 동훈_보호_포스트_작성_요청 = new CreatePostRequest(
-                    동훈_블로그_이름,
+                    동훈_블로그_ID,
                     "[보호] 동훈 제목",
                     "[보호] 동훈 내용",
                     "[보호] 동훈 썸네일",
@@ -302,7 +302,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 동훈_비공개_포스트_작성_요청 = new CreatePostRequest(
-                    동훈_블로그_이름,
+                    동훈_블로그_ID,
                     "[비공개] 동훈 제목",
                     "[비공개] 동훈 내용",
                     "[비공개] 동훈 썸네일",
@@ -400,7 +400,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 특정_카테고리로_검색하면_해당_카테고리와_하위_카테고리에_해당하는_포스트가_조회된다() {
             // given
             CreatePostRequest 포스트1_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트1",
                     "이건 첫번째 포스트이네요.",
                     null,
@@ -411,7 +411,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 포스트2_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트2",
                     "이번에는 이것 저것들에 대해 알아보아요",
                     null,
@@ -425,7 +425,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_생성_요청);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(말랑_카테고리_ID, 말랑_블로그_이름, null, null, null, null, null);
+            var 응답 = 포스트_전체_조회_요청(말랑_카테고리_ID, 말랑_블로그_ID, null, null, null, null, null);
 
             // then
             PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -438,7 +438,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 태그로_필터링() {
             // given
             CreatePostRequest 포스트1_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트1",
                     "이건 첫번째 포스트이네요.",
                     null,
@@ -449,7 +449,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     List.of("tag1", "tag2", "tag3")
             );
             CreatePostRequest 포스트2_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트2",
                     "이번에는 이것 저것들에 대해 알아보아요",
                     null,
@@ -463,7 +463,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_생성_요청);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, "tag1", null, null, null, null);
+            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_ID, "tag1", null, null, null, null);
 
             // then
             PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -478,7 +478,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 제목으로_검색한다() {
             // given
             CreatePostRequest 포스트1_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트1",
                     "포스트1입니다.",
                     null,
@@ -489,7 +489,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 포스트2_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스 트2",
                     "포스트2입니다.",
                     null,
@@ -503,7 +503,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_생성_요청);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, "포스트", null, null);
+            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_ID, null, null, "포스트", null, null);
 
             // then
             PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -518,7 +518,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 내용으로_검색한다() {
             // given
             CreatePostRequest 포스트1_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트1",
                     "포스트 1입니다.",
                     null,
@@ -529,7 +529,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 포스트2_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트 2",
                     "포스트 2입니다.",
                     null,
@@ -543,7 +543,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_생성_요청);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, null, "포스트 2", null);
+            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_ID, null, null, null, "포스트 2", null);
 
             // then
             PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -556,7 +556,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 내용으로_검색_시_글_작성자가_아니라면_보호글은_조회되나_내용은_감춰지며_비공개는_조회조차_되지_않는다() {
             // given
             CreatePostRequest 포스트1_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트",
                     "포스트",
                     "포스트 이미지",
@@ -567,7 +567,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 포스트2_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트",
                     "포스트",
                     "포스트 이미지",
@@ -581,7 +581,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_생성_요청);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, null, "포스트", null);
+            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_ID, null, null, null, "포스트", null);
 
             // then
             var 예상 = List.of(
@@ -605,7 +605,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         void 제목_내용으로_검색한다() {
             // given
             CreatePostRequest 포스트1_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "포스트 1",
                     "1입니다.",
                     null,
@@ -616,7 +616,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 포스트2_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "2번째",
                     "포스트.",
                     null,
@@ -627,7 +627,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     emptyList()
             );
             CreatePostRequest 포스트3_생성_요청 = new CreatePostRequest(
-                    말랑_블로그_이름,
+                    말랑_블로그_ID,
                     "3",
                     "3",
                     null,
@@ -642,7 +642,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_생성_요청);
 
             // when
-            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_이름, null, null, null, null, "포스트");
+            var 응답 = 포스트_전체_조회_요청(null, 말랑_블로그_ID, null, null, null, null, "포스트");
 
             // then
             PageResponse<PostSearchResponse> responses = 응답.as(new TypeRef<>() {

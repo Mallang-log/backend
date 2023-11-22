@@ -23,14 +23,14 @@ class PostEventHandlerTest extends ServiceTest {
         void 해당_카테고리에_속한_포스트들을_카테고리_없음으로_만든다() {
             // given
             Long 말랑_ID = 회원을_저장한다("말랑");
-            String blogName = 블로그_개설(말랑_ID, "mallang-log").getName();
+            Long blogId = 블로그_개설(말랑_ID, "mallang-log");
             Long categoryId1 = categoryService.create(new CreateCategoryCommand(
-                    말랑_ID, blogName, "최상위1", null));
+                    말랑_ID, blogId, "최상위1", null));
             Long categoryId2 = categoryService.create(new CreateCategoryCommand(
-                    말랑_ID, blogName, "최상위2", null));
-            Long postId1 = 포스트를_저장한다(말랑_ID, blogName, "제목1", "내용", categoryId1);
-            Long postId2 = 포스트를_저장한다(말랑_ID, blogName, "제목2", "내용", categoryId1);
-            Long postId3 = 포스트를_저장한다(말랑_ID, blogName, "안삭제", "내용", categoryId2);
+                    말랑_ID, blogId, "최상위2", null));
+            Long postId1 = 포스트를_저장한다(말랑_ID, blogId, "제목1", "내용", categoryId1);
+            Long postId2 = 포스트를_저장한다(말랑_ID, blogId, "제목2", "내용", categoryId1);
+            Long postId3 = 포스트를_저장한다(말랑_ID, blogId, "안삭제", "내용", categoryId2);
 
             // when
             publisher.publishEvent(new CategoryDeletedEvent(categoryId1));

@@ -6,7 +6,7 @@ import com.mallang.blog.domain.Blog;
 
 public record WriteAboutCommand(
         Long memberId,
-        String blogName,
+        Long blogId,
         String content
 ) {
     public About toAbout(Member member, Blog blog) {

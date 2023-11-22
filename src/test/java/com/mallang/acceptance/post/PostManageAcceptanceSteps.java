@@ -25,9 +25,9 @@ import java.util.List;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostManageAcceptanceSteps {
 
-    public static CreatePostRequest 공개_포스트_생성_데이터(String 블로그_이름) {
+    public static CreatePostRequest 공개_포스트_생성_데이터(Long 블로그_ID) {
         return new CreatePostRequest(
-                블로그_이름,
+                블로그_ID,
                 "제목",
                 "내용",
                 "섬네일",
@@ -38,9 +38,9 @@ public class PostManageAcceptanceSteps {
                 Collections.emptyList());
     }
 
-    public static CreatePostRequest 보호_포스트_생성_데이터(String 블로그_이름) {
+    public static CreatePostRequest 보호_포스트_생성_데이터(Long 블로그_ID) {
         return new CreatePostRequest(
-                블로그_이름,
+                블로그_ID,
                 "제목",
                 "내용",
                 "섬네일",
@@ -51,9 +51,9 @@ public class PostManageAcceptanceSteps {
                 Collections.emptyList());
     }
 
-    public static CreatePostRequest 비공개_포스트_생성_데이터(String 블로그_이름) {
+    public static CreatePostRequest 비공개_포스트_생성_데이터(Long 블로그_ID) {
         return new CreatePostRequest(
-                블로그_이름,
+                블로그_ID,
                 "제목",
                 "내용",
                 "섬네일",
@@ -106,14 +106,14 @@ public class PostManageAcceptanceSteps {
 
     public static ExtractableResponse<Response> 내_관리_글_목록_조회_요청(
             String 세션_ID,
-            String 블로그_이름,
+            Long 블로그_ID,
             Long 카테고리_ID,
             String 제목,
             String 내용,
             Visibility 공개여부
     ) {
         return given(세션_ID)
-                .queryParam("blogName", 블로그_이름)
+                .queryParam("blogId", 블로그_ID)
                 .queryParam("categoryId", 카테고리_ID)
                 .queryParam("title", 제목)
                 .queryParam("content", 내용)

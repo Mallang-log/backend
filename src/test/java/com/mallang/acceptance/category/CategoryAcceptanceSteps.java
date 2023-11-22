@@ -18,11 +18,11 @@ public class CategoryAcceptanceSteps {
 
     public static Long 카테고리_생성(
             String 세션_ID,
-            String 블로그_이름,
+            Long 블로그_ID,
             String 카테고리_이름,
             Long 부모_카테고리_ID
     ) {
-        return ID를_추출한다(카테고리_생성_요청(세션_ID, 블로그_이름, 카테고리_이름, 부모_카테고리_ID));
+        return ID를_추출한다(카테고리_생성_요청(세션_ID, 블로그_ID, 카테고리_이름, 부모_카테고리_ID));
     }
 
     public static Long 카테고리_생성(
@@ -34,12 +34,12 @@ public class CategoryAcceptanceSteps {
 
     public static ExtractableResponse<Response> 카테고리_생성_요청(
             String 세션_ID,
-            String 블로그_이름,
+            Long 블로그_ID,
             String 카테고리_이름,
             Long 부모_카테고리_ID
     ) {
         return given(세션_ID)
-                .body(new CreateCategoryRequest(블로그_이름, 카테고리_이름, 부모_카테고리_ID))
+                .body(new CreateCategoryRequest(블로그_ID, 카테고리_이름, 부모_카테고리_ID))
                 .post("/categories")
                 .then().log().all()
                 .extract();
@@ -79,9 +79,9 @@ public class CategoryAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 블로그의_카테고리_조회_요청(String 블로그_이름) {
+    public static ExtractableResponse<Response> 블로그의_카테고리_조회_요청(Long 블로그_ID) {
         return given()
-                .param("blogName", 블로그_이름)
+                .param("blogId", 블로그_ID)
                 .get("/categories")
                 .then().log().all()
                 .extract();
