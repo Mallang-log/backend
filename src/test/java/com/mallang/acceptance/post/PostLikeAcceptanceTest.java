@@ -19,8 +19,10 @@ import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_�
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_수정_요청;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static java.util.Collections.emptyList;
 
 import com.mallang.acceptance.AcceptanceTest;
+import com.mallang.post.presentation.request.UpdatePostRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -35,6 +37,8 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 블로그_이름;
+    private UpdatePostRequest 공개_포스트를_보호로_바꾸는_요청;
+    private UpdatePostRequest 공개_포스트를_비공개로_바꾸는_요청;
 
     @Override
     @BeforeEach
@@ -42,6 +46,26 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+        공개_포스트를_보호로_바꾸는_요청 = new UpdatePostRequest(
+                "보호로 변경",
+                "보호",
+                null,
+                "인트로",
+                PROTECTED,
+                "1234",
+                null,
+                emptyList()
+        );
+        공개_포스트를_비공개로_바꾸는_요청 = new UpdatePostRequest(
+                "보호로 변경",
+                "보호",
+                null,
+                "인트로",
+                PRIVATE,
+                null,
+                null,
+                emptyList()
+        );
     }
 
     @Nested
@@ -221,9 +245,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
-                    포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                            "업데이트", "업데이트", 없음(), "포스트 인트로",
-                            PROTECTED, "1234", 없음());
+                    포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
                     // when
                     var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID, null);
@@ -238,9 +260,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
-                    포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                            "업데이트", "업데이트", 없음(), "포스트 인트로",
-                            PROTECTED, "1234", 없음());
+                    포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_보호로_바꾸는_요청);
 
                     // when
                     var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID, "1234");
@@ -273,9 +293,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
-                포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                        "업데이트", "업데이트", 없음(), "포스트 인트로",
-                        PRIVATE, 없음(), 없음());
+                포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
                 // when
                 var 응답 = 좋아요_취소_요청(동훈_세션_ID, 포스트_ID, null);

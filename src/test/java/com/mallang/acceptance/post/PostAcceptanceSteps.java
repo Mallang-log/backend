@@ -4,17 +4,12 @@ import static com.mallang.acceptance.AcceptanceSteps.given;
 import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
-import com.mallang.post.query.response.PostSearchResponse.CategoryResponse;
-import com.mallang.post.query.response.PostSearchResponse.TagResponses;
-import com.mallang.post.query.response.PostSearchResponse.WriterResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import jakarta.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -90,59 +85,5 @@ public class PostAcceptanceSteps {
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields("writer.writerId", "writer.writerProfileImageUrl", "createdDate")
                 .isEqualTo(예상_데이터);
-    }
-
-    public static PostDetailResponse 포스트_단일_조회_데이터(
-            Long 포스트_ID,
-            String 작성자_닉네임,
-            Long 카테고리_ID,
-            String 카테고리_이름,
-            String 제목,
-            String 내용,
-            String 썸네일_이미지_이름,
-            Visibility 공개_범위,
-            boolean 보호_여부,
-            boolean 좋아요_클릭_여부,
-            int 좋아요_수,
-            String... 태그들
-    ) {
-        return PostDetailResponse.builder()
-                .id(포스트_ID)
-                .writer(new PostDetailResponse.WriterResponse(null, 작성자_닉네임, null))
-                .category(new PostDetailResponse.CategoryResponse(카테고리_ID, 카테고리_이름))
-                .tags(new PostDetailResponse.TagResponses(Arrays.asList(태그들)))
-                .isLiked(좋아요_클릭_여부)
-                .title(제목)
-                .postThumbnailImageName(썸네일_이미지_이름)
-                .visibility(공개_범위)
-                .isProtected(보호_여부)
-                .content(내용)
-                .likeCount(좋아요_수)
-                .build();
-    }
-
-    public static PostSearchResponse 포스트_전체_조회_데이터(
-            Long 포스트_ID,
-            String 작성자_닉네임,
-            Long 카테고리_ID,
-            String 카테고리_이름,
-            String 제목,
-            String 내용,
-            String 썸네일_이미지_이름,
-            String 인트로,
-            Visibility 공개_범위,
-            String... 태그들
-    ) {
-        return PostSearchResponse.builder()
-                .id(포스트_ID)
-                .writer(new WriterResponse(null, 작성자_닉네임, null))
-                .category(new CategoryResponse(카테고리_ID, 카테고리_이름))
-                .tags(new TagResponses(Arrays.asList(태그들)))
-                .title(제목)
-                .content(내용)
-                .intro(인트로)
-                .postThumbnailImageName(썸네일_이미지_이름)
-                .visibility(공개_범위)
-                .build();
     }
 }

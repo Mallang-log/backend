@@ -14,7 +14,6 @@ import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageSearchResponse;
-import com.mallang.post.query.response.PostManageSearchResponse.CategoryResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -66,59 +65,9 @@ public class PostManageAcceptanceSteps {
 
     public static Long 포스트_생성(
             String 세션_ID,
-            String 블로그_이름,
-            String 포스트_제목,
-            String 포스트_내용,
-            String 썸네일_이미지_이름,
-            String 포스트_인트로,
-            Visibility 공개_범위,
-            String 비밀번호,
-            Long 카테고리_ID,
-            String... 태그들
-    ) {
-        return 포스트_생성(세션_ID, new CreatePostRequest(
-                블로그_이름,
-                포스트_제목,
-                포스트_내용,
-                썸네일_이미지_이름,
-                포스트_인트로,
-                공개_범위,
-                비밀번호,
-                카테고리_ID,
-                Arrays.asList(태그들)));
-    }
-
-    public static Long 포스트_생성(
-            String 세션_ID,
             CreatePostRequest 요청
     ) {
         return ID를_추출한다(포스트_생성_요청(세션_ID, 요청));
-    }
-
-    public static ExtractableResponse<Response> 포스트_생성_요청(
-            String 세션_ID,
-            String 블로그_이름,
-            String 포스트_제목,
-            String 포스트_내용,
-            String 썸네일_이미지_이름,
-            String 포스트_인트로,
-            Visibility 공개_범위,
-            String 비밀번호,
-            Long 카테고리_ID,
-            String... 태그들
-    ) {
-        CreatePostRequest request = new CreatePostRequest(
-                블로그_이름,
-                포스트_제목,
-                포스트_내용,
-                썸네일_이미지_이름,
-                포스트_인트로,
-                공개_범위,
-                비밀번호,
-                카테고리_ID,
-                Arrays.asList(태그들)
-        );
-        return 포스트_생성_요청(세션_ID, request);
     }
 
     public static ExtractableResponse<Response> 포스트_생성_요청(
@@ -129,33 +78,6 @@ public class PostManageAcceptanceSteps {
                 .body(요청)
                 .when()
                 .post("/manage/posts")
-                .then().log().all()
-                .extract();
-    }
-
-    public static ExtractableResponse<Response> 포스트_수정_요청(
-            String 세션_ID,
-            Long 포스트_ID,
-            String 업데이트_제목,
-            String 업데이트_내용,
-            String 썸네일_이미지_이름,
-            String 업데이트_인트로,
-            Visibility 공개_범위,
-            String 비밀번호,
-            Long 변경할_카테고리_ID,
-            String... 태그들
-    ) {
-        return given(세션_ID)
-                .body(new UpdatePostRequest(
-                        업데이트_제목,
-                        업데이트_내용,
-                        썸네일_이미지_이름,
-                        업데이트_인트로,
-                        공개_범위,
-                        비밀번호,
-                        변경할_카테고리_ID,
-                        Arrays.asList(태그들)))
-                .put("/manage/posts/{id}", 포스트_ID)
                 .then().log().all()
                 .extract();
     }
@@ -198,23 +120,6 @@ public class PostManageAcceptanceSteps {
                 .get("/manage/posts")
                 .then().log().all()
                 .extract();
-    }
-
-    public static PostManageSearchResponse 내_글_관리_전체_조회_데이터(
-            Long 포스트_ID,
-            Long 카테고리_ID,
-            String 카테고리_이름,
-            String 제목,
-            Visibility 공개_범위,
-            String 비밀번호
-    ) {
-        return PostManageSearchResponse.builder()
-                .id(포스트_ID)
-                .category(new CategoryResponse(카테고리_ID, 카테고리_이름))
-                .title(제목)
-                .visibility(공개_범위)
-                .password(비밀번호)
-                .build();
     }
 
     public static void 내_관리_글_전체_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostManageSearchResponse> 예상_데이터) {
