@@ -160,6 +160,18 @@ public class PostManageAcceptanceSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 포스트_수정_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            UpdatePostRequest request
+    ) {
+        return given(세션_ID)
+                .body(request)
+                .put("/manage/posts/{id}", 포스트_ID)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> 포스트_삭제_요청(String 말랑_세션_ID, Long 포스트_ID) {
         return given(말랑_세션_ID)
                 .body(new DeletePostRequest(Arrays.asList(포스트_ID)))

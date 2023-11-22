@@ -1,7 +1,7 @@
 package com.mallang.comment.application;
 
-import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.DeleteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.DeleteAuthCommentCommand;
+import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.AuthenticatedComment;
@@ -72,7 +72,7 @@ public class CommentServiceTestHelper {
     }
 
     public void 댓글을_제거한다(Long 댓글_ID, Long 회원_ID) {
-        DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
+        DeleteAuthCommentCommand command = DeleteAuthCommentCommand.builder()
                 .commentId(댓글_ID)
                 .memberId(회원_ID)
                 .build();
@@ -80,7 +80,7 @@ public class CommentServiceTestHelper {
     }
 
     public void 비인증_댓글을_제거한다(Long 댓글_ID, String 암호) {
-        DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+        DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                 .commentId(댓글_ID)
                 .password(암호)
                 .build();

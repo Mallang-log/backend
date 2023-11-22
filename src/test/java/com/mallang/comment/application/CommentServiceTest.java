@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.BlogServiceTestHelper;
-import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.DeleteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.DeleteAuthCommentCommand;
+import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.UpdateUnAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
@@ -355,7 +355,7 @@ class CommentServiceTest {
             // given
             Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false,
                     postWriterId);
-            DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
+            DeleteAuthCommentCommand command = DeleteAuthCommentCommand.builder()
                     .commentId(commentId)
                     .memberId(postWriterId)
                     .build();
@@ -373,7 +373,7 @@ class CommentServiceTest {
         void 자신의_댓글이_아닌_경우_예외() {
             // given
             Long commentId = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, postWriterId);
-            DeleteAuthenticatedCommentCommand command = DeleteAuthenticatedCommentCommand.builder()
+            DeleteAuthCommentCommand command = DeleteAuthCommentCommand.builder()
                     .commentId(commentId)
                     .memberId(other1Id)
                     .build();
@@ -392,7 +392,7 @@ class CommentServiceTest {
         void 비인증_댓글은_비밀번호가_일치하면_제거할_수_있다() {
             // given
             Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
-            DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                     .commentId(commentId)
                     .password("1234")
                     .build();
@@ -410,7 +410,7 @@ class CommentServiceTest {
         void 비인증_댓글은_비밀번호가_일치하지_않다면_제거할_수_없다() {
             // given
             Long commentId = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
-            DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                     .commentId(commentId)
                     .password("12345")
                     .build();
@@ -430,11 +430,11 @@ class CommentServiceTest {
             // given
             Long comment1Id = commentServiceTestHelper.댓글을_작성한다(postId, "댓글", false, other1Id);
             Long comment2Id = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
-            DeleteAuthenticatedCommentCommand command1 = DeleteAuthenticatedCommentCommand.builder()
+            DeleteAuthCommentCommand command1 = DeleteAuthCommentCommand.builder()
                     .commentId(comment1Id)
                     .memberId(postWriterId)
                     .build();
-            DeleteUnAuthenticatedCommentCommand command2 = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command2 = DeleteUnAuthCommentCommand.builder()
                     .commentId(comment2Id)
                     .memberId(postWriterId)
                     .build();
@@ -457,7 +457,7 @@ class CommentServiceTest {
             // given
             Long 말랑_댓글_ID = commentServiceTestHelper.댓글을_작성한다(postId, "말랑 댓글", false, postWriterId);
             Long 대댓글_ID = commentServiceTestHelper.비인증_대댓글을_작성한다(postId, "대댓글", "hi", "12", 말랑_댓글_ID);
-            DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                     .commentId(대댓글_ID)
                     .password("12")
                     .build();
@@ -480,7 +480,7 @@ class CommentServiceTest {
             // given
             Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "말랑 댓글", "hi", "1");
             Long 대댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "대댓글", "hi2", "12");
-            DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                     .commentId(대댓글_ID)
                     .password("12")
                     .build();
@@ -504,7 +504,7 @@ class CommentServiceTest {
             Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "말랑 댓글", "hi", "1");
             Long 대댓글_ID = commentServiceTestHelper.대댓글을_작성한다(postId, "대댓글", false, postWriterId,
                     댓글_ID);
-            DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                     .commentId(댓글_ID)
                     .password("1")
                     .build();
@@ -529,7 +529,7 @@ class CommentServiceTest {
             Long 댓글_ID = commentServiceTestHelper.비인증_댓글을_작성한다(postId, "말랑 댓글", "hi", "hi");
             Long 대댓글_ID = commentServiceTestHelper.비인증_대댓글을_작성한다(postId, "대댓글", "hi2", "12", 댓글_ID);
             commentServiceTestHelper.비인증_댓글을_제거한다(댓글_ID, "hi");
-            DeleteUnAuthenticatedCommentCommand command = DeleteUnAuthenticatedCommentCommand.builder()
+            DeleteUnAuthCommentCommand command = DeleteUnAuthCommentCommand.builder()
                     .commentId(대댓글_ID)
                     .password("12")
                     .build();

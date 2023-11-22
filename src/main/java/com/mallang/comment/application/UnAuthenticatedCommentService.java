@@ -2,7 +2,7 @@ package com.mallang.comment.application;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
-import com.mallang.comment.application.command.DeleteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
 import com.mallang.comment.application.command.UpdateUnAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.Comment;
@@ -46,7 +46,7 @@ public class UnAuthenticatedCommentService {
         comment.update(command.password(), command.content(), command.postPassword());
     }
 
-    public void delete(DeleteUnAuthenticatedCommentCommand command) {
+    public void delete(DeleteUnAuthCommentCommand command) {
         UnAuthenticatedComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
         Member member = (command.memberId() == null)
                 ? null

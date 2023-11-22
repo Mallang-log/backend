@@ -18,8 +18,8 @@ public final class UnAuthCommentResponse extends CommentResponse {
             String content,
             LocalDateTime createdDate,
             boolean deleted,
-            List<CommentResponse> children,
-            WriterResponse writer
+            WriterResponse writer,
+            List<CommentResponse> children
     ) {
         super(id, content, createdDate, deleted, children);
         this.writer = writer;

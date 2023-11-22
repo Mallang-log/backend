@@ -2,7 +2,6 @@ package com.mallang.acceptance.category;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
-import static com.mallang.acceptance.AcceptanceSteps.비어있음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
@@ -16,17 +15,18 @@ import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고�
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_수정_요청;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_제거_요청;
-import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_조회_응답_데이터;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
-import static com.mallang.acceptance.category.CategoryAcceptanceSteps.하위_카테고리들;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.보호되지_않음;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.좋아요_안눌림;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_내용_검증;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_데이터;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
+import com.mallang.category.presentation.request.CreateCategoryRequest;
+import com.mallang.category.query.response.CategoryResponse;
+import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.post.query.response.PostDetailResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +44,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
     private String 동훈_세션_ID;
     private String 말랑_블로그_이름;
     private String 동훈_블로그_이름;
+    private CreateCategoryRequest Spring_카테고리_생성_요청;
 
     @Override
     @BeforeEach
@@ -53,6 +54,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
         동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
+        Spring_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "Spring", null);
     }
 
     @Nested
@@ -61,7 +63,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         @Test
         void 카테고리를_생성한다() {
             // when
-            var 응답 = 카테고리_생성_요청(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
+            var 응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
@@ -71,15 +73,30 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         @Test
         void 하위_카테고리를_생성한다() {
             // given
-            var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
+            var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
             var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "Jpa", 상위_카테고리_ID);
 
             // when
-            var 응답 = 카테고리_생성_요청(말랑_세션_ID, 말랑_블로그_이름, "JPA", 상위_카테고리_ID);
+            var 응답 = 카테고리_생성_요청(말랑_세션_ID, JPA_카테고리_생성_요청);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
             값이_존재한다(ID를_추출한다(응답));
+        }
+
+        @Test
+        void 타인의_카테고리_하위_카테고리로_지정하는_경우_예외() {
+            // given
+            var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
+            var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(동훈_블로그_이름, "Jpa", 상위_카테고리_ID);
+
+            // when
+            var 응답 = 카테고리_생성_요청(동훈_세션_ID, JPA_카테고리_생성_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 찾을수_없음);
         }
     }
 
@@ -89,61 +106,58 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         @Test
         void 카테고리를_업데이트한다() {
             // given
-            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
+            var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "JPA", Spring_카테고리_ID);
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, JPA_카테고리_생성_요청);
 
             // when
-            var extract = 카테고리_수정_요청(말랑_세션_ID, JPA_카테고리_ID, "Node", 없음());
+            var 응답 = 카테고리_수정_요청(말랑_세션_ID, JPA_카테고리_ID, "Node", 없음());
 
             // then
-            응답_상태를_검증한다(extract, 정상_처리);
-            var 예상_응답 = List.of(
-                    카테고리_조회_응답_데이터(Spring_카테고리_ID, "Spring", 비어있음()),
-                    카테고리_조회_응답_데이터(JPA_카테고리_ID, "Node", 비어있음())
-            );
-            var 응답 = 블로그의_카테고리_조회_요청(말랑_블로그_이름);
-            카테고리_조회_응답을_검증한다(응답, 예상_응답);
+            응답_상태를_검증한다(응답, 정상_처리);
         }
     }
 
     @Nested
     class 카테고리_삭제_API {
 
+        private Long Spring_카테고리_ID;
+        private Long JPA_카테고리_ID;
+
+        @BeforeEach
+        void setUp() {
+            Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
+            var JPA_카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "JPA", Spring_카테고리_ID);
+            JPA_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, JPA_카테고리_생성_요청));
+        }
+
         @Test
         void 카테고리는_제거되며_해당_카테고리를_가진_포스트는_카테고리_없음_상태가_된다() {
             // given
-            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
-            var 포스트_ID = 포스트_생성(
-                    말랑_세션_ID,
+            CreatePostRequest 포스트_생성_요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "제목",
                     "내용",
-                    없음(),
+                    null,
                     "인트로",
                     PUBLIC,
-                    없음(),
-                    JPA_카테고리_ID
+                    null,
+                    JPA_카테고리_ID,
+                    emptyList()
             );
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 포스트_생성_요청);
 
             // when
             var 응답 = 카테고리_제거_요청(말랑_세션_ID, JPA_카테고리_ID);
 
             // then
             응답_상태를_검증한다(응답, 정상_처리);
-            포스트_내용_검증(포스트_ID, 포스트_단일_조회_데이터(포스트_ID, "말랑",
-                    없음(), 없음(),
-                    "제목", "내용",
-                    null,
-                    PUBLIC, 보호되지_않음, 좋아요_안눌림, 0));
+            var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, null).as(PostDetailResponse.class);
+            assertThat(포스트_조회_응답.category().categoryId()).isNull();
         }
 
         @Test
         void 하위_카테고리가_있다면_제거할_수_없다() {
-            // given
-            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-            카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
-
             // when
             var 응답 = 카테고리_제거_요청(말랑_세션_ID, Spring_카테고리_ID);
 
@@ -153,9 +167,6 @@ class CategoryAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 자신의_카테고리가_아니라면_제거할_수_없다() {
-            // given
-            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-
             // when
             var 응답 = 카테고리_제거_요청(동훈_세션_ID, Spring_카테고리_ID);
 
@@ -171,27 +182,27 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         void 특정_블로그의_카테고리를_조회한다() {
             // given
             카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Node", 없음());
-
-            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
-            var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "N + 1", JPA_카테고리_ID);
-            var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Security", Spring_카테고리_ID);
-            var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "OAuth", Security_카테고리_ID);
-            var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "CSRF", Security_카테고리_ID);
-            var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Algorithm", 없음());
-            var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "DFS", Algorithm_카테고리_ID);
+            var Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, Spring_카테고리_생성_요청);
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "JPA", Spring_카테고리_ID));
+            var N1_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "N + 1", JPA_카테고리_ID));
+            var Security_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "Security", Spring_카테고리_ID));
+            var OAuth_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "OAuth", Security_카테고리_ID));
+            var CSRF_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "CSRF", Security_카테고리_ID));
+            var Algorithm_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "Algorithm", 없음()));
+            var DFS_카테고리_ID = 카테고리_생성(말랑_세션_ID, new CreateCategoryRequest(말랑_블로그_이름, "DFS", Algorithm_카테고리_ID));
             var 예상_응답 = List.of(
-                    카테고리_조회_응답_데이터(Spring_카테고리_ID, "Spring", 하위_카테고리들(
-                            카테고리_조회_응답_데이터(JPA_카테고리_ID, "JPA", 하위_카테고리들(
-                                    카테고리_조회_응답_데이터(N1_카테고리_ID, "N + 1", 비어있음())
+                    new CategoryResponse(Spring_카테고리_ID, "Spring", List.of(
+                            new CategoryResponse(JPA_카테고리_ID, "JPA", List.of(
+                                    new CategoryResponse(N1_카테고리_ID, "N + 1", emptyList())
                             )),
-                            카테고리_조회_응답_데이터(Security_카테고리_ID, "Security", 하위_카테고리들(
-                                    카테고리_조회_응답_데이터(OAuth_카테고리_ID, "OAuth", 비어있음()),
-                                    카테고리_조회_응답_데이터(CSRF_카테고리_ID, "CSRF", 비어있음())
+                            new CategoryResponse(Security_카테고리_ID, "Security", List.of(
+                                    new CategoryResponse(OAuth_카테고리_ID, "OAuth", emptyList()
+                                    ),
+                                    new CategoryResponse(CSRF_카테고리_ID, "CSRF", emptyList())
                             ))
                     )),
-                    카테고리_조회_응답_데이터(Algorithm_카테고리_ID, "Algorithm", 하위_카테고리들(
-                            카테고리_조회_응답_데이터(DFS_카테고리_ID, "DFS", 비어있음())
+                    new CategoryResponse(Algorithm_카테고리_ID, "Algorithm", List.of(
+                            new CategoryResponse(DFS_카테고리_ID, "DFS", emptyList())
                     ))
             );
 

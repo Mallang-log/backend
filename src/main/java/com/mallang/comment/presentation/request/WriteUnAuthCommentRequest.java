@@ -3,7 +3,7 @@ package com.mallang.comment.presentation.request;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import jakarta.annotation.Nullable;
 
-public record WriteAnonymousCommentRequest(
+public record WriteUnAuthCommentRequest(
         Long postId,
         String content,
         String nickname,

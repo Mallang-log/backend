@@ -3,7 +3,7 @@ package com.mallang.comment.presentation.request;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
 import jakarta.annotation.Nullable;
 
-public record UpdateAuthenticatedCommentRequest(
+public record UpdateAuthCommentRequest(
         String content,
         boolean secret
 ) {

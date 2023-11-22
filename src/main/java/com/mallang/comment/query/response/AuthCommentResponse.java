@@ -20,9 +20,9 @@ public final class AuthCommentResponse extends CommentResponse {
             String content,
             LocalDateTime createdDate,
             boolean deleted,
-            List<CommentResponse> children,
             WriterResponse writer,
-            boolean secret
+            boolean secret,
+            List<CommentResponse> children
     ) {
         super(id, content, createdDate, deleted, children);
         this.writer = writer;

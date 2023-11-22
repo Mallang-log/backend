@@ -11,10 +11,6 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성;
-import static com.mallang.acceptance.comment.CommentAcceptanceSteps.공개;
-import static com.mallang.acceptance.comment.CommentAcceptanceSteps.댓글_작성;
-import static com.mallang.acceptance.comment.CommentAcceptanceSteps.비공개;
-import static com.mallang.acceptance.comment.CommentAcceptanceSteps.비인증_댓글_작성;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.보호되지_않음;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.좋아요_안눌림;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_데이터;
@@ -138,12 +134,6 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         // given
         var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
         var 다른_회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("다른회원");
-
-        var 댓글1_ID = 비인증_댓글_작성(포스트_ID, "댓글", "비인증", "1234", null);
-        var 댓글2_ID = 댓글_작성(다른_회원_세션_ID, 포스트_ID, "댓글", 비공개, null);
-        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글1_ID, null);
-        댓글_작성(말랑_세션_ID, 포스트_ID, "대댓글", 공개, 댓글1_ID, null);
-        비인증_댓글_작성(포스트_ID, "대댓글", "비인증", "1234", 댓글2_ID, null);
 
         // when
         var 응답 = 포스트_삭제_요청(말랑_세션_ID, 포스트_ID);

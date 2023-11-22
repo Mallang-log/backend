@@ -245,7 +245,7 @@ class PostAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 포스트_검색_시 {
+    class 포스트_검색_API {
 
         @Test
         void 포스트를_전체_조회한다() {

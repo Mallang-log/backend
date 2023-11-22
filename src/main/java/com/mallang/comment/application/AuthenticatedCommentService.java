@@ -2,7 +2,7 @@ package com.mallang.comment.application;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
-import com.mallang.comment.application.command.DeleteAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.DeleteAuthCommentCommand;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.domain.AuthenticatedComment;
@@ -48,7 +48,7 @@ public class AuthenticatedCommentService {
         comment.update(writer, command.content(), command.secret(), command.postPassword());
     }
 
-    public void delete(DeleteAuthenticatedCommentCommand command) {
+    public void delete(DeleteAuthCommentCommand command) {
         AuthenticatedComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
         Member member = memberRepository.getById(command.memberId());
         comment.delete(member, commentDeleteService, command.postPassword());

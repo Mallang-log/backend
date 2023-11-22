@@ -37,11 +37,6 @@ public class PostAcceptanceSteps {
                 .extract();
     }
 
-    public static void 포스트_내용_검증(Long 포스트_ID, PostDetailResponse 예상_데이터) {
-        var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, null);
-        포스트_단일_조회_응답을_검증한다(포스트_조회_응답, 예상_데이터);
-    }
-
     public static void 포스트_단일_조회_응답을_검증한다(ExtractableResponse<Response> 응답, PostDetailResponse 예상_데이터) {
         PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
         assertThat(postDetailResponse).usingRecursiveComparison()

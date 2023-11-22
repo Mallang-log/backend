@@ -4,10 +4,9 @@ import jakarta.annotation.Nullable;
 import lombok.Builder;
 
 @Builder
-public record DeleteUnAuthenticatedCommentCommand(
+public record DeleteAuthCommentCommand(
         @Nullable String postPassword,
-        @Nullable Long memberId,
-        String password,
+        Long memberId,
         Long commentId
 ) {
 }
