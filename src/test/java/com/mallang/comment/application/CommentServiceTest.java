@@ -11,9 +11,9 @@ import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand
 import com.mallang.comment.application.command.UpdateUnAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
-import com.mallang.comment.domain.AuthenticatedComment;
+import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
@@ -47,10 +47,10 @@ class CommentServiceTest {
     private CommentServiceTestHelper commentServiceTestHelper;
 
     @Autowired
-    private AuthenticatedCommentService authenticatedCommentService;
+    private AuthCommentService authCommentService;
 
     @Autowired
-    private UnAuthenticatedCommentService unAuthenticatedCommentService;
+    private UnAuthCommentService unAuthCommentService;
 
     @Autowired
     private TransactionHelper transactionHelper;
@@ -84,7 +84,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            Long 댓글_ID = authenticatedCommentService.write(command);
+            Long 댓글_ID = authCommentService.write(command);
 
             // then
             assertThat(댓글_ID).isNotNull();
@@ -101,7 +101,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            Long 댓글_ID = authenticatedCommentService.write(command);
+            Long 댓글_ID = authCommentService.write(command);
 
             // then
             assertThat(댓글_ID).isNotNull();
@@ -118,7 +118,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            Long 댓글_ID = unAuthenticatedCommentService.write(command);
+            Long 댓글_ID = unAuthCommentService.write(command);
 
             // then
             assertThat(댓글_ID).isNotNull();
@@ -137,7 +137,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            Long 대댓글_ID = unAuthenticatedCommentService.write(command);
+            Long 대댓글_ID = unAuthCommentService.write(command);
 
             // then
             transactionHelper.doAssert(() -> {
@@ -161,7 +161,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            Long 대댓글_ID = authenticatedCommentService.write(command);
+            Long 대댓글_ID = authCommentService.write(command);
 
             // then
             transactionHelper.doAssert(() -> {
@@ -187,7 +187,7 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    authenticatedCommentService.write(command)
+                    authCommentService.write(command)
             ).isInstanceOf(CommentDepthConstraintViolationException.class);
 
             // then
@@ -211,7 +211,7 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    authenticatedCommentService.write(command)
+                    authCommentService.write(command)
             ).isInstanceOf(NotFoundCommentException.class);
 
             // then
@@ -237,10 +237,10 @@ class CommentServiceTest {
                     .build();
 
             // when
-            authenticatedCommentService.update(command);
+            authCommentService.update(command);
 
             // then
-            AuthenticatedComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
+            AuthComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("수정");
         }
 
@@ -256,10 +256,10 @@ class CommentServiceTest {
                     .build();
 
             // when
-            authenticatedCommentService.update(command);
+            authCommentService.update(command);
 
             // then
-            AuthenticatedComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
+            AuthComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("수정");
             assertThat(find.isSecret()).isTrue();
         }
@@ -277,11 +277,11 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    authenticatedCommentService.update(command)
+                    authCommentService.update(command)
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
-            AuthenticatedComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
+            AuthComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("댓글");
             assertThat(find.isSecret()).isFalse();
         }
@@ -297,10 +297,10 @@ class CommentServiceTest {
                     .build();
 
             // when
-            unAuthenticatedCommentService.update(command);
+            unAuthCommentService.update(command);
 
             // then
-            UnAuthenticatedComment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
+            UnAuthComment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("수정");
         }
 
@@ -316,11 +316,11 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    unAuthenticatedCommentService.update(command)
+                    unAuthCommentService.update(command)
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
-            UnAuthenticatedComment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
+            UnAuthComment find = commentServiceTestHelper.비인증_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("댓글");
         }
 
@@ -337,11 +337,11 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    authenticatedCommentService.update(command)
+                    authCommentService.update(command)
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
-            AuthenticatedComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
+            AuthComment find = commentServiceTestHelper.인증된_댓글을_조회한다(commentId);
             assertThat(find.getContent()).isEqualTo("댓글");
             assertThat(find.isSecret()).isFalse();
         }
@@ -361,7 +361,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            authenticatedCommentService.delete(command);
+            authCommentService.delete(command);
 
             // then
             assertThatThrownBy(() ->
@@ -380,7 +380,7 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    authenticatedCommentService.delete(command)
+                    authCommentService.delete(command)
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
@@ -398,7 +398,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            unAuthenticatedCommentService.delete(command);
+            unAuthCommentService.delete(command);
 
             // then
             assertThatThrownBy(() ->
@@ -417,7 +417,7 @@ class CommentServiceTest {
 
             // when
             assertThatThrownBy(() ->
-                    unAuthenticatedCommentService.delete(command)
+                    unAuthCommentService.delete(command)
             ).isInstanceOf(NoAuthorityForCommentException.class);
 
             // then
@@ -440,8 +440,8 @@ class CommentServiceTest {
                     .build();
 
             // when
-            authenticatedCommentService.delete(command1);
-            unAuthenticatedCommentService.delete(command2);
+            authCommentService.delete(command1);
+            unAuthCommentService.delete(command2);
 
             // then
             assertThatThrownBy(() ->
@@ -463,7 +463,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            unAuthenticatedCommentService.delete(command);
+            unAuthCommentService.delete(command);
 
             // then
             assertThatThrownBy(() ->
@@ -486,7 +486,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            unAuthenticatedCommentService.delete(command);
+            unAuthCommentService.delete(command);
 
             // then
             assertThatThrownBy(() ->
@@ -510,7 +510,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            unAuthenticatedCommentService.delete(command);
+            unAuthCommentService.delete(command);
 
             // then
             transactionHelper.doAssert(() -> {
@@ -535,7 +535,7 @@ class CommentServiceTest {
                     .build();
 
             // when
-            unAuthenticatedCommentService.delete(command);
+            unAuthCommentService.delete(command);
 
             // then
             assertThatThrownBy(() ->

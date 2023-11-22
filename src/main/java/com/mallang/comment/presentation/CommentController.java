@@ -4,8 +4,8 @@ import static com.mallang.post.presentation.support.PostPresentationConstant.POS
 
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.auth.presentation.support.OptionalAuth;
-import com.mallang.comment.application.AuthenticatedCommentService;
-import com.mallang.comment.application.UnAuthenticatedCommentService;
+import com.mallang.comment.application.AuthCommentService;
+import com.mallang.comment.application.UnAuthCommentService;
 import com.mallang.comment.application.command.DeleteAuthCommentCommand;
 import com.mallang.comment.presentation.request.DeleteUnAuthCommentRequest;
 import com.mallang.comment.presentation.request.UpdateAuthCommentRequest;
@@ -35,8 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommentController {
 
-    private final AuthenticatedCommentService authenticatedCommentService;
-    private final UnAuthenticatedCommentService unAuthenticatedCommentService;
+    private final AuthCommentService authCommentService;
+    private final UnAuthCommentService unAuthCommentService;
     private final CommentQueryService commentQueryService;
 
     @PostMapping
@@ -45,7 +45,7 @@ public class CommentController {
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody WriteAuthCommentRequest request
     ) {
-        Long id = authenticatedCommentService.write(request.toCommand(memberId, postPassword));
+        Long id = authCommentService.write(request.toCommand(memberId, postPassword));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
@@ -54,7 +54,7 @@ public class CommentController {
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody WriteUnAuthCommentRequest request
     ) {
-        Long id = unAuthenticatedCommentService.write(request.toCommand(postPassword));
+        Long id = unAuthCommentService.write(request.toCommand(postPassword));
         return ResponseEntity.created(URI.create("/comments/" + id)).build();
     }
 
@@ -65,7 +65,7 @@ public class CommentController {
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody UpdateAuthCommentRequest request
     ) {
-        authenticatedCommentService.update(request.toCommand(commentId, memberId, postPassword));
+        authCommentService.update(request.toCommand(commentId, memberId, postPassword));
         return ResponseEntity.ok().build();
     }
 
@@ -75,7 +75,7 @@ public class CommentController {
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody UpdateUnAuthCommentRequest request
     ) {
-        unAuthenticatedCommentService.update(request.toCommand(commentId, postPassword));
+        unAuthCommentService.update(request.toCommand(commentId, postPassword));
         return ResponseEntity.ok().build();
     }
 
@@ -90,7 +90,7 @@ public class CommentController {
                 .memberId(memberId)
                 .commentId(commentId)
                 .build();
-        authenticatedCommentService.delete(command);
+        authCommentService.delete(command);
         return ResponseEntity.ok().build();
     }
 
@@ -101,7 +101,7 @@ public class CommentController {
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody DeleteUnAuthCommentRequest request
     ) {
-        unAuthenticatedCommentService.delete(request.toCommand(memberId, commentId, postPassword));
+        unAuthCommentService.delete(request.toCommand(memberId, commentId, postPassword));
         return ResponseEntity.ok().build();
     }
 

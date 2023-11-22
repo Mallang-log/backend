@@ -1,6 +1,6 @@
 package com.mallang.comment.query.response;
 
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import lombok.Getter;
 public final class UnAuthCommentResponse extends CommentResponse {
 
     private final WriterResponse writer;
-    private final String type = UNAUTHENTICATED_COMMENT_DATA_TYPE;
+    private final String type = UN_AUTH_COMMENT_DATA_TYPE;
 
     @Builder
     public UnAuthCommentResponse(
@@ -25,7 +25,7 @@ public final class UnAuthCommentResponse extends CommentResponse {
         this.writer = writer;
     }
 
-    public static UnAuthCommentResponse from(UnAuthenticatedComment comment) {
+    public static UnAuthCommentResponse from(UnAuthComment comment) {
         return UnAuthCommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())

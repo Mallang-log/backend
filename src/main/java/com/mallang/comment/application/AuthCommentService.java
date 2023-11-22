@@ -5,7 +5,7 @@ import com.mallang.auth.domain.MemberRepository;
 import com.mallang.comment.application.command.DeleteAuthCommentCommand;
 import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
-import com.mallang.comment.domain.AuthenticatedComment;
+import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.service.CommentDeleteService;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class AuthenticatedCommentService {
+public class AuthCommentService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
@@ -30,7 +30,7 @@ public class AuthenticatedCommentService {
         Post post = postRepository.getById(command.postId());
         Member writer = memberRepository.getById(command.memberId());
         Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
-        AuthenticatedComment comment = command.toComment(post, writer, parent);
+        AuthComment comment = command.toComment(post, writer, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
     }
@@ -43,13 +43,13 @@ public class AuthenticatedCommentService {
     }
 
     public void update(UpdateAuthenticatedCommentCommand command) {
-        AuthenticatedComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
+        AuthComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
         Member writer = memberRepository.getById(command.memberId());
         comment.update(writer, command.content(), command.secret(), command.postPassword());
     }
 
     public void delete(DeleteAuthCommentCommand command) {
-        AuthenticatedComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
+        AuthComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
         Member member = memberRepository.getById(command.memberId());
         comment.delete(member, commentDeleteService, command.postPassword());
     }

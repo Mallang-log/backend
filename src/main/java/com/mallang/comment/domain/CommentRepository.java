@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    default AuthenticatedComment getAuthenticatedCommentById(Long id) {
-        return (AuthenticatedComment) getById(id);
+    default AuthComment getAuthenticatedCommentById(Long id) {
+        return (AuthComment) getById(id);
     }
 
-    default UnAuthenticatedComment getUnAuthenticatedCommentById(Long id) {
-        return (UnAuthenticatedComment) getById(id);
+    default UnAuthComment getUnAuthenticatedCommentById(Long id) {
+        return (UnAuthComment) getById(id);
     }
 
     default Comment getById(Long id) {

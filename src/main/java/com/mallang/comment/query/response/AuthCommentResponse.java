@@ -1,7 +1,7 @@
 package com.mallang.comment.query.response;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.comment.domain.AuthenticatedComment;
+import com.mallang.comment.domain.AuthComment;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -12,7 +12,7 @@ public final class AuthCommentResponse extends CommentResponse {
 
     private final WriterResponse writer;
     private final boolean secret;
-    private final String type = AUTHENTICATED_COMMENT_DATA_TYPE;
+    private final String type = AUTH_COMMENT_DATA_TYPE;
 
     @Builder
     public AuthCommentResponse(
@@ -29,7 +29,7 @@ public final class AuthCommentResponse extends CommentResponse {
         this.secret = secret;
     }
 
-    public static AuthCommentResponse from(AuthenticatedComment comment) {
+    public static AuthCommentResponse from(AuthComment comment) {
         return AuthCommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())

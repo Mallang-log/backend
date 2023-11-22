@@ -1,13 +1,13 @@
 package com.mallang.comment.query.response;
 
-import static com.mallang.comment.query.response.CommentResponse.AUTHENTICATED_COMMENT_DATA_TYPE;
-import static com.mallang.comment.query.response.CommentResponse.UNAUTHENTICATED_COMMENT_DATA_TYPE;
+import static com.mallang.comment.query.response.CommentResponse.AUTH_COMMENT_DATA_TYPE;
+import static com.mallang.comment.query.response.CommentResponse.UN_AUTH_COMMENT_DATA_TYPE;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.mallang.comment.domain.AuthenticatedComment;
+import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.common.execption.MallangLogException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,15 +20,15 @@ import lombok.Data;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AuthCommentResponse.class, name = AUTHENTICATED_COMMENT_DATA_TYPE),
-        @JsonSubTypes.Type(value = UnAuthCommentResponse.class, name = UNAUTHENTICATED_COMMENT_DATA_TYPE),
+        @JsonSubTypes.Type(value = AuthCommentResponse.class, name = AUTH_COMMENT_DATA_TYPE),
+        @JsonSubTypes.Type(value = UnAuthCommentResponse.class, name = UN_AUTH_COMMENT_DATA_TYPE),
 })
 @Data
 public abstract sealed class CommentResponse
         permits AuthCommentResponse, UnAuthCommentResponse {
 
-    public static final String AUTHENTICATED_COMMENT_DATA_TYPE = "AuthenticatedComment";
-    public static final String UNAUTHENTICATED_COMMENT_DATA_TYPE = "UnAuthenticatedComment";
+    public static final String AUTH_COMMENT_DATA_TYPE = "AuthComment";
+    public static final String UN_AUTH_COMMENT_DATA_TYPE = "UnAuthComment";
 
     protected final Long id;
     protected final String content;
@@ -53,10 +53,10 @@ public abstract sealed class CommentResponse
     }
 
     public static CommentResponse from(Comment comment) {
-        if (comment instanceof AuthenticatedComment authed) {
+        if (comment instanceof AuthComment authed) {
             return AuthCommentResponse.from(authed);
         }
-        if (comment instanceof UnAuthenticatedComment unAuthed) {
+        if (comment instanceof UnAuthComment unAuthed) {
             return UnAuthCommentResponse.from(unAuthed);
         }
         throw new MallangLogException("해당 Comment 타입이 CommentResponse 에서 지원되지 않습니다.");

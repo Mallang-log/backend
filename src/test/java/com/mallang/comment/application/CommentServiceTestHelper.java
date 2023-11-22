@@ -4,9 +4,9 @@ import com.mallang.comment.application.command.DeleteAuthCommentCommand;
 import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
 import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
-import com.mallang.comment.domain.AuthenticatedComment;
+import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.CommentRepository;
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -18,8 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 public class CommentServiceTestHelper {
 
     private final CommentRepository commentRepository;
-    private final AuthenticatedCommentService authenticatedCommentService;
-    private final UnAuthenticatedCommentService unAuthenticatedCommentService;
+    private final AuthCommentService authCommentService;
+    private final UnAuthCommentService unAuthCommentService;
 
     public Long 댓글을_작성한다(Long postId, String content, boolean secret, Long memberId) {
         WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
@@ -28,7 +28,7 @@ public class CommentServiceTestHelper {
                 .secret(secret)
                 .memberId(memberId)
                 .build();
-        return authenticatedCommentService.write(command);
+        return authCommentService.write(command);
     }
 
     public Long 비인증_댓글을_작성한다(Long postId, String content, String nickname, String password) {
@@ -38,7 +38,7 @@ public class CommentServiceTestHelper {
                 .nickname(nickname)
                 .password(password)
                 .build();
-        return unAuthenticatedCommentService.write(command);
+        return unAuthCommentService.write(command);
     }
 
     public Long 대댓글을_작성한다(Long postId, String content, boolean secret, Long memberId, Long parentCommentId) {
@@ -49,7 +49,7 @@ public class CommentServiceTestHelper {
                 .memberId(memberId)
                 .parentCommentId(parentCommentId)
                 .build();
-        return authenticatedCommentService.write(command);
+        return authCommentService.write(command);
     }
 
     public Long 비인증_대댓글을_작성한다(Long postId, String content, String nickname, String password, Long parentCommentId) {
@@ -60,14 +60,14 @@ public class CommentServiceTestHelper {
                 .password(password)
                 .parentCommentId(parentCommentId)
                 .build();
-        return unAuthenticatedCommentService.write(command);
+        return unAuthCommentService.write(command);
     }
 
-    public AuthenticatedComment 인증된_댓글을_조회한다(Long 댓글_ID) {
+    public AuthComment 인증된_댓글을_조회한다(Long 댓글_ID) {
         return commentRepository.getAuthenticatedCommentById(댓글_ID);
     }
 
-    public UnAuthenticatedComment 비인증_댓글을_조회한다(Long 댓글_ID) {
+    public UnAuthComment 비인증_댓글을_조회한다(Long 댓글_ID) {
         return commentRepository.getUnAuthenticatedCommentById(댓글_ID);
     }
 
@@ -76,7 +76,7 @@ public class CommentServiceTestHelper {
                 .commentId(댓글_ID)
                 .memberId(회원_ID)
                 .build();
-        authenticatedCommentService.delete(command);
+        authCommentService.delete(command);
     }
 
     public void 비인증_댓글을_제거한다(Long 댓글_ID, String 암호) {
@@ -84,6 +84,6 @@ public class CommentServiceTestHelper {
                 .commentId(댓글_ID)
                 .password(암호)
                 .build();
-        unAuthenticatedCommentService.delete(command);
+        unAuthCommentService.delete(command);
     }
 }

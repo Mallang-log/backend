@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-@DisplayName("인증된 사용자의 댓글(AuthenticatedComment) 은(는)")
+@DisplayName("인증된 사용자의 댓글(AuthComment) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class AuthenticatedCommentTest {
+class AuthCommentTest {
 
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
@@ -47,7 +47,7 @@ class AuthenticatedCommentTest {
         @Test
         void 비밀_댓글은_로그인한_사용자만_작성_가능하다() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -65,7 +65,7 @@ class AuthenticatedCommentTest {
         @Test
         void 공개_댓글을_작성할_수_있다() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -86,7 +86,7 @@ class AuthenticatedCommentTest {
             @Test
             void 로그인한_누구나_작성_가능하다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .writer(other)
@@ -113,7 +113,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트의_비밀번호가_일치하면_작성할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .writer(other)
@@ -130,7 +130,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자라면_작성할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .writer(postWriter)
@@ -147,7 +147,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자가_아니며_비밀번호도_일치하지_않으면_작성할_수_없다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .writer(other)
@@ -173,7 +173,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자만_작성할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .writer(postWriter)
@@ -190,7 +190,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자가_아니면_작성할_수_없다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .writer(other)
@@ -211,7 +211,7 @@ class AuthenticatedCommentTest {
         @Test
         void 자신의_댓글이_아닌_경우_예외() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
@@ -227,7 +227,7 @@ class AuthenticatedCommentTest {
         @Test
         void 댓글을_변경한다() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(true)
@@ -249,7 +249,7 @@ class AuthenticatedCommentTest {
                 }, delimiterString = " -> ")
         void 로그인한_유저는_비공개_여부도_변경할_수_있다(boolean before, boolean after) {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(before)
@@ -270,7 +270,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자라면_가능하다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(true)
@@ -297,7 +297,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자이며_포스트의_비밀번호가_일치하면_수정할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(true)
@@ -314,7 +314,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자가_포스트_작성자라면_수정할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(true)
@@ -331,7 +331,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자_글_작성자가_아니며_포스트의_비밀번호도_일치하지_않으면_수정할_수_없다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(true)
@@ -358,7 +358,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자가_포스트_작성자인_경우에만_수정할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(true)
@@ -375,7 +375,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자가_아니면_수정할_수_없다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(true)
@@ -400,7 +400,7 @@ class AuthenticatedCommentTest {
         @Test
         void 자신의_댓글인_경우_제거할_수_있다() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
@@ -416,7 +416,7 @@ class AuthenticatedCommentTest {
         @Test
         void 자신의_댓글이_아닌_경우_예외() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
@@ -432,14 +432,14 @@ class AuthenticatedCommentTest {
         @Test
         void 포스트_작성자는_모든_댓글_삭제_가능하다() {
             // given
-            AuthenticatedComment comment = AuthenticatedComment.builder()
+            AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
                     .writer(member)
                     .build();
 
-            AuthenticatedComment secretComment = AuthenticatedComment.builder()
+            AuthComment secretComment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(true)
@@ -459,7 +459,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자라면_가능하다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)
@@ -485,7 +485,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자이며_포스트의_비밀번호가_일치하면_삭제할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)
@@ -501,7 +501,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자가_포스트_작성자라면_삭제할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)
@@ -517,7 +517,7 @@ class AuthenticatedCommentTest {
             @Test
             void 댓글_작성자가_포스트_작성자가_아니며_포스트의_비밀번호도_일치하지_않으면_삭제할_수_없다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)
@@ -543,13 +543,13 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자만_삭제할_수_있다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)
                         .writer(postWriter)
                         .build();
-                AuthenticatedComment otherComment = AuthenticatedComment.builder()
+                AuthComment otherComment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)
@@ -568,7 +568,7 @@ class AuthenticatedCommentTest {
             @Test
             void 포스트_작성자가_아니면_삭제할_수_없다() {
                 // given
-                AuthenticatedComment comment = AuthenticatedComment.builder()
+                AuthComment comment = AuthComment.builder()
                         .content("내용")
                         .post(post)
                         .secret(false)

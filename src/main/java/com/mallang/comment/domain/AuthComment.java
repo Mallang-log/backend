@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class AuthenticatedComment extends Comment {
+public class AuthComment extends Comment {
 
     private boolean secret;
 
@@ -27,7 +27,7 @@ public class AuthenticatedComment extends Comment {
     private Member writer;
 
     @Builder
-    public AuthenticatedComment(
+    public AuthComment(
             String content,
             Post post,
             @Nullable Comment parent,

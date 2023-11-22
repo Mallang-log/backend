@@ -8,9 +8,9 @@ import static org.mockito.Mockito.verify;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.comment.domain.AuthenticatedComment;
+import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.CommentRepository;
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
@@ -43,13 +43,13 @@ class CommentDeleteServiceTest {
     @Test
     void 자식_댓글이_존재한다면_부모와의_연관관계는_유지되며_논리적으로만_제거시킨다() {
         // given
-        AuthenticatedComment parentComment = AuthenticatedComment.builder()
+        AuthComment parentComment = AuthComment.builder()
                 .content("내용")
                 .post(post)
                 .writer(member)
                 .secret(true)
                 .build();
-        AuthenticatedComment childComment = AuthenticatedComment.builder()
+        AuthComment childComment = AuthComment.builder()
                 .content("to be delete")
                 .post(post)
                 .writer(member)
@@ -70,13 +70,13 @@ class CommentDeleteServiceTest {
     @Test
     void 대댓글을_삭제하는_경우_물리적으로_제거된다() {
         // given
-        UnAuthenticatedComment parentComment = UnAuthenticatedComment.builder()
+        UnAuthComment parentComment = UnAuthComment.builder()
                 .content("내용")
                 .post(post)
                 .nickname("익")
                 .password("1234")
                 .build();
-        UnAuthenticatedComment childComment = UnAuthenticatedComment.builder()
+        UnAuthComment childComment = UnAuthComment.builder()
                 .content("to be delete")
                 .post(post)
                 .nickname("익")
@@ -97,13 +97,13 @@ class CommentDeleteServiceTest {
     @Test
     void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태이며_더이상_존재하는_자식이_없는_경우_부모_댓글도_물리적으로_제거된다() {
         // given
-        UnAuthenticatedComment parentComment = UnAuthenticatedComment.builder()
+        UnAuthComment parentComment = UnAuthComment.builder()
                 .content("내용")
                 .post(post)
                 .nickname("익")
                 .password("1234")
                 .build();
-        AuthenticatedComment childComment = AuthenticatedComment.builder()
+        AuthComment childComment = AuthComment.builder()
                 .content("to be delete")
                 .post(post)
                 .writer(member)
@@ -125,13 +125,13 @@ class CommentDeleteServiceTest {
     @Test
     void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태가_아닌_경우_부모는_변함없다() {
         // given
-        AuthenticatedComment parentComment = AuthenticatedComment.builder()
+        AuthComment parentComment = AuthComment.builder()
                 .content("내용")
                 .post(post)
                 .writer(member)
                 .secret(true)
                 .build();
-        UnAuthenticatedComment childComment = UnAuthenticatedComment.builder()
+        UnAuthComment childComment = UnAuthComment.builder()
                 .content("to be delete")
                 .post(post)
                 .nickname("익")
@@ -152,20 +152,20 @@ class CommentDeleteServiceTest {
     @Test
     void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태라도_여전히_다른_자식이_존재한다면_부모는_변함없다() {
         // given
-        AuthenticatedComment parentComment = AuthenticatedComment.builder()
+        AuthComment parentComment = AuthComment.builder()
                 .content("내용")
                 .post(post)
                 .writer(member)
                 .secret(true)
                 .build();
-        UnAuthenticatedComment childComment = UnAuthenticatedComment.builder()
+        UnAuthComment childComment = UnAuthComment.builder()
                 .content("to be delete")
                 .post(post)
                 .nickname("익")
                 .password("1234")
                 .parent(parentComment)
                 .build();
-        UnAuthenticatedComment otherChildComment = UnAuthenticatedComment.builder()
+        UnAuthComment otherChildComment = UnAuthComment.builder()
                 .content("to be delete")
                 .post(post)
                 .nickname("익")

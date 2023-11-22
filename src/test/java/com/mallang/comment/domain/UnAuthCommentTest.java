@@ -22,10 +22,10 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("익명 사용자의 댓글(UnAuthenticatedComment) 은(는)")
+@DisplayName("익명 사용자의 댓글(UnAuthComment) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class UnAuthenticatedCommentTest {
+class UnAuthCommentTest {
 
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
@@ -41,7 +41,7 @@ class UnAuthenticatedCommentTest {
         @Test
         void 공개_댓글만_작성_가능하다() {
             // when
-            UnAuthenticatedComment unAuth = UnAuthenticatedComment.builder()
+            UnAuthComment unAuth = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -59,7 +59,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 누구나_작성_가능하다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -86,7 +86,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트의_비밀번호가_일치하면_작성할_수_있다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -103,7 +103,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트의_비밀번호가_일치하지_않으면_작성할_수_없다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -129,7 +129,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 아무도_작성할_수_없다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -150,7 +150,7 @@ class UnAuthenticatedCommentTest {
         @Test
         void 비밀번호가_다른_경우_예외() {
             // given
-            UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+            UnAuthComment comment = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -166,7 +166,7 @@ class UnAuthenticatedCommentTest {
         @Test
         void 댓글을_변경한다() {
             // given
-            UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+            UnAuthComment comment = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -192,7 +192,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 댓글_비밀번호가_일치하고_포스트의_비밀번호가_일치하면_수정할_수_있다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -209,7 +209,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트의_비밀번호가_일치하지_않으면_수정할_수_없다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -236,7 +236,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 수정할_수_없다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -261,7 +261,7 @@ class UnAuthenticatedCommentTest {
         @Test
         void 비밀번호가_일치하면_제거할_수_있다() {
             // given
-            UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+            UnAuthComment comment = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -277,7 +277,7 @@ class UnAuthenticatedCommentTest {
         @Test
         void 비밀번호가_다른_경우_예외() {
             // given
-            UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+            UnAuthComment comment = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -293,7 +293,7 @@ class UnAuthenticatedCommentTest {
         @Test
         void 포스트_작성자는_모든_댓글_삭제_가능하다() {
             // given
-            UnAuthenticatedComment unAuth = UnAuthenticatedComment.builder()
+            UnAuthComment unAuth = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -318,7 +318,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 댓글_비밀번호가_일치하고_포스트의_비밀번호가_일치하면_삭제할_수_있다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -334,7 +334,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트_작성자라면_삭제할_수_있다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -350,7 +350,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트_작성자가_아니며_포스트의_비밀번호도_일치하지_않으면_삭제할_수_없다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -376,7 +376,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트_작성자만_삭제할_수_있다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")
@@ -392,7 +392,7 @@ class UnAuthenticatedCommentTest {
             @Test
             void 포스트_작성자가_아니면_삭제할_수_없다() {
                 // given
-                UnAuthenticatedComment comment = UnAuthenticatedComment.builder()
+                UnAuthComment comment = UnAuthComment.builder()
                         .content("내용")
                         .post(post)
                         .nickname("말랑")

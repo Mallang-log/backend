@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class UnAuthenticatedComment extends Comment {
+public class UnAuthComment extends Comment {
 
     @Column(nullable = false)
     private String nickname;
@@ -25,7 +25,7 @@ public class UnAuthenticatedComment extends Comment {
     private String password;
 
     @Builder
-    public UnAuthenticatedComment(
+    public UnAuthComment(
             String content,
             Post post,
             @Nullable Comment parent,

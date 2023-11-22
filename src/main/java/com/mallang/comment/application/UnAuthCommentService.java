@@ -7,7 +7,7 @@ import com.mallang.comment.application.command.UpdateUnAuthenticatedCommentComma
 import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
-import com.mallang.comment.domain.UnAuthenticatedComment;
+import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class UnAuthenticatedCommentService {
+public class UnAuthCommentService {
 
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
@@ -29,7 +29,7 @@ public class UnAuthenticatedCommentService {
     public Long write(WriteUnAuthenticatedCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
-        UnAuthenticatedComment comment = command.toCommand(post, parent);
+        UnAuthComment comment = command.toCommand(post, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
     }
@@ -42,12 +42,12 @@ public class UnAuthenticatedCommentService {
     }
 
     public void update(UpdateUnAuthenticatedCommentCommand command) {
-        UnAuthenticatedComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
+        UnAuthComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
         comment.update(command.password(), command.content(), command.postPassword());
     }
 
     public void delete(DeleteUnAuthCommentCommand command) {
-        UnAuthenticatedComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
+        UnAuthComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
         Member member = (command.memberId() == null)
                 ? null
                 : memberRepository.getById(command.memberId());
