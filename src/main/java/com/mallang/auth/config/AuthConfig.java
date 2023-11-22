@@ -49,6 +49,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 UriAndMethodAndParamCondition.builder()
                         .uriPatterns(Set.of(
                                 "/members/*",
+                                "/blogs",
                                 "/posts/**",
                                 "/categories",
                                 "/comments",

@@ -27,4 +27,12 @@ public class BlogAcceptanceSteps {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 블로그_정보_조회_요청(String 블로그_이름) {
+        return given()
+                .queryParam("blogName", 블로그_이름)
+                .get("/blogs")
+                .then().log().all()
+                .extract();
+    }
 }
