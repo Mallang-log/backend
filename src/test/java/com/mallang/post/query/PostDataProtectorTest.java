@@ -6,10 +6,9 @@ import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
-import com.mallang.post.query.data.PostDetailData;
-import com.mallang.post.query.data.PostDetailData.WriterDetailInfo;
-import com.mallang.post.query.data.PostSimpleData;
-import com.mallang.post.query.data.PostSimpleData.WriterSimpleInfo;
+import com.mallang.post.query.response.PostDetailResponse;
+import com.mallang.post.query.response.PostSearchResponse;
+import com.mallang.post.query.response.PostSearchResponse.WriterResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -34,15 +33,15 @@ class PostDataProtectorTest {
         void 보호_글이라도_글의_주인이_조회한다면_내용을_다_보여준다() {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new PostDetailResponse.WriterResponse(memberId, "mallang", "url"))
                     .content("content")
                     .visibility(PROTECTED)
                     .password("1234")
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId, null, postDetailData);
+            PostDetailResponse protectedData = postDataProtector.protectIfRequired(memberId, null, postDetailResponse);
 
             // then
             assertThat(protectedData.content()).isEqualTo("content");
@@ -52,15 +51,16 @@ class PostDataProtectorTest {
         void 보호글의_경우_비밀번호가_달라도_주인이라면_볼_수_있다() {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new PostDetailResponse.WriterResponse(memberId, "mallang", "url"))
                     .content("content")
                     .visibility(PROTECTED)
                     .password("1234")
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId, "12345", postDetailData);
+            PostDetailResponse protectedData = postDataProtector.protectIfRequired(memberId, "12345",
+                    postDetailResponse);
 
             // then
             assertThat(protectedData.content()).isEqualTo("content");
@@ -70,8 +70,8 @@ class PostDataProtectorTest {
         void 보호글의_경우_글의_주인이_아닌_경우_비밀번호가_일치하면_볼_수_있다() {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new PostDetailResponse.WriterResponse(memberId, "mallang", "url"))
                     .content("content")
                     .postThumbnailImageName("thumb")
                     .visibility(PROTECTED)
@@ -79,7 +79,8 @@ class PostDataProtectorTest {
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId + 1, "1234", postDetailData);
+            PostDetailResponse protectedData = postDataProtector.protectIfRequired(memberId + 1, "1234",
+                    postDetailResponse);
 
             // then
             assertThat(protectedData.content()).isEqualTo("content");
@@ -89,15 +90,16 @@ class PostDataProtectorTest {
         void 보호글의_경우_글의_주인이_아니며_비밀번호가_다르다면_보호된다() {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new PostDetailResponse.WriterResponse(memberId, "mallang", "url"))
                     .content("content")
                     .postThumbnailImageName("thumb")
                     .visibility(PROTECTED)
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(memberId + 1, null, postDetailData);
+            PostDetailResponse protectedData = postDataProtector.protectIfRequired(memberId + 1, null,
+                    postDetailResponse);
 
             // then
             assertThat(protectedData.content()).isEqualTo("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.");
@@ -109,14 +111,14 @@ class PostDataProtectorTest {
         void 공개_글은_모두에게_전체_공개될_수_있다(Visibility visibility) {
             // given
             Long memberId = 1L;
-            PostDetailData postDetailData = PostDetailData.builder()
-                    .writerInfo(new WriterDetailInfo(memberId, "mallang", "url"))
+            PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                    .writer(new PostDetailResponse.WriterResponse(memberId, "mallang", "url"))
                     .content("content")
                     .visibility(visibility)
                     .build();
 
             // when
-            PostDetailData protectedData = postDataProtector.protectIfRequired(null, null, postDetailData);
+            PostDetailResponse protectedData = postDataProtector.protectIfRequired(null, null, postDetailResponse);
 
             // then
             assertThat(protectedData.content()).isEqualTo("content");
@@ -129,25 +131,25 @@ class PostDataProtectorTest {
         @Test
         void 검색_결과_중_보호된_글은_주인만_볼_수_있으며_주인이_아니라면_보호되어_반환된다() {
             // given
-            List<PostSimpleData> result = List.of(
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
+            List<PostSearchResponse> result = List.of(
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(1L, "mallang", "url"))
                             .title("mallang-public")
                             .content("mallang-public")
                             .postThumbnailImageName("thumb-mallang-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(1L, "mallang", "url"))
                             .title("mallang-protected")
                             .content("mallang-protected")
                             .postThumbnailImageName("thumb-mallang-protected")
                             .intro("intro")
                             .visibility(PROTECTED)
                             .build(),
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(1L, "mallang", "url"))
                             .title("mallang-private")
                             .content("mallang-private")
                             .postThumbnailImageName("thumb-mallang-private")
@@ -155,16 +157,16 @@ class PostDataProtectorTest {
                             .visibility(PRIVATE)
                             .build(),
 
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(2L, "other", "url"))
                             .title("other-public")
                             .content("other-public")
                             .postThumbnailImageName("thumb-other-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(2L, "other", "url"))
                             .title("other-protected")
                             .content("other-protected")
                             .postThumbnailImageName("thumb-other-protected")
@@ -173,28 +175,28 @@ class PostDataProtectorTest {
                             .build());
 
             // when
-            List<PostSimpleData> protect = postDataProtector.protectIfRequired(1L, result);
+            List<PostSearchResponse> protect = postDataProtector.protectIfRequired(1L, result);
 
             // then
-            List<PostSimpleData> expected = List.of(
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
+            List<PostSearchResponse> expected = List.of(
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(1L, "mallang", "url"))
                             .title("mallang-public")
                             .content("mallang-public")
                             .postThumbnailImageName("thumb-mallang-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(1L, "mallang", "url"))
                             .title("mallang-protected")
                             .content("mallang-protected")
                             .postThumbnailImageName("thumb-mallang-protected")
                             .intro("intro")
                             .visibility(PROTECTED)
                             .build(),
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(1L, "mallang", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(1L, "mallang", "url"))
                             .title("mallang-private")
                             .content("mallang-private")
                             .postThumbnailImageName("thumb-mallang-private")
@@ -202,16 +204,16 @@ class PostDataProtectorTest {
                             .visibility(PRIVATE)
                             .build(),
 
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(2L, "other", "url"))
                             .title("other-public")
                             .content("other-public")
                             .postThumbnailImageName("thumb-other-public")
                             .intro("intro")
                             .visibility(PUBLIC)
                             .build(),
-                    PostSimpleData.builder()
-                            .writerInfo(new WriterSimpleInfo(2L, "other", "url"))
+                    PostSearchResponse.builder()
+                            .writer(new WriterResponse(2L, "other", "url"))
                             .title("other-protected")
                             .content("보호되어 있는 글입니다.")
                             .postThumbnailImageName("")

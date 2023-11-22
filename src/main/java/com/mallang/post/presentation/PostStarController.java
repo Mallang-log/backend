@@ -9,7 +9,7 @@ import com.mallang.post.application.PostStarService;
 import com.mallang.post.presentation.request.CancelPostStarRequest;
 import com.mallang.post.presentation.request.StarPostRequest;
 import com.mallang.post.query.PostStarQueryService;
-import com.mallang.post.query.data.StaredPostData;
+import com.mallang.post.query.response.StaredPostResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public class PostStarController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StaredPostData>> findAllByMemberId(
+    public ResponseEntity<List<StaredPostResponse>> findAllByMemberId(
             @OptionalAuth Long requesterId,
             @RequestParam("memberId") Long targetMemberId
     ) {

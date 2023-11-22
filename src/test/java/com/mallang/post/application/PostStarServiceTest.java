@@ -7,13 +7,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.auth.MemberServiceTestHelper;
-import com.mallang.blog.application.BlogServiceTestHelper;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CancelPostStarCommand;
 import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.visibility.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyStarPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
@@ -23,29 +20,12 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 @DisplayName("포스트 즐겨찾기 서비스(PostStarService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class PostStarServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogServiceTestHelper blogServiceTestHelper;
-
-    @Autowired
-    private PostServiceTestHelper postServiceTestHelper;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private PostStarService postStarService;
+class PostStarServiceTest extends ServiceTest {
 
     private Long memberId;
     private Long otherMemberId;
@@ -56,22 +36,22 @@ class PostStarServiceTest {
 
     @BeforeEach
     void setUp() {
-        memberId = memberServiceTestHelper.회원을_저장한다("말랑");
-        otherMemberId = memberServiceTestHelper.회원을_저장한다("other");
-        blogName = blogServiceTestHelper.블로그_개설(memberId, "mallang-log").getName();
-        publicPostId = postServiceTestHelper.포스트를_저장한다(
+        memberId = 회원을_저장한다("말랑");
+        otherMemberId = 회원을_저장한다("other");
+        blogName = 블로그_개설(memberId, "mallang-log").getName();
+        publicPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PUBLIC, null));
-        protectedPostId = postServiceTestHelper.포스트를_저장한다(
+        protectedPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        privatePostId = postServiceTestHelper.포스트를_저장한다(
+        privatePostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
@@ -180,7 +160,7 @@ class PostStarServiceTest {
             // given
             postStarService.star(new StarPostCommand(protectedPostId, otherMemberId, "1234"));
             postStarService.star(new StarPostCommand(publicPostId, otherMemberId, null));
-            postServiceTestHelper.포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
 
             // when & then
             assertDoesNotThrow(() -> {

@@ -5,10 +5,10 @@ import lombok.Builder;
 
 @Builder
 public record UpdateAuthenticatedCommentCommand(
-        @Nullable String postPassword,
         Long memberId,
         Long commentId,
         String content,
-        boolean secret
+        boolean secret,
+        @Nullable String postPassword
 ) {
 }

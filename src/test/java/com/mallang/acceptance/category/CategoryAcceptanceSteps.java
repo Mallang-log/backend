@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.category.presentation.request.CreateCategoryRequest;
 import com.mallang.category.presentation.request.UpdateCategoryRequest;
-import com.mallang.category.query.data.CategoryData;
+import com.mallang.category.query.response.CategoryResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -25,6 +25,13 @@ public class CategoryAcceptanceSteps {
         return ID를_추출한다(카테고리_생성_요청(세션_ID, 블로그_이름, 카테고리_이름, 부모_카테고리_ID));
     }
 
+    public static Long 카테고리_생성(
+            String 세션_ID,
+            CreateCategoryRequest request
+    ) {
+        return ID를_추출한다(카테고리_생성_요청(세션_ID, request));
+    }
+
     public static ExtractableResponse<Response> 카테고리_생성_요청(
             String 세션_ID,
             String 블로그_이름,
@@ -33,6 +40,17 @@ public class CategoryAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .body(new CreateCategoryRequest(블로그_이름, 카테고리_이름, 부모_카테고리_ID))
+                .post("/categories")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 카테고리_생성_요청(
+            String 세션_ID,
+            CreateCategoryRequest request
+    ) {
+        return given(세션_ID)
+                .body(request)
                 .post("/categories")
                 .then().log().all()
                 .extract();
@@ -69,26 +87,26 @@ public class CategoryAcceptanceSteps {
                 .extract();
     }
 
-    public static CategoryData 카테고리_조회_응답_데이터(
+    public static CategoryResponse 카테고리_조회_응답_데이터(
             Long 카테고리_ID,
             String 이름,
-            List<CategoryData> 하위_카테고리들
+            List<CategoryResponse> 하위_카테고리들
     ) {
-        return CategoryData.builder()
+        return CategoryResponse.builder()
                 .id(카테고리_ID)
                 .name(이름)
                 .children(하위_카테고리들)
                 .build();
     }
 
-    public static List<CategoryData> 하위_카테고리들(
-            CategoryData... 하위_카테고리들
+    public static List<CategoryResponse> 하위_카테고리들(
+            CategoryResponse... 하위_카테고리들
     ) {
         return Arrays.asList(하위_카테고리들);
     }
 
-    public static void 카테고리_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CategoryData> 예상_응답) {
-        List<CategoryData> actual = 응답.as(new TypeRef<>() {
+    public static void 카테고리_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CategoryResponse> 예상_응답) {
+        List<CategoryResponse> actual = 응답.as(new TypeRef<>() {
         });
         assertThat(actual).usingRecursiveComparison()
                 .isEqualTo(예상_응답);

@@ -1,10 +1,10 @@
 package com.mallang.post.query;
 
-import com.mallang.post.query.dao.PostManageDetailDataDao;
-import com.mallang.post.query.dao.PostManageSimpleDataDao;
-import com.mallang.post.query.data.PostManageDetailData;
-import com.mallang.post.query.data.PostManageSearchCond;
-import com.mallang.post.query.data.PostManageSimpleData;
+import com.mallang.post.query.dao.PostManageDetailDao;
+import com.mallang.post.query.dao.PostManageSearchDao;
+import com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond;
+import com.mallang.post.query.response.PostManageDetailResponse;
+import com.mallang.post.query.response.PostManageSearchResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostManageQueryService {
 
-    private final PostManageDetailDataDao postManageDetailDataDao;
-    private final PostManageSimpleDataDao postManageSimpleDataDao;
+    private final PostManageDetailDao postManageDetailDao;
+    private final PostManageSearchDao postManageSearchDao;
 
-    public PostManageDetailData findById(Long memberId, Long id) {
-        return postManageDetailDataDao.find(memberId, id);
+    public PostManageDetailResponse findById(Long memberId, Long id) {
+        return postManageDetailDao.find(memberId, id);
     }
 
-    public List<PostManageSimpleData> search(Long memberId, PostManageSearchCond cond) {
-        return postManageSimpleDataDao.search(memberId, cond);
+    public List<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond) {
+        return postManageSearchDao.search(memberId, cond);
     }
 }

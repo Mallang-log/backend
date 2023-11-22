@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.subscribe.presentation.request.BlogSubscribeRequest;
 import com.mallang.subscribe.presentation.request.BlogUnsubscribeRequest;
-import com.mallang.subscribe.query.data.SubscriberData;
-import com.mallang.subscribe.query.data.SubscribingBlogData;
+import com.mallang.subscribe.query.response.SubscriberResponse;
+import com.mallang.subscribe.query.response.SubscribingBlogResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -49,10 +49,10 @@ public class BlogSubscribeAcceptanceSteps {
             ExtractableResponse<Response> 응답,
             String... 블로그_이름들
     ) {
-        List<SubscribingBlogData> result = 응답.response().as(new TypeRef<>() {
+        List<SubscribingBlogResponse> result = 응답.response().as(new TypeRef<>() {
         });
         assertThat(result)
-                .extracting(SubscribingBlogData::blogName)
+                .extracting(SubscribingBlogResponse::blogName)
                 .containsExactly(블로그_이름들);
     }
 
@@ -68,10 +68,10 @@ public class BlogSubscribeAcceptanceSteps {
             ExtractableResponse<Response> 응답,
             String... 구독자_이름들
     ) {
-        List<SubscriberData> result = 응답.response().as(new TypeRef<>() {
+        List<SubscriberResponse> result = 응답.response().as(new TypeRef<>() {
         });
         assertThat(result)
-                .extracting(SubscriberData::subscriberNickname)
+                .extracting(SubscriberResponse::subscriberNickname)
                 .containsExactly(구독자_이름들);
     }
 }

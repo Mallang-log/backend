@@ -5,8 +5,8 @@ import com.mallang.subscribe.application.BlogSubscribeService;
 import com.mallang.subscribe.presentation.request.BlogSubscribeRequest;
 import com.mallang.subscribe.presentation.request.BlogUnsubscribeRequest;
 import com.mallang.subscribe.query.BlogSubscribeQueryService;
-import com.mallang.subscribe.query.data.SubscriberData;
-import com.mallang.subscribe.query.data.SubscribingBlogData;
+import com.mallang.subscribe.query.response.SubscriberResponse;
+import com.mallang.subscribe.query.response.SubscribingBlogResponse;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -46,14 +46,14 @@ public class BlogSubscribeController {
     }
 
     @GetMapping("/subscribers")
-    public List<SubscriberData> findSubscribers(
+    public List<SubscriberResponse> findSubscribers(
             @RequestParam(name = "blogName", required = true) String blogName
     ) {
         return blogSubscribeQueryService.findSubscribers(blogName);
     }
 
     @GetMapping("/subscribing-blogs")
-    public List<SubscribingBlogData> findSubscribingBlogs(
+    public List<SubscribingBlogResponse> findSubscribingBlogs(
             @RequestParam(name = "memberId", required = true) Long memberId
     ) {
         return blogSubscribeQueryService.findSubscribingBlogs(memberId);

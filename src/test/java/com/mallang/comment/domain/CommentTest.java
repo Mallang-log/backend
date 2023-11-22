@@ -43,7 +43,7 @@ class CommentTest {
         @Test
         void 내_댓글에_대댓글을_달_수_있다() {
             // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
+            AuthComment parent = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -51,7 +51,7 @@ class CommentTest {
                     .build();
 
             // when
-            AuthenticatedComment child = AuthenticatedComment.builder()
+            AuthComment child = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -68,7 +68,7 @@ class CommentTest {
         @Test
         void 다른_사람의_댓글에_대댓글을_달_수_있다() {
             // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
+            AuthComment parent = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -76,7 +76,7 @@ class CommentTest {
                     .build();
 
             // when
-            AuthenticatedComment child = AuthenticatedComment.builder()
+            AuthComment child = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(other)
@@ -93,7 +93,7 @@ class CommentTest {
         @Test
         void 비밀_댓글에도_대댓글을_달_수_있다() {
             // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
+            AuthComment parent = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -101,7 +101,7 @@ class CommentTest {
                     .build();
 
             // when
-            UnAuthenticatedComment child = UnAuthenticatedComment.builder()
+            UnAuthComment child = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("익")
@@ -118,13 +118,13 @@ class CommentTest {
         @Test
         void 대댓글에_대해서는_댓글을_달_수_없다() {
             // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
+            AuthComment parent = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
                     .secret(false)
                     .build();
-            UnAuthenticatedComment child = UnAuthenticatedComment.builder()
+            UnAuthComment child = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("익")
@@ -134,7 +134,7 @@ class CommentTest {
 
             // when
             assertThatThrownBy(() ->
-                    AuthenticatedComment.builder()
+                    AuthComment.builder()
                             .content("내용")
                             .post(post)
                             .writer(member)
@@ -157,13 +157,13 @@ class CommentTest {
         @Test
         void 대댓글인_경우_부모_댓글과_관계가_끊어진다() {
             // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
+            AuthComment parent = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
                     .writer(member)
                     .build();
-            UnAuthenticatedComment child = UnAuthenticatedComment.builder()
+            UnAuthComment child = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -183,13 +183,13 @@ class CommentTest {
         @Test
         void 댓글_제거_시_자식_댓글이_존재한다면_제거된_상태이나_자식_댓글과_관계는_유지된다() {
             // given
-            AuthenticatedComment parent = AuthenticatedComment.builder()
+            AuthComment parent = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
                     .writer(member)
                     .build();
-            UnAuthenticatedComment child = UnAuthenticatedComment.builder()
+            UnAuthComment child = UnAuthComment.builder()
                     .content("내용")
                     .post(post)
                     .nickname("말랑")
@@ -210,20 +210,20 @@ class CommentTest {
         @Test
         void 대댓글을_삭제하는_경우_부모와의_연관관계는_끊어지며_물리적으로_제거된다() {
             // given
-            AuthenticatedComment parentComment = AuthenticatedComment.builder()
+            AuthComment parentComment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
                     .secret(true)
                     .build();
-            AuthenticatedComment childComment = AuthenticatedComment.builder()
+            AuthComment childComment = AuthComment.builder()
                     .content("to be delete")
                     .post(post)
                     .writer(member)
                     .secret(true)
                     .parent(parentComment)
                     .build();
-            AuthenticatedComment childComment2 = AuthenticatedComment.builder()
+            AuthComment childComment2 = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
@@ -245,13 +245,13 @@ class CommentTest {
         @Test
         void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태이며_더이상_존재하는_자식이_없는_경우_부모_댓글도_물리적으로_제거된다() {
             // given
-            AuthenticatedComment parentComment = AuthenticatedComment.builder()
+            AuthComment parentComment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
                     .secret(true)
                     .build();
-            AuthenticatedComment childComment = AuthenticatedComment.builder()
+            AuthComment childComment = AuthComment.builder()
                     .content("to be delete")
                     .post(post)
                     .writer(member)
@@ -273,13 +273,13 @@ class CommentTest {
         @Test
         void 대댓글을_삭제하는_경우_부모_댓글이_논리적으로_제거된_상태가_아닌_경우_부모는_변함없다() {
             // given
-            AuthenticatedComment parentComment = AuthenticatedComment.builder()
+            AuthComment parentComment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
                     .secret(true)
                     .build();
-            AuthenticatedComment childComment = AuthenticatedComment.builder()
+            AuthComment childComment = AuthComment.builder()
                     .content("to be delete")
                     .post(post)
                     .writer(member)
@@ -300,13 +300,13 @@ class CommentTest {
         @Test
         void 자식_댓글이_존재한다면_부모와의_연관관계는_유지되며_논리적으로만_제거시킨다() {
             // given
-            AuthenticatedComment parentComment = AuthenticatedComment.builder()
+            AuthComment parentComment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .writer(member)
                     .secret(true)
                     .build();
-            AuthenticatedComment childComment = AuthenticatedComment.builder()
+            AuthComment childComment = AuthComment.builder()
                     .content("to be delete")
                     .post(post)
                     .writer(member)

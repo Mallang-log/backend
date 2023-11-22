@@ -22,12 +22,14 @@ import static com.mallang.acceptance.post.PostStarAcceptanceSteps.포스트_즐�
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
-import com.mallang.auth.query.data.MemberProfileData;
+import com.mallang.auth.query.response.MemberResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
-import com.mallang.post.query.data.StaredPostData;
+import com.mallang.post.presentation.request.UpdatePostRequest;
+import com.mallang.post.query.response.StaredPostResponse;
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,8 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     private String 동훈_세션_ID;
     private Long 동훈_ID;
     private String 블로그_이름;
+    private UpdatePostRequest 공개_포스트를_보호로_바꾸는_요청;
+    private UpdatePostRequest 공개_포스트를_비공개로_바꾸는_요청;
 
     @Override
     @BeforeEach
@@ -54,11 +58,31 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        동훈_ID = 내_정보_조회_요청(동훈_세션_ID).as(MemberProfileData.class).id();
+        동훈_ID = 내_정보_조회_요청(동훈_세션_ID).as(MemberResponse.class).id();
+        공개_포스트를_보호로_바꾸는_요청 = new UpdatePostRequest(
+                "보호로 변경",
+                "공개글에서 보호됨",
+                null,
+                "인트로",
+                PROTECTED,
+                "1234",
+                null,
+                emptyList()
+        );
+        공개_포스트를_비공개로_바꾸는_요청 = new UpdatePostRequest(
+                "보호로 변경",
+                "공개글에서 비공개됨",
+                null,
+                "인트로",
+                PRIVATE,
+                null,
+                null,
+                emptyList()
+        );
     }
 
     @Nested
-    class 즐겨찾기_시 extends AcceptanceTest {
+    class 즐겨찾기_API {
 
         @Test
         void 로그인하지_않았다면_즐겨찾기를_누를_수_없다() {
@@ -97,10 +121,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 보호된_포스트인_경우 extends AcceptanceTest {
+        class 보호된_포스트인_경우 {
 
             @Nested
-            class 블로그_주인인_경우 extends AcceptanceTest {
+            class 블로그_주인인_경우 {
 
                 @Test
                 void 즐겨찾기를_누를_수_있다() {
@@ -116,7 +140,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             }
 
             @Nested
-            class 블로그_주인이_아닌_경우 extends AcceptanceTest {
+            class 블로그_주인이_아닌_경우 {
 
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_일치하지_않으면_즐겨찾기를_누를_수_없다() {
@@ -145,7 +169,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         }
 
         @Nested
-        class 비공개_포스트인_경우 extends AcceptanceTest {
+        class 비공개_포스트인_경우 {
 
             @Test
             void 블로그_주인은_누를_수_있다() {
@@ -174,7 +198,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 즐겨찾기_취소_시 extends AcceptanceTest {
+    class 즐겨찾기_취소_API {
 
         @Test
         void 즐겨찾기를_취소한다() {
@@ -207,9 +231,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
-            포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                    "업데이트", "업데이트", 없음(), "포스트 인트로",
-                    PROTECTED, "1234", 없음());
+            포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
             // when
             var 응답 = 포스트_즐겨찾기_취소_요청(동훈_세션_ID, 포스트_ID);
@@ -224,9 +246,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
-            포스트_수정_요청(말랑_세션_ID, 포스트_ID,
-                    "업데이트", "업데이트", 없음(), "포스트 인트로",
-                    PRIVATE, 없음(), 없음());
+            포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
             // when
             var 응답 = 포스트_즐겨찾기_취소_요청(동훈_세션_ID, 포스트_ID);
@@ -237,7 +257,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 특정_회원의_즐겨찾기_목록_조회_API extends AcceptanceTest {
+    class 특정_회원의_즐겨찾기_목록_조회_API {
 
         private CreatePostRequest 포스트1_데이터;
         private CreatePostRequest 포스트2_데이터;
@@ -294,10 +314,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(null, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::title)
+                    .extracting(StaredPostResponse::title)
                     .containsExactly("포스트3", "포스트2", "포스트1");
         }
 
@@ -311,20 +331,16 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
 
-            포스트_수정_요청(말랑_세션_ID,
-                    포스트1_ID,
-                    "제목1", "내용1", null, "인트로",
-                    PROTECTED, "1234",
-                    null);
+            포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_보호로_바꾸는_요청);
 
             // when
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(동훈_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
+                    .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2", "보호되어 있는 글입니다.");
         }
 
@@ -338,21 +354,17 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
 
-            포스트_수정_요청(말랑_세션_ID,
-                    포스트1_ID,
-                    "제목1", "내용1", null, "인트로",
-                    PROTECTED, "1234",
-                    null);
+            포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_보호로_바꾸는_요청);
 
             // when
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
-                    .containsExactly("내용3", "내용2", "내용1");
+                    .extracting(StaredPostResponse::content)
+                    .containsExactly("내용3", "내용2", "공개글에서 보호됨");
         }
 
         @Test
@@ -364,20 +376,16 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
 
-            포스트_수정_요청(말랑_세션_ID,
-                    포스트1_ID,
-                    "제목1", "내용1", null, "인트로",
-                    PRIVATE, null,
-                    null);
+            포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
             // when
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
+                    .extracting(StaredPostResponse::content)
                     .containsExactly("내용3", "내용2");
         }
 
@@ -390,26 +398,18 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
-            포스트_수정_요청(말랑_세션_ID,
-                    포스트1_ID,
-                    "제목1", "내용1", null, "인트로",
-                    PRIVATE, null,
-                    null);
-            포스트_수정_요청(말랑_세션_ID,
-                    포스트1_ID,
-                    "제목1", "내용1", null, "인트로",
-                    PROTECTED, "1234",
-                    null);
+            포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_비공개로_바꾸는_요청);
+            포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_보호로_바꾸는_요청);
 
             // when
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 동훈_ID);
 
             // then
-            List<StaredPostData> result = 응답.as(new TypeRef<>() {
+            List<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result)
-                    .extracting(StaredPostData::content)
-                    .containsExactly("내용3", "내용2", "내용1");
+                    .extracting(StaredPostResponse::content)
+                    .containsExactly("내용3", "내용2", "공개글에서 보호됨");
         }
     }
 }

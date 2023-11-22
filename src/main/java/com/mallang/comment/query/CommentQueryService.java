@@ -1,7 +1,7 @@
 package com.mallang.comment.query;
 
-import com.mallang.comment.query.dao.CommentDataDao;
-import com.mallang.comment.query.data.CommentData;
+import com.mallang.comment.query.dao.CommentDao;
+import com.mallang.comment.query.response.CommentResponse;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,16 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CommentQueryService {
 
-    private final CommentDataDao commentDataDao;
+    private final CommentDao commentDao;
     private final CommentDataValidator commentDataValidator;
     private final CommentDataPostProcessor commentDataPostProcessor;
 
-    public List<CommentData> findAllByPostId(Long postId,
-                                             @Nullable Long memberId,
-                                             @Nullable String postPassword) {
+    public List<CommentResponse> findAllByPostId(Long postId,
+                                                 @Nullable Long memberId,
+                                                 @Nullable String postPassword) {
         commentDataValidator.validateAccessPost(postId, memberId, postPassword);
-        List<CommentData> result = commentDataDao.findAllByPostId(postId);
-        List<CommentData> deletedProcessedResult = commentDataPostProcessor.processDeleted(result);
+        List<CommentResponse> result = commentDao.findAllByPostId(postId);
+        List<CommentResponse> deletedProcessedResult = commentDataPostProcessor.processDeleted(result);
         return commentDataPostProcessor.processSecret(deletedProcessedResult, postId, memberId);
     }
 }

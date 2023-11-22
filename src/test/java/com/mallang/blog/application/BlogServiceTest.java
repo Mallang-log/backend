@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.auth.MemberServiceTestHelper;
 import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.exception.BlogNameException;
 import com.mallang.blog.exception.DuplicateBlogNameException;
@@ -18,19 +17,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("블로그 서비스(BlogService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ServiceTest
-class BlogServiceTest {
-
-    @Autowired
-    private MemberServiceTestHelper memberServiceTestHelper;
-
-    @Autowired
-    private BlogService blogService;
+class BlogServiceTest extends ServiceTest {
 
     private Long 말랑_ID;
 
@@ -39,7 +30,7 @@ class BlogServiceTest {
 
         @BeforeEach
         void setUp() {
-            말랑_ID = memberServiceTestHelper.회원을_저장한다("말랑");
+            말랑_ID = 회원을_저장한다("말랑");
         }
 
         @Test
@@ -65,7 +56,7 @@ class BlogServiceTest {
         @Test
         void 중복된_이름을_가진_다른_블로그가_존재하면_예외() {
             // given
-            Long 안말랑_ID = memberServiceTestHelper.회원을_저장한다("안말랑");
+            Long 안말랑_ID = 회원을_저장한다("안말랑");
             blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog"));
 
             // when & then

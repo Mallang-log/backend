@@ -19,7 +19,7 @@ import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.blog.presentation.request.DeleteAboutRequest;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
-import com.mallang.blog.query.data.AboutResponse;
+import com.mallang.blog.query.response.AboutResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
