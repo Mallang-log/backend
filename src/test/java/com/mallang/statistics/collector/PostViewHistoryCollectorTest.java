@@ -6,8 +6,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.mallang.statistics.history.PostViewHistory;
-import com.mallang.statistics.history.PostViewHistoryRepository;
+import com.mallang.statistics.statistic.collector.PostViewHistoryCollector;
+import com.mallang.statistics.statistic.source.PostViewHistory;
+import com.mallang.statistics.statistic.source.PostViewHistoryRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;

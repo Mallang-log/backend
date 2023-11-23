@@ -1,4 +1,4 @@
-package com.mallang.statistics.history;
+package com.mallang.statistics.statistic.source;
 
 import java.util.Optional;
 import java.util.UUID;

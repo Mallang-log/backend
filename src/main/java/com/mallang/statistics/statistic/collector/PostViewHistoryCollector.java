@@ -1,8 +1,8 @@
-package com.mallang.statistics.collector;
+package com.mallang.statistics.statistic.collector;
 
-import com.mallang.statistics.history.CommonHistory;
-import com.mallang.statistics.history.PostViewHistory;
-import com.mallang.statistics.history.PostViewHistoryRepository;
+import com.mallang.statistics.statistic.source.CommonHistory;
+import com.mallang.statistics.statistic.source.PostViewHistory;
+import com.mallang.statistics.statistic.source.PostViewHistoryRepository;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

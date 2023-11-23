@@ -1,4 +1,4 @@
-package com.mallang.statistics.history;
+package com.mallang.statistics.statistic.source;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.mallang.statistics.history;
+package com.mallang.statistics.statistic.source;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
