@@ -4,7 +4,7 @@ import jakarta.annotation.Nullable;
 import lombok.Builder;
 
 @Builder
-public record UpdateAuthenticatedCommentCommand(
+public record UpdateAuthCommentCommand(
         Long memberId,
         Long commentId,
         String content,

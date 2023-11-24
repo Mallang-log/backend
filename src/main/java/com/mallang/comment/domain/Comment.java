@@ -77,7 +77,7 @@ public abstract class Comment extends CommonDomainModel {
         this.content = content;
     }
 
-    public void delete(CommentDeleteService commentDeleteService) {
+    protected void delete(CommentDeleteService commentDeleteService) {
         this.deleted = true;
         commentDeleteService.delete(this);
     }

@@ -10,7 +10,6 @@ import com.mallang.category.application.command.UpdateCategoryCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.domain.CategoryValidator;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,22 +27,17 @@ public class CategoryService {
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByIdAndOwnerId(command.blogId(), command.memberId());
-        Category parentCategory = getParentCategory(command.parentCategoryId(), command.memberId());
+        Category parentCategory =
+                categoryRepository.getParentByIdAndOwnerId(command.parentCategoryId(), command.memberId());
         Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
         return categoryRepository.save(category).getId();
     }
 
     public void update(UpdateCategoryCommand command) {
         Category category = categoryRepository.getByIdAndOwnerId(command.categoryId(), command.memberId());
-        Category parentCategory = getParentCategory(command.parentCategoryId(), command.memberId());
+        Category parentCategory =
+                categoryRepository.getParentByIdAndOwnerId(command.parentCategoryId(), command.memberId());
         category.update(command.name(), parentCategory, categoryValidator);
-    }
-
-    private @Nullable Category getParentCategory(@Nullable Long parentCategoryId, Long memberId) {
-        if (parentCategoryId == null) {
-            return null;
-        }
-        return categoryRepository.getByIdAndOwnerId(parentCategoryId, memberId);
     }
 
     public void delete(DeleteCategoryCommand command) {
