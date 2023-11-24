@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.comment.application.command.DeleteAuthCommentCommand;
 import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
-import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.UpdateUnAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.UpdateAuthCommentCommand;
+import com.mallang.comment.application.command.UpdateUnAuthCommentCommand;
+import com.mallang.comment.application.command.WriteAuthCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthCommentCommand;
 import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.UnAuthComment;
@@ -49,7 +49,7 @@ class CommentServiceTest extends ServiceTest {
         @Test
         void 로그인한_사용자가_댓글을_작성한다() {
             // given
-            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+            WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(postId)
                     .content("댓글입니다.")
                     .memberId(other1Id)
@@ -66,7 +66,7 @@ class CommentServiceTest extends ServiceTest {
         @Test
         void 로그인한_사용자는_비밀_댓글_작성이_가능하다() {
             // given
-            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+            WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(postId)
                     .content("댓글입니다.")
                     .memberId(other1Id)
@@ -83,7 +83,7 @@ class CommentServiceTest extends ServiceTest {
         @Test
         void 로그인하지_않은_사용자도_댓글을_달_수_있다() {
             // given
-            WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
+            WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                     .postId(postId)
                     .content("댓글입니다.")
                     .nickname("비인증1")
@@ -101,7 +101,7 @@ class CommentServiceTest extends ServiceTest {
         void 대댓글을_작성할_수_있다() {
             // given
             Long 말랑_댓글_ID = 댓글을_작성한다(postId, "말랑 댓글", false, postWriterId);
-            WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
+            WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                     .postId(postId)
                     .content("대댓글입니다.")
                     .nickname("비인증1")
@@ -126,7 +126,7 @@ class CommentServiceTest extends ServiceTest {
         void 다른_사람의_댓글에_대댓글을_달_수_있다() {
             // given
             Long 말랑_댓글_ID = 댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
-            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+            WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(postId)
                     .content("대댓글입니다.")
                     .memberId(other1Id)
@@ -151,7 +151,7 @@ class CommentServiceTest extends ServiceTest {
             // given
             Long 말랑_댓글_ID = 댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
             Long 대댓글_ID = 대댓글을_작성한다(postId, "대댓글", false, postWriterId, 말랑_댓글_ID);
-            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+            WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(postId)
                     .content("대댓글입니다.")
                     .memberId(postWriterId)
@@ -175,7 +175,7 @@ class CommentServiceTest extends ServiceTest {
             // given
             Long 포스트2_ID = 포스트를_저장한다(postWriterId, blogId, "포스트2", "내용");
             Long 말랑_댓글_ID = 댓글을_작성한다(postId, "말랑 댓글", true, postWriterId);
-            WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+            WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(포스트2_ID)
                     .content("대댓글입니다.")
                     .memberId(postWriterId)
@@ -202,7 +202,7 @@ class CommentServiceTest extends ServiceTest {
         void 댓글이_수정된다() {
             // given
             Long commentId = 댓글을_작성한다(postId, "댓글", false, other1Id);
-            UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
+            UpdateAuthCommentCommand command = UpdateAuthCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(false)
@@ -221,7 +221,7 @@ class CommentServiceTest extends ServiceTest {
         void 인증된_사용자의_경우_비공개_여부도_수정할_수_있다() {
             // given
             Long commentId = 댓글을_작성한다(postId, "댓글", false, other1Id);
-            UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
+            UpdateAuthCommentCommand command = UpdateAuthCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)
@@ -241,7 +241,7 @@ class CommentServiceTest extends ServiceTest {
         void 자신의_댓글이_아닌_경우_예외() {
             // given
             Long commentId = 댓글을_작성한다(postId, "댓글", false, other1Id);
-            UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
+            UpdateAuthCommentCommand command = UpdateAuthCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)
@@ -263,7 +263,7 @@ class CommentServiceTest extends ServiceTest {
         void 비인증_댓글은_비밀번호가_일치하면_수정할_수_있다() {
             // given
             Long commentId = 비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
-            UpdateUnAuthenticatedCommentCommand command = UpdateUnAuthenticatedCommentCommand.builder()
+            UpdateUnAuthCommentCommand command = UpdateUnAuthCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .password("1234")
@@ -281,7 +281,7 @@ class CommentServiceTest extends ServiceTest {
         void 비인증_댓글_수정_시_비밀번호가_틀리면_예외() {
             // given
             Long commentId = 비인증_댓글을_작성한다(postId, "댓글", "mal", "1234");
-            UpdateUnAuthenticatedCommentCommand command = UpdateUnAuthenticatedCommentCommand.builder()
+            UpdateUnAuthCommentCommand command = UpdateUnAuthCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .password("123")
@@ -301,7 +301,7 @@ class CommentServiceTest extends ServiceTest {
         void 포스트_주인도_댓글을_수정할수는_없다() {
             // given
             Long commentId = 댓글을_작성한다(postId, "댓글", false, other1Id);
-            UpdateAuthenticatedCommentCommand command = UpdateAuthenticatedCommentCommand.builder()
+            UpdateAuthCommentCommand command = UpdateAuthCommentCommand.builder()
                     .commentId(commentId)
                     .content("수정")
                     .secret(true)

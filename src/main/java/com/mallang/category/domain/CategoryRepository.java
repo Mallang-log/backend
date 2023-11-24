@@ -1,6 +1,7 @@
 package com.mallang.category.domain;
 
 import com.mallang.category.exception.NotFoundCategoryException;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Override
     default Category getById(Long id) {
         return findById(id).orElseThrow(NotFoundCategoryException::new);
+    }
+
+    @Nullable
+    default Category getParentByIdAndOwnerId(@Nullable Long parentCategoryId, Long memberId) {
+        if (parentCategoryId == null) {
+            return null;
+        }
+        return getByIdAndOwnerId(parentCategoryId, memberId);
     }
 
     default Category getByIdAndOwnerId(Long id, Long ownerId) {
