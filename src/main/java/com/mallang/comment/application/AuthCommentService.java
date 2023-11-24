@@ -3,8 +3,8 @@ package com.mallang.comment.application;
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.comment.application.command.DeleteAuthCommentCommand;
-import com.mallang.comment.application.command.UpdateAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.UpdateAuthCommentCommand;
+import com.mallang.comment.application.command.WriteAuthCommentCommand;
 import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
@@ -26,7 +26,7 @@ public class AuthCommentService {
     private final CommentRepository commentRepository;
     private final CommentDeleteService commentDeleteService;
 
-    public Long write(WriteAuthenticatedCommentCommand command) {
+    public Long write(WriteAuthCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Member writer = memberRepository.getById(command.memberId());
         Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
@@ -42,14 +42,14 @@ public class AuthCommentService {
         return commentRepository.getByIdAndPostId(parentCommentId, postId);
     }
 
-    public void update(UpdateAuthenticatedCommentCommand command) {
-        AuthComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
+    public void update(UpdateAuthCommentCommand command) {
+        AuthComment comment = commentRepository.getAuthCommentById(command.commentId());
         Member writer = memberRepository.getById(command.memberId());
         comment.update(writer, command.content(), command.secret(), command.postPassword());
     }
 
     public void delete(DeleteAuthCommentCommand command) {
-        AuthComment comment = commentRepository.getAuthenticatedCommentById(command.commentId());
+        AuthComment comment = commentRepository.getAuthCommentById(command.commentId());
         Member member = memberRepository.getById(command.memberId());
         comment.delete(member, commentDeleteService, command.postPassword());
     }

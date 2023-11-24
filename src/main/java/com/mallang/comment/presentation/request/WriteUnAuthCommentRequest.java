@@ -1,6 +1,6 @@
 package com.mallang.comment.presentation.request;
 
-import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthCommentCommand;
 import jakarta.annotation.Nullable;
 
 public record WriteUnAuthCommentRequest(
@@ -11,8 +11,8 @@ public record WriteUnAuthCommentRequest(
         @Nullable Long parentCommentId
 ) {
 
-    public WriteUnAuthenticatedCommentCommand toCommand(@Nullable String postPassword) {
-        return WriteUnAuthenticatedCommentCommand.builder()
+    public WriteUnAuthCommentCommand toCommand(@Nullable String postPassword) {
+        return WriteUnAuthCommentCommand.builder()
                 .postId(postId)
                 .postPassword(postPassword)
                 .content(content)

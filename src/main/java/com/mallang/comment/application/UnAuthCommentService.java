@@ -3,8 +3,8 @@ package com.mallang.comment.application;
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.comment.application.command.DeleteUnAuthCommentCommand;
-import com.mallang.comment.application.command.UpdateUnAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.UpdateUnAuthCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthCommentCommand;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthComment;
@@ -26,7 +26,7 @@ public class UnAuthCommentService {
     private final CommentRepository commentRepository;
     private final CommentDeleteService commentDeleteService;
 
-    public Long write(WriteUnAuthenticatedCommentCommand command) {
+    public Long write(WriteUnAuthCommentCommand command) {
         Post post = postRepository.getById(command.postId());
         Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
         UnAuthComment comment = command.toCommand(post, parent);
@@ -41,13 +41,13 @@ public class UnAuthCommentService {
         return commentRepository.getByIdAndPostId(parentCommentId, postId);
     }
 
-    public void update(UpdateUnAuthenticatedCommentCommand command) {
-        UnAuthComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
+    public void update(UpdateUnAuthCommentCommand command) {
+        UnAuthComment comment = commentRepository.getUnAuthCommentById(command.commentId());
         comment.update(command.password(), command.content(), command.postPassword());
     }
 
     public void delete(DeleteUnAuthCommentCommand command) {
-        UnAuthComment comment = commentRepository.getUnAuthenticatedCommentById(command.commentId());
+        UnAuthComment comment = commentRepository.getUnAuthCommentById(command.commentId());
         Member member = (command.memberId() == null)
                 ? null
                 : memberRepository.getById(command.memberId());

@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    default AuthComment getAuthenticatedCommentById(Long id) {
+    default AuthComment getAuthCommentById(Long id) {
         return (AuthComment) getById(id);
     }
 
-    default UnAuthComment getUnAuthenticatedCommentById(Long id) {
+    default UnAuthComment getUnAuthCommentById(Long id) {
         return (UnAuthComment) getById(id);
     }
 
@@ -22,16 +22,16 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 .orElseThrow(NotFoundCommentException::new);
     }
 
+    @Override
+    @EntityGraph(attributePaths = {"parent"})
+    Optional<Comment> findById(Long id);
+
     default Comment getByIdAndPostId(Long id, Long postId) {
         return findByIdAndPostId(id, postId)
                 .orElseThrow(NotFoundCommentException::new);
     }
 
     Optional<Comment> findByIdAndPostId(Long id, Long postId);
-
-    @Override
-    @EntityGraph(attributePaths = {"parent"})
-    Optional<Comment> findById(Long id);
 
     @Modifying
     @Query("DELETE FROM Comment c WHERE c.post.id = :postId")

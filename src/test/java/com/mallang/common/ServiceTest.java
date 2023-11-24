@@ -21,8 +21,8 @@ import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.query.CategoryQueryService;
 import com.mallang.comment.application.AuthCommentService;
 import com.mallang.comment.application.UnAuthCommentService;
-import com.mallang.comment.application.command.WriteAuthenticatedCommentCommand;
-import com.mallang.comment.application.command.WriteUnAuthenticatedCommentCommand;
+import com.mallang.comment.application.command.WriteAuthCommentCommand;
+import com.mallang.comment.application.command.WriteUnAuthCommentCommand;
 import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthComment;
@@ -230,7 +230,7 @@ public abstract class ServiceTest {
     }
 
     public Long 댓글을_작성한다(Long postId, String content, boolean secret, Long memberId) {
-        WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+        WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                 .postId(postId)
                 .content(content)
                 .secret(secret)
@@ -240,7 +240,7 @@ public abstract class ServiceTest {
     }
 
     public Long 비인증_댓글을_작성한다(Long postId, String content, String nickname, String password) {
-        WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
+        WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                 .postId(postId)
                 .content(content)
                 .nickname(nickname)
@@ -250,7 +250,7 @@ public abstract class ServiceTest {
     }
 
     public Long 대댓글을_작성한다(Long postId, String content, boolean secret, Long memberId, Long parentCommentId) {
-        WriteAuthenticatedCommentCommand command = WriteAuthenticatedCommentCommand.builder()
+        WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                 .postId(postId)
                 .content(content)
                 .secret(secret)
@@ -261,7 +261,7 @@ public abstract class ServiceTest {
     }
 
     public Long 비인증_대댓글을_작성한다(Long postId, String content, String nickname, String password, Long parentCommentId) {
-        WriteUnAuthenticatedCommentCommand command = WriteUnAuthenticatedCommentCommand.builder()
+        WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                 .postId(postId)
                 .content(content)
                 .nickname(nickname)
@@ -272,10 +272,10 @@ public abstract class ServiceTest {
     }
 
     public AuthComment 인증된_댓글을_조회한다(Long 댓글_ID) {
-        return commentRepository.getAuthenticatedCommentById(댓글_ID);
+        return commentRepository.getAuthCommentById(댓글_ID);
     }
 
     public UnAuthComment 비인증_댓글을_조회한다(Long 댓글_ID) {
-        return commentRepository.getUnAuthenticatedCommentById(댓글_ID);
+        return commentRepository.getUnAuthCommentById(댓글_ID);
     }
 }
