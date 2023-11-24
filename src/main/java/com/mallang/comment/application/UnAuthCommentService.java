@@ -11,7 +11,6 @@ import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,17 +27,10 @@ public class UnAuthCommentService {
 
     public Long write(WriteUnAuthCommentCommand command) {
         Post post = postRepository.getById(command.postId());
-        Comment parent = getParentCommentByIdAndPostId(command.parentCommentId(), command.postId());
+        Comment parent = commentRepository.getParentByIdAndPostId(command.parentCommentId(), command.postId());
         UnAuthComment comment = command.toCommand(post, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();
-    }
-
-    private Comment getParentCommentByIdAndPostId(@Nullable Long parentCommentId, Long postId) {
-        if (parentCommentId == null) {
-            return null;
-        }
-        return commentRepository.getByIdAndPostId(parentCommentId, postId);
     }
 
     public void update(UpdateUnAuthCommentCommand command) {
