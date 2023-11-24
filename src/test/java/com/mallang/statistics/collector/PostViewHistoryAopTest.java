@@ -7,8 +7,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.mallang.common.ServiceTest;
+import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.statistics.statistic.collector.PostViewHistoryAop;
+import com.mallang.statistics.statistic.collector.PostViewHistoryCollector;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -138,7 +141,7 @@ class PostViewHistoryAopTest extends ServiceTest {
         // when
         assertThatThrownBy(() -> {
             postQueryService.getById(1L, null, 1000L);
-        });
+        }).isInstanceOf(NotFoundPostException.class);
 
         // then
         verify(postViewHistoryCollector, times(0)).save(any());
