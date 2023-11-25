@@ -20,19 +20,19 @@ class CategoryQueryServiceTest extends ServiceTest {
     void 특정_블로그의_카테고리를_전체_조회한다() {
         // given
         Long 동훈_ID = 회원을_저장한다("동훈");
-        Long 동훈_블로그_Id = 블로그_개설(동훈_ID, "donghun");
-        categoryService.create(new CreateCategoryCommand(동훈_ID, 동훈_블로그_Id, "Node", null));
+        String 동훈_블로그_이름 = 블로그_개설(동훈_ID, "donghun");
+        categoryService.create(new CreateCategoryCommand(동훈_ID, 동훈_블로그_이름, "Node", null));
 
         Long 말랑_ID = 회원을_저장한다("말랑");
-        Long 말랑_블로그_Id = 블로그_개설(말랑_ID, "mallang");
-        Long springId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "Spring", null));
-        Long jpaId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "JPA", springId));
-        Long n1Id = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "N + 1", jpaId));
-        Long securityId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "Security", springId));
-        Long oAuthId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "OAuth", securityId));
-        Long csrfId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "CSRF", securityId));
-        Long algorithmId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "Algorithm", null));
-        Long dfsId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_Id, "DFS", algorithmId));
+        String 말랑_블로그_이름 = 블로그_개설(말랑_ID, "mallang");
+        Long springId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "Spring", null));
+        Long jpaId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "JPA", springId));
+        Long n1Id = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "N + 1", jpaId));
+        Long securityId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "Security", springId));
+        Long oAuthId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "OAuth", securityId));
+        Long csrfId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "CSRF", securityId));
+        Long algorithmId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "Algorithm", null));
+        Long dfsId = categoryService.create(new CreateCategoryCommand(말랑_ID, 말랑_블로그_이름, "DFS", algorithmId));
         List<CategoryResponse> expected = List.of(
                 new CategoryResponse(springId, "Spring", List.of(
                         new CategoryResponse(jpaId, "JPA", List.of(
@@ -49,7 +49,7 @@ class CategoryQueryServiceTest extends ServiceTest {
         );
 
         // when
-        List<CategoryResponse> allByMemberId = categoryQueryService.findAllByBlogId(말랑_블로그_Id);
+        List<CategoryResponse> allByMemberId = categoryQueryService.findAllByBlogName(말랑_블로그_이름);
 
         // then
         assertThat(allByMemberId).usingRecursiveComparison()

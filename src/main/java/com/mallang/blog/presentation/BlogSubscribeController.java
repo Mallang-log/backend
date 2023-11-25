@@ -49,10 +49,10 @@ public class BlogSubscribeController {
 
     @GetMapping("/subscribers")
     public ResponseEntity<PageResponse<SubscriberResponse>> findSubscribers(
-            @RequestParam(name = "blogId", required = true) Long blogId,
+            @RequestParam(name = "blogName", required = true) String blogName,
             @PageableDefault(size = 10) Pageable pageable
     ) {
-        return ResponseEntity.ok(PageResponse.from(blogSubscribeQueryService.findSubscribers(blogId, pageable)));
+        return ResponseEntity.ok(PageResponse.from(blogSubscribeQueryService.findSubscribers(blogName, pageable)));
     }
 
     @GetMapping("/subscribing-blogs")

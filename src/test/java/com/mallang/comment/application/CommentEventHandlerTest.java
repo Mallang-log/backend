@@ -25,9 +25,9 @@ class CommentEventHandlerTest extends ServiceTest {
             // given
             Long memberId = 회원을_저장한다("말랑");
             Long otherMemberId = 회원을_저장한다("ohter");
-            Long blogId = 블로그_개설(memberId, "mallang-log");
-            Long postId1 = 포스트를_저장한다(memberId, blogId, "제목", "내용");
-            Long postId2 = 포스트를_저장한다(memberId, blogId, "제목2", "내용1");
+            String blogName = 블로그_개설(memberId, "mallang-log");
+            Long postId1 = 포스트를_저장한다(memberId, blogName, "제목", "내용");
+            Long postId2 = 포스트를_저장한다(memberId, blogName, "제목2", "내용1");
             Long post1Comment1 = 댓글을_작성한다(postId1, "댓1", true, otherMemberId);
             대댓글을_작성한다(postId1, "댓1", true, memberId, post1Comment1);
             비인증_대댓글을_작성한다(postId1, "댓1", "익1", "1234", post1Comment1);

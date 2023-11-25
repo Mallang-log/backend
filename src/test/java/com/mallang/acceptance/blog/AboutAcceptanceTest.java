@@ -34,7 +34,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
     private String 동훈_세션_ID;
-    private Long 말랑_블로그_ID;
+    private String 말랑_블로그_이름;
     private WriteAboutRequest 말랑_블로그_소개_작성_요청;
 
     @Override
@@ -43,8 +43,8 @@ public class AboutAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-        말랑_블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
-        말랑_블로그_소개_작성_요청 = new WriteAboutRequest(말랑_블로그_ID, "말랑입니다.");
+        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+        말랑_블로그_소개_작성_요청 = new WriteAboutRequest(말랑_블로그_이름, "말랑입니다.");
     }
 
     @Nested
@@ -90,7 +90,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             말랑_블로그_소개_ID = ID를_추출한다(블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청));
-            말랑_블로그_소개_수정_요청 = new UpdateAboutRequest(말랑_블로그_ID, "수정입니다.");
+            말랑_블로그_소개_수정_요청 = new UpdateAboutRequest(말랑_블로그_이름, "수정입니다.");
         }
 
         @Test
@@ -127,7 +127,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             말랑_블로그_소개_ID = ID를_추출한다(블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청));
-            말랑_블로그_소개_삭제_요청 = new DeleteAboutRequest(말랑_블로그_ID);
+            말랑_블로그_소개_삭제_요청 = new DeleteAboutRequest(말랑_블로그_이름);
         }
 
         @Test
@@ -159,7 +159,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
 
             // when
             var 응답 = given()
-                    .queryParam("blogId", 말랑_블로그_ID)
+                    .queryParam("blogName", 말랑_블로그_이름)
                     .get("/abouts")
                     .then().log().all()
                     .extract();

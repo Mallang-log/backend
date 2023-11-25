@@ -87,8 +87,8 @@ class PostViewHistoryAopTest extends ServiceTest {
     void PostQueryService_getById_시_기존_조회수_쿠키가_없다면_세팅한다() {
         // given
         Long memberId = 회원을_저장한다("말랑");
-        Long blogId = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogId, "안녕", "내용");
+        String blogName = 블로그_개설(memberId, "mallang-log");
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용");
 
         // when
         postQueryService.getById(memberId, null, postId);
@@ -103,8 +103,8 @@ class PostViewHistoryAopTest extends ServiceTest {
     void 세팅된_쿠키는_httpOnly_secure_10년뒤_만료이다() {
         // given
         Long memberId = 회원을_저장한다("말랑");
-        Long blogId = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogId, "안녕", "내용");
+        String blogName = 블로그_개설(memberId, "mallang-log");
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용");
         postQueryService.getById(memberId, null, postId);
 
         // when
@@ -124,8 +124,8 @@ class PostViewHistoryAopTest extends ServiceTest {
         MockHttpServletRequest request = testHttpRequest();
         request.setCookies(new Cookie("POST_VIEW_COOKIE", UUID.randomUUID().toString()));
         Long memberId = 회원을_저장한다("말랑");
-        Long blogId = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogId, "안녕", "내용");
+        String blogName = 블로그_개설(memberId, "mallang-log");
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용");
 
         // when
         postQueryService.getById(memberId, null, postId);

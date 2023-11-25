@@ -13,7 +13,7 @@ public class AboutDao {
 
     private final AboutQuerySupport aboutQuerySupport;
 
-    public AboutResponse find(Long blogId) {
-        return AboutResponse.from(aboutQuerySupport.getByBlogId(blogId));
+    public AboutResponse find(String blogName) {
+        return AboutResponse.from(aboutQuerySupport.getByBlogName(blogName));
     }
 }

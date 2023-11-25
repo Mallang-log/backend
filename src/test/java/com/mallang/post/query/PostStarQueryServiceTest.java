@@ -24,7 +24,7 @@ class PostStarQueryServiceTest extends ServiceTest {
 
     private Long memberId;
     private Long otherMemberId;
-    private Long blogId;
+    private String blogName;
     private Long post1Id;
     private Long post2Id;
     private Long post3Id;
@@ -33,22 +33,22 @@ class PostStarQueryServiceTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         otherMemberId = 회원을_저장한다("other");
-        blogId = 블로그_개설(memberId, "mallang");
+        blogName = 블로그_개설(memberId, "mallang");
         post1Id = 포스트를_저장한다(
                 memberId,
-                blogId,
+                blogName,
                 "포스트1",
                 "내용1",
                 new PostVisibilityPolicy(PUBLIC, null));
         post2Id = 포스트를_저장한다(
                 memberId,
-                blogId,
+                blogName,
                 "포스트2",
                 "내용2",
                 new PostVisibilityPolicy(PUBLIC, null));
         post3Id = 포스트를_저장한다(
                 memberId,
-                blogId,
+                blogName,
                 "포스트3",
                 "내용3",
                 new PostVisibilityPolicy(PUBLIC, null));

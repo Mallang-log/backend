@@ -22,14 +22,14 @@ public class SubscriberDao {
 
     private final JPAQueryFactory query;
 
-    public Page<SubscriberResponse> findSubscribers(Long blogId, Pageable pageable) {
+    public Page<SubscriberResponse> findSubscribers(String blogName, Pageable pageable) {
         JPAQuery<Long> countQuery = query.select(blogSubscribe.countDistinct())
                 .from(blogSubscribe)
-                .where(blogSubscribe.blog.id.eq(blogId));
+                .where(blogSubscribe.blog.name.value.eq(blogName));
         List<BlogSubscribe> result = query.selectFrom(blogSubscribe)
                 .distinct()
                 .join(blogSubscribe.subscriber, member).fetchJoin()
-                .where(blogSubscribe.blog.id.eq(blogId))
+                .where(blogSubscribe.blog.name.value.eq(blogName))
                 .orderBy(blogSubscribe.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

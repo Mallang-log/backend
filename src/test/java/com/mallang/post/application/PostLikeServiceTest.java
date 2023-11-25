@@ -29,7 +29,7 @@ class PostLikeServiceTest extends ServiceTest {
 
     private Long memberId;
     private Long otherMemberId;
-    private Long blogID;
+    private String blogName;
     private Long publicPostId;
     private Long protectedPostId;
     private Long privatePostId;
@@ -38,22 +38,22 @@ class PostLikeServiceTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         otherMemberId = 회원을_저장한다("other");
-        blogID = 블로그_개설(memberId, "mallang-log");
+        blogName = 블로그_개설(memberId, "mallang-log");
         publicPostId = 포스트를_저장한다(
                 memberId,
-                blogID,
+                blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PUBLIC, null));
         protectedPostId = 포스트를_저장한다(
                 memberId,
-                blogID,
+                blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
         privatePostId = 포스트를_저장한다(
                 memberId,
-                blogID,
+                blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PRIVATE, null));

@@ -28,25 +28,25 @@ class PostSearchDaoTest extends ServiceTest {
     void setUp() {
         mallangId = 회원을_저장한다("말랑");
         otherId = 회원을_저장한다("other");
-        Long blogId = 블로그_개설(mallangId, "mallang-log");
-        Long otherBlogId = 블로그_개설(otherId, "other-log");
-        포스트를_저장한다(mallangId, blogId,
+        String blogName = 블로그_개설(mallangId, "mallang-log");
+        String otherBlogName = 블로그_개설(otherId, "other-log");
+        포스트를_저장한다(mallangId, blogName,
                 "mallang-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
-        포스트를_저장한다(mallangId, blogId,
+        포스트를_저장한다(mallangId, blogName,
                 "mallang-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        포스트를_저장한다(mallangId, blogId,
+        포스트를_저장한다(mallangId, blogName,
                 "mallang-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
 
-        포스트를_저장한다(otherId, otherBlogId,
+        포스트를_저장한다(otherId, otherBlogName,
                 "ohter-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
-        포스트를_저장한다(otherId, otherBlogId,
+        포스트를_저장한다(otherId, otherBlogName,
                 "ohter-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
-        포스트를_저장한다(otherId, otherBlogId,
+        포스트를_저장한다(otherId, otherBlogName,
                 "ohter-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
     }

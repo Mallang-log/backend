@@ -26,7 +26,7 @@ public class CategoryService {
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByIdAndOwnerId(command.blogId(), command.memberId());
+        Blog blog = blogRepository.getByNameAndOwnerId(command.blogName(), command.memberId());
         Category parentCategory =
                 categoryRepository.getParentByIdAndOwnerId(command.parentCategoryId(), command.memberId());
         Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
