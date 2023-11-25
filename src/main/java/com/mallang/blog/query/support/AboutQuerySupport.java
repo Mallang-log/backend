@@ -4,13 +4,16 @@ import com.mallang.blog.domain.About;
 import com.mallang.blog.exception.NotFoundAboutException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AboutQuerySupport extends JpaRepository<About, Long> {
 
-    default About getByBlogId(Long blogId) {
-        return findByBlogId(blogId)
+    default About getByBlogName(String blogName) {
+        return findByBlogName(blogName)
                 .orElseThrow(NotFoundAboutException::new);
     }
 
-    Optional<About> findByBlogId(Long blogId);
+    @Query("SELECT a FROM About a WHERE a.blog.name.value = :blogName")
+    Optional<About> findByBlogName(@Param("blogName") String blogName);
 }

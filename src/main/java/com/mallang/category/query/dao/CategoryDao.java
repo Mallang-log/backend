@@ -14,8 +14,8 @@ public class CategoryDao {
 
     private final CategoryQuerySupport categoryQuerySupport;
 
-    public List<CategoryResponse> findAllByBlogId(Long blogId) {
-        return categoryQuerySupport.findAllRootByBlogId(blogId)
+    public List<CategoryResponse> findAllByBlogName(String blogName) {
+        return categoryQuerySupport.findAllRootByBlogName(blogName)
                 .stream()
                 .map(CategoryResponse::from)
                 .toList();

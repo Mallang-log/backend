@@ -18,8 +18,8 @@ public class BlogSubscribeQueryService {
     private final SubscriberDao subscriberDao;
     private final SubscribingBlogDao subscribingBlogDataDao;
 
-    public Page<SubscriberResponse> findSubscribers(Long blogId, Pageable pageable) {
-        return subscriberDao.findSubscribers(blogId, pageable);
+    public Page<SubscriberResponse> findSubscribers(String blogName, Pageable pageable) {
+        return subscriberDao.findSubscribers(blogName, pageable);
     }
 
     public Page<SubscribingBlogResponse> findSubscribingBlogs(Long memberId, Pageable pageable) {
