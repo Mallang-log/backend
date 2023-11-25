@@ -59,8 +59,8 @@ public class AboutController {
 
     @GetMapping
     public ResponseEntity<AboutResponse> findByBlogName(
-            @RequestParam(name = "blogId") Long blogId
+            @RequestParam(name = "blogName") String blogName
     ) {
-        return ResponseEntity.ok(aboutQueryService.findByBlogId(blogId));
+        return ResponseEntity.ok(aboutQueryService.findByBlogName(blogName));
     }
 }

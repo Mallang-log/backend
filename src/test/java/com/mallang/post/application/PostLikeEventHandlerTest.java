@@ -17,14 +17,14 @@ import org.junit.jupiter.api.Test;
 class PostLikeEventHandlerTest extends ServiceTest {
 
     private Long memberId;
-    private Long blogId;
+    private String blogName;
     private Long postId;
 
     @BeforeEach
     void setUp() {
         memberId = 회원을_저장한다("말랑");
-        blogId = 블로그_개설(memberId, "mallang-log");
-        postId = 포스트를_저장한다(memberId, blogId, "포스트", "내용", "태그1");
+        blogName = 블로그_개설(memberId, "mallang-log");
+        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
     }
 
     @Nested

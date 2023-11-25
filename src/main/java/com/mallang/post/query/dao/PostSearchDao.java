@@ -37,7 +37,7 @@ public class PostSearchDao {
                 .from(post)
                 .where(
                         filterPrivatePost(memberId),
-                        blogEq(cond.blogId()),
+                        blogEq(cond.blogName()),
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
@@ -50,7 +50,7 @@ public class PostSearchDao {
                 .leftJoin(post.category, category).fetchJoin()
                 .where(
                         filterPrivatePost(memberId),
-                        blogEq(cond.blogId()),
+                        blogEq(cond.blogName()),
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
@@ -73,11 +73,11 @@ public class PostSearchDao {
                         .and(post.writer.id.eq(memberId)));
     }
 
-    private BooleanExpression blogEq(@Nullable Long blogId) {
-        if (blogId == null) {
+    private BooleanExpression blogEq(@Nullable String blogName) {
+        if (ObjectUtils.isEmpty(blogName)) {
             return null;
         }
-        return post.blog.id.eq(blogId);
+        return post.blog.name.value.eq(blogName);
     }
 
     private BooleanExpression hasCategory(@Nullable Long categoryId) {
@@ -123,7 +123,7 @@ public class PostSearchDao {
 
     @Builder
     public record PostSearchCond(
-            @Nullable Long blogId,
+            @Nullable String blogName,
             @Nullable Long writerId,
             @Nullable Long categoryId,
             @Nullable String tag,

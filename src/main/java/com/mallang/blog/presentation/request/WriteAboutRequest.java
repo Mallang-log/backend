@@ -3,10 +3,10 @@ package com.mallang.blog.presentation.request;
 import com.mallang.blog.application.command.WriteAboutCommand;
 
 public record WriteAboutRequest(
-        Long blogId,
+        String blogName,
         String content
 ) {
     public WriteAboutCommand toCommand(Long memberId) {
-        return new WriteAboutCommand(memberId, blogId, content);
+        return new WriteAboutCommand(memberId, blogName, content);
     }
 }

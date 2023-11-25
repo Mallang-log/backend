@@ -20,12 +20,12 @@ class SubscribingBlogDaoTest extends ServiceTest {
     void 특정_회원이_구독중인_블로그_모두_조회() {
         // given
         Long 주인_ID = 회원을_저장한다("주인");
-        Long 주인_블로그_ID = 블로그_개설(주인_ID, "owner-blog");
+        String 주인_블로그_이름 = 블로그_개설(주인_ID, "owner-blog");
         Long 구독자1_ID = 회원을_저장한다("구독자1");
         Long 다른블로그주인_ID = 회원을_저장한다("다른블로그주인");
-        Long 다른_블로그_ID = 블로그_개설(다른블로그주인_ID, "other-blog");
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_ID));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 다른_블로그_ID));
+        String 다른_블로그_이름 = 블로그_개설(다른블로그주인_ID, "other-blog");
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_이름));
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 다른_블로그_이름));
 
         // when
         List<SubscribingBlogResponse> result = subscribingBlogDao.findSubscribingBlogs(구독자1_ID, pageable)

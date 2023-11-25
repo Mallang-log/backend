@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 class PostLikeAcceptanceTest extends AcceptanceTest {
 
     private String 말랑_세션_ID;
-    private Long 블로그_ID;
+    private String 블로그_이름;
     private UpdatePostRequest 공개_포스트를_보호로_바꾸는_요청;
     private UpdatePostRequest 공개_포스트를_비공개로_바꾸는_요청;
 
@@ -45,7 +45,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
     protected void setUp() {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        블로그_ID = 블로그_개설(말랑_세션_ID, "mallang-log");
+        블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
         공개_포스트를_보호로_바꾸는_요청 = new UpdatePostRequest(
                 "보호로 변경",
                 "보호",
@@ -74,7 +74,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         @Test
         void 로그인하지_않았다면_좋아요를_누를_수_없다() {
             // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
 
             // when
             var 응답 = 포스트_좋아요_요청(없음(), 포스트_ID, null);
@@ -85,7 +85,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 포스트에_좋아요를_누른다() {
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
             // when
@@ -98,7 +98,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         @Test
         void 이미_좋아요를_누른_포스트에는_중복해서_좋아요를_누를_수_없다() {
             // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
             // when
@@ -117,7 +117,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 @Test
                 void 좋아요를_누를_수_있다() {
                     // given
-                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
 
                     // when
                     var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
@@ -133,7 +133,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_일치하지_않으면_좋아요를_누를_수_없다() {
                     // given
-                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
                     // when
@@ -146,7 +146,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_일치하면_좋아요를_누를_수_있다() {
                     // given
-                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
                     // when
@@ -164,7 +164,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             @Test
             void 블로그_주인은_누를_수_있다() {
                 // given
-                var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_ID));
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_이름));
 
                 // when
                 var 응답 = 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
@@ -176,7 +176,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             @Test
             void 블로그_주인이_아닌_경우_누를_수_없다() {
                 // given
-                var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_ID));
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_이름));
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
 
                 // when
@@ -194,7 +194,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         @Test
         void 좋아요를_취소한다() {
             // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
             // when
@@ -207,7 +207,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         @Test
         void 좋아요를_누르지_않은_경우_취소하면_예외가_발생한다() {
             // given
-            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
 
             // when
             var 응답 = 좋아요_취소_요청(말랑_세션_ID, 포스트_ID, null);
@@ -225,7 +225,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 @Test
                 void 좋아요를_취소할_수_있다() {
                     // given
-                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_ID));
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
                     포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
                     // when
@@ -242,7 +242,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_다르면_취소할_수_없다() {
                     // given
-                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
                     포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
@@ -257,7 +257,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
                 @Test
                 void 입력한_비밀번호가_포스트의_비밀번호와_일치하면_취소할_수_있다() {
                     // given
-                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+                    var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
                     var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                     포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
                     포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_보호로_바꾸는_요청);
@@ -277,7 +277,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             @Test
             void 블로그_주인은_취소할_수_있다() {
                 // given
-                var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_ID));
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_이름));
                 포스트_좋아요_요청(말랑_세션_ID, 포스트_ID, null);
 
                 // when
@@ -290,7 +290,7 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
             @Test
             void 블로그_주인이_아닌_경우_취소할_수_없다() {
                 // given
-                var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_ID));
+                var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
                 var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
                 포스트_좋아요_요청(동훈_세션_ID, 포스트_ID, null);
                 포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);

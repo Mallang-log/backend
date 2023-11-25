@@ -163,31 +163,32 @@ public abstract class ServiceTest {
         return memberRepository.save(member).getId();
     }
 
-    protected Long 블로그_개설(Long memberId, String name) {
-        return blogService.open(new OpenBlogCommand(memberId, name));
+    protected String 블로그_개설(Long memberId, String name) {
+        blogService.open(new OpenBlogCommand(memberId, name));
+        return name;
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, String... 태그들) {
-        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, PUBLIC, null, null, 태그들);
+    protected Long 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, PUBLIC, null, null, 태그들);
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID, Long 블로그_ID, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
-        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, PUBLIC, null, 카테고리_ID, 태그들);
+    protected Long 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
+        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, PUBLIC, null, 카테고리_ID, 태그들);
     }
 
     protected Long 포스트를_저장한다(Long 회원_ID,
-                             Long 블로그_ID,
+                             String 블로그_이름,
                              String 제목,
                              String 내용,
                              PostVisibilityPolicy 공개범위,
                              String... 태그들
     ) {
-        return 포스트를_저장한다(회원_ID, 블로그_ID, 제목, 내용, 공개범위.getVisibility(), 공개범위.getPassword(), null, 태그들);
+        return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, 공개범위.getVisibility(), 공개범위.getPassword(), null, 태그들);
     }
 
     protected Long 포스트를_저장한다(
             Long 회원_ID,
-            Long 블로그_ID,
+            String 블로그_이름,
             String 제목,
             String 내용,
             Visibility visibility,
@@ -197,7 +198,7 @@ public abstract class ServiceTest {
     ) {
         return postService.create(new CreatePostCommand(
                 회원_ID,
-                블로그_ID,
+                블로그_이름,
                 제목,
                 내용,
                 null,

@@ -20,20 +20,20 @@ class SubscriberDaoTest extends ServiceTest {
     void 특정_회원을_구독중인_구독자_모두_조회() {
         // given
         Long 주인_ID = 회원을_저장한다("주인");
-        Long 주인_블로그_Id = 블로그_개설(주인_ID, "owner-blog");
+        String 주인_블로그_이름 = 블로그_개설(주인_ID, "owner-blog");
         Long 구독자1_ID = 회원을_저장한다("구독자1");
         Long 구독자2_ID = 회원을_저장한다("구독자2");
         Long 구독자3_ID = 회원을_저장한다("구독자3");
         Long 다른블로그주인_ID = 회원을_저장한다("다른블로그주인");
-        Long 다른_블로그_Id = 블로그_개설(다른블로그주인_ID, "other-blog");
+        String 다른_블로그_이름 = 블로그_개설(다른블로그주인_ID, "other-blog");
         Long 다른블로그구독자1_ID = 회원을_저장한다("다른블로그구독자1");
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_Id));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자2_ID, 주인_블로그_Id));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자3_ID, 주인_블로그_Id));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(다른블로그구독자1_ID, 다른_블로그_Id));
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_이름));
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자2_ID, 주인_블로그_이름));
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자3_ID, 주인_블로그_이름));
+        blogSubscribeService.subscribe(new BlogSubscribeCommand(다른블로그구독자1_ID, 다른_블로그_이름));
 
         // when
-        List<SubscriberResponse> result = subscriberDao.findSubscribers(주인_블로그_Id, pageable)
+        List<SubscriberResponse> result = subscriberDao.findSubscribers(주인_블로그_이름, pageable)
                 .getContent();
 
         // then
