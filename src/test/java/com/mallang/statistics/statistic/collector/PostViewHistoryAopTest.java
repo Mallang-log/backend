@@ -1,4 +1,4 @@
-package com.mallang.statistics.collector;
+package com.mallang.statistics.statistic.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,8 +10,6 @@ import com.mallang.common.ServiceTest;
 import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
-import com.mallang.statistics.statistic.collector.PostViewHistoryAop;
-import com.mallang.statistics.statistic.collector.PostViewHistoryCollector;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

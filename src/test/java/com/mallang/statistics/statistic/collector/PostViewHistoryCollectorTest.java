@@ -1,4 +1,4 @@
-package com.mallang.statistics.collector;
+package com.mallang.statistics.statistic.collector;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.mallang.statistics.statistic.collector.PostViewHistoryCollector;
 import com.mallang.statistics.statistic.source.PostViewHistory;
 import com.mallang.statistics.statistic.source.PostViewHistoryRepository;
 import java.time.LocalDateTime;
