@@ -12,18 +12,19 @@ import jakarta.annotation.Nullable;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostStarAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 포스트_즐겨찾기_요청(String 세션_ID, Long 포스트_ID, @Nullable String 비밀번호) {
+    public static ExtractableResponse<Response> 포스트_즐겨찾기_요청(String 세션_ID, Long 포스트_ID, String 블로그_이름,
+                                                            @Nullable String 비밀번호) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
-                .body(new StarPostRequest(포스트_ID))
+                .body(new StarPostRequest(포스트_ID, 블로그_이름))
                 .post("/post-stars")
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 포스트_즐겨찾기_취소_요청(String 세션_ID, Long 포스트_ID) {
+    public static ExtractableResponse<Response> 포스트_즐겨찾기_취소_요청(String 세션_ID, Long 포스트_ID, String 블로그_이름) {
         return given(세션_ID)
-                .body(new CancelPostStarRequest(포스트_ID))
+                .body(new CancelPostStarRequest(포스트_ID, 블로그_이름))
                 .delete("/post-stars")
                 .then().log().all()
                 .extract();

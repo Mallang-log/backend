@@ -16,9 +16,10 @@ public class CommentDataValidator {
     private final PostRepository postRepository;
 
     public void validateAccessPost(Long postId,
+                                   String blogName,
                                    @Nullable Long memberId,
                                    @Nullable String postPassword) {
-        Post post = postRepository.getById(postId);
+        Post post = postRepository.getByIdAndBlogName(postId, blogName);
         Member member = null;
         if (memberId != null) {
             member = memberRepository.getById(memberId);

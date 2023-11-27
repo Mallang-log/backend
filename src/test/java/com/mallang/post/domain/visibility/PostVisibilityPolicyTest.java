@@ -3,7 +3,8 @@ package com.mallang.post.domain.visibility;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.ProtectVisibilityPasswordMustRequired;
 import com.mallang.post.exception.VisibilityPasswordNotRequired;
 import org.junit.jupiter.api.DisplayName;

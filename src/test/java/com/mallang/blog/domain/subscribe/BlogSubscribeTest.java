@@ -1,11 +1,12 @@
 package com.mallang.blog.domain.subscribe;
 
+import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.MemberFixture.회원;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
-import com.mallang.auth.MemberFixture;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.AlreadySubscribedException;
@@ -22,8 +23,8 @@ import org.junit.jupiter.api.Test;
 class BlogSubscribeTest {
 
     private final BlogSubscribeValidator blogSubscribeValidator = mock(BlogSubscribeValidator.class);
-    private final Member member = MemberFixture.말랑();
-    private final Member other = MemberFixture.회원("other");
+    private final Member member = 말랑();
+    private final Member other = 회원("other");
     private final Blog mallangBlog = new Blog("mallang-log", member);
 
     @Nested

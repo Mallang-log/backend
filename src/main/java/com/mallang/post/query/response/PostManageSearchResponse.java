@@ -2,7 +2,7 @@ package com.mallang.post.query.response;
 
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
@@ -17,7 +17,7 @@ public record PostManageSearchResponse(
 ) {
     public static PostManageSearchResponse from(Post post) {
         return PostManageSearchResponse.builder()
-                .id(post.getId())
+                .id(post.getPostId().getId())
                 .title(post.getTitle())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .password(post.getVisibilityPolish().getPassword())

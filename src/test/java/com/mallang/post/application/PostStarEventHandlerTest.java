@@ -24,7 +24,7 @@ class PostStarEventHandlerTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         blogName = 블로그_개설(memberId, "mallang-log");
-        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1").getId();
     }
 
     @Nested
@@ -32,13 +32,13 @@ class PostStarEventHandlerTest extends ServiceTest {
 
         @Test
         void 해당_포스트에_눌린_좋아요를_모두_제거한다() {
-            postStarService.star(new StarPostCommand(postId, memberId, null));
+            postStarService.star(new StarPostCommand(postId, blogName, memberId, null));
 
             // when
-            포스트를_삭제한다(memberId, postId);
+            포스트를_삭제한다(memberId, postId, blogName);
 
             // then
-            assertThat(postStarRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();
+            assertThat(postStarRepository.findByPostIdAndBlogNameAndMemberId(postId, blogName, memberId)).isEmpty();
         }
     }
 }

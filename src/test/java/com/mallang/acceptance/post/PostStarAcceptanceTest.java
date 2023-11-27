@@ -19,9 +19,9 @@ import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_�
 import static com.mallang.acceptance.post.PostStarAcceptanceSteps.특정_회원의_즐겨찾기_포스트_목록_조회_요청;
 import static com.mallang.acceptance.post.PostStarAcceptanceSteps.포스트_즐겨찾기_요청;
 import static com.mallang.acceptance.post.PostStarAcceptanceSteps.포스트_즐겨찾기_취소_요청;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -60,6 +60,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
         동훈_ID = 내_정보_조회_요청(동훈_세션_ID).as(MemberResponse.class).id();
         공개_포스트를_보호로_바꾸는_요청 = new UpdatePostRequest(
+                블로그_이름,
                 "보호로 변경",
                 "공개글에서 보호됨",
                 null,
@@ -70,6 +71,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                 emptyList()
         );
         공개_포스트를_비공개로_바꾸는_요청 = new UpdatePostRequest(
+                블로그_이름,
                 "보호로 변경",
                 "공개글에서 비공개됨",
                 null,
@@ -90,7 +92,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
 
             // when
-            var 응답 = 포스트_즐겨찾기_요청(없음(), 포스트_ID, null);
+            var 응답 = 포스트_즐겨찾기_요청(없음(), 포스트_ID, 블로그_이름, null);
 
             // then
             응답_상태를_검증한다(응답, 인증되지_않음);
@@ -101,7 +103,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
 
             // when
-            var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
+            var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
@@ -111,10 +113,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         void 이미_즐겨찾기를_누른_포스트에는_중복해서_즐겨찾기를_누를_수_없다() {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
-            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, null);
+            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null);
 
             // when
-            var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, null);
+            var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null);
 
             // then
             응답_상태를_검증한다(응답, 중복됨);
@@ -132,7 +134,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
 
                     // when
-                    var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, null);
+                    var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null);
 
                     // then
                     응답_상태를_검증한다(응답, 생성됨);
@@ -148,7 +150,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
 
                     // when
-                    var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
+                    var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null);
 
                     // then
                     응답_상태를_검증한다(응답, 권한_없음);
@@ -160,7 +162,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                     var 포스트_ID = 포스트_생성(말랑_세션_ID, 보호_포스트_생성_데이터(블로그_이름));
 
                     // when
-                    var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, "1234");
+                    var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, "1234");
 
                     // then
                     응답_상태를_검증한다(응답, 생성됨);
@@ -177,7 +179,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_이름));
 
                 // when
-                var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, null);
+                var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null);
 
                 // then
                 응답_상태를_검증한다(응답, 생성됨);
@@ -189,7 +191,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                 var 포스트_ID = 포스트_생성(말랑_세션_ID, 비공개_포스트_생성_데이터(블로그_이름));
 
                 // when
-                var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
+                var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null);
 
                 // then
                 응답_상태를_검증한다(응답, 권한_없음);
@@ -204,10 +206,10 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         void 즐겨찾기를_취소한다() {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
-            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, null);
+            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null);
 
             // when
-            var 응답 = 포스트_즐겨찾기_취소_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 포스트_즐겨찾기_취소_요청(말랑_세션_ID, 포스트_ID, 블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -219,7 +221,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
 
             // when
-            var 응답 = 포스트_즐겨찾기_취소_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 포스트_즐겨찾기_취소_요청(말랑_세션_ID, 포스트_ID, 블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 찾을수_없음);
@@ -230,11 +232,11 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null);
             포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
             // when
-            var 응답 = 포스트_즐겨찾기_취소_요청(동훈_세션_ID, 포스트_ID);
+            var 응답 = 포스트_즐겨찾기_취소_요청(동훈_세션_ID, 포스트_ID, 블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -245,11 +247,11 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             var 동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null);
             포스트_수정_요청(말랑_세션_ID, 포스트_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
             // when
-            var 응답 = 포스트_즐겨찾기_취소_요청(동훈_세션_ID, 포스트_ID);
+            var 응답 = 포스트_즐겨찾기_취소_요청(동훈_세션_ID, 포스트_ID, 블로그_이름);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -306,9 +308,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트1_ID = 포스트_생성(말랑_세션_ID, 포스트1_데이터);
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_데이터);
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_데이터);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, 블로그_이름, null);
 
             // when
             var 응답 = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(null, 동훈_ID);
@@ -327,9 +329,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트1_ID = 포스트_생성(말랑_세션_ID, 포스트1_데이터);
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_데이터);
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_데이터);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, 블로그_이름, null);
 
             포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_보호로_바꾸는_요청);
 
@@ -350,9 +352,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트1_ID = 포스트_생성(말랑_세션_ID, 포스트1_데이터);
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_데이터);
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_데이터);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, 블로그_이름, null);
 
             포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_보호로_바꾸는_요청);
 
@@ -372,9 +374,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트1_ID = 포스트_생성(말랑_세션_ID, 포스트1_데이터);
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_데이터);
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_데이터);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, 블로그_이름, null);
 
             포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_비공개로_바꾸는_요청);
 
@@ -395,9 +397,9 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트1_ID = 포스트_생성(말랑_세션_ID, 포스트1_데이터);
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_데이터);
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_데이터);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, null);
-            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, 블로그_이름, null);
+            포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, 블로그_이름, null);
             포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_비공개로_바꾸는_요청);
             포스트_수정_요청(말랑_세션_ID, 포스트1_ID, 공개_포스트를_보호로_바꾸는_요청);
 

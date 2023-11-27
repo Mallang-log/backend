@@ -3,6 +3,7 @@ package com.mallang.post.presentation;
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.application.PostService;
+import com.mallang.post.domain.PostId;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -38,8 +39,9 @@ public class PostManageController {
             @Auth Long memberId,
             @RequestBody CreatePostRequest request
     ) {
-        Long id = postService.create(request.toCommand(memberId));
-        return ResponseEntity.created(URI.create("/posts/" + id)).build();
+        PostId id = postService.create(request.toCommand(memberId));
+        URI uri = URI.create("/posts/%s/%d".formatted(request.blogName(), id.getId()));
+        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping("/{id}")
@@ -61,12 +63,13 @@ public class PostManageController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{blogName}/{id}")
     public ResponseEntity<PostManageDetailResponse> getById(
+            @PathVariable(name = "blogName") String blogName,
             @PathVariable(name = "id") Long postId,
             @Auth Long memberId
     ) {
-        return ResponseEntity.ok(postManageQueryService.findById(memberId, postId));
+        return ResponseEntity.ok(postManageQueryService.findById(memberId, postId, blogName));
     }
 
     @GetMapping

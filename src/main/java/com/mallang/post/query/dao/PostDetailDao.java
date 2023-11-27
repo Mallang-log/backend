@@ -16,11 +16,11 @@ public class PostDetailDao {
     private final PostQuerySupport postQuerySupport;
     private final PostLikeQuerySupport postLikeQuerySupport;
 
-    public PostDetailResponse find(@Nullable Long memberId, Long id) {
+    public PostDetailResponse find(Long id, String blogName, @Nullable Long memberId) {
         if (memberId == null) {
-            return PostDetailResponse.from(postQuerySupport.getById(id));
+            return PostDetailResponse.from(postQuerySupport.getByIdAndBlogName(id, blogName));
         }
-        boolean isLiked = postLikeQuerySupport.existsByMemberIdAndPostId(memberId, id);
-        return PostDetailResponse.withLiked(postQuerySupport.getById(id), isLiked);
+        boolean isLiked = postLikeQuerySupport.existsByMemberIdAndPostId(memberId, id, blogName);
+        return PostDetailResponse.withLiked(postQuerySupport.getByIdAndBlogName(id, blogName), isLiked);
     }
 }

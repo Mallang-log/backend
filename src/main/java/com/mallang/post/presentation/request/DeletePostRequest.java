@@ -4,9 +4,10 @@ import com.mallang.post.application.command.DeletePostCommand;
 import java.util.List;
 
 public record DeletePostRequest(
-        List<Long> postIds
+        List<Long> postIds,
+        String blogName
 ) {
     public DeletePostCommand toCommand(Long memberId) {
-        return new DeletePostCommand(memberId, postIds);
+        return new DeletePostCommand(memberId, postIds, blogName);
     }
 }

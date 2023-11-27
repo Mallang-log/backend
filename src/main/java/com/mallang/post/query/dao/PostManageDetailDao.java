@@ -13,7 +13,8 @@ public class PostManageDetailDao {
 
     private final PostQuerySupport postQuerySupport;
 
-    public PostManageDetailResponse find(Long memberId, Long id) {
-        return PostManageDetailResponse.from(postQuerySupport.getByIdAndWriterId(id, memberId));
+    public PostManageDetailResponse find(Long memberId, Long id, String blogName) {
+        return PostManageDetailResponse.from(postQuerySupport
+                .getByPostIdAndBlogNameAndWriterId(id, blogName, memberId));
     }
 }

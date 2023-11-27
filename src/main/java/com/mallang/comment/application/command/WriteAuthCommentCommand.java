@@ -10,6 +10,7 @@ import lombok.Builder;
 @Builder
 public record WriteAuthCommentCommand(
         Long postId,
+        String blogName,
         String content,
         boolean secret,
         Long memberId,

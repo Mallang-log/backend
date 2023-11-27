@@ -1,9 +1,9 @@
 package com.mallang.post.query.dao;
 
 import static com.mallang.auth.domain.QMember.member;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.star.QPostStar.postStar;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 
 import com.mallang.post.domain.star.PostStar;
 import com.mallang.post.query.response.StaredPostResponse;

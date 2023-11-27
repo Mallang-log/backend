@@ -13,9 +13,9 @@ import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_�
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.포스트_좋아요_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -110,7 +110,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 포스트를_단일_조회한다() {
             // when
-            var 응답 = 포스트_단일_조회_요청(null, 공개_포스트_ID, null);
+            var 응답 = 포스트_단일_조회_요청(null, 공개_포스트_ID, 말랑_블로그_이름, null);
 
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
@@ -123,7 +123,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 없는_ID = 100L;
 
             // when
-            var 응답 = 포스트_단일_조회_요청(null, 없는_ID, null);
+            var 응답 = 포스트_단일_조회_요청(null, 없는_ID, 말랑_블로그_이름, null);
 
             // then
             응답_상태를_검증한다(응답, 찾을수_없음);
@@ -132,11 +132,11 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 좋아요_눌렀는지_여부가_반영된다() {
             // given
-            포스트_좋아요_요청(말랑_세션_ID, 공개_포스트_ID, null);
+            포스트_좋아요_요청(말랑_세션_ID, 공개_포스트_ID, 말랑_블로그_이름, null);
 
             // when
-            var 좋아요_눌린_응답 = 포스트_단일_조회_요청(말랑_세션_ID, 공개_포스트_ID, null);
-            var 좋아요_안눌린_응답 = 포스트_단일_조회_요청(null, 공개_포스트_ID, null);
+            var 좋아요_눌린_응답 = 포스트_단일_조회_요청(말랑_세션_ID, 공개_포스트_ID, 말랑_블로그_이름, null);
+            var 좋아요_안눌린_응답 = 포스트_단일_조회_요청(null, 공개_포스트_ID, 말랑_블로그_이름, null);
 
             // then
             assertThat(좋아요_눌린_응답.as(PostDetailResponse.class).isLiked()).isTrue();
@@ -146,7 +146,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 블로그_주인은_비공개_글을_볼_수_있다() {
             // when
-            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 비공개_포스트_ID, null);
+            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 비공개_포스트_ID, 말랑_블로그_이름, null);
 
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
@@ -157,7 +157,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 블로그_주인이_아니라면_비공개_글_조회시_예외() {
             // when
-            var 응답 = 포스트_단일_조회_요청(null, 비공개_포스트_ID, null);
+            var 응답 = 포스트_단일_조회_요청(null, 비공개_포스트_ID, 말랑_블로그_이름, null);
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
@@ -166,7 +166,7 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 블로그_주인은_보호글을_볼_수_있다() {
             // when
-            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 보호_포스트_ID, null);
+            var 응답 = 포스트_단일_조회_요청(말랑_세션_ID, 보호_포스트_ID, 말랑_블로그_이름, null);
 
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
@@ -179,12 +179,13 @@ class PostAcceptanceTest extends AcceptanceTest {
         @Test
         void 블로그_주인이_아닌_경우_보호글_조회시_내용과_썸네일_이미지가_보호된다() {
             // when
-            var 응답 = 포스트_단일_조회_요청(null, 보호_포스트_ID, null);
+            var 응답 = 포스트_단일_조회_요청(null, 보호_포스트_ID, 말랑_블로그_이름, null);
 
             // then
             포스트_단일_조회_응답을_검증한다(응답,
                     new PostDetailResponse(
                             보호_포스트_ID,
+                            말랑_블로그_이름,
                             "[보호] 제목",
                             "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
                             "",
@@ -328,6 +329,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 예상_데이터 = List.of(
                     new PostSearchResponse(
                             동훈_비공개_포스트_ID,
+                            동훈_블로그_이름,
                             "[비공개] 동훈 제목",
                             "[비공개] 동훈 내용",
                             "[비공개] 동훈 인트로",
@@ -341,6 +343,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     ),
                     new PostSearchResponse(
                             동훈_보호_포스트_ID,
+                            동훈_블로그_이름,
                             "[보호] 동훈 제목",
                             "[보호] 동훈 내용",
                             "[보호] 동훈 인트로",
@@ -354,6 +357,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     ),
                     new PostSearchResponse(
                             동훈_공개_포스트_ID,
+                            동훈_블로그_이름,
                             "[공개] 동훈 제목",
                             "[공개] 동훈 내용",
                             "[공개] 동훈 인트로",
@@ -368,6 +372,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
                     new PostSearchResponse(
                             말랑_보호_포스트_ID,
+                            말랑_블로그_이름,
                             "[보호] 말랑 제목",
                             "보호되어 있는 글입니다.",
                             "",
@@ -381,6 +386,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                     ),
                     new PostSearchResponse(
                             말랑_공개_포스트_ID,
+                            말랑_블로그_이름,
                             "[공개] 말랑 제목",
                             "[공개] 말랑 내용",
                             "[공개] 말랑 인트로",
@@ -587,6 +593,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             var 예상 = List.of(
                     new PostSearchResponse(
                             포스트1_ID,
+                            말랑_블로그_이름,
                             "포스트",
                             "보호된 글입니다.",
                             "",

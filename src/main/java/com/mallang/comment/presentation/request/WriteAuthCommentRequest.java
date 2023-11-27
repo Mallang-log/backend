@@ -5,6 +5,7 @@ import jakarta.annotation.Nullable;
 
 public record WriteAuthCommentRequest(
         Long postId,
+        String blogName,
         String content,
         boolean secret,
         @Nullable Long parentCommentId
@@ -13,6 +14,7 @@ public record WriteAuthCommentRequest(
     public WriteAuthCommentCommand toCommand(Long memberId, @Nullable String postPassword) {
         return WriteAuthCommentCommand.builder()
                 .postId(postId)
+                .blogName(blogName)
                 .postPassword(postPassword)
                 .content(content)
                 .secret(secret)

@@ -1,6 +1,6 @@
 package com.mallang.post.query;
 
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.query.response.PostDetailResponse;
 import org.springframework.stereotype.Component;

@@ -10,15 +10,21 @@ public interface PostLikeQuerySupport extends JpaRepository<PostLike, Long> {
 
     default boolean existsByMemberIdAndPostId(
             Long memberId,
-            Long postId
+            Long postId,
+            String blogName
     ) {
-        // TODO 이거 VS findTop1ByMemberIdAndBlogNameAndPostId 이거랑 성능차이 있나 확인하기
-        return findByMemberIdAndPostId(memberId, postId).isPresent();
+        return findByMemberIdAndPostId(memberId, postId, blogName).isPresent();
     }
 
-    @Query("SELECT pl FROM PostLike pl WHERE pl.member.id = :memberId AND pl.post.id = :postId")
+    @Query("""
+            SELECT pl FROM PostLike pl
+            WHERE pl.member.id = :memberId
+            AND pl.post.postId.id = :postId
+            AND pl.post.blog.name.value = :blogName
+            """)
     Optional<PostLike> findByMemberIdAndPostId(
             @Param("memberId") Long memberId,
-            @Param("postId") Long postId
+            @Param("postId") Long postId,
+            @Param("blogName") String blogName
     );
 }

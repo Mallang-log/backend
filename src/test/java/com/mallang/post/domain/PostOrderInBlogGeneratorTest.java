@@ -27,8 +27,11 @@ class PostOrderInBlogGeneratorTest extends ServiceTest {
         포스트를_저장한다(otherId, otherBlogName, "글1", "1");
 
         // when & then
-        assertThat(postOrderInBlogGenerator.generate(blogRepository.getByName(blogName))).isEqualTo(3);
-        assertThat(postOrderInBlogGenerator.generate(blogRepository.getByName(otherBlogName))).isEqualTo(2);
-        assertThat(postOrderInBlogGenerator.generate(blogRepository.getByName(thirdBlogName))).isEqualTo(1);
+        PostId postId = postOrderInBlogGenerator.generate(blogRepository.getByName(blogName).getId());
+        PostId ohterPostId = postOrderInBlogGenerator.generate(blogRepository.getByName(otherBlogName).getId());
+        PostId thirdPostId = postOrderInBlogGenerator.generate(blogRepository.getByName(thirdBlogName).getId());
+        assertThat(postId.getId()).isEqualTo(3);
+        assertThat(ohterPostId.getId()).isEqualTo(2);
+        assertThat(thirdPostId.getId()).isEqualTo(1);
     }
 }

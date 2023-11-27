@@ -1,4 +1,4 @@
-package com.mallang.post.domain.visibility;
+package com.mallang.post.domain;
 
 import com.mallang.post.exception.ProtectVisibilityPasswordMustRequired;
 import com.mallang.post.exception.VisibilityPasswordNotRequired;

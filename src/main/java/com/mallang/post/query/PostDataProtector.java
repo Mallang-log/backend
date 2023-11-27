@@ -1,6 +1,6 @@
 package com.mallang.post.query;
 
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import com.mallang.post.query.response.StaredPostResponse;
@@ -28,6 +28,7 @@ public class PostDataProtector {
         }
         return new PostDetailResponse(
                 postDetailResponse.id(),
+                postDetailResponse.blogName(),
                 postDetailResponse.title(),
                 "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
                 "",
@@ -57,6 +58,7 @@ public class PostDataProtector {
         }
         return new PostSearchResponse(
                 postSearchResponse.id(),
+                postSearchResponse.blogName(),
                 postSearchResponse.title(),
                 "보호되어 있는 글입니다.",
                 "",
@@ -91,6 +93,7 @@ public class PostDataProtector {
                 data.starId(),
                 data.staredData(),
                 data.postId(),
+                data.blogName(),
                 data.title(),
                 "보호되어 있는 글입니다.",
                 "",

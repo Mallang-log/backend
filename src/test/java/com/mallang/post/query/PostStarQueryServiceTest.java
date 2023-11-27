@@ -1,13 +1,13 @@
 package com.mallang.post.query;
 
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.StarPostCommand;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.query.response.StaredPostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,19 +39,22 @@ class PostStarQueryServiceTest extends ServiceTest {
                 blogName,
                 "포스트1",
                 "내용1",
-                new PostVisibilityPolicy(PUBLIC, null));
+                new PostVisibilityPolicy(PUBLIC, null)
+        ).getId();
         post2Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트2",
                 "내용2",
-                new PostVisibilityPolicy(PUBLIC, null));
+                new PostVisibilityPolicy(PUBLIC, null)
+        ).getId();
         post3Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트3",
                 "내용3",
-                new PostVisibilityPolicy(PUBLIC, null));
+                new PostVisibilityPolicy(PUBLIC, null)
+        ).getId();
     }
 
     @Nested
@@ -60,9 +63,9 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 누구나_볼_수_있다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post1Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post2Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post3Id, blogName, otherMemberId, null));
 
             // when
             Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, null, pageable);
@@ -76,11 +79,11 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 보호_글은_보호되어_조회된다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post1Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post2Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post3Id, blogName, otherMemberId, null));
 
-            포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, post1Id, blogName, PROTECTED, "1234");
 
             // when
             Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, otherMemberId,
@@ -95,11 +98,11 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 글_작성자가_다른_회원의_즐겨찾기_목록_조회_시_글_작성자의_보호글이_즐겨찾이_되어있다면_볼_수_있다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post1Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post2Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post3Id, blogName, otherMemberId, null));
 
-            포스트_공개여부를_업데이트한다(memberId, post1Id, PROTECTED, "1234");
+            포스트_공개여부를_업데이트한다(memberId, post1Id, blogName, PROTECTED, "1234");
 
             // when
             Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId, pageable);
@@ -113,11 +116,11 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 비공개_글은_누가_조회하든_조회되지_않는다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post1Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post2Id, blogName, otherMemberId, null));
+            postStarService.star(new StarPostCommand(post3Id, blogName, otherMemberId, null));
 
-            포스트_공개여부를_업데이트한다(memberId, post1Id, PRIVATE, null);
+            포스트_공개여부를_업데이트한다(memberId, post1Id, blogName, PRIVATE, null);
 
             // when
             Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId, pageable);

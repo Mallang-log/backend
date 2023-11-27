@@ -1,8 +1,8 @@
 package com.mallang.post.query;
 
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -130,10 +130,10 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 포스트를_조회한다() {
             // given
-            Long id = postService.create(말랑_public_포스트_작성_요청);
+            Long id = postService.create(말랑_public_포스트_작성_요청).getId();
 
             // when
-            PostDetailResponse response = postQueryService.getById(null, null, id);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, null, null);
 
             // then
             assertThat(response)
@@ -152,12 +152,13 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 좋아요_눌렀는지_여부가_반영된다() {
             // given
-            Long id = postService.create(말랑_public_포스트_작성_요청);
-            postLikeService.like(new ClickPostLikeCommand(id, mallangId, null));
+            Long id = postService.create(말랑_public_포스트_작성_요청).getId();
+            postLikeService.like(new ClickPostLikeCommand(id, mallangBlogName, mallangId, null));
 
             // when
-            PostDetailResponse responseClickLike = postQueryService.getById(mallangId, null, id);
-            PostDetailResponse responseNoLike = postQueryService.getById(null, null, id);
+            PostDetailResponse responseClickLike = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId,
+                    null);
+            PostDetailResponse responseNoLike = postQueryService.getByIdAndBlogName(id, mallangBlogName, null, null);
 
             // then
             assertThat(responseClickLike.isLiked()).isTrue();
@@ -167,10 +168,10 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 블로그_주인은_비공개_글을_볼_수_있다() {
             // given
-            Long id = postService.create(말랑_private_포스트_작성_요청);
+            Long id = postService.create(말랑_private_포스트_작성_요청).getId();
 
             // when
-            PostDetailResponse response = postQueryService.getById(mallangId, null, id);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId, null);
 
             // then
             assertThat(response.id()).isEqualTo(id);
@@ -179,21 +180,21 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 블로그_주인이_아니라면_비공개_글_조회시_예외() {
             // given
-            Long id = postService.create(말랑_private_포스트_작성_요청);
+            Long id = postService.create(말랑_private_포스트_작성_요청).getId();
 
             // when & then
             assertThatThrownBy(() ->
-                    postQueryService.getById(mallangId + 1, null, id)
+                    postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1, null)
             ).isInstanceOf(NoAuthorityAccessPostException.class);
         }
 
         @Test
         void 블로그_주인은_보호글을_볼_수_있다() {
             // given
-            Long id = postService.create(말랑_protected_포스트_작성_요청);
+            Long id = postService.create(말랑_protected_포스트_작성_요청).getId();
 
             // when
-            PostDetailResponse response = postQueryService.getById(mallangId, null, id);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId, null);
 
             // then
             assertThat(response.id()).isEqualTo(id);
@@ -204,10 +205,11 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 블로그_주인이_아닌_경우_비밀번호가_일치하면_보호글을_볼_수_있다() {
             // given
-            Long id = postService.create(말랑_protected_포스트_작성_요청);
+            Long id = postService.create(말랑_protected_포스트_작성_요청).getId();
 
             // when
-            PostDetailResponse response = postQueryService.getById(mallangId + 1, "1234", id);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1,
+                    "1234");
 
             // then
             assertThat(response.id()).isEqualTo(id);
@@ -218,10 +220,10 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 블로그_주인이_아니며_비밀번호가_일치하지_않는_경우_보호글_조회시_내용이_보호된다() {
             // given
-            Long id = postService.create(말랑_protected_포스트_작성_요청);
+            Long id = postService.create(말랑_protected_포스트_작성_요청).getId();
 
             // when
-            PostDetailResponse response = postQueryService.getById(mallangId + 1, null, id);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1, null);
 
             // then
             assertThat(response)
@@ -245,12 +247,12 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 포스트를_전체_조회한다() {
             // given
-            Long post1Id = postService.create(말랑_public_포스트_작성_요청);
-            Long post2Id = postService.create(말랑_public_포스트_작성_요청);
+            Long post1Id = postService.create(말랑_public_포스트_작성_요청).getId();
+            Long post2Id = postService.create(말랑_public_포스트_작성_요청).getId();
             PostSearchCond cond = PostSearchCond.builder().build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -270,9 +272,9 @@ class PostQueryServiceTest extends ServiceTest {
             postService.create(동훈_private_포스트_작성_요청);
 
             // when
-            List<PostSearchResponse> search = postQueryService.search(mallangId,
-                            new PostSearchCond(null, null, null, null,
-                                    null, null, null), pageable)
+            List<PostSearchResponse> search = postQueryService.search(new PostSearchCond(null, null, null, null,
+                            null, null, null), pageable, mallangId
+                    )
                     .getContent();
 
             // then
@@ -291,7 +293,7 @@ class PostQueryServiceTest extends ServiceTest {
             // given
             Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
             Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "노드", null));
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링).getId();
             포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", 노드);
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
@@ -299,7 +301,7 @@ class PostQueryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -322,15 +324,15 @@ class PostQueryServiceTest extends ServiceTest {
             // given
             Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
             Long JPA = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "JPA", 스프링));
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링);
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA);
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링).getId();
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA).getId();
             PostSearchCond cond = PostSearchCond.builder()
                     .categoryId(스프링)
                     .blogName(mallangBlogName)
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -358,15 +360,15 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_태그의_포스트만_조회한다() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", "tag1");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
-                    "tag2");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", "tag1").getId();
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1", "tag2")
+                    .getId();
             PostSearchCond cond = PostSearchCond.builder()
                     .tag("tag2")
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -389,15 +391,15 @@ class PostQueryServiceTest extends ServiceTest {
             // given
             Long findWriterId = 회원을_저장한다("말랑말랑");
             String otherBlogName = 블로그_개설(findWriterId, "other");
-            Long post1Id = 포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1",
-                    "tag2");
+            Long post1Id = 포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1").getId();
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1", "tag2")
+                    .getId();
             PostSearchCond cond = PostSearchCond.builder()
                     .writerId(findWriterId)
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -418,15 +420,15 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 제목으로_조회() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕").getId();
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getId();
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히").getId();
             PostSearchCond cond = PostSearchCond.builder()
                     .title("안녕")
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -446,15 +448,15 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 내용으로_조회() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕").getId();
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getId();
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히").getId();
             PostSearchCond cond = PostSearchCond.builder()
                     .content("안녕")
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -481,15 +483,15 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 내용_and_제목으로_조회() {
             // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕");
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요");
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히");
+            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕").getId();
+            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getId();
+            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히").getId();
             PostSearchCond cond = PostSearchCond.builder()
                     .titleOrContent("안녕")
                     .build();
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(null, cond, pageable)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
@@ -529,7 +531,7 @@ class PostQueryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    postQueryService.search(null, cond, pageable)
+                    postQueryService.search(cond, pageable, null)
             ).isInstanceOf(BadPostSearchCondException.class);
         }
     }

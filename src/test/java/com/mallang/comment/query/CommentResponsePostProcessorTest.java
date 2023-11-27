@@ -2,6 +2,7 @@ package com.mallang.comment.query;
 
 import static com.mallang.auth.MemberFixture.동훈;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -66,7 +67,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getById(1L)).willReturn(post);
+            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글")
@@ -92,7 +93,8 @@ class CommentResponsePostProcessorTest {
             );
 
             // when
-            List<CommentResponse> commentData = commentDataPostProcessor.processSecret(commentResponses, 1L, 1L);
+            List<CommentResponse> commentData = commentDataPostProcessor.processSecret(commentResponses, 1L, "blog",
+                    1L);
 
             // then
             assertThat(commentData)
@@ -108,7 +110,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getById(1L)).willReturn(post);
+            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글")
@@ -139,7 +141,8 @@ class CommentResponsePostProcessorTest {
             );
 
             // when
-            List<CommentResponse> commentData = commentDataPostProcessor.processSecret(commentResponses, 1L, null);
+            List<CommentResponse> commentData = commentDataPostProcessor
+                    .processSecret(commentResponses, 1L, "blog", null);
 
             // then
             assertThat(commentData)
@@ -155,7 +158,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getById(1L)).willReturn(post);
+            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글1")
@@ -186,7 +189,8 @@ class CommentResponsePostProcessorTest {
             );
 
             // when
-            List<CommentResponse> commentData = commentDataPostProcessor.processSecret(commentResponses, 1L, 2L);
+            List<CommentResponse> commentData = commentDataPostProcessor
+                    .processSecret(commentResponses, 1L, "blog", 2L);
 
             // then
             assertThat(commentData)

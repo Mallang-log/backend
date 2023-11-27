@@ -1,6 +1,6 @@
 package com.mallang.post.application.command;
 
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.Builder;
 public record UpdatePostCommand(
         Long memberId,
         Long postId,
+        String blogName,
         String title,
         String content,
         @Nullable String postThumbnailImageName,

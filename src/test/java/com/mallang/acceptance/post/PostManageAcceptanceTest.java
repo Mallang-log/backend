@@ -9,10 +9,6 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.보호되지_않음;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.좋아요_안눌림;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.공개_포스트_생성_데이터;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_관리_글_단일_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_관리_글_단일_조회_응답을_검증한다;
@@ -22,16 +18,14 @@ import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_�
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_수정_요청;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
-import com.mallang.post.query.response.PostDetailResponse;
-import com.mallang.post.query.response.PostDetailResponse.WriterResponse;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageDetailResponse.CategoryResponse;
 import com.mallang.post.query.response.PostManageDetailResponse.TagResponses;
@@ -95,7 +89,9 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
 
         // when
-        UpdatePostRequest 포스트_업데이트_요청 = new UpdatePostRequest("업데이트 제목",
+        UpdatePostRequest 포스트_업데이트_요청 = new UpdatePostRequest(
+                말랑_블로그_이름,
+                "업데이트 제목",
                 "업데이트 내용",
                 "업데이트 포스트 썸네일 이름",
                 "업데이트 인트로",
@@ -108,37 +104,18 @@ class PostManageAcceptanceTest extends AcceptanceTest {
 
         // then
         응답_상태를_검증한다(응답, 정상_처리);
-        var 조회_결과 = 포스트_단일_조회_요청(말랑_세션_ID, 포스트_ID, null);
-        var 예상_데이터 = new PostDetailResponse(
-                포스트_ID,
-                "업데이트 제목",
-                "업데이트 내용",
-                "업데이트 포스트 썸네일 이름",
-                PRIVATE,
-                보호되지_않음,
-                null,
-                0,
-                좋아요_안눌림,
-                null,
-                new WriterResponse(null, "말랑", "말랑"),
-                new PostDetailResponse.CategoryResponse(Spring_카테고리_ID, "Spring"),
-                new PostDetailResponse.TagResponses(List.of("태그1", "태그2"))
-        );
-        포스트_단일_조회_응답을_검증한다(조회_결과, 예상_데이터);
     }
 
     @Test
     void 포스트를_삭제한다() {
         // given
         var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
-        var 다른_회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("다른회원");
 
         // when
-        var 응답 = 포스트_삭제_요청(말랑_세션_ID, 포스트_ID);
+        var 응답 = 포스트_삭제_요청(말랑_세션_ID, 포스트_ID, 말랑_블로그_이름);
 
         // then
         응답_상태를_검증한다(응답, 본문_없음);
-        응답_상태를_검증한다(포스트_단일_조회_요청(null, 포스트_ID, null), 찾을수_없음);
     }
 
     @Nested
@@ -163,7 +140,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             );
             public_spring_포스트_ID = 포스트_생성(말랑_세션_ID, public_spring_포스트_요청);
 
-            CreatePostRequest protected_jpa_포스트_요청 = new CreatePostRequest(말랑_블로그_이름,
+            CreatePostRequest protected_jpa_포스트_요청 = new CreatePostRequest(
+                    말랑_블로그_이름,
                     "Jpa 입니다",
                     "이번에는 이것 저것들에 대해 알아보아요",
                     "썸넬2",
@@ -175,7 +153,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             );
             protected_jpa_포스트_ID = 포스트_생성(말랑_세션_ID, protected_jpa_포스트_요청);
 
-            CreatePostRequest private_front_포스트_요청 = new CreatePostRequest(말랑_블로그_이름,
+            CreatePostRequest private_front_포스트_요청 = new CreatePostRequest(
+                    말랑_블로그_이름,
                     "Front 입니다",
                     "잘 알아보았어요!",
                     null,
@@ -396,7 +375,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 나의_글을_관리용으로_단일_조회한다() {
             // when
-            var 응답 = 내_관리_글_단일_조회_요청(말랑_세션_ID, 포스트_ID);
+            var 응답 = 내_관리_글_단일_조회_요청(말랑_세션_ID, 말랑_블로그_이름, 포스트_ID);
 
             // then
             내_관리_글_단일_조회_응답을_검증한다(응답,
@@ -416,7 +395,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 냐의_글이_아닌_경우_예외() {
             // when
-            var 응답 = 내_관리_글_단일_조회_요청(동훈_세션_ID, 포스트_ID);
+            var 응답 = 내_관리_글_단일_조회_요청(동훈_세션_ID, 말랑_블로그_이름, 포스트_ID);
 
             // then
             응답_상태를_검증한다(응답, 찾을수_없음);

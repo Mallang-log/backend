@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +13,7 @@ import lombok.Builder;
 @Builder
 public record PostDetailResponse(
         Long id,
+        String blogName,
         String title,
         String content,
         @Nullable String postThumbnailImageName,
@@ -32,7 +33,8 @@ public record PostDetailResponse(
 
     public static PostDetailResponse withLiked(Post post, boolean isLiked) {
         return PostDetailResponse.builder()
-                .id(post.getId())
+                .id(post.getPostId().getId())
+                .blogName(post.getBlog().getName())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .postThumbnailImageName(post.getPostThumbnailImageName())

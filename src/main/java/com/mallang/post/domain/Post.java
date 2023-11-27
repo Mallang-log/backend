@@ -1,54 +1,53 @@
 package com.mallang.post.domain;
 
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
+import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
-import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
-import com.mallang.common.domain.CommonDomainModel;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
-@NoArgsConstructor(access = PROTECTED)
-@Table(
-        name = "post",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        columnNames = {"orders", "blog_id"}
-                )
-        }
-)
+@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Post extends CommonDomainModel {
+public class Post extends AbstractAggregateRoot<Post> {
 
-    // TODO https://github.com/jakartaee/persistence/issues/113 해당 이슈 해결되면, 해당 방법 사용해서 자동 생성되도록 수정하기
-    @Column(name = "orders", nullable = false, updatable = false)
-    private Long order;
+    @EmbeddedId
+    private PostId postId;
 
+    @MapsId(value = "blog_id")
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "blog_id", nullable = false)
+    @JoinColumn(name = "blog_id", nullable = false, updatable = false)
     private Blog blog;
 
     @Column(nullable = false)
@@ -76,14 +75,17 @@ public class Post extends CommonDomainModel {
 
     private int likeCount = 0;
 
-    @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "post_id", updatable = false, nullable = false)
+    @OneToMany(cascade = {PERSIST, MERGE, REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id", updatable = false, nullable = false)
+    @JoinColumn(name = "blog_id", referencedColumnName = "blog_id", updatable = false, nullable = false)
     private List<Tag> tags = new ArrayList<>();
+
+    @CreatedDate
+    private LocalDateTime createdDate;
 
     @Builder
     public Post(
-            Long order,
-            Blog blog,
+            PostId postId,
             String title,
             String content,
             String postThumbnailImageName,
@@ -93,8 +95,7 @@ public class Post extends CommonDomainModel {
             @Nullable Category category,
             List<String> tags
     ) {
-        this.order = order;
-        this.blog = blog;
+        this.postId = postId;
         this.title = title;
         this.content = content;
         this.postThumbnailImageName = postThumbnailImageName;
@@ -124,7 +125,7 @@ public class Post extends CommonDomainModel {
     }
 
     public void delete() {
-        registerEvent(new PostDeleteEvent(getId()));
+        registerEvent(new PostDeleteEvent(getPostId()));
     }
 
     private void setTags(List<String> tags) {
@@ -158,16 +159,15 @@ public class Post extends CommonDomainModel {
 
     public void validatePostAccessibility(@Nullable Member member,
                                           @Nullable String postPassword) {
-        if (visibilityPolish.getVisibility() == Visibility.PUBLIC) {
+        if (visibilityPolish.getVisibility() == PUBLIC) {
             return;
         }
         if (getWriter().equals(member)) {
             return;
         }
-        if (visibilityPolish.getVisibility() == Visibility.PROTECTED) {
-            if (visibilityPolish.getPassword().equals(postPassword)) {
-                return;
-            }
+        if (visibilityPolish.getVisibility() == PROTECTED
+                && visibilityPolish.getPassword().equals(postPassword)) {
+            return;
         }
         throw new NoAuthorityAccessPostException();
     }
@@ -184,5 +184,26 @@ public class Post extends CommonDomainModel {
         return tags.stream()
                 .map(Tag::getContent)
                 .toList();
+    }
+
+    @Override
+    public List<Object> domainEvents() {
+        return new ArrayList<>(super.domainEvents());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Post post)) {
+            return false;
+        }
+        return Objects.equals(getPostId(), post.getPostId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getPostId());
     }
 }

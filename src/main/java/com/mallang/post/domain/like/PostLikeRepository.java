@@ -2,6 +2,7 @@ package com.mallang.post.domain.like;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NotFoundPostLikeException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,14 +14,22 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     boolean existsByPostAndMember(Post post, Member member);
 
-    default PostLike getByPostIdAndMemberId(Long postId, Long memberId) {
-        return findByPostIdAndMemberId(postId, memberId)
+    default PostLike getByPostIdAndMemberId(Long postId, String blogName, Long memberId) {
+        return findByPostIdAndMemberId(postId, blogName, memberId)
                 .orElseThrow(NotFoundPostLikeException::new);
     }
 
-    Optional<PostLike> findByPostIdAndMemberId(Long postId, Long memberId);
+    @Query("""
+            SELECT pl FROM PostLike pl
+            WHERE pl.post.postId.id = :postId
+            AND pl.post.blog.name.value = :blogName
+            AND pl.member.id = :memberId
+            """)
+    Optional<PostLike> findByPostIdAndMemberId(@Param("postId") Long postId,
+                                               @Param("blogName") String blogName,
+                                               @Param("memberId") Long memberId);
 
     @Modifying
-    @Query("DELETE FROM PostLike pl WHERE pl.post.id = :postId")
-    void deleteAllByPostId(@Param("postId") Long postId);
+    @Query("DELETE FROM PostLike pl WHERE pl.post.postId = :postId")
+    void deleteAllByPostId(@Param("postId") PostId postId);
 }

@@ -1,10 +1,11 @@
 package com.mallang.post.query.dao;
 
 import static com.mallang.auth.domain.QMember.member;
+import static com.mallang.blog.domain.QBlog.blog;
 import static com.mallang.category.domain.QCategory.category;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
 import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
 import com.mallang.category.query.support.CategoryQuerySupport;
@@ -45,6 +46,7 @@ public class PostSearchDao {
                 );
         List<Post> result = query.selectFrom(post)
                 .distinct()
+                .leftJoin(post.blog, blog).fetchJoin()
                 .leftJoin(post.tags, tag)
                 .join(post.writer, member).fetchJoin()
                 .leftJoin(post.category, category).fetchJoin()
@@ -56,7 +58,7 @@ public class PostSearchDao {
                         writerIdEq(cond.writerId()),
                         titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
                 )
-                .orderBy(post.id.desc())
+                .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

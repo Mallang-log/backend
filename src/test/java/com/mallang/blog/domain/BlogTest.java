@@ -1,6 +1,7 @@
 package com.mallang.blog.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
+import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,10 +26,7 @@ class BlogTest {
     class 개설_시 {
 
         private final BlogValidator blogValidator = mock(BlogValidator.class);
-        private final Blog blog = Blog.builder()
-                .name("mallang")
-                .owner(동훈())
-                .build();
+        private final Blog blog = mallangBlog(말랑());
 
         @Test
         void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예외() {
