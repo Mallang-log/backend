@@ -22,13 +22,16 @@ public class PostQueryService {
     private final PostDataValidator postDataValidator;
     private final PostDataProtector postDataProtector;
 
-    public PostDetailResponse getById(@Nullable Long memberId, @Nullable String postPassword, Long id) {
-        PostDetailResponse postDetailResponse = postDetailDao.find(memberId, id);
+    public PostDetailResponse getByIdAndBlogName(Long id,
+                                                 String blogName,
+                                                 @Nullable Long memberId,
+                                                 @Nullable String postPassword) {
+        PostDetailResponse postDetailResponse = postDetailDao.find(id, blogName, memberId);
         postDataValidator.validateAccessPost(memberId, postDetailResponse);
         return postDataProtector.protectIfRequired(memberId, postPassword, postDetailResponse);
     }
 
-    public Page<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond, Pageable pageable) {
+    public Page<PostSearchResponse> search(PostSearchCond cond, Pageable pageable, @Nullable Long memberId) {
         Page<PostSearchResponse> result = postSearchDao.search(memberId, cond, pageable);
         return postDataProtector.protectIfRequired(memberId, result);
     }

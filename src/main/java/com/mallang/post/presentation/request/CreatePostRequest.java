@@ -1,7 +1,7 @@
 package com.mallang.post.presentation.request;
 
 import com.mallang.post.application.command.CreatePostCommand;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.util.List;
 

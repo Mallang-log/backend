@@ -3,8 +3,8 @@ package com.mallang.comment.domain;
 import static com.mallang.auth.MemberFixture.동훈;
 import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.auth.MemberFixture.회원;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -15,8 +15,8 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.NoAuthorityForCommentException;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -36,7 +36,6 @@ class AuthCommentTest {
     private final Post post = Post.builder()
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
-            .blog(blog)
             .build();
     private final Member member = 말랑(1L);
     private final Member other = 동훈(2L);
@@ -107,7 +106,6 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
-                    .blog(blog)
                     .build();
 
             @Test
@@ -167,7 +165,6 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
-                    .blog(blog)
                     .build();
 
             @Test
@@ -291,7 +288,6 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
-                    .blog(blog)
                     .build();
 
             @Test
@@ -352,7 +348,6 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
-                    .blog(blog)
                     .build();
 
             @Test
@@ -479,7 +474,6 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
-                    .blog(blog)
                     .build();
 
             @Test
@@ -537,7 +531,6 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
-                    .blog(blog)
                     .build();
 
             @Test

@@ -1,12 +1,12 @@
 package com.mallang.post.query.dao;
 
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.common.ServiceTest;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostSearchResponse;
 import java.util.List;
@@ -41,13 +41,13 @@ class PostSearchDaoTest extends ServiceTest {
                 new PostVisibilityPolicy(PRIVATE, null));
 
         포스트를_저장한다(otherId, otherBlogName,
-                "ohter-public", "content",
+                "other-public", "content",
                 new PostVisibilityPolicy(PUBLIC, null));
         포스트를_저장한다(otherId, otherBlogName,
-                "ohter-protected", "content",
+                "other-protected", "content",
                 new PostVisibilityPolicy(PROTECTED, "1234"));
         포스트를_저장한다(otherId, otherBlogName,
-                "ohter-private", "content",
+                "other-private", "content",
                 new PostVisibilityPolicy(PRIVATE, null));
     }
 
@@ -62,7 +62,7 @@ class PostSearchDaoTest extends ServiceTest {
         // then
         assertThat(search)
                 .extracting(PostSearchResponse::title)
-                .containsExactly("ohter-protected", "ohter-public",
+                .containsExactly("other-protected", "other-public",
                         "mallang-private", "mallang-protected", "mallang-public"
                 );
     }

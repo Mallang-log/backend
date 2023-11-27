@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 
 public record CancelPostLikeCommand(
         Long postId,
+        String blogName,
         Long memberId,
         @Nullable String postPassword
 ) {

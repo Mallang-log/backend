@@ -12,8 +12,8 @@ import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -36,7 +36,6 @@ class CommentDeleteServiceTest {
     private final Post post = Post.builder()
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
-            .blog(blog)
             .build();
     private final Member member = 말랑(1L);
 

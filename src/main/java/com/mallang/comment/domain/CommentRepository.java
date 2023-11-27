@@ -1,12 +1,15 @@
 package com.mallang.comment.domain;
 
 import com.mallang.comment.exception.NotFoundCommentException;
+import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostId;
 import jakarta.annotation.Nullable;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
@@ -27,17 +30,17 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @EntityGraph(attributePaths = {"parent"})
     Optional<Comment> findById(Long id);
 
-    default Comment getParentByIdAndPostId(@Nullable Long parentCommentId, Long postId) {
+    default Comment getParentByIdAndPost(@Nullable Long parentCommentId, Post post) {
         if (parentCommentId == null) {
             return null;
         }
-        return findByIdAndPostId(parentCommentId, postId)
+        return findByIdAndPost(parentCommentId, post)
                 .orElseThrow(NotFoundCommentException::new);
     }
 
-    Optional<Comment> findByIdAndPostId(Long id, Long postId);
+    Optional<Comment> findByIdAndPost(Long id, Post post);
 
     @Modifying
-    @Query("DELETE FROM Comment c WHERE c.post.id = :postId")
-    void deleteAllByPostId(Long postId);
+    @Query("DELETE FROM Comment c WHERE c.post.postId = :postId")
+    void deleteAllByPostId(@Param("postId") PostId postId);
 }

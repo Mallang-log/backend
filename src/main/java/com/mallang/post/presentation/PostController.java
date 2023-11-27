@@ -26,13 +26,14 @@ public class PostController {
 
     private final PostQueryService postQueryService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{blogName}/{id}")
     public ResponseEntity<PostDetailResponse> getById(
             @OptionalAuth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
+            @PathVariable(name = "blogName") String blogName,
             @PathVariable(name = "id") Long id
     ) {
-        return ResponseEntity.ok(postQueryService.getById(memberId, postPassword, id));
+        return ResponseEntity.ok(postQueryService.getByIdAndBlogName(id, blogName, memberId, postPassword));
     }
 
     @GetMapping
@@ -41,6 +42,6 @@ public class PostController {
             @ModelAttribute PostSearchCond postSearchCond,
             @PageableDefault(size = 9) Pageable pageable
     ) {
-        return ResponseEntity.ok(PageResponse.from(postQueryService.search(memberId, postSearchCond, pageable)));
+        return ResponseEntity.ok(PageResponse.from(postQueryService.search(postSearchCond, pageable, memberId)));
     }
 }

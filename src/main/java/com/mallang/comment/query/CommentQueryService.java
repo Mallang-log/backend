@@ -17,12 +17,13 @@ public class CommentQueryService {
     private final CommentDataValidator commentDataValidator;
     private final CommentDataPostProcessor commentDataPostProcessor;
 
-    public List<CommentResponse> findAllByPostId(Long postId,
-                                                 @Nullable Long memberId,
-                                                 @Nullable String postPassword) {
-        commentDataValidator.validateAccessPost(postId, memberId, postPassword);
-        List<CommentResponse> result = commentDao.findAllByPostId(postId);
+    public List<CommentResponse> findAllByPost(Long postId,
+                                               String blogName,
+                                               @Nullable Long memberId,
+                                               @Nullable String postPassword) {
+        commentDataValidator.validateAccessPost(postId, blogName, memberId, postPassword);
+        List<CommentResponse> result = commentDao.findAllByPost(postId, blogName);
         List<CommentResponse> deletedProcessedResult = commentDataPostProcessor.processDeleted(result);
-        return commentDataPostProcessor.processSecret(deletedProcessedResult, postId, memberId);
+        return commentDataPostProcessor.processSecret(deletedProcessedResult, postId, blogName, memberId);
     }
 }

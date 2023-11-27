@@ -1,6 +1,5 @@
 package com.mallang.post.domain;
 
-import com.mallang.blog.domain.Blog;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +9,8 @@ public class PostOrderInBlogGenerator {
 
     private final PostRepository postRepository;
 
-    public Long generate(Blog blog) {
-        return postRepository.countByBlog(blog) + 1;
+    public PostId generate(Long blogId) {
+        long postId = postRepository.countByBlog(blogId) + 1;
+        return new PostId(postId, blogId);
     }
 }

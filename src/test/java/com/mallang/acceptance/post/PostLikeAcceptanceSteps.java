@@ -12,19 +12,29 @@ import jakarta.annotation.Nullable;
 @SuppressWarnings("NonAsciiCharacters")
 public class PostLikeAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 포스트_좋아요_요청(String 세션_ID, Long 포스트_ID, @Nullable String 비밀번호) {
+    public static ExtractableResponse<Response> 포스트_좋아요_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 블로그_이름,
+            @Nullable String 비밀번호
+    ) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
-                .body(new ClickPostLikeRequest(포스트_ID))
+                .body(new ClickPostLikeRequest(포스트_ID, 블로그_이름))
                 .post("/post-likes")
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 좋아요_취소_요청(String 세션_ID, Long 포스트_ID, @Nullable String 비밀번호) {
+    public static ExtractableResponse<Response> 좋아요_취소_요청(
+            String 세션_ID,
+            Long 포스트_ID,
+            String 블로그_이름,
+            @Nullable String 비밀번호
+    ) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
-                .body(new CancelPostLikeRequest(포스트_ID))
+                .body(new CancelPostLikeRequest(포스트_ID, 블로그_이름))
                 .delete("/post-likes")
                 .then().log().all()
                 .extract();

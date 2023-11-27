@@ -1,6 +1,6 @@
 package com.mallang.post.application;
 
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,6 +14,7 @@ import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
+import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NotFoundPostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,7 @@ class PostServiceTest extends ServiceTest {
                     .build();
 
             // when
-            Long id = postService.create(command);
+            Long id = postService.create(command).getId();
 
             // then
             assertThat(id).isNotNull();
@@ -77,11 +78,11 @@ class PostServiceTest extends ServiceTest {
                     .build();
 
             // when
-            Long id = postService.create(command);
+            Long id = postService.create(command).getId();
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getById(id);
+                Post post = postRepository.getByIdAndBlogName(id, blogName);
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
             });
         }
@@ -119,11 +120,11 @@ class PostServiceTest extends ServiceTest {
                     .build();
 
             // when
-            Long id = postService.create(command);
+            Long id = postService.create(command).getId();
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getById(id);
+                Post post = postRepository.getByIdAndBlogName(id, blogName);
                 assertThat(post.getTags())
                         .containsExactly("tag1", "tag2", "tag3");
             });
@@ -142,10 +143,11 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 내가_쓴_포스트를_수정할_수_있다() {
             // given
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1").getId();
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID,
+            postService.update(new UpdatePostCommand(
+                    memberId, 포스트_ID, blogName,
                     "수정제목", "수정내용",
                     "수정썸네일",
                     "수정인트로",
@@ -154,7 +156,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getById(포스트_ID);
+                Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
@@ -168,12 +170,13 @@ class PostServiceTest extends ServiceTest {
         void 다른_사람의_포스트는_수정할_수_없다() {
             // given
             Long otherMemberId = 회원을_저장한다("동훈");
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용").getId();
 
             // when
             assertThatThrownBy(() ->
                     postService.update(
-                            new UpdatePostCommand(otherMemberId, 포스트_ID,
+                            new UpdatePostCommand(
+                                    otherMemberId, 포스트_ID, blogName,
                                     "수정제목", "수정내용",
                                     null, "수정인트로",
                                     PUBLIC, null,
@@ -181,7 +184,7 @@ class PostServiceTest extends ServiceTest {
             ).isInstanceOf(NotFoundPostException.class);
 
             // then
-            Post post = postRepository.getById(포스트_ID);
+            Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("포스트");
             assertThat(post.getContent()).isEqualTo("내용");
         }
@@ -192,17 +195,18 @@ class PostServiceTest extends ServiceTest {
             Long springCategoryId = categoryService.create(new CreateCategoryCommand(
                     memberId, blogName, "Spring", null
             ));
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId).getId();
 
             // when
-            postService.update(new UpdatePostCommand(memberId, 포스트_ID,
+            postService.update(new UpdatePostCommand(
+                    memberId, 포스트_ID, blogName,
                     "수정제목", "수정내용",
                     null, "수정인트로",
                     PUBLIC, null,
                     null, emptyList()));
 
             // then
-            Post post = postRepository.getById(포스트_ID);
+            Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("수정제목");
             assertThat(post.getContent()).isEqualTo("수정내용");
             assertThat(post.getCategory()).isNull();
@@ -211,14 +215,15 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용");
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용").getId();
             Long springCategoryId = categoryService.create(new CreateCategoryCommand(
                     memberId, blogName, "Spring", null
             ));
 
             // when
             postService.update(
-                    new UpdatePostCommand(memberId, 포스트_ID,
+                    new UpdatePostCommand(
+                            memberId, 포스트_ID, blogName,
                             "수정제목", "수정내용",
                             null, "수정인트로",
                             PUBLIC, null,
@@ -226,7 +231,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getById(포스트_ID);
+                Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
@@ -239,13 +244,12 @@ class PostServiceTest extends ServiceTest {
             Long springCategoryId = categoryService.create(new CreateCategoryCommand(
                     memberId, blogName, "Spring", null
             ));
-            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId);
+            Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId).getId();
             Long nodeCategoryId = categoryService.create(new CreateCategoryCommand(memberId, blogName, "Node", null));
 
             // when
             postService.update(new UpdatePostCommand(
-                    memberId,
-                    포스트_ID,
+                    memberId, 포스트_ID, blogName,
                     "수정제목", "수정내용",
                     null, "수정인트로",
                     PUBLIC, null,
@@ -253,7 +257,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getById(포스트_ID);
+                Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Node");
@@ -264,10 +268,11 @@ class PostServiceTest extends ServiceTest {
     @Nested
     class 포스트_제거_시 {
 
-        private Long myPostId1;
-        private Long myPostId2;
+        private PostId myPostId1;
+        private PostId myPostId2;
         private Long otherId;
-        private Long otherPostId;
+        private String otherBlogName;
+        private PostId otherPostId;
 
         @BeforeEach
         void setUp() {
@@ -275,41 +280,42 @@ class PostServiceTest extends ServiceTest {
             blogName = 블로그_개설(memberId, "mallang-log");
             myPostId1 = 포스트를_저장한다(memberId, blogName, "내 글 1", "내 글 1 입니다.");
             myPostId2 = 포스트를_저장한다(memberId, blogName, "내 글 2", "내 글 2 입니다.");
-            댓글을_작성한다(myPostId1, "dw", false, memberId);
+            댓글을_작성한다(myPostId1.getId(), blogName, "dw", false, memberId);
             otherId = 회원을_저장한다("other");
-            String otherBlogName = 블로그_개설(otherId, "other-log");
+            otherBlogName = 블로그_개설(otherId, "other-log");
             otherPostId = 포스트를_저장한다(otherId, otherBlogName, "다른사람 글 1", "다른사람 글 1 입니다.");
         }
 
         @Test
         void 자신이_작성한_글이_아닌_경우_아무것도_지워지지_않는다() {
             // when
-            postService.delete(new DeletePostCommand(otherId, List.of(myPostId1)));
+            postService.delete(new DeletePostCommand(otherId, List.of(myPostId1.getId()), blogName));
 
             // then
-            assertThat(postRepository.existsById(myPostId1)).isTrue();
+            assertThat(postRepository.findByIdAndBlogName(myPostId1.getId(), blogName)).isPresent();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isZero();
         }
 
         @Test
         void 없는_글이_있으면_제외하고_제거된다() {
             // when
-            postService.delete(new DeletePostCommand(memberId, List.of(myPostId1, 100000L)));
+            postService.delete(new DeletePostCommand(memberId, List.of(myPostId1.getId(), 100000L), blogName));
 
             // then
-            assertThat(postRepository.existsById(myPostId1)).isFalse();
+            assertThat(postRepository.findByIdAndBlogName(myPostId1.getId(), blogName)).isEmpty();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(1);
         }
 
         @Test
         void 원하는_포스트들을_제거하며_각각_댓글_제거_이벤트가_발행된다() {
             // when
-            postService.delete(new DeletePostCommand(memberId, List.of(myPostId1, myPostId2)));
+            postService.delete(
+                    new DeletePostCommand(memberId, List.of(myPostId1.getId(), myPostId2.getId()), blogName));
 
             // then
-            assertThat(postRepository.existsById(myPostId1)).isFalse();
-            assertThat(postRepository.existsById(myPostId2)).isFalse();
-            assertThat(postRepository.existsById(otherPostId)).isTrue();
+            assertThat(postRepository.findByIdAndBlogName(myPostId1.getId(), blogName)).isEmpty();
+            assertThat(postRepository.findByIdAndBlogName(myPostId2.getId(), blogName)).isEmpty();
+            assertThat(postRepository.findByIdAndBlogName(otherPostId.getId(), otherBlogName)).isPresent();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(2);
         }
     }

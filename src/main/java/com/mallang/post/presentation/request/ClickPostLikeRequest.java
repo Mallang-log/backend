@@ -4,10 +4,11 @@ import com.mallang.post.application.command.ClickPostLikeCommand;
 import jakarta.annotation.Nullable;
 
 public record ClickPostLikeRequest(
-        Long postId
+        Long postId,
+        String blogName
 ) {
 
     public ClickPostLikeCommand toCommand(Long memberId, @Nullable String postPassword) {
-        return new ClickPostLikeCommand(postId, memberId, postPassword);
+        return new ClickPostLikeCommand(postId, blogName, memberId, postPassword);
     }
 }

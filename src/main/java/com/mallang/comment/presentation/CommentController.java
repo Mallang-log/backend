@@ -74,9 +74,10 @@ public class CommentController {
     public ResponseEntity<List<CommentResponse>> findAll(
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @Nullable @OptionalAuth Long memberId,
-            @RequestParam(value = "postId", required = true) Long postId
+            @RequestParam(value = "postId", required = true) Long postId,
+            @RequestParam(value = "blogName", required = true) String blogName
     ) {
-        List<CommentResponse> result = commentQueryService.findAllByPostId(postId, memberId, postPassword);
+        List<CommentResponse> result = commentQueryService.findAllByPost(postId, blogName, memberId, postPassword);
         return ResponseEntity.ok(result);
     }
 }

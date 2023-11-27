@@ -10,10 +10,11 @@ import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostId;
 import com.mallang.post.domain.PostIntro;
 import com.mallang.post.domain.PostOrderInBlogGenerator;
 import com.mallang.post.domain.PostRepository;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,17 +32,18 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final PostOrderInBlogGenerator postOrderInBlogGenerator;
 
-    public Long create(CreatePostCommand command) {
+    public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByNameAndOwnerId(command.blogName(), command.memberId());
         Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
-        Long postId = postOrderInBlogGenerator.generate(blog);
-        Post post = command.toPost(member, blog, category, postId);
-        return postRepository.save(post).getId();
+        PostId postId = postOrderInBlogGenerator.generate(blog.getId());
+        Post post = command.toPost(member, category, postId);
+        return postRepository.save(post).getPostId();
     }
 
     public void update(UpdatePostCommand command) {
-        Post post = postRepository.getByIdAndWriterId(command.postId(), command.memberId());
+        Post post = postRepository
+                .getByIdAndBlogNameAndWriterId(command.postId(), command.blogName(), command.memberId());
         Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
         post.update(
                 command.title(),
@@ -55,7 +57,8 @@ public class PostService {
     }
 
     public void delete(DeletePostCommand command) {
-        List<Post> posts = postRepository.findAllByIdInAndWriterId(command.postIds(), command.memberId());
+        List<Post> posts = postRepository
+                .findAllByIdInAndWriterId(command.postIds(), command.blogName(), command.memberId());
         for (Post post : posts) {
             post.delete();
             postRepository.delete(post);

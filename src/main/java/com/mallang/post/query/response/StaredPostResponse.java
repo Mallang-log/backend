@@ -3,8 +3,8 @@ package com.mallang.post.query.response;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.domain.star.PostStar;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +15,7 @@ public record StaredPostResponse(
         Long starId,
         LocalDateTime staredData,
         Long postId,
+        String blogName,
         String title,
         String content,
         String intro,
@@ -30,7 +31,8 @@ public record StaredPostResponse(
         return StaredPostResponse.builder()
                 .starId(postStar.getId())
                 .staredData(postStar.getCreatedDate())
-                .postId(post.getId())
+                .postId(post.getPostId().getId())
+                .blogName(post.getBlog().getName())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .intro(post.getPostIntro())

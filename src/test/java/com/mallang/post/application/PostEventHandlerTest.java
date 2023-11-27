@@ -28,17 +28,17 @@ class PostEventHandlerTest extends ServiceTest {
                     말랑_ID, blogName, "최상위1", null));
             Long categoryId2 = categoryService.create(new CreateCategoryCommand(
                     말랑_ID, blogName, "최상위2", null));
-            Long postId1 = 포스트를_저장한다(말랑_ID, blogName, "제목1", "내용", categoryId1);
-            Long postId2 = 포스트를_저장한다(말랑_ID, blogName, "제목2", "내용", categoryId1);
-            Long postId3 = 포스트를_저장한다(말랑_ID, blogName, "안삭제", "내용", categoryId2);
+            Long postId1 = 포스트를_저장한다(말랑_ID, blogName, "제목1", "내용", categoryId1).getId();
+            Long postId2 = 포스트를_저장한다(말랑_ID, blogName, "제목2", "내용", categoryId1).getId();
+            Long postId3 = 포스트를_저장한다(말랑_ID, blogName, "안삭제", "내용", categoryId2).getId();
 
             // when
             publisher.publishEvent(new CategoryDeletedEvent(categoryId1));
 
             // then
-            assertThat(postRepository.getById((postId1)).getCategory()).isNull();
-            assertThat(postRepository.getById((postId2)).getCategory()).isNull();
-            assertThat(postRepository.getById((postId3)).getCategory()).isNotNull();
+            assertThat(postRepository.getByIdAndBlogName(postId1, blogName).getCategory()).isNull();
+            assertThat(postRepository.getByIdAndBlogName(postId2, blogName).getCategory()).isNull();
+            assertThat(postRepository.getByIdAndBlogName(postId3, blogName).getCategory()).isNotNull();
         }
     }
 }

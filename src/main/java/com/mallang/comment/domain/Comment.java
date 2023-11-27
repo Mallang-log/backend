@@ -16,6 +16,7 @@ import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -35,7 +36,10 @@ public abstract class Comment extends CommonDomainModel {
     protected String content;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumns({
+            @JoinColumn(name = "post_id", referencedColumnName = "post_id"),
+            @JoinColumn(name = "blog_id", referencedColumnName = "blog_id"),
+    })
     protected Post post;
 
     protected boolean deleted;

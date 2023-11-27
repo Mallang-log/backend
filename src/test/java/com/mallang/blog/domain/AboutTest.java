@@ -1,6 +1,7 @@
 package com.mallang.blog.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
+import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -21,11 +22,8 @@ import org.junit.jupiter.api.Test;
 class AboutTest {
 
     private final AboutValidator aboutValidator = mock(AboutValidator.class);
-    private final Member member = 동훈();
-    private final Blog blog = Blog.builder()
-            .name("mallang")
-            .owner(member)
-            .build();
+    private final Member member = 말랑();
+    private final Blog blog = mallangBlog(말랑());
 
     @Nested
     class 작성_시 {

@@ -18,7 +18,7 @@ import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고�
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -152,7 +152,8 @@ class CategoryAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 정상_처리);
-            var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, null).as(PostDetailResponse.class);
+            var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, 말랑_블로그_이름, null)
+                    .as(PostDetailResponse.class);
             assertThat(포스트_조회_응답.category().categoryId()).isNull();
         }
 

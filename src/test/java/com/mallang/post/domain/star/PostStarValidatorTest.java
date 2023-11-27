@@ -28,7 +28,6 @@ class PostStarValidatorTest {
             .title("제목")
             .content("내용")
             .writer(mallang)
-            .blog(blog)
             .build();
 
     @Test

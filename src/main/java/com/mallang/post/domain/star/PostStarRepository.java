@@ -2,6 +2,7 @@ package com.mallang.post.domain.star;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NotFoundPostStarException;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,14 +14,22 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
 
     boolean existsByPostAndMember(Post post, Member member);
 
-    default PostStar getByPostIdAndMemberId(Long postId, Long memberId) {
-        return findByPostIdAndMemberId(postId, memberId)
+    default PostStar getByPostIdAndBlogNameAndMemberId(Long postId, String blogName, Long memberId) {
+        return findByPostIdAndBlogNameAndMemberId(postId, blogName, memberId)
                 .orElseThrow(NotFoundPostStarException::new);
     }
 
-    Optional<PostStar> findByPostIdAndMemberId(Long postId, Long memberId);
+    @Query("""
+            SELECT ps FROM PostStar ps
+            WHERE ps.post.postId.id = :postId
+            AND ps.post.blog.name.value = :blogName
+            AND ps.member.id = :memberId
+            """)
+    Optional<PostStar> findByPostIdAndBlogNameAndMemberId(@Param("postId") Long postId,
+                                                          @Param("blogName") String blogName,
+                                                          @Param("memberId") Long memberId);
 
     @Modifying
-    @Query("DELETE FROM PostStar ps WHERE ps.post.id = :postId")
-    void deleteAllByPostId(@Param("postId") Long postId);
+    @Query("DELETE FROM PostStar ps WHERE ps.post.postId = :postId")
+    void deleteAllByPostId(@Param("postId") PostId postId);
 }

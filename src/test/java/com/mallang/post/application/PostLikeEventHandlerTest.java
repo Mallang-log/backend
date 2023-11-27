@@ -24,7 +24,7 @@ class PostLikeEventHandlerTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         blogName = 블로그_개설(memberId, "mallang-log");
-        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1");
+        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1").getId();
     }
 
     @Nested
@@ -32,13 +32,13 @@ class PostLikeEventHandlerTest extends ServiceTest {
 
         @Test
         void 해당_포스트에_눌린_좋아요를_모두_제거한다() {
-            postLikeService.like(new ClickPostLikeCommand(postId, memberId, null));
+            postLikeService.like(new ClickPostLikeCommand(postId, blogName, memberId, null));
 
             // when
-            포스트를_삭제한다(memberId, postId);
+            포스트를_삭제한다(memberId, postId, blogName);
 
             // then
-            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, memberId)).isEmpty();
+            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, blogName, memberId)).isEmpty();
         }
     }
 }

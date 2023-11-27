@@ -15,8 +15,9 @@ public class CommentDao {
 
     private final CommentQuerySupport commentQuerySupport;
 
-    public List<CommentResponse> findAllByPostId(Long postId) {
-        return commentQuerySupport.findAllByPostId(postId).stream()
+    public List<CommentResponse> findAllByPost(Long postId, String blogName) {
+        return commentQuerySupport.findAllByPost(postId, blogName)
+                .stream()
                 .filter(it -> Objects.isNull(it.getParent()))
                 .map(CommentResponse::from)
                 .toList();

@@ -14,8 +14,8 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,7 +32,6 @@ class CommentTest {
     private final Post post = Post.builder()
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
-            .blog(blog)
             .build();
     private final Member member = 말랑(1L);
     private final Member other = 동훈(2L);

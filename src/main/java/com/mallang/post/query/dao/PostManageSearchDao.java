@@ -6,7 +6,7 @@ import static com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCon
 
 import com.mallang.category.query.support.CategoryQuerySupport;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -51,7 +51,7 @@ public class PostManageSearchDao {
                         contentContains(cond.content()),
                         visibilityEq(cond.visibility())
                 )
-                .orderBy(post.id.desc())
+                .orderBy(post.postId.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

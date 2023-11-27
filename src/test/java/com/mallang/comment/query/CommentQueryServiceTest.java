@@ -6,6 +6,7 @@ import com.mallang.comment.query.response.AuthCommentResponse;
 import com.mallang.comment.query.response.CommentResponse;
 import com.mallang.comment.query.response.UnAuthCommentResponse;
 import com.mallang.common.ServiceTest;
+import com.mallang.post.domain.PostId;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +22,7 @@ class CommentQueryServiceTest extends ServiceTest {
 
     private Long memberId;
     private String blogName;
-    private Long postId;
+    private PostId postId;
 
     @Nested
     class 특정_포스트의_댓글_모두_조회_시 {
@@ -36,12 +37,12 @@ class CommentQueryServiceTest extends ServiceTest {
         @Test
         void 인증되지_않은_요청인_경우_비밀_댓글은_비밀_댓글로_조회된다() {
             // given
-            댓글을_작성한다(postId, "댓글1", false, memberId);
-            댓글을_작성한다(postId, "[비밀] 댓글2", true, memberId);
-            비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId.getId(), blogName, "댓글1", false, memberId);
+            댓글을_작성한다(postId.getId(), blogName, "[비밀] 댓글2", true, memberId);
+            비인증_댓글을_작성한다(postId.getId(), blogName, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentResponse> result = commentQueryService.findAllByPostId(postId, null, null);
+            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getId(), blogName, null, null);
 
             // then
             assertThat(result)
@@ -64,14 +65,14 @@ class CommentQueryServiceTest extends ServiceTest {
             // given
             Long dong = 회원을_저장한다("동훈");
             Long hehe = 회원을_저장한다("헤헤");
-            댓글을_작성한다(postId, "동훈 댓글", false, dong);
-            댓글을_작성한다(postId, "헤헤 댓글", false, hehe);
-            댓글을_작성한다(postId, "[비밀] 동훈 댓글2", true, dong); // 제외
-            댓글을_작성한다(postId, "[비밀] 헤헤 댓글2", true, hehe);
-            비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId.getId(), blogName, "동훈 댓글", false, dong);
+            댓글을_작성한다(postId.getId(), blogName, "헤헤 댓글", false, hehe);
+            댓글을_작성한다(postId.getId(), blogName, "[비밀] 동훈 댓글2", true, dong); // 제외
+            댓글을_작성한다(postId.getId(), blogName, "[비밀] 헤헤 댓글2", true, hehe);
+            비인증_댓글을_작성한다(postId.getId(), blogName, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentResponse> result = commentQueryService.findAllByPostId(postId, dong, null);
+            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getId(), blogName, dong, null);
 
             // then
             assertThat(result)
@@ -84,14 +85,14 @@ class CommentQueryServiceTest extends ServiceTest {
             // given
             Long dong = 회원을_저장한다("동훈");
             Long hehe = 회원을_저장한다("헤헤");
-            댓글을_작성한다(postId, "동훈 댓글", false, memberId);
-            댓글을_작성한다(postId, "헤헤 댓글", false, hehe);
-            댓글을_작성한다(postId, "[비밀] 동훈 댓글2", true, memberId); // 제외
-            댓글을_작성한다(postId, "[비밀] 헤헤 댓글2", true, hehe);
-            비인증_댓글을_작성한다(postId, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId.getId(), blogName, "동훈 댓글", false, memberId);
+            댓글을_작성한다(postId.getId(), blogName, "헤헤 댓글", false, hehe);
+            댓글을_작성한다(postId.getId(), blogName, "[비밀] 동훈 댓글2", true, memberId); // 제외
+            댓글을_작성한다(postId.getId(), blogName, "[비밀] 헤헤 댓글2", true, hehe);
+            비인증_댓글을_작성한다(postId.getId(), blogName, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentResponse> result = commentQueryService.findAllByPostId(postId, memberId, null);
+            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getId(), blogName, memberId, null);
 
             // then
             assertThat(result)

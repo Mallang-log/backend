@@ -3,13 +3,13 @@ package com.mallang.acceptance.post;
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.common.presentation.PageResponse;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -95,9 +95,9 @@ public class PostManageAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 포스트_삭제_요청(String 말랑_세션_ID, Long 포스트_ID) {
+    public static ExtractableResponse<Response> 포스트_삭제_요청(String 말랑_세션_ID, Long 포스트_ID, String 블로그_이름) {
         return given(말랑_세션_ID)
-                .body(new DeletePostRequest(Arrays.asList(포스트_ID)))
+                .body(new DeletePostRequest(Arrays.asList(포스트_ID), 블로그_이름))
                 .delete("/manage/posts")
                 .then()
                 .log().all()
@@ -132,9 +132,9 @@ public class PostManageAcceptanceSteps {
                 .isEqualTo(예상_데이터);
     }
 
-    public static ExtractableResponse<Response> 내_관리_글_단일_조회_요청(String 세션_ID, Long 포스트_ID) {
+    public static ExtractableResponse<Response> 내_관리_글_단일_조회_요청(String 세션_ID, String 블로그_이름, Long 포스트_ID) {
         return given(세션_ID)
-                .get("/manage/posts/{id}", 포스트_ID)
+                .get("/manage/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
                 .then()
                 .log().all()
                 .extract();
