@@ -1,7 +1,7 @@
 package com.mallang.common;
 
 import static com.mallang.auth.domain.OauthServerType.GITHUB;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
@@ -34,12 +34,13 @@ import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostId;
 import com.mallang.post.domain.PostOrderInBlogGenerator;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.post.query.dao.PostSearchDao;
@@ -168,25 +169,25 @@ public abstract class ServiceTest {
         return name;
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, String... 태그들) {
+    protected PostId 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, String... 태그들) {
         return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, PUBLIC, null, null, 태그들);
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
+    protected PostId 포스트를_저장한다(Long 회원_ID, String 블로그_이름, String 제목, String 내용, Long 카테고리_ID, String... 태그들) {
         return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, PUBLIC, null, 카테고리_ID, 태그들);
     }
 
-    protected Long 포스트를_저장한다(Long 회원_ID,
-                             String 블로그_이름,
-                             String 제목,
-                             String 내용,
-                             PostVisibilityPolicy 공개범위,
-                             String... 태그들
+    protected PostId 포스트를_저장한다(Long 회원_ID,
+                               String 블로그_이름,
+                               String 제목,
+                               String 내용,
+                               PostVisibilityPolicy 공개범위,
+                               String... 태그들
     ) {
         return 포스트를_저장한다(회원_ID, 블로그_이름, 제목, 내용, 공개범위.getVisibility(), 공개범위.getPassword(), null, 태그들);
     }
 
-    protected Long 포스트를_저장한다(
+    protected PostId 포스트를_저장한다(
             Long 회원_ID,
             String 블로그_이름,
             String 제목,
@@ -210,11 +211,12 @@ public abstract class ServiceTest {
         ));
     }
 
-    protected void 포스트_공개여부를_업데이트한다(Long 회원_ID, Long postId, Visibility visibility, String password) {
-        Post post = postRepository.getById(postId);
+    protected void 포스트_공개여부를_업데이트한다(Long 회원_ID, Long postId, String blogName, Visibility visibility, String password) {
+        Post post = postRepository.getByIdAndBlogName(postId, blogName);
         postService.update(new UpdatePostCommand(
                 회원_ID,
                 postId,
+                blogName,
                 post.getTitle(),
                 post.getContent(),
                 post.getPostThumbnailImageName(),
@@ -226,13 +228,14 @@ public abstract class ServiceTest {
         ));
     }
 
-    protected void 포스트를_삭제한다(Long memberId, Long postId) {
-        postService.delete(new DeletePostCommand(memberId, List.of(postId)));
+    protected void 포스트를_삭제한다(Long memberId, Long postId, String blogName) {
+        postService.delete(new DeletePostCommand(memberId, List.of(postId), blogName));
     }
 
-    public Long 댓글을_작성한다(Long postId, String content, boolean secret, Long memberId) {
+    public Long 댓글을_작성한다(Long postId, String blogName, String content, boolean secret, Long memberId) {
         WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                 .postId(postId)
+                .blogName(blogName)
                 .content(content)
                 .secret(secret)
                 .memberId(memberId)
@@ -240,9 +243,10 @@ public abstract class ServiceTest {
         return authCommentService.write(command);
     }
 
-    public Long 비인증_댓글을_작성한다(Long postId, String content, String nickname, String password) {
+    public Long 비인증_댓글을_작성한다(Long postId, String blogName, String content, String nickname, String password) {
         WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                 .postId(postId)
+                .blogName(blogName)
                 .content(content)
                 .nickname(nickname)
                 .password(password)
@@ -250,9 +254,17 @@ public abstract class ServiceTest {
         return unAuthCommentService.write(command);
     }
 
-    public Long 대댓글을_작성한다(Long postId, String content, boolean secret, Long memberId, Long parentCommentId) {
+    public Long 대댓글을_작성한다(
+            Long postId,
+            String blogName,
+            String content,
+            boolean secret,
+            Long memberId,
+            Long parentCommentId
+    ) {
         WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                 .postId(postId)
+                .blogName(blogName)
                 .content(content)
                 .secret(secret)
                 .memberId(memberId)
@@ -261,9 +273,17 @@ public abstract class ServiceTest {
         return authCommentService.write(command);
     }
 
-    public Long 비인증_대댓글을_작성한다(Long postId, String content, String nickname, String password, Long parentCommentId) {
+    public Long 비인증_대댓글을_작성한다(
+            Long postId,
+            String blogName,
+            String content,
+            String nickname,
+            String password,
+            Long parentCommentId
+    ) {
         WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                 .postId(postId)
+                .blogName(blogName)
                 .content(content)
                 .nickname(nickname)
                 .password(password)

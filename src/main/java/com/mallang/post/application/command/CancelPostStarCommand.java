@@ -1,7 +1,8 @@
 package com.mallang.post.application.command;
 
 public record CancelPostStarCommand(
+        Long memberId,
         Long postId,
-        Long memberId
+        String blogName
 ) {
 }

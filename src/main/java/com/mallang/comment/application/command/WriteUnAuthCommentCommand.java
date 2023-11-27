@@ -9,6 +9,7 @@ import lombok.Builder;
 @Builder
 public record WriteUnAuthCommentCommand(
         Long postId,
+        String blogName,
         String content,
         String nickname,
         String password,

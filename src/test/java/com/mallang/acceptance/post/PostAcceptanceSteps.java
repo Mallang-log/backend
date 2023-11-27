@@ -24,11 +24,12 @@ public class PostAcceptanceSteps {
     public static ExtractableResponse<Response> 포스트_단일_조회_요청(
             @Nullable String 세션_ID,
             Long 포스트_ID,
+            String 블로그_이름,
             @Nullable String 비밀번호
     ) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
-                .get("/posts/{id}", 포스트_ID)
+                .get("/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
                 .then().log().all()
                 .extract();
     }

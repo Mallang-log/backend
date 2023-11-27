@@ -51,13 +51,13 @@ class PostViewHistoryAopTest extends ServiceTest {
 
     @Test
     void forJacocoTestCoverage() {
-        postViewHistoryAop.postQueryServiceGetById();
+        postViewHistoryAop.postQueryServiceGetByIdAndBlogName();
     }
 
     @Test
-    void 포인트컷으로_PostQueryService_의_getById_매칭() throws NoSuchMethodException {
+    void 포인트컷으로_PostQueryService_의_getByIdAndBlogName_매칭() throws NoSuchMethodException {
         // given
-        Method pointcut = PostViewHistoryAop.class.getDeclaredMethod("postQueryServiceGetById");
+        Method pointcut = PostViewHistoryAop.class.getDeclaredMethod("postQueryServiceGetByIdAndBlogName");
         Pointcut annotation = AnnotationUtils.getAnnotation(pointcut, Pointcut.class);
         String regex = "execution\\(\\* (.+?)\\(..\\)\\)";
         Pattern pattern = Pattern.compile(regex);
@@ -69,29 +69,29 @@ class PostViewHistoryAopTest extends ServiceTest {
         String group = matcher.group(1);
 
         // then
-        assertThat(group).isEqualTo(PostQueryService.class.getName() + ".getById");
+        assertThat(group).isEqualTo(PostQueryService.class.getName() + ".getByIdAndBlogName");
     }
 
     @Test
-    void PostQueryService_의_getById_외의_메서드가_호출되면_저장하지_않는다() {
+    void PostQueryService_의_getByIdAndBlogName_외의_메서드가_호출되면_저장하지_않는다() {
         // when
-        postQueryService.search(null,
-                new PostSearchCond(null, null, null, null, null, null, null),
-                PageRequest.of(0, 20));
+        postQueryService.search(new PostSearchCond(null, null, null, null, null, null, null), PageRequest.of(0, 20),
+                null
+        );
 
         // then
         verify(postViewHistoryCollector, times(0)).save(any());
     }
 
     @Test
-    void PostQueryService_getById_시_기존_조회수_쿠키가_없다면_세팅한다() {
+    void PostQueryService_getByIdAndBlogName_시_기존_조회수_쿠키가_없다면_세팅한다() {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용");
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
 
         // when
-        postQueryService.getById(memberId, null, postId);
+        postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
 
         // then
         verify(postViewHistoryCollector, times(1)).save(any());
@@ -104,8 +104,8 @@ class PostViewHistoryAopTest extends ServiceTest {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용");
-        postQueryService.getById(memberId, null, postId);
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
 
         // when
         Cookie postViewCookie = testHttpResponse().getCookie("POST_VIEW_COOKIE");
@@ -119,16 +119,16 @@ class PostViewHistoryAopTest extends ServiceTest {
     }
 
     @Test
-    void PostQueryService_getById_시_기존_조회수_쿠키가_있다면_별다른_설정을_하지_않는다() {
+    void PostQueryService_getByIdAndBlogName_시_기존_조회수_쿠키가_있다면_별다른_설정을_하지_않는다() {
         // given
         MockHttpServletRequest request = testHttpRequest();
         request.setCookies(new Cookie("POST_VIEW_COOKIE", UUID.randomUUID().toString()));
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용");
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
 
         // when
-        postQueryService.getById(memberId, null, postId);
+        postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
 
         // then
         verify(postViewHistoryCollector, times(1)).save(any());
@@ -140,7 +140,7 @@ class PostViewHistoryAopTest extends ServiceTest {
     void 조회_실패시_동작하지_않는다() {
         // when
         assertThatThrownBy(() -> {
-            postQueryService.getById(1L, null, 1000L);
+            postQueryService.getByIdAndBlogName(1000L, "name", 1L, null);
         }).isInstanceOf(NotFoundPostException.class);
 
         // then

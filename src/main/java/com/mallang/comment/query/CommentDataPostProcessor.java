@@ -51,8 +51,11 @@ public class CommentDataPostProcessor {
                 .build();
     }
 
-    public List<CommentResponse> processSecret(List<CommentResponse> datas, Long postId, @Nullable Long memberId) {
-        if (isPostWriter(postId, memberId)) {
+    public List<CommentResponse> processSecret(List<CommentResponse> datas,
+                                               Long postId,
+                                               String blogName,
+                                               @Nullable Long memberId) {
+        if (isPostWriter(postId, blogName, memberId)) {
             return datas;
         }
         return datas.stream()
@@ -60,8 +63,8 @@ public class CommentDataPostProcessor {
                 .toList();
     }
 
-    private boolean isPostWriter(Long postId, @Nullable Long memberId) {
-        Post post = postRepository.getById(postId);
+    private boolean isPostWriter(Long postId, String blogName, @Nullable Long memberId) {
+        Post post = postRepository.getByIdAndBlogName(postId, blogName);
         return Objects.equals(post.getWriter().getId(), memberId);
     }
 

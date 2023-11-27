@@ -2,6 +2,7 @@ package com.mallang.blog.application;
 
 import static com.mallang.auth.MemberFixture.동훈;
 import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -31,12 +32,15 @@ class AboutServiceTest extends ServiceTest {
     private Member member;
     private Member other;
     private Blog blog;
+    private WriteAboutCommand writeAboutCommand;
 
     @BeforeEach
     void setUp() {
         member = memberRepository.save(말랑());
         other = memberRepository.save(동훈());
-        blog = blogRepository.save(new Blog("mallang-log", member));
+        blog = blogRepository.save(mallangBlog(member));
+        writeAboutCommand =
+                new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
     }
 
     @Nested
@@ -44,24 +48,20 @@ class AboutServiceTest extends ServiceTest {
 
         @Test
         void 첫_작성이라면_작성된다() {
-            // given
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
-
             // when & then
             assertDoesNotThrow(() -> {
-                aboutService.write(command);
+                aboutService.write(writeAboutCommand);
             });
         }
 
         @Test
         void 블로그에_이미_작성된_소개가_있으면_예외() {
             // given
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
-            aboutService.write(command);
+            aboutService.write(writeAboutCommand);
 
             // when & then
             assertThatThrownBy(() ->
-                    aboutService.write(command)
+                    aboutService.write(writeAboutCommand)
             ).isInstanceOf(AlreadyExistAboutException.class);
         }
 
@@ -84,8 +84,7 @@ class AboutServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
-            aboutId = aboutService.write(command);
+            aboutId = aboutService.write(writeAboutCommand);
         }
 
         @Test
@@ -120,8 +119,7 @@ class AboutServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            WriteAboutCommand command = new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");
-            aboutId = aboutService.write(command);
+            aboutId = aboutService.write(writeAboutCommand);
         }
 
         @Test

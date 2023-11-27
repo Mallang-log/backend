@@ -139,19 +139,22 @@ public class CommentAcceptanceSteps {
 
     public static ExtractableResponse<Response> 특정_포스트의_댓글_전체_조회_요청(
             Long 포스트_ID,
+            String 블로그_이름,
             @Nullable String 포스트_비밀번호
     ) {
-        return 특정_포스트의_댓글_전체_조회_요청(null, 포스트_ID, 포스트_비밀번호);
+        return 특정_포스트의_댓글_전체_조회_요청(null, 포스트_ID, 블로그_이름, 포스트_비밀번호);
     }
 
     public static ExtractableResponse<Response> 특정_포스트의_댓글_전체_조회_요청(
             String 세션_ID,
             Long 포스트_ID,
+            String 블로그_이름,
             @Nullable String 포스트_비밀번호
     ) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .queryParam("postId", 포스트_ID)
+                .queryParam("blogName", 블로그_이름)
                 .get("/comments")
                 .then().log().all()
                 .extract();

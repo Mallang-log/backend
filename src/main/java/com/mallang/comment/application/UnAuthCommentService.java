@@ -26,8 +26,8 @@ public class UnAuthCommentService {
     private final CommentDeleteService commentDeleteService;
 
     public Long write(WriteUnAuthCommentCommand command) {
-        Post post = postRepository.getById(command.postId());
-        Comment parent = commentRepository.getParentByIdAndPostId(command.parentCommentId(), command.postId());
+        Post post = postRepository.getByIdAndBlogName(command.postId(), command.blogName());
+        Comment parent = commentRepository.getParentByIdAndPost(command.parentCommentId(), post);
         UnAuthComment comment = command.toCommand(post, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();

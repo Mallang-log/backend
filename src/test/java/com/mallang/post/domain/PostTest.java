@@ -4,9 +4,9 @@ import static com.mallang.auth.MemberFixture.동훈;
 import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
@@ -25,6 +24,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("포스트(Post) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -40,13 +40,28 @@ class PostTest {
     private final Category otherMemberCategory = 루트_카테고리("otherMemberCategory", otherMember, otherBlog);
 
     @Test
+    void Id가_같으면_동일하다() {
+        // given
+        Post post1 = Post.builder().title("1").build();
+        Post post2 = Post.builder().title("2").build();
+        ReflectionTestUtils.setField(post1, "postId", new PostId(1L, 2L));
+        ReflectionTestUtils.setField(post2, "postId", new PostId(1L, 2L));
+
+        // when & then
+        assertThat(post1)
+                .isEqualTo(post1)
+                .hasSameHashCodeAs(post2)
+                .isEqualTo(post2)
+                .isNotEqualTo(new Object());
+    }
+
+    @Test
     void 카테고리를_없앨_수_있다() {
         // given
         Post post = Post.builder()
                 .title("제목")
                 .content("내용")
                 .writer(mallang)
-                .blog(blog)
                 .category(springCategory)
                 .build();
 
@@ -67,7 +82,6 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
-                    .blog(blog)
                     .tags(List.of("tag1", "tag2"))
                     .build();
 
@@ -83,7 +97,6 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
-                    .blog(blog)
                     .build();
 
             // when & then
@@ -98,7 +111,6 @@ class PostTest {
                             .title("제목")
                             .content("내용")
                             .writer(mallang)
-                            .blog(blog)
                             .tags(List.of("태그1", "태그1"))
                             .build()
             ).isInstanceOf(DuplicatedTagsInPostException.class);
@@ -111,7 +123,6 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
-                    .blog(blog)
                     .category(jpaCategory)
                     .build();
 
@@ -127,7 +138,6 @@ class PostTest {
                     .content("내용")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
-                    .blog(blog)
                     .build();
 
             // when & then
@@ -141,7 +151,6 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
-                    .blog(blog)
                     .build();
 
             // when & then
@@ -159,7 +168,6 @@ class PostTest {
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
-                    .blog(blog)
                     .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
                     .tags(List.of("태그1"))
                     .build();
@@ -187,7 +195,6 @@ class PostTest {
                 .title("제목")
                 .content("내용")
                 .writer(mallang)
-                .blog(blog)
                 .build();
 
         @Test
@@ -222,7 +229,6 @@ class PostTest {
                         .content("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
-                        .blog(blog)
                         .category(springCategory)
                         .build();
 
@@ -247,7 +253,6 @@ class PostTest {
                     .content("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
-                    .blog(blog)
                     .category(springCategory)
                     .build();
 
@@ -284,7 +289,6 @@ class PostTest {
                     .content("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
-                    .blog(blog)
                     .category(springCategory)
                     .build();
 
@@ -313,7 +317,6 @@ class PostTest {
                 .title("제목")
                 .content("내용")
                 .writer(mallang)
-                .blog(blog)
                 .build();
 
         // when
@@ -329,7 +332,6 @@ class PostTest {
                 .title("제목")
                 .content("내용")
                 .writer(mallang)
-                .blog(blog)
                 .build();
         post.clickLike();
         post.clickLike();
@@ -349,7 +351,6 @@ class PostTest {
                 .title("제목")
                 .content("내용")
                 .writer(mallang)
-                .blog(blog)
                 .build();
 
         // when

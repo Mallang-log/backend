@@ -19,8 +19,8 @@ public class PostManageQueryService {
     private final PostManageDetailDao postManageDetailDao;
     private final PostManageSearchDao postManageSearchDao;
 
-    public PostManageDetailResponse findById(Long memberId, Long id) {
-        return postManageDetailDao.find(memberId, id);
+    public PostManageDetailResponse findById(Long memberId, Long id, String blogName) {
+        return postManageDetailDao.find(memberId, id, blogName);
     }
 
     public Page<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond, Pageable pageable) {

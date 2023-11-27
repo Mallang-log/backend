@@ -1,8 +1,8 @@
 package com.mallang.post.application;
 
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -11,7 +11,7 @@ import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CancelPostLikeCommand;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy;
+import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,19 +44,22 @@ class PostLikeServiceTest extends ServiceTest {
                 blogName,
                 "포스트",
                 "내용",
-                new PostVisibilityPolicy(PUBLIC, null));
+                new PostVisibilityPolicy(PUBLIC, null)
+        ).getId();
         protectedPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
-                new PostVisibilityPolicy(PROTECTED, "1234"));
+                new PostVisibilityPolicy(PROTECTED, "1234")
+        ).getId();
         privatePostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
-                new PostVisibilityPolicy(PRIVATE, null));
+                new PostVisibilityPolicy(PRIVATE, null)
+        ).getId();
     }
 
     @Nested
@@ -65,7 +68,7 @@ class PostLikeServiceTest extends ServiceTest {
         @Test
         void 로그인해야_좋아요를_누를_수_있다() {
             // given
-            ClickPostLikeCommand command = new ClickPostLikeCommand(publicPostId, null, null);
+            ClickPostLikeCommand command = new ClickPostLikeCommand(publicPostId, blogName, null, null);
 
             // when & then
             assertThatThrownBy(() -> {
@@ -76,8 +79,8 @@ class PostLikeServiceTest extends ServiceTest {
         @Test
         void 회원이_이미_해당_포스트에_좋아요를_누른_경우_예외() {
             // given
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
-            ClickPostLikeCommand command = new ClickPostLikeCommand(publicPostId, memberId, null);
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, memberId, null));
+            ClickPostLikeCommand command = new ClickPostLikeCommand(publicPostId, blogName, memberId, null);
 
             // when
             assertThatThrownBy(() -> {
@@ -85,44 +88,44 @@ class PostLikeServiceTest extends ServiceTest {
             }).isInstanceOf(AlreadyLikedPostException.class);
 
             // then
-            Post post = postRepository.getById(publicPostId);
+            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
         @Test
         void 해당_포스트에_좋아요를_누른_적이_없으면_좋아요를_누른다() {
             // when
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getById(publicPostId);
+            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
         @Test
         void 글_작성자는_보호된_글에_좋아요를_누를_수_있다() {
             // when
-            postLikeService.like(new ClickPostLikeCommand(protectedPostId, memberId, null));
+            postLikeService.like(new ClickPostLikeCommand(protectedPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getById(protectedPostId);
+            Post post = postRepository.getByIdAndBlogName(protectedPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
         @Test
         void 보호된_글의_비밀번호와_입력한_비밀번호가_일치하면_좋아요를_누를_수_있다() {
             // when
-            postLikeService.like(new ClickPostLikeCommand(protectedPostId, otherMemberId, "1234"));
+            postLikeService.like(new ClickPostLikeCommand(protectedPostId, blogName, otherMemberId, "1234"));
 
             // then
-            Post post = postRepository.getById(protectedPostId);
+            Post post = postRepository.getByIdAndBlogName(protectedPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
         @Test
         void 보호된_글의_비밀번호와_입력한_비밀번호가_다르면_예외() {
             // given
-            ClickPostLikeCommand command = new ClickPostLikeCommand(protectedPostId, otherMemberId, "12345");
+            ClickPostLikeCommand command = new ClickPostLikeCommand(protectedPostId, blogName, otherMemberId, "12345");
 
             // when & then
             assertThatThrownBy(() -> {
@@ -133,8 +136,8 @@ class PostLikeServiceTest extends ServiceTest {
         @Test
         void 비공개_글에는_작성자_말고는_좋아요를_누를_수_없다() {
             // given
-            ClickPostLikeCommand command1 = new ClickPostLikeCommand(privatePostId, memberId, null);
-            ClickPostLikeCommand command2 = new ClickPostLikeCommand(privatePostId, otherMemberId, null);
+            ClickPostLikeCommand command1 = new ClickPostLikeCommand(privatePostId, blogName, memberId, null);
+            ClickPostLikeCommand command2 = new ClickPostLikeCommand(privatePostId, blogName, otherMemberId, null);
 
             // when & then
             assertDoesNotThrow(() -> {
@@ -152,69 +155,69 @@ class PostLikeServiceTest extends ServiceTest {
         @Test
         void 좋아요_취소_시_좋아요가_제거된다() {
             // given
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // when
-            postLikeService.cancel(new CancelPostLikeCommand(publicPostId, memberId, null));
+            postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getById(publicPostId);
+            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 
         @Test
         void 글_작성자는_보호된_글에_누른_좋아요를_취소할_수_있다() {
             // given
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
-            포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, memberId, null));
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, blogName, PROTECTED, "1234");
 
             // when
-            postLikeService.cancel(new CancelPostLikeCommand(publicPostId, memberId, null));
+            postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getById(publicPostId);
+            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 
         @Test
         void 보호된_글의_비밀번호와_입력한_비밀번호가_일치하면_좋아요를_취소한_수_있다() {
             // given
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, otherMemberId, null));
-            포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, otherMemberId, null));
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, blogName, PROTECTED, "1234");
 
             // when
-            postLikeService.cancel(new CancelPostLikeCommand(publicPostId, otherMemberId, "1234"));
+            postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, otherMemberId, "1234"));
 
             // then
-            Post post = postRepository.getById(publicPostId);
+            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 
         @Test
         void 보호된_글의_비밀번호와_입력한_비밀번호가_다르면_예외() {
             // given
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, otherMemberId, null));
-            포스트_공개여부를_업데이트한다(memberId, publicPostId, PROTECTED, "1234");
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, otherMemberId, null));
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, blogName, PROTECTED, "1234");
 
             // when & then
             assertThatThrownBy(() -> {
-                postLikeService.cancel(new CancelPostLikeCommand(publicPostId, otherMemberId, "12345"));
+                postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, otherMemberId, "12345"));
             }).isInstanceOf(NoAuthorityAccessPostException.class);
         }
 
         @Test
         void 비공개_글에는_작성자_말고는_좋아요를_취소할_수_없다() {
             // given
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, memberId, null));
-            postLikeService.like(new ClickPostLikeCommand(publicPostId, otherMemberId, null));
-            포스트_공개여부를_업데이트한다(memberId, publicPostId, PRIVATE, null);
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, memberId, null));
+            postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, otherMemberId, null));
+            포스트_공개여부를_업데이트한다(memberId, publicPostId, blogName, PRIVATE, null);
 
             // when & then
             assertDoesNotThrow(() -> {
-                postLikeService.cancel(new CancelPostLikeCommand(publicPostId, memberId, null));
+                postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, memberId, null));
             });
             assertThatThrownBy(() -> {
-                postLikeService.cancel(new CancelPostLikeCommand(publicPostId, otherMemberId, null));
+                postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, otherMemberId, null));
             }).isInstanceOf(NoAuthorityAccessPostException.class);
         }
     }

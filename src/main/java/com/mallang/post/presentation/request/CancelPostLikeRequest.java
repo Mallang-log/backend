@@ -4,10 +4,11 @@ import com.mallang.post.application.command.CancelPostLikeCommand;
 import jakarta.annotation.Nullable;
 
 public record CancelPostLikeRequest(
-        Long postId
+        Long postId,
+        String blogName
 ) {
 
     public CancelPostLikeCommand toCommand(Long memberId, @Nullable String postPassword) {
-        return new CancelPostLikeCommand(postId, memberId, postPassword);
+        return new CancelPostLikeCommand(postId, blogName, memberId, postPassword);
     }
 }

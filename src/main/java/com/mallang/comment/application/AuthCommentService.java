@@ -26,9 +26,9 @@ public class AuthCommentService {
     private final CommentDeleteService commentDeleteService;
 
     public Long write(WriteAuthCommentCommand command) {
-        Post post = postRepository.getById(command.postId());
+        Post post = postRepository.getByIdAndBlogName(command.postId(), command.blogName());
         Member writer = memberRepository.getById(command.memberId());
-        Comment parent = commentRepository.getParentByIdAndPostId(command.parentCommentId(), command.postId());
+        Comment parent = commentRepository.getParentByIdAndPost(command.parentCommentId(), post);
         AuthComment comment = command.toComment(post, writer, parent);
         comment.write(command.postPassword());
         return commentRepository.save(comment).getId();

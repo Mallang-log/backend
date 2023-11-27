@@ -2,7 +2,7 @@ package com.mallang.post.query.response;
 
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.visibility.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +23,7 @@ public record PostManageDetailResponse(
 ) {
     public static PostManageDetailResponse from(Post post) {
         return PostManageDetailResponse.builder()
-                .id(post.getId())
+                .id(post.getPostId().getId())
                 .title(post.getTitle())
                 .intro(post.getPostIntro())
                 .content(post.getContent())

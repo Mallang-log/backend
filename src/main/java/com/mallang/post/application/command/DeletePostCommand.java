@@ -4,6 +4,7 @@ import java.util.List;
 
 public record DeletePostCommand(
         Long memberId,
-        List<Long> postIds
+        List<Long> postIds,
+        String blogName
 ) {
 }

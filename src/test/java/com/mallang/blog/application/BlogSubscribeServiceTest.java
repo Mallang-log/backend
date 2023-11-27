@@ -37,8 +37,11 @@ class BlogSubscribeServiceTest extends ServiceTest {
 
         @Test
         void 블로그를_구독한다() {
+            // given
+            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
+
             // when
-            Long subscribeId = blogSubscribeService.subscribe(new BlogSubscribeCommand(mallangId, otherBlogName));
+            Long subscribeId = blogSubscribeService.subscribe(command);
 
             // then
             assertThat(blogSubscribeRepository.findById(subscribeId)).isPresent();
@@ -48,21 +51,23 @@ class BlogSubscribeServiceTest extends ServiceTest {
         void 자신의_블로그를_구독하면_예외() {
             // given
             String mallangBlogName = 블로그_개설(mallangId, "mallang-log");
+            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, mallangBlogName);
 
             // when & then
             assertThatThrownBy(() ->
-                    blogSubscribeService.subscribe(new BlogSubscribeCommand(mallangId, mallangBlogName))
+                    blogSubscribeService.subscribe(command)
             ).isInstanceOf(SelfSubscribeException.class);
         }
 
         @Test
         void 이미_구독한_블로그라면_예외() {
             // given
-            blogSubscribeService.subscribe(new BlogSubscribeCommand(mallangId, otherBlogName));
+            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
+            blogSubscribeService.subscribe(command);
 
             // when & then
             assertThatThrownBy(() ->
-                    blogSubscribeService.subscribe(new BlogSubscribeCommand(mallangId, otherBlogName))
+                    blogSubscribeService.subscribe(command)
             ).isInstanceOf(AlreadySubscribedException.class);
         }
     }
@@ -73,10 +78,12 @@ class BlogSubscribeServiceTest extends ServiceTest {
         @Test
         void 구독한_블로그를_구독_취소한다() {
             // given
-            Long subscribeId = blogSubscribeService.subscribe(new BlogSubscribeCommand(mallangId, otherBlogName));
+            BlogSubscribeCommand subscribeCommand = new BlogSubscribeCommand(mallangId, otherBlogName);
+            Long subscribeId = blogSubscribeService.subscribe(subscribeCommand);
+            BlogUnsubscribeCommand unsubscribeCommand = new BlogUnsubscribeCommand(mallangId, otherBlogName);
 
             // when
-            blogSubscribeService.unsubscribe(new BlogUnsubscribeCommand(mallangId, otherBlogName));
+            blogSubscribeService.unsubscribe(unsubscribeCommand);
 
             // then
             assertThat(blogSubscribeRepository.findById(subscribeId)).isEmpty();
@@ -84,9 +91,12 @@ class BlogSubscribeServiceTest extends ServiceTest {
 
         @Test
         void 구독하지_않은_블로그라면_예외() {
+            // given
+            BlogUnsubscribeCommand command = new BlogUnsubscribeCommand(mallangId, otherBlogName);
+
             // when & then
             assertThatThrownBy(() ->
-                    blogSubscribeService.unsubscribe(new BlogUnsubscribeCommand(mallangId, otherBlogName))
+                    blogSubscribeService.unsubscribe(command)
             ).isInstanceOf(UnsubscribeUnsubscribedBlogException.class);
         }
     }
