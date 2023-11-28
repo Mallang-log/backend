@@ -9,7 +9,23 @@ import io.restassured.response.Response;
 @SuppressWarnings("NonAsciiCharacters")
 public class StatisticManageAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 포스트_통계_조회_요청(
+    public static ExtractableResponse<Response> 블로그_주인용_방문자_통계_조회_요청(
+            String 세션_ID,
+            String 블로그_이름,
+            PeriodType periodType,
+            String 조회_마지막_일,
+            int 조회_개수
+    ) {
+        return given(세션_ID)
+                .param("periodType", periodType)
+                .param("lastDay", 조회_마지막_일)
+                .param("count", 조회_개수)
+                .get("/manage/statistics/blogs/{blogName}", 블로그_이름)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 주인용_포스트_통계_조회_요청(
             String 세션_ID,
             String 블로그_이름,
             Long 포스트_ID,

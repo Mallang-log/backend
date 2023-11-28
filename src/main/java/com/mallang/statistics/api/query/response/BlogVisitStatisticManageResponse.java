@@ -10,6 +10,9 @@ public class BlogVisitStatisticManageResponse {
     private LocalDate endDateInclude;
     private int visitCount;
 
+    public BlogVisitStatisticManageResponse() {
+    }
+
     public BlogVisitStatisticManageResponse(LocalDate startDateInclude, LocalDate endDateInclude) {
         this(startDateInclude, endDateInclude, 0);
     }
