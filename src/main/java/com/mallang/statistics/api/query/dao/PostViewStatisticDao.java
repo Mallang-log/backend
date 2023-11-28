@@ -33,13 +33,13 @@ public class PostViewStatisticDao {
             StatisticCondition condition
     ) {
         Post findPost = Optional.ofNullable(query.selectFrom(post)
-                        .where(
-                                post.postId.id.eq(postId),
-                                post.blog.name.value.eq(blogName),
-                                post.writer.id.eq(memberId)
-                        )
-                        .fetchFirst())
-                .orElseThrow(NotFoundPostException::new);
+                .where(
+                        post.postId.id.eq(postId),
+                        post.blog.name.value.eq(blogName),
+                        post.writer.id.eq(memberId)
+                )
+                .fetchFirst()
+        ).orElseThrow(NotFoundPostException::new);
 
         List<PostViewStatistic> result = query.selectFrom(postViewStatistic)
                 .where(
