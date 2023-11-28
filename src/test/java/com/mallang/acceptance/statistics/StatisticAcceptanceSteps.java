@@ -18,4 +18,14 @@ public class StatisticAcceptanceSteps {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 포스트_누적_조회수_조회_요청(
+            String 블로그_이름,
+            Long 포스트_ID
+    ) {
+        return given()
+                .get("/statistics/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
+                .then().log().all()
+                .extract();
+    }
 }

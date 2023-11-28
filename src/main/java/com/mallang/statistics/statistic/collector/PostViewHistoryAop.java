@@ -26,14 +26,6 @@ public class PostViewHistoryAop {
 
     private final PostViewHistoryCollector postViewHistoryCollector;
 
-    public static class PointCuts {
-
-        @Pointcut("execution(* com.mallang.post.query.PostQueryService.getByIdAndBlogName(..))")
-        void postQueryServiceGetByIdAndBlogName() {
-        }
-    }
-
-
     @AfterReturning(
             pointcut = "com.mallang.statistics.statistic.collector.PostViewHistoryAop.PointCuts.postQueryServiceGetByIdAndBlogName()",
             returning = "result"
@@ -63,5 +55,12 @@ public class PostViewHistoryAop {
         cookie.setMaxAge(NO_EXPIRED_MAX_AGE);
         response.addCookie(cookie);
         return uuid;
+    }
+
+    public static class PointCuts {
+
+        @Pointcut("execution(* com.mallang.post.query.PostQueryService.getByIdAndBlogName(..))")
+        void postQueryServiceGetByIdAndBlogName() {
+        }
     }
 }
