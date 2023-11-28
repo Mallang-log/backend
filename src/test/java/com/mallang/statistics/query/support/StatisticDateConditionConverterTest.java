@@ -13,10 +13,10 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("날짜 변환기(DateConverter) 은(는)")
+@DisplayName("날짜 변환기(StatisticDateConditionConverter) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class DateConverterTest {
+class StatisticDateConditionConverterTest {
 
     @Test
     void 조회타입이_일간인_경우_조회_마지막_날은_입력_그대로이다() {
@@ -24,10 +24,10 @@ class DateConverterTest {
         LocalDate 기준_2023년_11월_28일 = LocalDate.of(2023, 11, 28);
 
         // when
-        StatisticCondition result = DateConverter.convert(DAY, 기준_2023년_11월_28일, 100);
+        StatisticCondition result = StatisticDateConditionConverter.convert(DAY, 기준_2023년_11월_28일, 100);
 
         // then
-        assertThat(result.lastDay()).isEqualTo(기준_2023년_11월_28일);
+        assertThat(result.lastDayInclude()).isEqualTo(기준_2023년_11월_28일);
     }
 
     @Test
@@ -39,9 +39,12 @@ class DateConverterTest {
         int 기준일로부터_30일_전 = 30;
 
         // when
-        LocalDate 결과_2023년_11월_27일 = DateConverter.convert(DAY, 기준_2023년_11월_28일, 기준일로부터_1일_전).startDay();
-        LocalDate 결과_2023년_11월_18일 = DateConverter.convert(DAY, 기준_2023년_11월_28일, 기준일로부터_10일_전).startDay();
-        LocalDate 결과_2023년_10월_29일 = DateConverter.convert(DAY, 기준_2023년_11월_28일, 기준일로부터_30일_전).startDay();
+        LocalDate 결과_2023년_11월_27일 = StatisticDateConditionConverter.convert(DAY, 기준_2023년_11월_28일, 기준일로부터_1일_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_11월_18일 = StatisticDateConditionConverter.convert(DAY, 기준_2023년_11월_28일, 기준일로부터_10일_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_10월_29일 = StatisticDateConditionConverter.convert(DAY, 기준_2023년_11월_28일, 기준일로부터_30일_전)
+                .startDayInclude();
 
         // then
         LocalDate 예상_2023년_11월_27일 = LocalDate.of(2023, 11, 27);
@@ -61,16 +64,16 @@ class DateConverterTest {
         LocalDate 기준_2023년_12월_3일_일 = LocalDate.of(2023, 12, 3);
 
         // when
-        StatisticCondition result1 = DateConverter.convert(WEEK, 기준_2023년_11월_27일_월, 100);
-        StatisticCondition result2 = DateConverter.convert(WEEK, 기준_2023년_11월_28일_화, 100);
-        StatisticCondition result3 = DateConverter.convert(WEEK, 기준_2023년_12월_2일_토, 100);
-        StatisticCondition result4 = DateConverter.convert(WEEK, 기준_2023년_12월_3일_일, 100);
+        StatisticCondition result1 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_11월_27일_월, 100);
+        StatisticCondition result2 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_11월_28일_화, 100);
+        StatisticCondition result3 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_12월_2일_토, 100);
+        StatisticCondition result4 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_12월_3일_일, 100);
 
         // then
-        assertThat(result1.lastDay())
-                .isEqualTo(result2.lastDay())
-                .isEqualTo(result3.lastDay())
-                .isEqualTo(result4.lastDay())
+        assertThat(result1.lastDayInclude())
+                .isEqualTo(result2.lastDayInclude())
+                .isEqualTo(result3.lastDayInclude())
+                .isEqualTo(result4.lastDayInclude())
                 .isEqualTo(기준_2023년_12월_3일_일);
     }
 
@@ -86,17 +89,25 @@ class DateConverterTest {
         int 기준일로부터_5주_전 = 5;
 
         // when
-        LocalDate 결과_2023년_11월_13일_월 = DateConverter.convert(WEEK, 기준_2023년_11월_26일_일, 기준일로부터_1주_전).startDay();
-        LocalDate 결과_2023년_10월_16일_월 = DateConverter.convert(WEEK, 기준_2023년_11월_26일_일, 기준일로부터_5주_전).startDay();
+        LocalDate 결과_2023년_11월_13일_월 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_11월_26일_일, 기준일로부터_1주_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_10월_16일_월 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_11월_26일_일, 기준일로부터_5주_전)
+                .startDayInclude();
 
-        LocalDate 결과_2023년_11월_20일_월1 = DateConverter.convert(WEEK, 기준_2023년_11월_27일_월, 기준일로부터_1주_전).startDay();
-        LocalDate 결과_2023년_10월_23일_월1 = DateConverter.convert(WEEK, 기준_2023년_11월_27일_월, 기준일로부터_5주_전).startDay();
+        LocalDate 결과_2023년_11월_20일_월1 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_11월_27일_월, 기준일로부터_1주_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_10월_23일_월1 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_11월_27일_월, 기준일로부터_5주_전)
+                .startDayInclude();
 
-        LocalDate 결과_2023년_11월_20일_월2 = DateConverter.convert(WEEK, 기준_2023년_12월_1일_토, 기준일로부터_1주_전).startDay();
-        LocalDate 결과_2023년_10월_23일_월2 = DateConverter.convert(WEEK, 기준_2023년_12월_1일_토, 기준일로부터_5주_전).startDay();
+        LocalDate 결과_2023년_11월_20일_월2 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_12월_1일_토, 기준일로부터_1주_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_10월_23일_월2 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_12월_1일_토, 기준일로부터_5주_전)
+                .startDayInclude();
 
-        LocalDate 결과_2023년_11월_20일_월3 = DateConverter.convert(WEEK, 기준_2023년_12월_2일_일, 기준일로부터_1주_전).startDay();
-        LocalDate 결과_2023년_10월_23일_월3 = DateConverter.convert(WEEK, 기준_2023년_12월_2일_일, 기준일로부터_5주_전).startDay();
+        LocalDate 결과_2023년_11월_20일_월3 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_12월_2일_일, 기준일로부터_1주_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_10월_23일_월3 = StatisticDateConditionConverter.convert(WEEK, 기준_2023년_12월_2일_일, 기준일로부터_5주_전)
+                .startDayInclude();
 
         // then
         LocalDate 예상_2023년_11월_13일 = LocalDate.of(2023, 11, 13);
@@ -124,14 +135,14 @@ class DateConverterTest {
         LocalDate 기준_2023년_11월_30일 = LocalDate.of(2023, 11, 30);
 
         // when
-        StatisticCondition result1 = DateConverter.convert(MONTH, 기준_2023년_11월_1일, 100);
-        StatisticCondition result2 = DateConverter.convert(MONTH, 기준_2023년_11월_28일, 100);
-        StatisticCondition result3 = DateConverter.convert(MONTH, 기준_2023년_11월_30일, 100);
+        StatisticCondition result1 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_11월_1일, 100);
+        StatisticCondition result2 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_11월_28일, 100);
+        StatisticCondition result3 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_11월_30일, 100);
 
         // then
-        assertThat(result1.lastDay())
-                .isEqualTo(result2.lastDay())
-                .isEqualTo(result3.lastDay())
+        assertThat(result1.lastDayInclude())
+                .isEqualTo(result2.lastDayInclude())
+                .isEqualTo(result3.lastDayInclude())
                 .isEqualTo(기준_2023년_11월_30일);
     }
 
@@ -145,11 +156,15 @@ class DateConverterTest {
         int 기준일로부터_4달_전 = 4;
 
         // when
-        LocalDate 결과_2023년_9월_1일 = DateConverter.convert(MONTH, 기준_2023년_10월_31일, 기준일로부터_1달_전).startDay();
-        LocalDate 결과_2023년_6월_1일 = DateConverter.convert(MONTH, 기준_2023년_10월_31일, 기준일로부터_4달_전).startDay();
+        LocalDate 결과_2023년_9월_1일 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_10월_31일, 기준일로부터_1달_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_6월_1일 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_10월_31일, 기준일로부터_4달_전)
+                .startDayInclude();
 
-        LocalDate 결과_2023년_10월_1일 = DateConverter.convert(MONTH, 기준_2023년_11월_26일, 기준일로부터_1달_전).startDay();
-        LocalDate 결과_2023년_7월_1일 = DateConverter.convert(MONTH, 기준_2023년_11월_26일, 기준일로부터_4달_전).startDay();
+        LocalDate 결과_2023년_10월_1일 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_11월_26일, 기준일로부터_1달_전)
+                .startDayInclude();
+        LocalDate 결과_2023년_7월_1일 = StatisticDateConditionConverter.convert(MONTH, 기준_2023년_11월_26일, 기준일로부터_4달_전)
+                .startDayInclude();
 
         // then
         LocalDate 예상_2023년_6월_1일 = LocalDate.of(2023, 6, 1);
@@ -171,14 +186,14 @@ class DateConverterTest {
         LocalDate 기준_2023년_12월_31일 = LocalDate.of(2023, 12, 31);
 
         // when
-        StatisticCondition result1 = DateConverter.convert(YEAR, 기준_2023년_1월_1일, 100);
-        StatisticCondition result2 = DateConverter.convert(YEAR, 기준_2023년_11월_28일, 100);
-        StatisticCondition result3 = DateConverter.convert(YEAR, 기준_2023년_12월_31일, 100);
+        StatisticCondition result1 = StatisticDateConditionConverter.convert(YEAR, 기준_2023년_1월_1일, 100);
+        StatisticCondition result2 = StatisticDateConditionConverter.convert(YEAR, 기준_2023년_11월_28일, 100);
+        StatisticCondition result3 = StatisticDateConditionConverter.convert(YEAR, 기준_2023년_12월_31일, 100);
 
         // then
-        assertThat(result1.lastDay())
-                .isEqualTo(result2.lastDay())
-                .isEqualTo(result3.lastDay())
+        assertThat(result1.lastDayInclude())
+                .isEqualTo(result2.lastDayInclude())
+                .isEqualTo(result3.lastDayInclude())
                 .isEqualTo(기준_2023년_12월_31일);
     }
 
@@ -192,11 +207,15 @@ class DateConverterTest {
         int 기준일로부터_5년_전 = 5;
 
         // when
-        LocalDate 결과_2022년_1월_1일 = DateConverter.convert(YEAR, 기준_2023년_10월_31일, 기준일로부터_1년_전).startDay();
-        LocalDate 결과_2018년_1월_1일 = DateConverter.convert(YEAR, 기준_2023년_10월_31일, 기준일로부터_5년_전).startDay();
+        LocalDate 결과_2022년_1월_1일 = StatisticDateConditionConverter.convert(YEAR, 기준_2023년_10월_31일, 기준일로부터_1년_전)
+                .startDayInclude();
+        LocalDate 결과_2018년_1월_1일 = StatisticDateConditionConverter.convert(YEAR, 기준_2023년_10월_31일, 기준일로부터_5년_전)
+                .startDayInclude();
 
-        LocalDate 결과_2023년_1월_1일 = DateConverter.convert(YEAR, 기준_2024년_12월_31일, 기준일로부터_1년_전).startDay();
-        LocalDate 결과_2019년_1월_1일 = DateConverter.convert(YEAR, 기준_2024년_12월_31일, 기준일로부터_5년_전).startDay();
+        LocalDate 결과_2023년_1월_1일 = StatisticDateConditionConverter.convert(YEAR, 기준_2024년_12월_31일, 기준일로부터_1년_전)
+                .startDayInclude();
+        LocalDate 결과_2019년_1월_1일 = StatisticDateConditionConverter.convert(YEAR, 기준_2024년_12월_31일, 기준일로부터_5년_전)
+                .startDayInclude();
 
         // then
         LocalDate 예상_2022년_1월_1일 = LocalDate.of(2022, 1, 1);

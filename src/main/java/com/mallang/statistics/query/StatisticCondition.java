@@ -5,8 +5,8 @@ import java.time.LocalDate;
 
 public record StatisticCondition(
         PeriodType periodType,
-        LocalDate lastDay,
-        LocalDate startDay
+        LocalDate startDayInclude,
+        LocalDate lastDayInclude
 ) {
 
 }

@@ -9,7 +9,10 @@ import static java.time.temporal.TemporalAdjusters.previousOrSame;
 import com.mallang.statistics.query.StatisticCondition;
 import java.time.LocalDate;
 
-public final class DateConverter {
+public final class StatisticDateConditionConverter {
+
+    private StatisticDateConditionConverter() {
+    }
 
     public static StatisticCondition convert(
             PeriodType periodType,
@@ -18,7 +21,7 @@ public final class DateConverter {
     ) {
         LocalDate lastDateOfPeriod = getLastDate(lastDay, periodType);
         LocalDate startDataOfPeriod = getStartData(lastDateOfPeriod, periodType, count);
-        return new StatisticCondition(periodType, lastDateOfPeriod, startDataOfPeriod);
+        return new StatisticCondition(periodType, startDataOfPeriod, lastDateOfPeriod);
     }
 
     private static LocalDate getLastDate(LocalDate lastDay, PeriodType periodType) {
@@ -31,11 +34,11 @@ public final class DateConverter {
     }
 
     private static LocalDate getStartData(LocalDate lastDateOfPeriod, PeriodType periodType, int count) {
-        LocalDate startDateOfLastDateOfPeriod = getStartDateOfLastDateOfPeriod(lastDateOfPeriod, periodType);
+        LocalDate startDateOfLastDateOfPeriod = getStartDateOfLastPeriod(lastDateOfPeriod, periodType);
         return startDateOfLastDateOfPeriod.minus(count, periodType.temporalUnit());
     }
 
-    private static LocalDate getStartDateOfLastDateOfPeriod(LocalDate lastDateOfPeriod, PeriodType periodType) {
+    private static LocalDate getStartDateOfLastPeriod(LocalDate lastDateOfPeriod, PeriodType periodType) {
         return switch (periodType) {
             case DAY -> lastDateOfPeriod;
             case WEEK -> lastDateOfPeriod.with(previousOrSame(MONDAY));
