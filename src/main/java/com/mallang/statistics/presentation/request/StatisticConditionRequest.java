@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public record StatisticConditionRequest(
         @NotNull PeriodType periodType,
         @NotNull LocalDate lastDay,
-        @NotNull int count
+        int count
 ) {
 
     public PostViewStatisticQueryDto toDto(Long memberId,

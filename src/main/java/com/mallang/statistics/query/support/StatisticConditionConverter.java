@@ -35,7 +35,7 @@ public final class StatisticConditionConverter {
 
     private static LocalDate getStartData(LocalDate lastDateOfPeriod, PeriodType periodType, int count) {
         LocalDate startDateOfLastDateOfPeriod = getStartDateOfLastPeriod(lastDateOfPeriod, periodType);
-        return startDateOfLastDateOfPeriod.minus(count, periodType.temporalUnit());
+        return startDateOfLastDateOfPeriod.minus(count - 1, periodType.temporalUnit());
     }
 
     private static LocalDate getStartDateOfLastPeriod(LocalDate lastDateOfPeriod, PeriodType periodType) {
