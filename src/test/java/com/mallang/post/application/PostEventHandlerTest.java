@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("포스트 이벤트 핸들러(PostEventHandler) 은(는)")
+@DisplayName("포스트 이벤트 핸들러 (PostEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostEventHandlerTest extends ServiceTest {
@@ -36,9 +36,9 @@ class PostEventHandlerTest extends ServiceTest {
             publisher.publishEvent(new CategoryDeletedEvent(categoryId1));
 
             // then
-            assertThat(postRepository.getByIdAndBlogName(postId1, blogName).getCategory()).isNull();
-            assertThat(postRepository.getByIdAndBlogName(postId2, blogName).getCategory()).isNull();
-            assertThat(postRepository.getByIdAndBlogName(postId3, blogName).getCategory()).isNotNull();
+            assertThat(postRepository.getById(postId1, blogName).getCategory()).isNull();
+            assertThat(postRepository.getById(postId2, blogName).getCategory()).isNull();
+            assertThat(postRepository.getById(postId3, blogName).getCategory()).isNotNull();
         }
     }
 }

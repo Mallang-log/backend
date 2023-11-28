@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("인증 정보 저장 컨텍스트(AuthContext) 은(는)")
+@DisplayName("인증 정보 저장 컨텍스트 (AuthContext) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AuthContextTest {

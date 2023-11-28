@@ -212,7 +212,7 @@ public abstract class ServiceTest {
     }
 
     protected void 포스트_공개여부를_업데이트한다(Long 회원_ID, Long postId, String blogName, Visibility visibility, String password) {
-        Post post = postRepository.getByIdAndBlogName(postId, blogName);
+        Post post = postRepository.getById(postId, blogName);
         postService.update(new UpdatePostCommand(
                 회원_ID,
                 postId,

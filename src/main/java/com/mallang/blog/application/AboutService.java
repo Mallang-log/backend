@@ -26,7 +26,7 @@ public class AboutService {
 
     public Long write(WriteAboutCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwnerId(command.blogName(), command.memberId());
+        Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
         About about = command.toAbout(member, blog);
         about.write(aboutValidator);
         return aboutRepository.save(about)
@@ -34,16 +34,14 @@ public class AboutService {
     }
 
     public void update(UpdateAboutCommand command) {
-        About about = aboutRepository.getByIdAndWriterIdAndBlogName(
-                command.aboutId(), command.memberId(), command.blogName()
-        );
+        About about = aboutRepository
+                .getByIdAndWriterAndBlog(command.aboutId(), command.memberId(), command.blogName());
         about.update(command.content());
     }
 
     public void delete(DeleteAboutCommand command) {
-        About about = aboutRepository.getByIdAndWriterIdAndBlogName(
-                command.aboutId(), command.memberId(), command.blogName()
-        );
+        About about = aboutRepository
+                .getByIdAndWriterAndBlog(command.aboutId(), command.memberId(), command.blogName());
         aboutRepository.delete(about);
     }
 }

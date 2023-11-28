@@ -24,7 +24,7 @@ public class PostStarService {
     private final PostStarValidator postStarValidator;
 
     public Long star(StarPostCommand command) {
-        Post post = postRepository.getByIdAndBlogName(command.postId(), command.blogName());
+        Post post = postRepository.getById(command.postId(), command.blogName());
         Member member = memberRepository.getById(command.memberId());
         PostStar postStar = new PostStar(post, member);
         postStar.star(postStarValidator, command.postPassword());
@@ -34,7 +34,7 @@ public class PostStarService {
 
     public void cancel(CancelPostStarCommand command) {
         PostStar postStar = postStarRepository
-                .getByPostIdAndBlogNameAndMemberId(command.postId(), command.blogName(), command.memberId());
+                .getByPostAndMember(command.postId(), command.blogName(), command.memberId());
         postStarRepository.delete(postStar);
     }
 }

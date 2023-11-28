@@ -1,9 +1,9 @@
 package com.mallang.statistics.api.query.support;
 
-import static com.mallang.statistics.api.query.support.PeriodType.DAY;
-import static com.mallang.statistics.api.query.support.PeriodType.MONTH;
-import static com.mallang.statistics.api.query.support.PeriodType.WEEK;
-import static com.mallang.statistics.api.query.support.PeriodType.YEAR;
+import static com.mallang.statistics.api.query.PeriodType.DAY;
+import static com.mallang.statistics.api.query.PeriodType.MONTH;
+import static com.mallang.statistics.api.query.PeriodType.WEEK;
+import static com.mallang.statistics.api.query.PeriodType.YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.statistics.api.query.StatisticCondition;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("날짜 변환기(StatisticConditionConverter) 은(는)")
+@DisplayName("날짜 변환기 (StatisticConditionConverter) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class StatisticConditionConverterTest {

@@ -26,22 +26,22 @@ public class CategoryService {
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwnerId(command.blogName(), command.memberId());
-        Category parentCategory =
-                categoryRepository.getParentByIdAndOwnerId(command.parentCategoryId(), command.memberId());
+        Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
+        Category parentCategory = categoryRepository
+                .getParentByIdAndOwner(command.parentCategoryId(), command.memberId());
         Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
         return categoryRepository.save(category).getId();
     }
 
     public void update(UpdateCategoryCommand command) {
-        Category category = categoryRepository.getByIdAndOwnerId(command.categoryId(), command.memberId());
-        Category parentCategory =
-                categoryRepository.getParentByIdAndOwnerId(command.parentCategoryId(), command.memberId());
+        Category category = categoryRepository.getByIdAndOwner(command.categoryId(), command.memberId());
+        Category parentCategory = categoryRepository
+                .getParentByIdAndOwner(command.parentCategoryId(), command.memberId());
         category.update(command.name(), parentCategory, categoryValidator);
     }
 
     public void delete(DeleteCategoryCommand command) {
-        Category category = categoryRepository.getByIdAndOwnerId(command.categoryId(), command.memberId());
+        Category category = categoryRepository.getByIdAndOwner(command.categoryId(), command.memberId());
         category.delete();
         categoryRepository.delete(category);
     }

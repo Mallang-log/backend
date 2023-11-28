@@ -9,30 +9,32 @@ import static com.mallang.common.LocalDateFixture.날짜_2022_1_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_10_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_10_20;
 import static com.mallang.common.LocalDateFixture.날짜_2023_10_31;
-import static com.mallang.common.LocalDateFixture.날짜_2023_11_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_13_월;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_15_수;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_19_일;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_1_수;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_20_월;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_21_화;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_25_토;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_26_일;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_27_월;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_28_화;
-import static com.mallang.common.LocalDateFixture.날짜_2023_11_30;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_30_목;
 import static com.mallang.common.LocalDateFixture.날짜_2023_12_31;
 import static com.mallang.common.LocalDateFixture.날짜_2023_12_3_일;
 import static com.mallang.common.LocalDateFixture.날짜_2023_1_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_9_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_9_30;
-import static com.mallang.statistics.api.query.support.PeriodType.DAY;
-import static com.mallang.statistics.api.query.support.PeriodType.MONTH;
-import static com.mallang.statistics.api.query.support.PeriodType.WEEK;
-import static com.mallang.statistics.api.query.support.PeriodType.YEAR;
+import static com.mallang.statistics.api.query.PeriodType.DAY;
+import static com.mallang.statistics.api.query.PeriodType.MONTH;
+import static com.mallang.statistics.api.query.PeriodType.WEEK;
+import static com.mallang.statistics.api.query.PeriodType.YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.common.ServiceTest;
 import com.mallang.post.domain.PostId;
+import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.PostViewStatisticResponse;
 import com.mallang.statistics.statistic.PostViewStatistic;
@@ -46,7 +48,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("포스트 조회수 통계 DAO(PostViewStatisticDao) 은(는)")
+@DisplayName("포스트 조회수 통계 DAO (PostViewStatisticDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostViewStatisticDaoTest extends ServiceTest {
@@ -93,6 +95,17 @@ class PostViewStatisticDaoTest extends ServiceTest {
                 .isEqualTo(List.of(
                         new PostViewStatisticResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 0)
                 ));
+    }
+
+    @Test
+    void 자신의_포스트가_아닌_경우_예외() {
+        // given
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25_토, 날짜_2023_11_25_토);
+
+        // when & then
+        assertThatThrownBy(() -> {
+            postViewStatisticDao.find(memberId + 1L, blogName, postId.getId(), cond);
+        }).isInstanceOf(NotFoundPostException.class);
     }
 
     @Test
@@ -161,8 +174,8 @@ class PostViewStatisticDaoTest extends ServiceTest {
         PostViewStatistic 통계_2023_10_20 = new PostViewStatistic(날짜_2023_10_20, postId, 25);
         PostViewStatistic 통계_2023_10_31 = new PostViewStatistic(날짜_2023_10_31, postId, 2);
 
-        PostViewStatistic 통계_2023_11_1 = new PostViewStatistic(날짜_2023_11_1, postId, 100);
-        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30, postId, 200);
+        PostViewStatistic 통계_2023_11_1 = new PostViewStatistic(날짜_2023_11_1_수, postId, 100);
+        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30_목, postId, 200);
 
         postViewStatisticRepository.saveAll(List.of(
                 통계_2023_9_1,
@@ -172,7 +185,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
                 통계_2023_11_1,
                 통계_2023_11_30
         ));
-        StatisticCondition cond = new StatisticCondition(MONTH, 날짜_2023_9_1, 날짜_2023_11_30);
+        StatisticCondition cond = new StatisticCondition(MONTH, 날짜_2023_9_1, 날짜_2023_11_30_목);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
@@ -183,7 +196,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
                 .isEqualTo(List.of(
                         new PostViewStatisticResponse(날짜_2023_9_1, 날짜_2023_9_30, 10),
                         new PostViewStatisticResponse(날짜_2023_10_1, 날짜_2023_10_31, 32),
-                        new PostViewStatisticResponse(날짜_2023_11_1, 날짜_2023_11_30, 300)
+                        new PostViewStatisticResponse(날짜_2023_11_1_수, 날짜_2023_11_30_목, 300)
                 ));
     }
 
@@ -198,7 +211,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
         PostViewStatistic 통계_2022_12_31 = new PostViewStatistic(날짜_2022_12_31, postId, 10);
 
         PostViewStatistic 통계_2023_2_3 = new PostViewStatistic(날짜_2023_2_3, postId, 30);
-        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30, postId, 20);
+        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30_목, postId, 20);
 
         postViewStatisticRepository.saveAll(List.of(
                 통계_2022_1_1,
@@ -207,7 +220,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
                 통계_2023_2_3,
                 통계_2023_11_30
         ));
-        StatisticCondition cond = new StatisticCondition(YEAR, 날짜_2020_1_1, 날짜_2023_11_30);
+        StatisticCondition cond = new StatisticCondition(YEAR, 날짜_2020_1_1, 날짜_2023_11_30_목);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);

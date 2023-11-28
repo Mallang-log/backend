@@ -16,7 +16,7 @@ public interface BlogSubscribeRepository extends JpaRepository<BlogSubscribe, Lo
     }
 
     @Query("SELECT s FROM BlogSubscribe s WHERE s.subscriber.id = :subscriberId AND s.blog.name.value = :blogName")
-    Optional<BlogSubscribe> findBySubscriberIdAndBlogName(
+    Optional<BlogSubscribe> findBySubscriberAndBlog(
             @Param("subscriberId") Long subscriberId,
             @Param("blogName") String blogName
     );

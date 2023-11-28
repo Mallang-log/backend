@@ -10,13 +10,13 @@ public interface AboutRepository extends JpaRepository<About, Long> {
 
     boolean existsByBlog(Blog blog);
 
-    default About getByIdAndWriterIdAndBlogName(Long aboutId, Long memberId, String blogName) {
-        return findByIdAndWriterIdAndBlogName(aboutId, memberId, blogName)
+    default About getByIdAndWriterAndBlog(Long aboutId, Long memberId, String blogName) {
+        return findByIdAndWriterAndBlog(aboutId, memberId, blogName)
                 .orElseThrow(NotFoundAboutException::new);
     }
 
     @Query("SELECT a FROM About a WHERE a.id = :aboutId AND a.writer.id = :writerId AND a.blog.name.value = :blogName")
-    Optional<About> findByIdAndWriterIdAndBlogName(
+    Optional<About> findByIdAndWriterAndBlog(
             @Param("aboutId") Long aboutId,
             @Param("writerId") Long writerId,
             @Param("blogName") String blogName

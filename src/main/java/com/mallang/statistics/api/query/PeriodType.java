@@ -1,4 +1,4 @@
-package com.mallang.statistics.api.query.support;
+package com.mallang.statistics.api.query;
 
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;

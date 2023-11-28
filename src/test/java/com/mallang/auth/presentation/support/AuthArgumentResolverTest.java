@@ -13,7 +13,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 
-@DisplayName("인증 ArgumentResolver(AuthArgumentResolver) 은(는)")
+@DisplayName("인증 ArgumentResolver (AuthArgumentResolver) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AuthArgumentResolverTest {

@@ -15,7 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 
-@DisplayName("포스트 조회 데이터 검증기(PostDataValidator) 은(는)")
+@DisplayName("포스트 조회 데이터 검증기 (PostDataValidator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostDataValidatorTest {

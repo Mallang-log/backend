@@ -52,7 +52,7 @@ class CommentResponseValidatorTest {
     @Test
     void 공개_포스트면_문제없다() {
         // given
-        given(postRepository.getByIdAndBlogName(1L, blog.getName()))
+        given(postRepository.getById(1L, blog.getName()))
                 .willReturn(공개_포스트);
 
         // when & then
@@ -65,9 +65,9 @@ class CommentResponseValidatorTest {
     void 포스트_작성자와_조회자가_동일하면_보호든_비공개든_문제없다() {
         // given
         given(memberRepository.getById(10L)).willReturn(owner);
-        given(postRepository.getByIdAndBlogName(1L, blog.getName()))
+        given(postRepository.getById(1L, blog.getName()))
                 .willReturn(비공개_포스트);
-        given(postRepository.getByIdAndBlogName(2L, blog.getName()))
+        given(postRepository.getById(2L, blog.getName()))
                 .willReturn(보호_포스트);
 
         // when & then
@@ -82,7 +82,7 @@ class CommentResponseValidatorTest {
     @Test
     void 보호_포스트인_경우_비밀번호가_일치하면_문제없다() {
         // given
-        given(postRepository.getByIdAndBlogName(1L, blog.getName()))
+        given(postRepository.getById(1L, blog.getName()))
                 .willReturn(보호_포스트);
 
         // when & then
@@ -94,7 +94,7 @@ class CommentResponseValidatorTest {
     @Test
     void 포스트_작성자가_아니며_보호_포스트인데_비밀번호가_다르면_예외() {
         // given
-        given(postRepository.getByIdAndBlogName(1L, blog.getName()))
+        given(postRepository.getById(1L, blog.getName()))
                 .willReturn(보호_포스트);
 
         // when & then
@@ -106,7 +106,7 @@ class CommentResponseValidatorTest {
     @Test
     void 포스트_작성자가_아닌데_비공개면_오류() {
         // given
-        given(postRepository.getByIdAndBlogName(1L, blog.getName()))
+        given(postRepository.getById(1L, blog.getName()))
                 .willReturn(비공개_포스트);
 
         // when & then

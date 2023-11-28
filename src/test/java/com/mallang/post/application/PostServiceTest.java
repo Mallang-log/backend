@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("포스트 서비스(PostService) 은(는)")
+@DisplayName("포스트 서비스 (PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostServiceTest extends ServiceTest {
@@ -82,7 +82,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getByIdAndBlogName(id, blogName);
+                Post post = postRepository.getById(id, blogName);
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
             });
         }
@@ -124,7 +124,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getByIdAndBlogName(id, blogName);
+                Post post = postRepository.getById(id, blogName);
                 assertThat(post.getTags())
                         .containsExactly("tag1", "tag2", "tag3");
             });
@@ -156,7 +156,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
+                Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
@@ -184,7 +184,7 @@ class PostServiceTest extends ServiceTest {
             ).isInstanceOf(NotFoundPostException.class);
 
             // then
-            Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
+            Post post = postRepository.getById(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("포스트");
             assertThat(post.getContent()).isEqualTo("내용");
         }
@@ -206,7 +206,7 @@ class PostServiceTest extends ServiceTest {
                     null, emptyList()));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
+            Post post = postRepository.getById(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("수정제목");
             assertThat(post.getContent()).isEqualTo("수정내용");
             assertThat(post.getCategory()).isNull();
@@ -231,7 +231,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
+                Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
@@ -257,7 +257,7 @@ class PostServiceTest extends ServiceTest {
 
             // then
             transactionHelper.doAssert(() -> {
-                Post post = postRepository.getByIdAndBlogName(포스트_ID, blogName);
+                Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
                 assertThat(post.getContent()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Node");
@@ -292,7 +292,7 @@ class PostServiceTest extends ServiceTest {
             postService.delete(new DeletePostCommand(otherId, List.of(myPostId1.getId()), blogName));
 
             // then
-            assertThat(postRepository.findByIdAndBlogName(myPostId1.getId(), blogName)).isPresent();
+            assertThat(postRepository.findById(myPostId1.getId(), blogName)).isPresent();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isZero();
         }
 
@@ -302,7 +302,7 @@ class PostServiceTest extends ServiceTest {
             postService.delete(new DeletePostCommand(memberId, List.of(myPostId1.getId(), 100000L), blogName));
 
             // then
-            assertThat(postRepository.findByIdAndBlogName(myPostId1.getId(), blogName)).isEmpty();
+            assertThat(postRepository.findById(myPostId1.getId(), blogName)).isEmpty();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(1);
         }
 
@@ -313,9 +313,9 @@ class PostServiceTest extends ServiceTest {
                     new DeletePostCommand(memberId, List.of(myPostId1.getId(), myPostId2.getId()), blogName));
 
             // then
-            assertThat(postRepository.findByIdAndBlogName(myPostId1.getId(), blogName)).isEmpty();
-            assertThat(postRepository.findByIdAndBlogName(myPostId2.getId(), blogName)).isEmpty();
-            assertThat(postRepository.findByIdAndBlogName(otherPostId.getId(), otherBlogName)).isPresent();
+            assertThat(postRepository.findById(myPostId1.getId(), blogName)).isEmpty();
+            assertThat(postRepository.findById(myPostId2.getId(), blogName)).isEmpty();
+            assertThat(postRepository.findById(otherPostId.getId(), otherBlogName)).isPresent();
             assertThat(EventsTestUtils.count(events, PostDeleteEvent.class)).isEqualTo(2);
         }
     }

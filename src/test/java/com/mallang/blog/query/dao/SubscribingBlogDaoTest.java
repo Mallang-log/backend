@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("특정 회원이 구독중인 블로그 조회 DAO(SubscribingBlogDao) 은(는)")
+@DisplayName("특정 회원이 구독중인 블로그 조회 DAO (SubscribingBlogDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class SubscribingBlogDaoTest extends ServiceTest {

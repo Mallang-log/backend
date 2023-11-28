@@ -34,7 +34,7 @@ public class PostService {
 
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwnerId(command.blogName(), command.memberId());
+        Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
         Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
         PostId postId = postOrderInBlogGenerator.generate(blog.getId());
         Post post = command.toPost(member, category, postId);
@@ -43,7 +43,7 @@ public class PostService {
 
     public void update(UpdatePostCommand command) {
         Post post = postRepository
-                .getByIdAndBlogNameAndWriterId(command.postId(), command.blogName(), command.memberId());
+                .getByIdAndWriter(command.postId(), command.blogName(), command.memberId());
         Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
         post.update(
                 command.title(),
@@ -58,7 +58,7 @@ public class PostService {
 
     public void delete(DeletePostCommand command) {
         List<Post> posts = postRepository
-                .findAllByIdInAndWriterId(command.postIds(), command.blogName(), command.memberId());
+                .findAllByIdInAndWriter(command.postIds(), command.blogName(), command.memberId());
         for (Post post : posts) {
             post.delete();
             postRepository.delete(post);
@@ -69,6 +69,6 @@ public class PostService {
         if (id == null) {
             return null;
         }
-        return categoryRepository.getByIdAndOwnerId(id, ownerId);
+        return categoryRepository.getByIdAndOwner(id, ownerId);
     }
 }

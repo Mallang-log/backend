@@ -14,8 +14,8 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     boolean existsByPostAndMember(Post post, Member member);
 
-    default PostLike getByPostIdAndMemberId(Long postId, String blogName, Long memberId) {
-        return findByPostIdAndMemberId(postId, blogName, memberId)
+    default PostLike getByPostAndMember(Long postId, String blogName, Long memberId) {
+        return findByPostAndMember(postId, blogName, memberId)
                 .orElseThrow(NotFoundPostLikeException::new);
     }
 
@@ -25,9 +25,9 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
             AND pl.post.blog.name.value = :blogName
             AND pl.member.id = :memberId
             """)
-    Optional<PostLike> findByPostIdAndMemberId(@Param("postId") Long postId,
-                                               @Param("blogName") String blogName,
-                                               @Param("memberId") Long memberId);
+    Optional<PostLike> findByPostAndMember(@Param("postId") Long postId,
+                                           @Param("blogName") String blogName,
+                                           @Param("memberId") Long memberId);
 
     @Modifying
     @Query("DELETE FROM PostLike pl WHERE pl.post.postId = :postId")

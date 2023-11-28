@@ -8,20 +8,24 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
-import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.포스트_통계_조회_요청;
+import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.주인용_블로그_방문자_통계_조회_요청;
+import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.주인용_포스트_통계_조회_요청;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_24_금;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_25_토;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_26_일;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_27_월;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_28_화;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
-import static com.mallang.statistics.api.query.support.PeriodType.DAY;
+import static com.mallang.statistics.api.query.PeriodType.DAY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.presentation.request.CreatePostRequest;
+import com.mallang.statistics.api.query.response.BlogVisitStatisticManageResponse;
 import com.mallang.statistics.api.query.response.PostViewStatisticResponse;
+import com.mallang.statistics.statistic.BlogVisitStatistic;
+import com.mallang.statistics.statistic.BlogVisitStatisticRepository;
 import com.mallang.statistics.statistic.PostViewStatistic;
 import com.mallang.statistics.statistic.PostViewStatisticRepository;
 import io.restassured.common.mapper.TypeRef;
@@ -35,10 +39,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("통계 관리 인수테스트")
+@DisplayName("주인용 통계 조회 인수테스트")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class StatisticManageAcceptanceTest extends AcceptanceTest {
+
+    @Autowired
+    private BlogVisitStatisticRepository blogVisitStatisticRepository;
 
     @Autowired
     private PostViewStatisticRepository postViewStatisticRepository;
@@ -71,7 +78,67 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 포스트_통계_조회_API {
+    class 블로그_주인용_블로그_방문자_통계_조회_API {
+
+        @Test
+        void 블로그_통계_조회() {
+            // given
+            var 통계_2023_11_25 = new BlogVisitStatistic(날짜_2023_11_25_토, 말랑_블로그_이름, 10);
+            var 통계_2023_11_26 = new BlogVisitStatistic(날짜_2023_11_26_일, 말랑_블로그_이름, 5);
+            var 통계_2023_11_27 = new BlogVisitStatistic(날짜_2023_11_27_월, 말랑_블로그_이름);
+            var 통계_2023_11_28 = new BlogVisitStatistic(날짜_2023_11_28_화, 말랑_블로그_이름, 100);
+            blogVisitStatisticRepository.saveAll(List.of(통계_2023_11_25, 통계_2023_11_26, 통계_2023_11_27, 통계_2023_11_28));
+            var date_2023_11_28 = "2023-11-28";
+
+            // when
+            var 응답 = 주인용_블로그_방문자_통계_조회_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    DAY,
+                    date_2023_11_28,
+                    5
+            );
+
+            // then
+            List<BlogVisitStatisticManageResponse> response = 응답.as(new TypeRef<>() {
+            });
+            assertThat(response).usingRecursiveComparison()
+                    .isEqualTo(List.of(
+                            new BlogVisitStatisticManageResponse(날짜_2023_11_24_금, 날짜_2023_11_24_금, 0),
+                            new BlogVisitStatisticManageResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 10),
+                            new BlogVisitStatisticManageResponse(날짜_2023_11_26_일, 날짜_2023_11_26_일, 5),
+                            new BlogVisitStatisticManageResponse(날짜_2023_11_27_월, 날짜_2023_11_27_월, 0),
+                            new BlogVisitStatisticManageResponse(날짜_2023_11_28_화, 날짜_2023_11_28_화, 100)
+                    ));
+        }
+
+        @Test
+        void 자신의_블로그가_아닌_경우_볼_수_없다() {
+            // when
+            var date_2023_11_28 = "2023-11-28";
+            var 응답 = 주인용_블로그_방문자_통계_조회_요청(
+                    동훈_세션_ID,
+                    말랑_블로그_이름,
+                    DAY,
+                    date_2023_11_28,
+                    5
+            );
+            var 응답2 = 주인용_블로그_방문자_통계_조회_요청(
+                    null,
+                    말랑_블로그_이름,
+                    DAY,
+                    date_2023_11_28,
+                    5
+            );
+
+            // then
+            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답2, 인증되지_않음);
+        }
+    }
+
+    @Nested
+    class 포스트_조회수_통계_조회_API {
 
         @Test
         void 포스트_통계_조회() {
@@ -85,7 +152,7 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
             var date_2023_11_28 = "2023-11-28";
 
             // when
-            var 응답 = 포스트_통계_조회_요청(
+            var 응답 = 주인용_포스트_통계_조회_요청(
                     말랑_세션_ID,
                     말랑_블로그_이름,
                     포스트_ID,
@@ -111,7 +178,7 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
         void 자신의_포스트가_아닌_경우_볼_수_없다() {
             // when
             var date_2023_11_28 = "2023-11-28";
-            var 응답 = 포스트_통계_조회_요청(
+            var 응답 = 주인용_포스트_통계_조회_요청(
                     동훈_세션_ID,
                     말랑_블로그_이름,
                     포스트_ID,
@@ -119,7 +186,7 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
                     date_2023_11_28,
                     5
             );
-            var 응답2 = 포스트_통계_조회_요청(
+            var 응답2 = 주인용_포스트_통계_조회_요청(
                     null,
                     말랑_블로그_이름,
                     포스트_ID,

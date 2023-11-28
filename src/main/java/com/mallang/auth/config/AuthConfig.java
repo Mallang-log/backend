@@ -55,7 +55,8 @@ public class AuthConfig implements WebMvcConfigurer {
                                 "/comments",
                                 "/blog-subscribes/*",
                                 "/post-stars",
-                                "/abouts"
+                                "/abouts",
+                                "/statistics/**"
                         ))
                         .httpMethods(Set.of(GET))
                         .build()
