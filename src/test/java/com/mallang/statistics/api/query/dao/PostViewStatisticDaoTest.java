@@ -30,9 +30,11 @@ import static com.mallang.statistics.api.query.PeriodType.MONTH;
 import static com.mallang.statistics.api.query.PeriodType.WEEK;
 import static com.mallang.statistics.api.query.PeriodType.YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.common.ServiceTest;
 import com.mallang.post.domain.PostId;
+import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.PostViewStatisticResponse;
 import com.mallang.statistics.statistic.PostViewStatistic;
@@ -93,6 +95,17 @@ class PostViewStatisticDaoTest extends ServiceTest {
                 .isEqualTo(List.of(
                         new PostViewStatisticResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 0)
                 ));
+    }
+
+    @Test
+    void 자신의_포스트가_아닌_경우_예외() {
+        // given
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25_토, 날짜_2023_11_25_토);
+
+        // when & then
+        assertThatThrownBy(() -> {
+            postViewStatisticDao.find(memberId + 1L, blogName, postId.getId(), cond);
+        }).isInstanceOf(NotFoundPostException.class);
     }
 
     @Test
