@@ -28,33 +28,6 @@ public class BlogVisitHistoryAop {
 
     private final BlogVisitHistoryCollector blogVisitHistoryCollector;
 
-    public static class PointCuts {
-
-        @Pointcut("within(com.mallang.blog.presentation.BlogController)")
-        void blogController() {
-        }
-
-        @Pointcut("within(com.mallang.blog.presentation.AboutController)")
-        void aboutController() {
-        }
-
-        @Pointcut("within(com.mallang.post.presentation.PostController)")
-        void postController() {
-        }
-
-        @Pointcut("blogController() || aboutController() || postController()")
-        void blogVisitController() {
-        }
-
-        @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
-        void getMappingMethods() {
-        }
-
-        @Pointcut("blogVisitController() && getMappingMethods()")
-        void blogVisitControllerMethods() {
-        }
-    }
-
     @AfterReturning(pointcut = "com.mallang.statistics.statistic.collector.BlogVisitHistoryAop.PointCuts.blogVisitControllerMethods()")
     public void history(JoinPoint joinPoint) {
         getBlogName(joinPoint).ifPresent(blogName -> {
@@ -98,5 +71,32 @@ public class BlogVisitHistoryAop {
         cookie.setMaxAge(NO_EXPIRED_MAX_AGE);
         response.addCookie(cookie);
         return uuid;
+    }
+
+    public static class PointCuts {
+
+        @Pointcut("within(com.mallang.blog.presentation.BlogController)")
+        void blogController() {
+        }
+
+        @Pointcut("within(com.mallang.blog.presentation.AboutController)")
+        void aboutController() {
+        }
+
+        @Pointcut("within(com.mallang.post.presentation.PostController)")
+        void postController() {
+        }
+
+        @Pointcut("blogController() || aboutController() || postController()")
+        void blogVisitController() {
+        }
+
+        @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
+        void getMappingMethods() {
+        }
+
+        @Pointcut("blogVisitController() && getMappingMethods()")
+        void blogVisitControllerMethods() {
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.mallang.statistics.api.presentation;
 
 import com.mallang.statistics.api.query.StatisticQueryService;
 import com.mallang.statistics.api.query.response.BlogVisitStatisticSimpleResponse;
+import com.mallang.statistics.api.query.response.PostTotalViewsResponse;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,4 +28,15 @@ public class StatisticsController {
                 statisticQueryService.getSimpleBlogVisitStatistics(blogName, localDate)
         );
     }
+
+    @GetMapping("/posts/{blogName}/{id}")
+    public ResponseEntity<PostTotalViewsResponse> getPostTotalViews(
+            @PathVariable("blogName") String blogName,
+            @PathVariable("id") Long id
+    ) {
+        return ResponseEntity.ok(
+                statisticQueryService.getPostTotalViews(blogName, id)
+        );
+    }
+
 }
