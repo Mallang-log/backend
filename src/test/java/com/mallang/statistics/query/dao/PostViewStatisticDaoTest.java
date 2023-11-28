@@ -44,6 +44,38 @@ class PostViewStatisticDaoTest extends ServiceTest {
     }
 
     @Test
+    void 날짜가_잘못_들어온_경우() {
+        LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
+        LocalDate 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_26, 날짜_2023_11_25);
+        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId);
+        통계_2023_11_25.addCount(10);
+
+        // when
+        List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void 조회_통계가_하나도_없는_경우() {
+        // given
+        LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25, 날짜_2023_11_25);
+
+        // when
+        List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
+
+        // then
+        assertThat(result)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(
+                        new PostViewStatisticResponse(날짜_2023_11_25, 날짜_2023_11_25, 0)
+                ));
+    }
+
+    @Test
     void 일간_조회수_통계를_구한다() {
         // given
         LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);

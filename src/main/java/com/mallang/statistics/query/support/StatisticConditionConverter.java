@@ -9,9 +9,9 @@ import static java.time.temporal.TemporalAdjusters.previousOrSame;
 import com.mallang.statistics.query.StatisticCondition;
 import java.time.LocalDate;
 
-public final class StatisticDateConditionConverter {
+public final class StatisticConditionConverter {
 
-    private StatisticDateConditionConverter() {
+    private StatisticConditionConverter() {
     }
 
     public static StatisticCondition convert(

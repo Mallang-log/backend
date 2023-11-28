@@ -6,10 +6,13 @@ import static com.mallang.statistics.statistic.QPostViewStatistic.postViewStatis
 import com.mallang.post.domain.Post;
 import com.mallang.statistics.query.StatisticCondition;
 import com.mallang.statistics.query.response.PostViewStatisticResponse;
+import com.mallang.statistics.statistic.PostViewStatistic;
 import com.mallang.statistics.statistic.utils.LocalDateUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,7 +29,6 @@ public class PostViewStatisticDao {
             Long postId,
             StatisticCondition condition
     ) {
-        List<PostViewStatisticResponse> response = getResponseTemplates(condition);
         Post findPost = query.selectFrom(post)
                 .where(
                         post.postId.id.eq(postId),
@@ -34,22 +36,15 @@ public class PostViewStatisticDao {
                         post.writer.id.eq(memberId)
                 )
                 .fetchFirst();
-        query.selectFrom(postViewStatistic)
+        List<PostViewStatistic> result = query.selectFrom(postViewStatistic)
                 .where(
                         postViewStatistic.postId.eq(findPost.getPostId()),
                         postViewStatistic.statisticDate.between(condition.startDayInclude(), condition.lastDayInclude())
-                ).fetch()
-                .forEach(viewStatistic -> {
-                    for (PostViewStatisticResponse postViewStatisticResponse : response) {
-                        LocalDate statisticDate = viewStatistic.getStatisticDate();
-                        LocalDate startDate = postViewStatisticResponse.getStartDateInclude();
-                        LocalDate endDate = postViewStatisticResponse.getEndDateInclude();
-                        if (LocalDateUtils.isBetween(startDate, endDate, statisticDate)) {
-                            postViewStatisticResponse.addViewCount(viewStatistic.getCount());
-                            break;
-                        }
-                    }
-                });
+                )
+                .orderBy(postViewStatistic.statisticDate.asc())
+                .fetch();
+        List<PostViewStatisticResponse> response = getResponseTemplates(condition);
+        aggregate(new ArrayDeque<>(result), response);
         return response;
     }
 
@@ -57,11 +52,28 @@ public class PostViewStatisticDao {
         List<PostViewStatisticResponse> postViewStatisticResponses = new ArrayList<>();
         LocalDate current = condition.startDayInclude();
         while (current.isBefore(condition.lastDayInclude()) || current.isEqual(condition.lastDayInclude())) {
-            LocalDate next = current
-                    .plus(1, condition.periodType().temporalUnit());
+            LocalDate next = current.plus(1, condition.periodType().temporalUnit());
             postViewStatisticResponses.add(new PostViewStatisticResponse(current, next.minusDays(1)));
             current = next;
         }
         return postViewStatisticResponses;
+    }
+
+    private void aggregate(Deque<PostViewStatistic> statistics, List<PostViewStatisticResponse> response) {
+        for (PostViewStatisticResponse postViewStatisticResponse : response) {
+            LocalDate startDate = postViewStatisticResponse.getStartDateInclude();
+            LocalDate endDate = postViewStatisticResponse.getEndDateInclude();
+            while (!statistics.isEmpty()) {
+                PostViewStatistic postView = statistics.peekFirst();
+                if (!LocalDateUtils.isBetween(startDate, endDate, postView.getStatisticDate())) {
+                    break;
+                }
+                postViewStatisticResponse.addViewCount(postView.getCount());
+                statistics.pollFirst();
+            }
+            if (statistics.isEmpty()) {
+                return;
+            }
+        }
     }
 }
