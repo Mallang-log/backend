@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-@DisplayName("인증된 사용자의 댓글(AuthComment) 은(는)")
+@DisplayName("인증된 사용자의 댓글 (AuthComment) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AuthCommentTest {

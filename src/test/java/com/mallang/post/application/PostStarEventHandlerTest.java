@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("포스트 즐겨찾기 이벤트 핸들러(PostStarEventHandler) 은(는)")
+@DisplayName("포스트 즐겨찾기 이벤트 핸들러 (PostStarEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostStarEventHandlerTest extends ServiceTest {

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("댓글 서비스(CommentService) 은(는)")
+@DisplayName("댓글 서비스 (CommentService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class CommentServiceTest extends ServiceTest {

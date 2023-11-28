@@ -9,7 +9,7 @@ import io.restassured.response.Response;
 @SuppressWarnings("NonAsciiCharacters")
 public class StatisticManageAcceptanceSteps {
 
-    public static ExtractableResponse<Response> 블로그_주인용_방문자_통계_조회_요청(
+    public static ExtractableResponse<Response> 주인용_블로그_방문자_통계_조회_요청(
             String 세션_ID,
             String 블로그_이름,
             PeriodType periodType,

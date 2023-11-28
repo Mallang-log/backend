@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
-@DisplayName("예외 공통처리 ControllerAdvice(ExceptionControllerAdvice) 은(는)")
+@DisplayName("예외 공통처리 ControllerAdvice (ExceptionControllerAdvice) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class ExceptionControllerAdviceTest {

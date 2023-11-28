@@ -47,7 +47,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("블로그 방문 통계 관리 DAO(BlogVisitStatisticManageDao) 은(는)")
+@DisplayName("블로그 방문 통계 관리 DAO (BlogVisitStatisticManageDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class BlogVisitStatisticManageDaoTest extends ServiceTest {

@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
 
-@DisplayName("URI, HttpMethod, RequestParam 조건(UriAndMethodAndParamCondition) 은(는)")
+@DisplayName("URI, HttpMethod, RequestParam 조건 (UriAndMethodAndParamCondition) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class UriAndMethodAndParamConditionTest {

@@ -48,7 +48,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("포스트 조회수 통계 DAO(PostViewStatisticDao) 은(는)")
+@DisplayName("포스트 조회수 통계 DAO (PostViewStatisticDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostViewStatisticDaoTest extends ServiceTest {

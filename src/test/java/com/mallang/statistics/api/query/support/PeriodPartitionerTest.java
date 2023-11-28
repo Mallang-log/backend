@@ -36,7 +36,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("기간 분할기(PeriodPartitioner) 은(는)")
+@DisplayName("기간 분할기 (PeriodPartitioner) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PeriodPartitionerTest {

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-@DisplayName("포스트 즐겨찾기 서비스(PostStarService) 은(는)")
+@DisplayName("포스트 즐겨찾기 서비스 (PostStarService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostStarServiceTest extends ServiceTest {

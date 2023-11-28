@@ -17,7 +17,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@DisplayName("카테고리 검증기(CategoryValidator) 은(는)")
+@DisplayName("카테고리 검증기 (CategoryValidator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest

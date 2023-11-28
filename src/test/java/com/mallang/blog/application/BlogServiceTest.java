@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("블로그 서비스(BlogService) 은(는)")
+@DisplayName("블로그 서비스 (BlogService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class BlogServiceTest extends ServiceTest {

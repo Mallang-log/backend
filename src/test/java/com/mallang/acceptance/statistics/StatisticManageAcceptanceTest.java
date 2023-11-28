@@ -8,7 +8,7 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
-import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.블로그_주인용_방문자_통계_조회_요청;
+import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.주인용_블로그_방문자_통계_조회_요청;
 import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.주인용_포스트_통계_조회_요청;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_24_금;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_25_토;
@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@DisplayName("통계 관리 인수테스트")
+@DisplayName("주인용 통계 조회 인수테스트")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class StatisticManageAcceptanceTest extends AcceptanceTest {
@@ -91,7 +91,7 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
             var date_2023_11_28 = "2023-11-28";
 
             // when
-            var 응답 = 블로그_주인용_방문자_통계_조회_요청(
+            var 응답 = 주인용_블로그_방문자_통계_조회_요청(
                     말랑_세션_ID,
                     말랑_블로그_이름,
                     DAY,
@@ -116,14 +116,14 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
         void 자신의_블로그가_아닌_경우_볼_수_없다() {
             // when
             var date_2023_11_28 = "2023-11-28";
-            var 응답 = 블로그_주인용_방문자_통계_조회_요청(
+            var 응답 = 주인용_블로그_방문자_통계_조회_요청(
                     동훈_세션_ID,
                     말랑_블로그_이름,
                     DAY,
                     date_2023_11_28,
                     5
             );
-            var 응답2 = 블로그_주인용_방문자_통계_조회_요청(
+            var 응답2 = 주인용_블로그_방문자_통계_조회_요청(
                     null,
                     말랑_블로그_이름,
                     DAY,

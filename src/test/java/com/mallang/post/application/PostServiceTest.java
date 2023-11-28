@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 
-@DisplayName("포스트 서비스(PostService) 은(는)")
+@DisplayName("포스트 서비스 (PostService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostServiceTest extends ServiceTest {
