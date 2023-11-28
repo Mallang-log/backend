@@ -30,7 +30,9 @@ import static com.mallang.statistics.api.query.PeriodType.MONTH;
 import static com.mallang.statistics.api.query.PeriodType.WEEK;
 import static com.mallang.statistics.api.query.PeriodType.YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.blog.exception.NotFoundBlogException;
 import com.mallang.common.ServiceTest;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.BlogVisitStatisticManageResponse;
@@ -63,6 +65,44 @@ class BlogVisitStatisticManageDaoTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         blogName = 블로그_개설(memberId, "mallang-log");
+    }
+
+    @Test
+    void 날짜가_잘못_들어온_경우() {
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_26_일, 날짜_2023_11_25_토);
+
+        // when
+        List<BlogVisitStatisticManageResponse> result = blogVisitStatisticManageDao.find(memberId, blogName, cond);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void 조회_통계가_하나도_없는_경우() {
+        // given
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25_토, 날짜_2023_11_25_토);
+
+        // when
+        List<BlogVisitStatisticManageResponse> result = blogVisitStatisticManageDao.find(memberId, blogName, cond);
+
+        // then
+        assertThat(result)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(
+                        new BlogVisitStatisticManageResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 0)
+                ));
+    }
+
+    @Test
+    void 자신의_블로그가_아닌_경우_예외() {
+        // given
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25_토, 날짜_2023_11_25_토);
+
+        // when & then
+        assertThatThrownBy(() -> {
+            blogVisitStatisticManageDao.find(memberId + 1L, blogName, cond);
+        }).isInstanceOf(NotFoundBlogException.class);
     }
 
     @Test

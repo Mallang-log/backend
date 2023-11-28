@@ -60,9 +60,7 @@ class BlogVisitStatisticSimpleDaoTest extends ServiceTest {
     void 블로그가_없는_경우() {
         // given
         blogVisitStatisticRepository.saveAll(List.of(
-                new BlogVisitStatistic(날짜_2020_1_1, blogName, 110),
-                new BlogVisitStatistic(날짜_2023_11_27_월, blogName, 10),
-                new BlogVisitStatistic(날짜_2023_11_28_화, blogName, 5)
+                new BlogVisitStatistic(날짜_2020_1_1, blogName, 110)
         ));
 
         // when
