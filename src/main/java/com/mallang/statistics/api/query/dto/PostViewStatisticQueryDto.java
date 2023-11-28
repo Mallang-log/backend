@@ -1,6 +1,6 @@
 package com.mallang.statistics.api.query.dto;
 
-import com.mallang.statistics.api.query.support.PeriodType;
+import com.mallang.statistics.api.query.PeriodType;
 import java.time.LocalDate;
 import lombok.Builder;
 

@@ -1,5 +1,6 @@
 package com.mallang.statistics.api.query.support;
 
+import com.mallang.statistics.api.query.PeriodType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

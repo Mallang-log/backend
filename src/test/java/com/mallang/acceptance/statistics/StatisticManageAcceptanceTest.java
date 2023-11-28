@@ -15,7 +15,7 @@ import static com.mallang.common.LocalDateFixture.날짜_2023_11_26_일;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_27_월;
 import static com.mallang.common.LocalDateFixture.날짜_2023_11_28_화;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
-import static com.mallang.statistics.api.query.support.PeriodType.DAY;
+import static com.mallang.statistics.api.query.PeriodType.DAY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;

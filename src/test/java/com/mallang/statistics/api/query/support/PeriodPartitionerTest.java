@@ -23,10 +23,10 @@ import static com.mallang.common.LocalDateFixture.날짜_2023_12_31;
 import static com.mallang.common.LocalDateFixture.날짜_2023_1_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_9_1;
 import static com.mallang.common.LocalDateFixture.날짜_2023_9_30;
-import static com.mallang.statistics.api.query.support.PeriodType.DAY;
-import static com.mallang.statistics.api.query.support.PeriodType.MONTH;
-import static com.mallang.statistics.api.query.support.PeriodType.WEEK;
-import static com.mallang.statistics.api.query.support.PeriodType.YEAR;
+import static com.mallang.statistics.api.query.PeriodType.DAY;
+import static com.mallang.statistics.api.query.PeriodType.MONTH;
+import static com.mallang.statistics.api.query.PeriodType.WEEK;
+import static com.mallang.statistics.api.query.PeriodType.YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.statistics.api.query.support.PeriodPartitioner.PeriodPart;

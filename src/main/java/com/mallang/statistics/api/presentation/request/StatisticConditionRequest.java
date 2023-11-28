@@ -1,7 +1,7 @@
 package com.mallang.statistics.api.presentation.request;
 
+import com.mallang.statistics.api.query.PeriodType;
 import com.mallang.statistics.api.query.dto.PostViewStatisticQueryDto;
-import com.mallang.statistics.api.query.support.PeriodType;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
