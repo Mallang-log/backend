@@ -141,7 +141,7 @@ class PostQueryServiceTest extends ServiceTest {
                     .ignoringExpectedNullFields()
                     .ignoringFields("createdDate")
                     .isEqualTo(PostDetailResponse.builder()
-                            .id(id)
+                            .postId(id)
                             .title("mallang-public")
                             .content("mallang-public")
                             .visibility(PUBLIC)
@@ -174,7 +174,7 @@ class PostQueryServiceTest extends ServiceTest {
             PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId, null);
 
             // then
-            assertThat(response.id()).isEqualTo(id);
+            assertThat(response.postId()).isEqualTo(id);
         }
 
         @Test
@@ -197,7 +197,7 @@ class PostQueryServiceTest extends ServiceTest {
             PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId, null);
 
             // then
-            assertThat(response.id()).isEqualTo(id);
+            assertThat(response.postId()).isEqualTo(id);
             assertThat(response.title()).isEqualTo("mallang-protected");
             assertThat(response.content()).isEqualTo("mallang-protected");
         }
@@ -212,7 +212,7 @@ class PostQueryServiceTest extends ServiceTest {
                     "1234");
 
             // then
-            assertThat(response.id()).isEqualTo(id);
+            assertThat(response.postId()).isEqualTo(id);
             assertThat(response.title()).isEqualTo("mallang-protected");
             assertThat(response.content()).isEqualTo("mallang-protected");
         }
@@ -229,9 +229,9 @@ class PostQueryServiceTest extends ServiceTest {
             assertThat(response)
                     .usingRecursiveComparison()
                     .ignoringExpectedNullFields()
-                    .ignoringFields("createdDate")
+                    .ignoringFields("createdDate", "blogId")
                     .isEqualTo(PostDetailResponse.builder()
-                            .id(id)
+                            .postId(id)
                             .title("mallang-protected")
                             .content("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.")
                             .visibility(PROTECTED)

@@ -114,7 +114,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
-            assertThat(postDetailResponse.id()).isEqualTo(공개_포스트_ID);
+            assertThat(postDetailResponse.postId()).isEqualTo(공개_포스트_ID);
         }
 
         @Test
@@ -150,7 +150,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
-            assertThat(postDetailResponse.id()).isEqualTo(비공개_포스트_ID);
+            assertThat(postDetailResponse.postId()).isEqualTo(비공개_포스트_ID);
             assertThat(postDetailResponse.content()).isEqualTo("[비공개] 내용");
         }
 
@@ -170,7 +170,7 @@ class PostAcceptanceTest extends AcceptanceTest {
 
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
-            assertThat(postDetailResponse.id()).isEqualTo(보호_포스트_ID);
+            assertThat(postDetailResponse.postId()).isEqualTo(보호_포스트_ID);
             assertThat(postDetailResponse.isProtected()).isFalse();
             assertThat(postDetailResponse.content()).isEqualTo("[보호] 내용");
             assertThat(postDetailResponse.password()).isNull();
@@ -185,6 +185,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             포스트_단일_조회_응답을_검증한다(응답,
                     new PostDetailResponse(
                             보호_포스트_ID,
+                            null,
                             말랑_블로그_이름,
                             "[보호] 제목",
                             "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",

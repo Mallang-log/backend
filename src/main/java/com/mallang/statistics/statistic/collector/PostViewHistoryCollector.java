@@ -1,5 +1,6 @@
 package com.mallang.statistics.statistic.collector;
 
+import com.mallang.post.domain.PostId;
 import com.mallang.statistics.statistic.source.CommonHistory;
 import com.mallang.statistics.statistic.source.PostViewHistory;
 import com.mallang.statistics.statistic.source.PostViewHistoryRepository;
@@ -20,7 +21,7 @@ public class PostViewHistoryCollector {
 
     public void save(PostViewHistory postViewHistory) {
         UUID uuid = postViewHistory.getUuid();
-        Long postId = postViewHistory.getPostId();
+        PostId postId = postViewHistory.getPostId();
         postViewHistoryRepository
                 .findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, postId)
                 .map(CommonHistory::getCreatedDate)

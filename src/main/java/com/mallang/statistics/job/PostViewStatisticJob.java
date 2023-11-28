@@ -2,6 +2,7 @@ package com.mallang.statistics.job;
 
 import static java.util.stream.Collectors.groupingBy;
 
+import com.mallang.post.domain.PostId;
 import com.mallang.statistics.statistic.PostViewStatistic;
 import com.mallang.statistics.statistic.PostViewStatisticRepository;
 import com.mallang.statistics.statistic.source.PostViewHistory;
@@ -24,20 +25,20 @@ public class PostViewStatisticJob {
     private final TransactionTemplate transactionTemplate;
 
     public void postViewsAggregationJob() {
-        Map<Long, List<PostViewHistory>> unprocessedHistories = getUnAggregatedViewsStep();
-        Map<Long, Map<LocalDate, List<PostViewHistory>>> historiesGroupedByDateByPostId =
+        Map<PostId, List<PostViewHistory>> unprocessedHistories = getUnAggregatedViewsStep();
+        Map<PostId, Map<LocalDate, List<PostViewHistory>>> historiesGroupedByDateByPostId =
                 groupingViewByDateStep(unprocessedHistories);
         aggregateViewsStep(historiesGroupedByDateByPostId);
     }
 
-    private Map<Long, List<PostViewHistory>> getUnAggregatedViewsStep() {
+    private Map<PostId, List<PostViewHistory>> getUnAggregatedViewsStep() {
         return postViewHistoryRepository.findAll()
                 .stream()
                 .collect(groupingBy(PostViewHistory::getPostId));
     }
 
-    private Map<Long, Map<LocalDate, List<PostViewHistory>>> groupingViewByDateStep(
-            Map<Long, List<PostViewHistory>> unAggregatedViews
+    private Map<PostId, Map<LocalDate, List<PostViewHistory>>> groupingViewByDateStep(
+            Map<PostId, List<PostViewHistory>> unAggregatedViews
     ) {
         return unAggregatedViews
                 .entrySet()
@@ -50,22 +51,22 @@ public class PostViewStatisticJob {
                 ));
     }
 
-    private void aggregateViewsStep(Map<Long, Map<LocalDate, List<PostViewHistory>>> historiesGroupByDateByPostId) {
-        for (Entry<Long, Map<LocalDate, List<PostViewHistory>>> entry : historiesGroupByDateByPostId.entrySet()) {
-            Long postId = entry.getKey();
+    private void aggregateViewsStep(Map<PostId, Map<LocalDate, List<PostViewHistory>>> historiesGroupByDateByPostId) {
+        for (Entry<PostId, Map<LocalDate, List<PostViewHistory>>> entry : historiesGroupByDateByPostId.entrySet()) {
+            PostId postId = entry.getKey();
             Map<LocalDate, List<PostViewHistory>> viewHistoriesGroupByDate = entry.getValue();
             aggregateViewsByPostIdStep(postId, viewHistoriesGroupByDate);
         }
     }
 
-    private void aggregateViewsByPostIdStep(Long postId,
+    private void aggregateViewsByPostIdStep(PostId postId,
                                             Map<LocalDate, List<PostViewHistory>> viewHistoriesGroupByDate) {
         for (Entry<LocalDate, List<PostViewHistory>> entry : viewHistoriesGroupByDate.entrySet()) {
             aggregateEachPostViewsByDateStep(postId, entry.getKey(), entry.getValue());
         }
     }
 
-    private void aggregateEachPostViewsByDateStep(Long postId,
+    private void aggregateEachPostViewsByDateStep(PostId postId,
                                                   LocalDate date,
                                                   List<PostViewHistory> postViewHistories) {
         transactionTemplate.executeWithoutResult(status -> {

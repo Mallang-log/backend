@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.mallang.post.domain.PostId;
 import com.mallang.statistics.statistic.source.PostViewHistory;
 import com.mallang.statistics.statistic.source.PostViewHistoryRepository;
 import java.time.LocalDateTime;
@@ -28,14 +29,16 @@ class PostViewHistoryCollectorTest {
     private final PostViewHistoryCollector postViewHistoryCollector =
             new PostViewHistoryCollector(postViewHistoryRepository);
 
+    private final PostId postId = new PostId(1L, 1L);
+
     @Test
     void 기존_포스트_조회_이력이_없으면_곧바로_저장한다() {
         // given
         UUID uuid = UUID.randomUUID();
-        PostViewHistory postViewHistory = new PostViewHistory(uuid, 1L,
+        PostViewHistory postViewHistory = new PostViewHistory(uuid, postId,
                 LocalDateTime.of(2022, 10, 4, 14, 20) // 2022.10.4 - 14:20
         );
-        given(postViewHistoryRepository.findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, 1L))
+        given(postViewHistoryRepository.findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, postId))
                 .willReturn(Optional.empty());
 
         // when
@@ -57,9 +60,9 @@ class PostViewHistoryCollectorTest {
         LocalDateTime localDateTime = LocalDateTime.parse(time, formatter);
 
         UUID uuid = UUID.randomUUID();
-        PostViewHistory postViewHistory = new PostViewHistory(uuid, 1L, LocalDateTime.parse(now, formatter));
-        PostViewHistory last = new PostViewHistory(uuid, 1L, localDateTime);
-        given(postViewHistoryRepository.findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, 1L))
+        PostViewHistory postViewHistory = new PostViewHistory(uuid, postId, LocalDateTime.parse(now, formatter));
+        PostViewHistory last = new PostViewHistory(uuid, postId, localDateTime);
+        given(postViewHistoryRepository.findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, postId))
                 .willReturn(Optional.of(last));
 
         // when
@@ -78,9 +81,9 @@ class PostViewHistoryCollectorTest {
         LocalDateTime localDateTime = LocalDateTime.parse(lastTime, formatter);
 
         UUID uuid = UUID.randomUUID();
-        PostViewHistory postViewHistory = new PostViewHistory(uuid, 1L, LocalDateTime.parse(now, formatter));
-        PostViewHistory last = new PostViewHistory(uuid, 1L, localDateTime);
-        given(postViewHistoryRepository.findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, 1L))
+        PostViewHistory postViewHistory = new PostViewHistory(uuid, postId, LocalDateTime.parse(now, formatter));
+        PostViewHistory last = new PostViewHistory(uuid, postId, localDateTime);
+        given(postViewHistoryRepository.findFirstByUuidAndPostIdOrderByCreatedDateDesc(uuid, postId))
                 .willReturn(Optional.of(last));
 
         // when
