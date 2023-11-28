@@ -30,8 +30,13 @@ public class PostViewStatistic {
     private int count;
 
     public PostViewStatistic(LocalDate statisticDate, PostId postId) {
+        this(statisticDate, postId, 0);
+    }
+
+    public PostViewStatistic(LocalDate statisticDate, PostId postId, int count) {
         this.statisticDate = statisticDate;
         this.postId = postId;
+        this.count = count;
     }
 
     public void addCount(int amount) {
