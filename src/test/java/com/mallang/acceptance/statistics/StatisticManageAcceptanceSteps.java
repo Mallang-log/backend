@@ -2,7 +2,7 @@ package com.mallang.acceptance.statistics;
 
 import static com.mallang.acceptance.AcceptanceSteps.given;
 
-import com.mallang.statistics.query.support.PeriodType;
+import com.mallang.statistics.api.query.support.PeriodType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
