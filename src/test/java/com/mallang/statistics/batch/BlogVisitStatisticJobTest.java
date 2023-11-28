@@ -1,4 +1,4 @@
-package com.mallang.statistics.job;
+package com.mallang.statistics.batch;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;

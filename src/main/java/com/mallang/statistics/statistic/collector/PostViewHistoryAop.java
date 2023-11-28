@@ -1,5 +1,6 @@
 package com.mallang.statistics.statistic.collector;
 
+import com.mallang.post.domain.PostId;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.statistics.statistic.source.PostViewHistory;
 import com.mallang.statistics.statistic.utils.HttpUtils;
@@ -40,7 +41,8 @@ public class PostViewHistoryAop {
     public void history(PostDetailResponse result) {
         UUID uuid = getPostViewCookieValue();
         LocalDateTime now = LocalDateTimeUtils.nowWithoutSeconds();
-        postViewHistoryCollector.save(new PostViewHistory(uuid, result.id(), now));
+        PostId postId = new PostId(result.postId(), result.blogId());
+        postViewHistoryCollector.save(new PostViewHistory(uuid, postId, now));
     }
 
     private UUID getPostViewCookieValue() {

@@ -1,4 +1,4 @@
-package com.mallang.statistics.job.exeution;
+package com.mallang.statistics.batch.exeution;
 
 public enum Status {
     PROCESSING,

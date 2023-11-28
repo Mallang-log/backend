@@ -40,7 +40,8 @@ public class PostAcceptanceSteps {
                 .ignoringFields(
                         "writer.writerId",
                         "writer.writerProfileImageUrl",
-                        "createdDate"
+                        "createdDate",
+                        "blogId"
                 )
                 .isEqualTo(예상_데이터);
         assertThat(postDetailResponse.password()).isNull();

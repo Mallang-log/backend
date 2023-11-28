@@ -1,5 +1,6 @@
 package com.mallang.statistics.statistic.source;
 
+import com.mallang.post.domain.PostId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
@@ -17,9 +18,9 @@ public class PostViewHistory extends CommonHistory {
     private UUID uuid;
 
     @Column(nullable = false)
-    private Long postId;
+    private PostId postId;
 
-    public PostViewHistory(UUID uuid, Long postId, LocalDateTime createdDate) {
+    public PostViewHistory(UUID uuid, PostId postId, LocalDateTime createdDate) {
         super(createdDate);
         this.uuid = uuid;
         this.postId = postId;
