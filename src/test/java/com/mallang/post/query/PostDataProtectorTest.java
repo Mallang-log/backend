@@ -23,7 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@DisplayName("포스트 조회 데이터 보호기(PostDataProtector) 은(는)")
+@DisplayName("포스트 조회 데이터 보호기 (PostDataProtector) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostDataProtectorTest {

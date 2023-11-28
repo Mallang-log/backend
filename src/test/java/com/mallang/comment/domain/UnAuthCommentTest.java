@@ -22,7 +22,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("익명 사용자의 댓글(UnAuthComment) 은(는)")
+@DisplayName("익명 사용자의 댓글 (UnAuthComment) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class UnAuthCommentTest {

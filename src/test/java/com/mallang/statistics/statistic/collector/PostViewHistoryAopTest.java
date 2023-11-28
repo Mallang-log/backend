@@ -32,7 +32,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@DisplayName("포스트 조회 이력 AOP(PostViewHistoryAop) 은(는)")
+@DisplayName("포스트 조회 이력 AOP (PostViewHistoryAop) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest

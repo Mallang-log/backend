@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("회원 조회 DAO(MemberDao) 은(는)")
+@DisplayName("회원 조회 DAO (MemberDao) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class MemberDaoTest extends ServiceTest {

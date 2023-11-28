@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("대표 예외(MallangLogException) 은(는)")
+@DisplayName("대표 예외 (MallangLogException) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class MallangLogExceptionTest {

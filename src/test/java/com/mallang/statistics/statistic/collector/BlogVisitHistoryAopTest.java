@@ -29,7 +29,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@DisplayName("블로그 방문 이력 AOP(BlogVisitHistoryAop) 은(는)")
+@DisplayName("블로그 방문 이력 AOP (BlogVisitHistoryAop) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest

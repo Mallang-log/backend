@@ -19,7 +19,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("댓글 조회 데이터 후처리기(CommentDataPostProcessor) 은(는)")
+@DisplayName("댓글 조회 데이터 후처리기 (CommentDataPostProcessor) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class CommentResponsePostProcessorTest {
@@ -67,7 +67,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
+            given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글")
@@ -110,7 +110,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
+            given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글")
@@ -158,7 +158,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
+            given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글1")

@@ -16,14 +16,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     }
 
     @Nullable
-    default Category getParentByIdAndOwnerId(@Nullable Long parentCategoryId, Long memberId) {
+    default Category getParentByIdAndOwner(@Nullable Long parentCategoryId, Long memberId) {
         if (parentCategoryId == null) {
             return null;
         }
-        return getByIdAndOwnerId(parentCategoryId, memberId);
+        return getByIdAndOwner(parentCategoryId, memberId);
     }
 
-    default Category getByIdAndOwnerId(Long id, Long ownerId) {
+    default Category getByIdAndOwner(Long id, Long ownerId) {
         return findByIdAndOwnerId(id, ownerId)
                 .orElseThrow(() ->
                         new NotFoundCategoryException("존재하지 않는 카테고리거나, 해당 사용자의 카테고리가 아닙니다."));

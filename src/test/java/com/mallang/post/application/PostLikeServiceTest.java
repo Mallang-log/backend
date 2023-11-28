@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-@DisplayName("포스트 좋아요 서비스(PostLikeService) 은(는)")
+@DisplayName("포스트 좋아요 서비스 (PostLikeService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostLikeServiceTest extends ServiceTest {
@@ -88,7 +88,7 @@ class PostLikeServiceTest extends ServiceTest {
             }).isInstanceOf(AlreadyLikedPostException.class);
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
@@ -98,7 +98,7 @@ class PostLikeServiceTest extends ServiceTest {
             postLikeService.like(new ClickPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
@@ -108,7 +108,7 @@ class PostLikeServiceTest extends ServiceTest {
             postLikeService.like(new ClickPostLikeCommand(protectedPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(protectedPostId, blogName);
+            Post post = postRepository.getById(protectedPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
@@ -118,7 +118,7 @@ class PostLikeServiceTest extends ServiceTest {
             postLikeService.like(new ClickPostLikeCommand(protectedPostId, blogName, otherMemberId, "1234"));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(protectedPostId, blogName);
+            Post post = postRepository.getById(protectedPostId, blogName);
             assertThat(post.getLikeCount()).isEqualTo(1);
         }
 
@@ -161,7 +161,7 @@ class PostLikeServiceTest extends ServiceTest {
             postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 
@@ -175,7 +175,7 @@ class PostLikeServiceTest extends ServiceTest {
             postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, memberId, null));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 
@@ -189,7 +189,7 @@ class PostLikeServiceTest extends ServiceTest {
             postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, otherMemberId, "1234"));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 

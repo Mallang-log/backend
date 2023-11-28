@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("포스트 좋아요 검증기(PostLikeValidator) 은(는)")
+@DisplayName("포스트 좋아요 검증기 (PostLikeValidator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostLikeValidatorTest {

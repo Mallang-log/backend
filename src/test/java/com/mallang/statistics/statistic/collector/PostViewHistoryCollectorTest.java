@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("포스트 조회 이력 수집기(PostViewHistoryCollector) 은(는)")
+@DisplayName("포스트 조회 이력 수집기 (PostViewHistoryCollector) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostViewHistoryCollectorTest {

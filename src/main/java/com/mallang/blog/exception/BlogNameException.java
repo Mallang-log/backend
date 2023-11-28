@@ -1,13 +1,14 @@
 package com.mallang.blog.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 import com.mallang.common.execption.ErrorCode;
 import com.mallang.common.execption.MallangLogException;
-import org.springframework.http.HttpStatus;
 
 public class BlogNameException extends MallangLogException {
 
     public BlogNameException() {
-        super(new ErrorCode(HttpStatus.BAD_REQUEST,
+        super(new ErrorCode(BAD_REQUEST,
                 """
                         블로그 이름은 다음 조건을 만족해야 합니다.
                         - 최소 4자 최대 32자 이내여야 한다

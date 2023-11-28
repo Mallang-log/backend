@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("포스트 좋아요 이벤트 핸들러(PostLikeEventHandler) 은(는)")
+@DisplayName("포스트 좋아요 이벤트 핸들러 (PostLikeEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostLikeEventHandlerTest extends ServiceTest {
@@ -38,7 +38,7 @@ class PostLikeEventHandlerTest extends ServiceTest {
             포스트를_삭제한다(memberId, postId, blogName);
 
             // then
-            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, blogName, memberId)).isEmpty();
+            assertThat(postLikeRepository.findByPostAndMember(postId, blogName, memberId)).isEmpty();
         }
     }
 }

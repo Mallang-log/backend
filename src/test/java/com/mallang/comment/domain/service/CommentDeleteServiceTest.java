@@ -20,7 +20,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@DisplayName("댓글 제거 도메인 서비스(CommentDeleteService) 은(는)")
+@DisplayName("댓글 제거 도메인 서비스 (CommentDeleteService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class CommentDeleteServiceTest {

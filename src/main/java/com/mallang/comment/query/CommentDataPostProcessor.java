@@ -64,7 +64,7 @@ public class CommentDataPostProcessor {
     }
 
     private boolean isPostWriter(Long postId, String blogName, @Nullable Long memberId) {
-        Post post = postRepository.getByIdAndBlogName(postId, blogName);
+        Post post = postRepository.getById(postId, blogName);
         return Objects.equals(post.getWriter().getId(), memberId);
     }
 

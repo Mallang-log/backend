@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
-@DisplayName("포스트 즐겨찾기 서비스(PostStarService) 은(는)")
+@DisplayName("포스트 즐겨찾기 서비스 (PostStarService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostStarServiceTest extends ServiceTest {
@@ -154,7 +154,7 @@ class PostStarServiceTest extends ServiceTest {
             postStarService.cancel(new CancelPostStarCommand(memberId, publicPostId, blogName));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 

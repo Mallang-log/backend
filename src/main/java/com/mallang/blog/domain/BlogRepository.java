@@ -15,14 +15,14 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     @Query("SELECT b FROM Blog b WHERE b.name.value = :blogName")
     Optional<Blog> findByName(@Param("blogName") String blogName);
 
-    default Blog getByNameAndOwnerId(String blogName, Long ownerId) {
-        return findByNameAndOwnerId(blogName, ownerId)
+    default Blog getByNameAndOwner(String blogName, Long ownerId) {
+        return findByNameAndOwner(blogName, ownerId)
                 .orElseThrow(() ->
                         new NotFoundBlogException("존재하지 않는 블로그거나, 해당 사용자의 블로그가 아닙니다."));
     }
 
     @Query("SELECT b FROM Blog b WHERE b.name.value = :blogName AND b.owner.id = :ownerId")
-    Optional<Blog> findByNameAndOwnerId(
+    Optional<Blog> findByNameAndOwner(
             @Param("blogName") String blogName,
             @Param("ownerId") Long ownerId
     );

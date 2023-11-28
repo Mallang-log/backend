@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 
-@DisplayName("포스트 즐겨찾기 조회 서비스(PostStarQueryService) 은(는)")
+@DisplayName("포스트 즐겨찾기 조회 서비스 (PostStarQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostStarQueryServiceTest extends ServiceTest {

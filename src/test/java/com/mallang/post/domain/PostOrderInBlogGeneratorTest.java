@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("블로그의 포스트 ID 생성기(PostOrderInBlogGenerator) 은(는)")
+@DisplayName("블로그의 포스트 ID 생성기 (PostOrderInBlogGenerator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostOrderInBlogGeneratorTest extends ServiceTest {

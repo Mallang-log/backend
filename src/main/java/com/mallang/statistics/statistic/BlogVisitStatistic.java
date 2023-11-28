@@ -29,8 +29,13 @@ public class BlogVisitStatistic {
     private int count;
 
     public BlogVisitStatistic(LocalDate statisticDate, String blogName) {
+        this(statisticDate, blogName, 0);
+    }
+
+    public BlogVisitStatistic(LocalDate statisticDate, String blogName, int count) {
         this.statisticDate = statisticDate;
         this.blogName = blogName;
+        this.count = count;
     }
 
     public void addCount(int amount) {

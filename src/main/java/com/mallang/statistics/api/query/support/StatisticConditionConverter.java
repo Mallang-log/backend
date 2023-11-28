@@ -6,6 +6,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 
+import com.mallang.statistics.api.query.PeriodType;
 import com.mallang.statistics.api.query.StatisticCondition;
 import java.time.LocalDate;
 
