@@ -1,10 +1,9 @@
 package com.mallang.statistics.api.query.dao;
 
-import static com.mallang.blog.domain.QBlog.blog;
 import static com.mallang.statistics.statistic.QBlogVisitStatistic.blogVisitStatistic;
 
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.exception.NotFoundBlogException;
+import com.mallang.blog.query.support.BlogQuerySupport;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.BlogVisitStatisticManageResponse;
 import com.mallang.statistics.api.query.support.PeriodPartitioner;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlogVisitStatisticManageDao {
 
+    private final BlogQuerySupport blogQuerySupport;
     private final JPAQueryFactory query;
 
     public List<BlogVisitStatisticManageResponse> find(
@@ -31,17 +30,10 @@ public class BlogVisitStatisticManageDao {
             String blogName,
             StatisticCondition condition
     ) {
-        Blog targetBlog = Optional.ofNullable(query.selectFrom(blog)
-                .where(
-                        blog.owner.id.eq(memberId),
-                        blog.name.value.eq(blogName)
-                )
-                .fetchFirst()
-        ).orElseThrow(NotFoundBlogException::new);
-
+        Blog blog = blogQuerySupport.getByMemberAndBlog(memberId, blogName);
         List<BlogVisitStatistic> result = query.selectFrom(blogVisitStatistic)
                 .where(
-                        blogVisitStatistic.blogName.eq(targetBlog.getName()),
+                        blogVisitStatistic.blogName.eq(blog.getName()),
                         blogVisitStatistic.statisticDate
                                 .between(condition.startDayInclude(), condition.lastDayInclude())
                 )

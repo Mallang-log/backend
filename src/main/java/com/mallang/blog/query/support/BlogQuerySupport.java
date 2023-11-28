@@ -14,4 +14,12 @@ public interface BlogQuerySupport extends JpaRepository<Blog, Long> {
 
     @Query("SELECT b FROM Blog b JOIN FETCH b.owner WHERE b.name.value = :blogName")
     Optional<Blog> findWithOwnerByName(String blogName);
+
+    default Blog getByMemberAndBlog(Long memberId, String blogName) {
+        return findByMemberAndBlog(memberId, blogName)
+                .orElseThrow(NotFoundBlogException::new);
+    }
+
+    @Query("SELECT b FROM Blog b WHERE b.name.value = :blogName AND b.owner.id = :memberId")
+    Optional<Blog> findByMemberAndBlog(Long memberId, String blogName);
 }
