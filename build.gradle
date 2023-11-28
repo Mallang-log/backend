@@ -106,6 +106,7 @@ def excludeCoverage = [
         '**/statistics/job/**/*Execution*',
         '**/statistics/job/**/*JobHistoryRecorder*',
         '**/statistics/job/**/*Scheduler*',
+        '**/statistics/statistic/collector/**/*PointCuts*',
 ] + Qdomains
 
 jacocoTestReport {
@@ -161,6 +162,7 @@ jacocoTestCoverageVerification {
                     '*.statistics.job.*Execution*',
                     '*.statistics.job.*JobHistoryRecorder*',
                     '*.statistics.job.*Scheduler*',
+                    '*.statistics.statistic.collector.*PointCuts*',
             ] + QdomainsInVerification
 
             limit {

@@ -25,12 +25,16 @@ public class PostViewHistoryAop {
 
     private final PostViewHistoryCollector postViewHistoryCollector;
 
-    @Pointcut("execution(* com.mallang.post.query.PostQueryService.getByIdAndBlogName(..))")
-    public void postQueryServiceGetByIdAndBlogName() {
+    public static class PointCuts {
+
+        @Pointcut("execution(* com.mallang.post.query.PostQueryService.getByIdAndBlogName(..))")
+        void postQueryServiceGetByIdAndBlogName() {
+        }
     }
 
+
     @AfterReturning(
-            pointcut = "postQueryServiceGetByIdAndBlogName()",
+            pointcut = "com.mallang.statistics.statistic.collector.PostViewHistoryAop.PointCuts.postQueryServiceGetByIdAndBlogName()",
             returning = "result"
     )
     public void history(PostDetailResponse result) {
