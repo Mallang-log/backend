@@ -1,5 +1,30 @@
 package com.mallang.statistics.query.dao;
 
+import static com.mallang.common.LocalDateFixture.날짜_2020_12_31;
+import static com.mallang.common.LocalDateFixture.날짜_2020_1_1;
+import static com.mallang.common.LocalDateFixture.날짜_2021_12_31;
+import static com.mallang.common.LocalDateFixture.날짜_2021_1_1;
+import static com.mallang.common.LocalDateFixture.날짜_2022_12_31;
+import static com.mallang.common.LocalDateFixture.날짜_2022_1_1;
+import static com.mallang.common.LocalDateFixture.날짜_2023_10_1;
+import static com.mallang.common.LocalDateFixture.날짜_2023_10_20;
+import static com.mallang.common.LocalDateFixture.날짜_2023_10_31;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_1;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_13_월;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_15_수;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_19_일;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_20_월;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_21_화;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_25_토;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_26_일;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_27_월;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_28_화;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_30;
+import static com.mallang.common.LocalDateFixture.날짜_2023_12_31;
+import static com.mallang.common.LocalDateFixture.날짜_2023_12_3_일;
+import static com.mallang.common.LocalDateFixture.날짜_2023_1_1;
+import static com.mallang.common.LocalDateFixture.날짜_2023_9_1;
+import static com.mallang.common.LocalDateFixture.날짜_2023_9_30;
 import static com.mallang.statistics.query.support.PeriodType.DAY;
 import static com.mallang.statistics.query.support.PeriodType.MONTH;
 import static com.mallang.statistics.query.support.PeriodType.WEEK;
@@ -45,10 +70,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
 
     @Test
     void 날짜가_잘못_들어온_경우() {
-        LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
-        LocalDate 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);
-        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_26, 날짜_2023_11_25);
-        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId, 10);
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_26_일, 날짜_2023_11_25_토);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
@@ -60,8 +82,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
     @Test
     void 조회_통계가_하나도_없는_경우() {
         // given
-        LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
-        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25, 날짜_2023_11_25);
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25_토, 날짜_2023_11_25_토);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
@@ -70,23 +91,19 @@ class PostViewStatisticDaoTest extends ServiceTest {
         assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
-                        new PostViewStatisticResponse(날짜_2023_11_25, 날짜_2023_11_25, 0)
+                        new PostViewStatisticResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 0)
                 ));
     }
 
     @Test
     void 일간_조회수_통계를_구한다() {
         // given
-        LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
-        LocalDate 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);
-        LocalDate 날짜_2023_11_27 = LocalDate.of(2023, 11, 27);
-        LocalDate 날짜_2023_11_28 = LocalDate.of(2023, 11, 28);
-        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId, 10);
-        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId, 5);
-        PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27, postId);
-        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId, 100);
+        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25_토, postId, 10);
+        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26_일, postId, 5);
+        PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27_월, postId);
+        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28_화, postId, 100);
         postViewStatisticRepository.saveAll(List.of(통계_2023_11_25, 통계_2023_11_26, 통계_2023_11_27, 통계_2023_11_28));
-        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25, 날짜_2023_11_28);
+        StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25_토, 날짜_2023_11_28_화);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
@@ -95,36 +112,22 @@ class PostViewStatisticDaoTest extends ServiceTest {
         assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
-                        new PostViewStatisticResponse(날짜_2023_11_25, 날짜_2023_11_25, 10),
-                        new PostViewStatisticResponse(날짜_2023_11_26, 날짜_2023_11_26, 5),
-                        new PostViewStatisticResponse(날짜_2023_11_27, 날짜_2023_11_27, 0),
-                        new PostViewStatisticResponse(날짜_2023_11_28, 날짜_2023_11_28, 100)
+                        new PostViewStatisticResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 10),
+                        new PostViewStatisticResponse(날짜_2023_11_26_일, 날짜_2023_11_26_일, 5),
+                        new PostViewStatisticResponse(날짜_2023_11_27_월, 날짜_2023_11_27_월, 0),
+                        new PostViewStatisticResponse(날짜_2023_11_28_화, 날짜_2023_11_28_화, 100)
                 ));
     }
 
     @Test
     void 주간_조회수_통계를_구한다() {
         // given
-        LocalDate 날짜_2023_11_13 = LocalDate.of(2023, 11, 13);  // 저저번주 시작
-        LocalDate 날짜_2023_11_15 = LocalDate.of(2023, 11, 15);  // 저저번주
-        LocalDate 날짜_2023_11_19 = LocalDate.of(2023, 11, 19);  // 저저번주 끝
-
-        LocalDate 날짜_2023_11_20 = LocalDate.of(2023, 11, 20);  // 저번주 시작
-        LocalDate 날짜_2023_11_21 = LocalDate.of(2023, 11, 21);  // 저번주
-        LocalDate 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);  // 저번주 끝
-
-        LocalDate 날짜_2023_11_27 = LocalDate.of(2023, 11, 27);  // 이번주 시작
-        LocalDate 날짜_2023_11_28 = LocalDate.of(2023, 11, 28);  // 이번주
-        LocalDate 날짜_2023_12_3 = LocalDate.of(2023, 12, 3);  // 이번주 끝
-
-        PostViewStatistic 통계_2023_11_15 = new PostViewStatistic(날짜_2023_11_15, postId, 10);
-
-        PostViewStatistic 통계_2023_11_20 = new PostViewStatistic(날짜_2023_11_20, postId, 5);
-        PostViewStatistic 통계_2023_11_21 = new PostViewStatistic(날짜_2023_11_21, postId, 25);
-        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId, 2);
-
-        PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27, postId, 100);
-        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId, 200);
+        PostViewStatistic 통계_2023_11_15 = new PostViewStatistic(날짜_2023_11_15_수, postId, 10);
+        PostViewStatistic 통계_2023_11_20 = new PostViewStatistic(날짜_2023_11_20_월, postId, 5);
+        PostViewStatistic 통계_2023_11_21 = new PostViewStatistic(날짜_2023_11_21_화, postId, 25);
+        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26_일, postId, 2);
+        PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27_월, postId, 100);
+        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28_화, postId, 200);
 
         postViewStatisticRepository.saveAll(List.of(
                 통계_2023_11_15,
@@ -134,7 +137,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
                 통계_2023_11_27,
                 통계_2023_11_28
         ));
-        StatisticCondition cond = new StatisticCondition(WEEK, 날짜_2023_11_13, 날짜_2023_11_28);
+        StatisticCondition cond = new StatisticCondition(WEEK, 날짜_2023_11_13_월, 날짜_2023_11_28_화);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
@@ -143,25 +146,15 @@ class PostViewStatisticDaoTest extends ServiceTest {
         assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
-                        new PostViewStatisticResponse(날짜_2023_11_13, 날짜_2023_11_19, 10),
-                        new PostViewStatisticResponse(날짜_2023_11_20, 날짜_2023_11_26, 32),
-                        new PostViewStatisticResponse(날짜_2023_11_27, 날짜_2023_12_3, 300)
+                        new PostViewStatisticResponse(날짜_2023_11_13_월, 날짜_2023_11_19_일, 10),
+                        new PostViewStatisticResponse(날짜_2023_11_20_월, 날짜_2023_11_26_일, 32),
+                        new PostViewStatisticResponse(날짜_2023_11_27_월, 날짜_2023_12_3_일, 300)
                 ));
     }
 
     @Test
     void 월간_조회수_통계를_구한다() {
         // given
-        LocalDate 날짜_2023_9_1 = LocalDate.of(2023, 9, 1);
-        LocalDate 날짜_2023_9_30 = LocalDate.of(2023, 9, 30);
-
-        LocalDate 날짜_2023_10_1 = LocalDate.of(2023, 10, 1);
-        LocalDate 날짜_2023_10_20 = LocalDate.of(2023, 10, 20);
-        LocalDate 날짜_2023_10_31 = LocalDate.of(2023, 10, 31);
-
-        LocalDate 날짜_2023_11_1 = LocalDate.of(2023, 11, 1);
-        LocalDate 날짜_2023_11_30 = LocalDate.of(2023, 11, 30);
-
         PostViewStatistic 통계_2023_9_1 = new PostViewStatistic(날짜_2023_9_1, postId, 10);
 
         PostViewStatistic 통계_2023_10_1 = new PostViewStatistic(날짜_2023_10_1, postId, 5);
@@ -197,20 +190,8 @@ class PostViewStatisticDaoTest extends ServiceTest {
     @Test
     void 연간_조회수_통계를_구한다() {
         // given
-        LocalDate 날짜_2020_1_1 = LocalDate.of(2020, 1, 1);
-        LocalDate 날짜_2020_12_31 = LocalDate.of(2020, 12, 31);
-
-        LocalDate 날짜_2021_1_1 = LocalDate.of(2021, 1, 1);
-        LocalDate 날짜_2021_12_31 = LocalDate.of(2021, 12, 31);
-
-        LocalDate 날짜_2022_1_1 = LocalDate.of(2022, 1, 1);
         LocalDate 날짜_2022_9_3 = LocalDate.of(2022, 9, 30);
-        LocalDate 날짜_2022_12_31 = LocalDate.of(2022, 12, 31);
-
-        LocalDate 날짜_2023_1_1 = LocalDate.of(2023, 1, 1);
         LocalDate 날짜_2023_2_3 = LocalDate.of(2023, 11, 1);
-        LocalDate 날짜_2023_11_30 = LocalDate.of(2023, 11, 30);
-        LocalDate 날짜_2023_12_31 = LocalDate.of(2023, 12, 31);
 
         PostViewStatistic 통계_2022_1_1 = new PostViewStatistic(날짜_2022_1_1, postId, 5);
         PostViewStatistic 통계_2022_9_3 = new PostViewStatistic(날짜_2022_9_3, postId, 50);

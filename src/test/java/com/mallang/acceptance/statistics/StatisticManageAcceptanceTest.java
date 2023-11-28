@@ -9,6 +9,11 @@ import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_�
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.acceptance.statistics.StatisticManageAcceptanceSteps.포스트_통계_조회_요청;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_24_금;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_25_토;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_26_일;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_27_월;
+import static com.mallang.common.LocalDateFixture.날짜_2023_11_28_화;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static com.mallang.statistics.query.support.PeriodType.DAY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +25,6 @@ import com.mallang.statistics.query.response.PostViewStatisticResponse;
 import com.mallang.statistics.statistic.PostViewStatistic;
 import com.mallang.statistics.statistic.PostViewStatisticRepository;
 import io.restassured.common.mapper.TypeRef;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,20 +77,14 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
         void 포스트_통계_조회() {
             // given
             PostId postId = new PostId(포스트_ID, 말랑_블로그_ID);
-            var 날짜_2023_11_24 = LocalDate.of(2023, 11, 24);
-            var 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
-            var 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);
-            var 날짜_2023_11_27 = LocalDate.of(2023, 11, 27);
-            var 날짜_2023_11_28 = LocalDate.of(2023, 11, 28);
-            var 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId, 10);
-            var 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId, 5);
-            var 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27, postId);
-            var 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId, 100);
+            var 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25_토, postId, 10);
+            var 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26_일, postId, 5);
+            var 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27_월, postId);
+            var 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28_화, postId, 100);
             postViewStatisticRepository.saveAll(List.of(통계_2023_11_25, 통계_2023_11_26, 통계_2023_11_27, 통계_2023_11_28));
             var date_2023_11_28 = "2023-11-28";
 
             // when
-
             var 응답 = 포스트_통계_조회_요청(
                     말랑_세션_ID,
                     말랑_블로그_이름,
@@ -101,11 +99,11 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
             });
             assertThat(response).usingRecursiveComparison()
                     .isEqualTo(List.of(
-                            new PostViewStatisticResponse(날짜_2023_11_24, 날짜_2023_11_24, 0),
-                            new PostViewStatisticResponse(날짜_2023_11_25, 날짜_2023_11_25, 10),
-                            new PostViewStatisticResponse(날짜_2023_11_26, 날짜_2023_11_26, 5),
-                            new PostViewStatisticResponse(날짜_2023_11_27, 날짜_2023_11_27, 0),
-                            new PostViewStatisticResponse(날짜_2023_11_28, 날짜_2023_11_28, 100)
+                            new PostViewStatisticResponse(날짜_2023_11_24_금, 날짜_2023_11_24_금, 0),
+                            new PostViewStatisticResponse(날짜_2023_11_25_토, 날짜_2023_11_25_토, 10),
+                            new PostViewStatisticResponse(날짜_2023_11_26_일, 날짜_2023_11_26_일, 5),
+                            new PostViewStatisticResponse(날짜_2023_11_27_월, 날짜_2023_11_27_월, 0),
+                            new PostViewStatisticResponse(날짜_2023_11_28_화, 날짜_2023_11_28_화, 100)
                     ));
         }
 
