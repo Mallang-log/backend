@@ -7,12 +7,13 @@ import com.mallang.post.domain.Post;
 import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.PostViewStatisticResponse;
+import com.mallang.statistics.api.query.support.PeriodPartitioner;
+import com.mallang.statistics.api.query.support.PeriodPartitioner.PeriodPart;
 import com.mallang.statistics.statistic.PostViewStatistic;
 import com.mallang.statistics.statistic.utils.LocalDateUtils;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDate;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
@@ -53,14 +54,11 @@ public class PostViewStatisticDao {
     }
 
     private List<PostViewStatisticResponse> getResponseTemplates(StatisticCondition condition) {
-        List<PostViewStatisticResponse> postViewStatisticResponses = new ArrayList<>();
-        LocalDate current = condition.startDayInclude();
-        while (current.isBefore(condition.lastDayInclude()) || current.isEqual(condition.lastDayInclude())) {
-            LocalDate next = current.plus(1, condition.periodType().temporalUnit());
-            postViewStatisticResponses.add(new PostViewStatisticResponse(current, next.minusDays(1)));
-            current = next;
-        }
-        return postViewStatisticResponses;
+        List<PeriodPart> partition = PeriodPartitioner
+                .partition(condition.periodType(), condition.startDayInclude(), condition.lastDayInclude());
+        return partition.stream()
+                .map(it -> new PostViewStatisticResponse(it.startInclude(), it.endInclude()))
+                .toList();
     }
 
     private void aggregate(Deque<PostViewStatistic> statistics, List<PostViewStatisticResponse> response) {
