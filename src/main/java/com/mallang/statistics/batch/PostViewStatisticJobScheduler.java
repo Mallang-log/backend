@@ -1,7 +1,7 @@
-package com.mallang.statistics.job;
+package com.mallang.statistics.batch;
 
-import com.mallang.statistics.job.exeution.JobExecution;
-import com.mallang.statistics.job.exeution.JobHistoryRecorder;
+import com.mallang.statistics.batch.exeution.JobExecution;
+import com.mallang.statistics.batch.exeution.JobHistoryRecorder;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

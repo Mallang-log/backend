@@ -12,7 +12,8 @@ import lombok.Builder;
 
 @Builder
 public record PostDetailResponse(
-        Long id,
+        Long postId,
+        Long blogId,
         String blogName,
         String title,
         String content,
@@ -33,7 +34,8 @@ public record PostDetailResponse(
 
     public static PostDetailResponse withLiked(Post post, boolean isLiked) {
         return PostDetailResponse.builder()
-                .id(post.getPostId().getId())
+                .postId(post.getPostId().getId())
+                .blogId(post.getPostId().getBlogId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
                 .content(post.getContent())

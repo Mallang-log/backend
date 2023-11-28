@@ -1,6 +1,6 @@
-package com.mallang.statistics.job.exeution;
+package com.mallang.statistics.batch.exeution;
 
-import static com.mallang.statistics.job.exeution.Status.SUCCESS;
+import static com.mallang.statistics.batch.exeution.Status.SUCCESS;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
