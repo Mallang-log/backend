@@ -18,8 +18,6 @@ public class LocalDateFixture {
     public static final LocalDate 날짜_2023_10_1 = LocalDate.of(2023, 10, 1);
     public static final LocalDate 날짜_2023_10_20 = LocalDate.of(2023, 10, 20);
     public static final LocalDate 날짜_2023_10_31 = LocalDate.of(2023, 10, 31);
-    public static final LocalDate 날짜_2023_11_1 = LocalDate.of(2023, 11, 1);
-    public static final LocalDate 날짜_2023_11_30 = LocalDate.of(2023, 11, 30);
 
     public static final LocalDate 날짜_2023_11_1_수 = LocalDate.of(2023, 11, 1);
     public static final LocalDate 날짜_2023_11_2_목 = LocalDate.of(2023, 11, 2);
