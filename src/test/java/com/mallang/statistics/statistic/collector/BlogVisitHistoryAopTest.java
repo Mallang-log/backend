@@ -1,4 +1,4 @@
-package com.mallang.statistics.collector;
+package com.mallang.statistics.statistic.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,20 +6,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.mallang.blog.application.command.WriteAboutCommand;
+import com.mallang.blog.presentation.AboutController;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.exception.NotFoundPostException;
-import com.mallang.post.query.PostQueryService;
+import com.mallang.post.presentation.PostController;
 import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
-import com.mallang.statistics.statistic.collector.PostViewHistoryAop;
-import com.mallang.statistics.statistic.collector.PostViewHistoryCollector;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.aspectj.lang.annotation.Pointcut;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -27,76 +23,56 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-@DisplayName("포스트 조회 이력 AOP(PostViewHistoryAop) 은(는)")
+@DisplayName("블로그 방문 이력 AOP(BlogVisitHistoryAop) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest
-class PostViewHistoryAopTest extends ServiceTest {
+class BlogVisitHistoryAopTest extends ServiceTest {
 
     @MockBean
-    private PostViewHistoryCollector postViewHistoryCollector;
+    private BlogVisitHistoryCollector blogVisitHistoryCollector;
 
     @Autowired
-    private PostQueryService postQueryService;
+    private PostController postController;
 
     @Autowired
-    private PostViewHistoryAop postViewHistoryAop;
+    private AboutController aboutController;
+
+    @Autowired
+    private BlogVisitHistoryAop blogVisitHistoryAop;
 
     @Test
-    void forJacocoTestCoverage() {
-        postViewHistoryAop.postQueryServiceGetByIdAndBlogName();
-    }
-
-    @Test
-    void 포인트컷으로_PostQueryService_의_getByIdAndBlogName_매칭() throws NoSuchMethodException {
-        // given
-        Method pointcut = PostViewHistoryAop.class.getDeclaredMethod("postQueryServiceGetByIdAndBlogName");
-        Pointcut annotation = AnnotationUtils.getAnnotation(pointcut, Pointcut.class);
-        String regex = "execution\\(\\* (.+?)\\(..\\)\\)";
-        Pattern pattern = Pattern.compile(regex);
-        assert annotation != null;
-        Matcher matcher = pattern.matcher(annotation.value());
-
+    void Blog_About_Post_Controller_중_GetMapping이_붙었으며_파라미터로_blogName을_받는_메서드_외_다른_메서드가_호출되면_저장하지_않는다() {
         // when
-        matcher.find();
-        String group = matcher.group(1);
+        PostSearchCond cond = PostSearchCond.builder()
+                .blogName("blog-name")
+                .build();
+        postController.search(null, cond, PageRequest.of(0, 100));
 
         // then
-        assertThat(group).isEqualTo(PostQueryService.class.getName() + ".getByIdAndBlogName");
+        verify(blogVisitHistoryCollector, times(0)).save(any());
     }
 
     @Test
-    void PostQueryService_의_getByIdAndBlogName_외의_메서드가_호출되면_저장하지_않는다() {
-        // when
-        postQueryService.search(new PostSearchCond(null, null, null, null, null, null, null), PageRequest.of(0, 20),
-                null
-        );
-
-        // then
-        verify(postViewHistoryCollector, times(0)).save(any());
-    }
-
-    @Test
-    void PostQueryService_getByIdAndBlogName_시_기존_조회수_쿠키가_없다면_세팅한다() {
+    void 작동_시_기존_블로그_방문_쿠키가_없다면_세팅한다() {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
         Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
 
         // when
-        postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
+        postController.getById(null, null, "mallang-log", postId);
 
         // then
-        verify(postViewHistoryCollector, times(1)).save(any());
+        verify(blogVisitHistoryCollector, times(1)).save(any());
         MockHttpServletResponse response = testHttpResponse();
-        assertThat(response.getCookie("POST_VIEW_COOKIE")).isNotNull();
+        assertThat(response.getCookie("BLOG_VISIT_COOKIE")).isNotNull();
     }
 
     @Test
@@ -105,13 +81,12 @@ class PostViewHistoryAopTest extends ServiceTest {
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
         Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
-        postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
+        postController.getById(null, null, "mallang-log", postId);
 
         // when
-        Cookie postViewCookie = testHttpResponse().getCookie("POST_VIEW_COOKIE");
+        Cookie postViewCookie = testHttpResponse().getCookie("BLOG_VISIT_COOKIE");
 
         // then
-        assert postViewCookie != null;
         assertThat(postViewCookie.isHttpOnly()).isTrue();
         assertThat(postViewCookie.getSecure()).isTrue();
         assertThat(postViewCookie.getMaxAge()).isEqualTo(60 * 60 * 24 * 365 * 10);
@@ -119,34 +94,34 @@ class PostViewHistoryAopTest extends ServiceTest {
     }
 
     @Test
-    void PostQueryService_getByIdAndBlogName_시_기존_조회수_쿠키가_있다면_별다른_설정을_하지_않는다() {
+    void 작동_시_기존_블로그_방문_쿠키가_있다면_별다른_설정을_하지_않는다() {
         // given
         MockHttpServletRequest request = testHttpRequest();
-        request.setCookies(new Cookie("POST_VIEW_COOKIE", UUID.randomUUID().toString()));
+        request.setCookies(new Cookie("BLOG_VISIT_COOKIE", UUID.randomUUID().toString()));
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        aboutService.write(new WriteAboutCommand(memberId, blogName, "about"));
 
         // when
-        postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
+        aboutController.findByBlogName("mallang-log");
 
         // then
-        verify(postViewHistoryCollector, times(1)).save(any());
+        verify(blogVisitHistoryCollector, times(1)).save(any());
         MockHttpServletResponse response = testHttpResponse();
-        assertThat(response.getCookie("POST_VIEW_COOKIE")).isNull();
+        assertThat(response.getCookie("BLOG_VISIT_COOKIE")).isNull();
     }
 
     @Test
     void 조회_실패시_동작하지_않는다() {
         // when
         assertThatThrownBy(() -> {
-            postQueryService.getByIdAndBlogName(1000L, "name", 1L, null);
+            postController.getById(null, null, "mallang-log", 1000L);
         }).isInstanceOf(NotFoundPostException.class);
 
         // then
-        verify(postViewHistoryCollector, times(0)).save(any());
+        verify(blogVisitHistoryCollector, times(0)).save(any());
         MockHttpServletResponse response = testHttpResponse();
-        assertThat(response.getCookie("POST_VIEW_COOKIE")).isNull();
+        assertThat(response.getCookie("BLOG_VISIT_COOKIE")).isNull();
     }
 
     private MockHttpServletRequest testHttpRequest() {
