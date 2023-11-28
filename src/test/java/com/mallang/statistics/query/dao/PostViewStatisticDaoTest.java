@@ -48,8 +48,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
         LocalDate 날짜_2023_11_25 = LocalDate.of(2023, 11, 25);
         LocalDate 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);
         StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_26, 날짜_2023_11_25);
-        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId);
-        통계_2023_11_25.addCount(10);
+        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId, 10);
 
         // when
         List<PostViewStatisticResponse> result = postViewStatisticDao.find(memberId, blogName, postId.getId(), cond);
@@ -82,13 +81,10 @@ class PostViewStatisticDaoTest extends ServiceTest {
         LocalDate 날짜_2023_11_26 = LocalDate.of(2023, 11, 26);
         LocalDate 날짜_2023_11_27 = LocalDate.of(2023, 11, 27);
         LocalDate 날짜_2023_11_28 = LocalDate.of(2023, 11, 28);
-        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId);
-        통계_2023_11_25.addCount(10);
-        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId);
-        통계_2023_11_26.addCount(5);
+        PostViewStatistic 통계_2023_11_25 = new PostViewStatistic(날짜_2023_11_25, postId, 10);
+        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId, 5);
         PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27, postId);
-        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId);
-        통계_2023_11_28.addCount(100);
+        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId, 100);
         postViewStatisticRepository.saveAll(List.of(통계_2023_11_25, 통계_2023_11_26, 통계_2023_11_27, 통계_2023_11_28));
         StatisticCondition cond = new StatisticCondition(DAY, 날짜_2023_11_25, 날짜_2023_11_28);
 
@@ -121,20 +117,14 @@ class PostViewStatisticDaoTest extends ServiceTest {
         LocalDate 날짜_2023_11_28 = LocalDate.of(2023, 11, 28);  // 이번주
         LocalDate 날짜_2023_12_3 = LocalDate.of(2023, 12, 3);  // 이번주 끝
 
-        PostViewStatistic 통계_2023_11_15 = new PostViewStatistic(날짜_2023_11_15, postId);
-        통계_2023_11_15.addCount(10);
+        PostViewStatistic 통계_2023_11_15 = new PostViewStatistic(날짜_2023_11_15, postId, 10);
 
-        PostViewStatistic 통계_2023_11_20 = new PostViewStatistic(날짜_2023_11_20, postId);
-        통계_2023_11_20.addCount(5);
-        PostViewStatistic 통계_2023_11_21 = new PostViewStatistic(날짜_2023_11_21, postId);
-        통계_2023_11_21.addCount(25);
-        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId);
-        통계_2023_11_26.addCount(2);
+        PostViewStatistic 통계_2023_11_20 = new PostViewStatistic(날짜_2023_11_20, postId, 5);
+        PostViewStatistic 통계_2023_11_21 = new PostViewStatistic(날짜_2023_11_21, postId, 25);
+        PostViewStatistic 통계_2023_11_26 = new PostViewStatistic(날짜_2023_11_26, postId, 2);
 
-        PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27, postId);
-        통계_2023_11_27.addCount(100);
-        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId);
-        통계_2023_11_28.addCount(200);
+        PostViewStatistic 통계_2023_11_27 = new PostViewStatistic(날짜_2023_11_27, postId, 100);
+        PostViewStatistic 통계_2023_11_28 = new PostViewStatistic(날짜_2023_11_28, postId, 200);
 
         postViewStatisticRepository.saveAll(List.of(
                 통계_2023_11_15,
@@ -172,20 +162,14 @@ class PostViewStatisticDaoTest extends ServiceTest {
         LocalDate 날짜_2023_11_1 = LocalDate.of(2023, 11, 1);
         LocalDate 날짜_2023_11_30 = LocalDate.of(2023, 11, 30);
 
-        PostViewStatistic 통계_2023_9_1 = new PostViewStatistic(날짜_2023_9_1, postId);
-        통계_2023_9_1.addCount(10);
+        PostViewStatistic 통계_2023_9_1 = new PostViewStatistic(날짜_2023_9_1, postId, 10);
 
-        PostViewStatistic 통계_2023_10_1 = new PostViewStatistic(날짜_2023_10_1, postId);
-        통계_2023_10_1.addCount(5);
-        PostViewStatistic 통계_2023_10_20 = new PostViewStatistic(날짜_2023_10_20, postId);
-        통계_2023_10_20.addCount(25);
-        PostViewStatistic 통계_2023_10_31 = new PostViewStatistic(날짜_2023_10_31, postId);
-        통계_2023_10_31.addCount(2);
+        PostViewStatistic 통계_2023_10_1 = new PostViewStatistic(날짜_2023_10_1, postId, 5);
+        PostViewStatistic 통계_2023_10_20 = new PostViewStatistic(날짜_2023_10_20, postId, 25);
+        PostViewStatistic 통계_2023_10_31 = new PostViewStatistic(날짜_2023_10_31, postId, 2);
 
-        PostViewStatistic 통계_2023_11_1 = new PostViewStatistic(날짜_2023_11_1, postId);
-        통계_2023_11_1.addCount(100);
-        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30, postId);
-        통계_2023_11_30.addCount(200);
+        PostViewStatistic 통계_2023_11_1 = new PostViewStatistic(날짜_2023_11_1, postId, 100);
+        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30, postId, 200);
 
         postViewStatisticRepository.saveAll(List.of(
                 통계_2023_9_1,
@@ -228,17 +212,12 @@ class PostViewStatisticDaoTest extends ServiceTest {
         LocalDate 날짜_2023_11_30 = LocalDate.of(2023, 11, 30);
         LocalDate 날짜_2023_12_31 = LocalDate.of(2023, 12, 31);
 
-        PostViewStatistic 통계_2022_1_1 = new PostViewStatistic(날짜_2022_1_1, postId);
-        통계_2022_1_1.addCount(5);
-        PostViewStatistic 통계_2022_9_3 = new PostViewStatistic(날짜_2022_9_3, postId);
-        통계_2022_9_3.addCount(50);
-        PostViewStatistic 통계_2022_12_31 = new PostViewStatistic(날짜_2022_12_31, postId);
-        통계_2022_12_31.addCount(10);
+        PostViewStatistic 통계_2022_1_1 = new PostViewStatistic(날짜_2022_1_1, postId, 5);
+        PostViewStatistic 통계_2022_9_3 = new PostViewStatistic(날짜_2022_9_3, postId, 50);
+        PostViewStatistic 통계_2022_12_31 = new PostViewStatistic(날짜_2022_12_31, postId, 10);
 
-        PostViewStatistic 통계_2023_2_3 = new PostViewStatistic(날짜_2023_2_3, postId);
-        통계_2023_2_3.addCount(30);
-        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30, postId);
-        통계_2023_11_30.addCount(20);
+        PostViewStatistic 통계_2023_2_3 = new PostViewStatistic(날짜_2023_2_3, postId, 30);
+        PostViewStatistic 통계_2023_11_30 = new PostViewStatistic(날짜_2023_11_30, postId, 20);
 
         postViewStatisticRepository.saveAll(List.of(
                 통계_2022_1_1,

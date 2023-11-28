@@ -4,6 +4,7 @@ import static com.mallang.post.domain.QPost.post;
 import static com.mallang.statistics.statistic.QPostViewStatistic.postViewStatistic;
 
 import com.mallang.post.domain.Post;
+import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.statistics.query.StatisticCondition;
 import com.mallang.statistics.query.response.PostViewStatisticResponse;
 import com.mallang.statistics.statistic.PostViewStatistic;
@@ -14,6 +15,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -29,13 +31,15 @@ public class PostViewStatisticDao {
             Long postId,
             StatisticCondition condition
     ) {
-        Post findPost = query.selectFrom(post)
-                .where(
-                        post.postId.id.eq(postId),
-                        post.blog.name.value.eq(blogName),
-                        post.writer.id.eq(memberId)
-                )
-                .fetchFirst();
+        Post findPost = Optional.ofNullable(query.selectFrom(post)
+                        .where(
+                                post.postId.id.eq(postId),
+                                post.blog.name.value.eq(blogName),
+                                post.writer.id.eq(memberId)
+                        )
+                        .fetchFirst())
+                .orElseThrow(NotFoundPostException::new);
+
         List<PostViewStatistic> result = query.selectFrom(postViewStatistic)
                 .where(
                         postViewStatistic.postId.eq(findPost.getPostId()),
