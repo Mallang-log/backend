@@ -154,7 +154,7 @@ class PostStarServiceTest extends ServiceTest {
             postStarService.cancel(new CancelPostStarCommand(memberId, publicPostId, blogName));
 
             // then
-            Post post = postRepository.getByIdAndBlogName(publicPostId, blogName);
+            Post post = postRepository.getById(publicPostId, blogName);
             assertThat(post.getLikeCount()).isZero();
         }
 

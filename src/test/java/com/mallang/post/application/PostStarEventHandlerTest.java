@@ -38,7 +38,7 @@ class PostStarEventHandlerTest extends ServiceTest {
             포스트를_삭제한다(memberId, postId, blogName);
 
             // then
-            assertThat(postStarRepository.findByPostIdAndBlogNameAndMemberId(postId, blogName, memberId)).isEmpty();
+            assertThat(postStarRepository.findByPostAndMember(postId, blogName, memberId)).isEmpty();
         }
     }
 }

@@ -9,30 +9,30 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostRepository extends JpaRepository<Post, PostId> {
 
-    default Post getByIdAndBlogName(Long postId, String blogName) {
-        return findByIdAndBlogName(postId, blogName).orElseThrow(NotFoundPostException::new);
+    default Post getById(Long postId, String blogName) {
+        return findById(postId, blogName).orElseThrow(NotFoundPostException::new);
     }
 
     @Query("SELECT p FROM Post p WHERE p.postId.id = :postId AND p.blog.name.value = :blogName")
-    Optional<Post> findByIdAndBlogName(@Param("postId") Long postId,
-                                       @Param("blogName") String blogName);
+    Optional<Post> findById(@Param("postId") Long postId,
+                            @Param("blogName") String blogName);
 
-    default Post getByIdAndBlogNameAndWriterId(Long postId, String blogName, Long writerId) {
-        return findByIdAndBlogNameAndWriterId(postId, blogName, writerId)
+    default Post getByIdAndWriter(Long postId, String blogName, Long writerId) {
+        return findByIdAndWriter(postId, blogName, writerId)
                 .orElseThrow(NotFoundPostException::new);
     }
 
     @Query("SELECT p FROM Post p WHERE p.postId.id = :postId AND p.blog.name.value = :blogName AND p.writer.id = :writerId")
-    Optional<Post> findByIdAndBlogNameAndWriterId(@Param("postId") Long postId,
-                                                  @Param("blogName") String blogName,
-                                                  @Param("writerId") Long writerId);
+    Optional<Post> findByIdAndWriter(@Param("postId") Long postId,
+                                     @Param("blogName") String blogName,
+                                     @Param("writerId") Long writerId);
 
     List<Post> findAllByCategoryId(Long categoryId);
 
     @Query("SELECT p FROM Post p WHERE p.postId.id in :ids AND p.blog.name.value = :blogName AND p.writer.id = :writerId")
-    List<Post> findAllByIdInAndWriterId(@Param("ids") List<Long> ids,
-                                        @Param("blogName") String blogName,
-                                        @Param("writerId") Long writerId);
+    List<Post> findAllByIdInAndWriter(@Param("ids") List<Long> ids,
+                                      @Param("blogName") String blogName,
+                                      @Param("writerId") Long writerId);
 
     @Query("SELECT COUNT(p) FROM Post p WHERE p.postId.blogId = :blogId")
     Long countByBlog(Long blogId);

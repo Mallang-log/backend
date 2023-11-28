@@ -24,7 +24,7 @@ public class PostLikeService {
     private final PostLikeValidator postLikeValidator;
 
     public void like(ClickPostLikeCommand command) {
-        Post post = postRepository.getByIdAndBlogName(command.postId(), command.blogName());
+        Post post = postRepository.getById(command.postId(), command.blogName());
         Member member = memberRepository.getById(command.memberId());
         PostLike postLike = new PostLike(post, member);
         postLike.like(postLikeValidator, command.postPassword());
@@ -33,7 +33,7 @@ public class PostLikeService {
 
     public void cancel(CancelPostLikeCommand command) {
         PostLike postLike = postLikeRepository
-                .getByPostIdAndMemberId(command.postId(), command.blogName(), command.memberId());
+                .getByPostAndMember(command.postId(), command.blogName(), command.memberId());
         postLike.cancel(command.postPassword());
         postLikeRepository.delete(postLike);
     }

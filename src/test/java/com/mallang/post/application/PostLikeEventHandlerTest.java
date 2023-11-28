@@ -38,7 +38,7 @@ class PostLikeEventHandlerTest extends ServiceTest {
             포스트를_삭제한다(memberId, postId, blogName);
 
             // then
-            assertThat(postLikeRepository.findByPostIdAndMemberId(postId, blogName, memberId)).isEmpty();
+            assertThat(postLikeRepository.findByPostAndMember(postId, blogName, memberId)).isEmpty();
         }
     }
 }

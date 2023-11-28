@@ -67,7 +67,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
+            given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글")
@@ -110,7 +110,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
+            given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글")
@@ -158,7 +158,7 @@ class CommentResponsePostProcessorTest {
             // given
             Post post = mock(Post.class);
             given(post.getWriter()).willReturn(동훈(1L));
-            given(postRepository.getByIdAndBlogName(any(), any())).willReturn(post);
+            given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
                             .content("비공개 댓글1")

@@ -36,9 +36,9 @@ class PostEventHandlerTest extends ServiceTest {
             publisher.publishEvent(new CategoryDeletedEvent(categoryId1));
 
             // then
-            assertThat(postRepository.getByIdAndBlogName(postId1, blogName).getCategory()).isNull();
-            assertThat(postRepository.getByIdAndBlogName(postId2, blogName).getCategory()).isNull();
-            assertThat(postRepository.getByIdAndBlogName(postId3, blogName).getCategory()).isNotNull();
+            assertThat(postRepository.getById(postId1, blogName).getCategory()).isNull();
+            assertThat(postRepository.getById(postId2, blogName).getCategory()).isNull();
+            assertThat(postRepository.getById(postId3, blogName).getCategory()).isNotNull();
         }
     }
 }

@@ -14,8 +14,8 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
 
     boolean existsByPostAndMember(Post post, Member member);
 
-    default PostStar getByPostIdAndBlogNameAndMemberId(Long postId, String blogName, Long memberId) {
-        return findByPostIdAndBlogNameAndMemberId(postId, blogName, memberId)
+    default PostStar getByPostAndMember(Long postId, String blogName, Long memberId) {
+        return findByPostAndMember(postId, blogName, memberId)
                 .orElseThrow(NotFoundPostStarException::new);
     }
 
@@ -25,9 +25,9 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
             AND ps.post.blog.name.value = :blogName
             AND ps.member.id = :memberId
             """)
-    Optional<PostStar> findByPostIdAndBlogNameAndMemberId(@Param("postId") Long postId,
-                                                          @Param("blogName") String blogName,
-                                                          @Param("memberId") Long memberId);
+    Optional<PostStar> findByPostAndMember(@Param("postId") Long postId,
+                                           @Param("blogName") String blogName,
+                                           @Param("memberId") Long memberId);
 
     @Modifying
     @Query("DELETE FROM PostStar ps WHERE ps.post.postId = :postId")

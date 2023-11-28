@@ -34,7 +34,7 @@ public class BlogSubscribeService {
 
     public void unsubscribe(BlogUnsubscribeCommand command) {
         BlogSubscribe subscribe = blogSubscribeRepository
-                .findBySubscriberIdAndBlogName(command.subscriberId(), command.blogName())
+                .findBySubscriberAndBlog(command.subscriberId(), command.blogName())
                 .orElseThrow(UnsubscribeUnsubscribedBlogException::new);
         blogSubscribeRepository.delete(subscribe);
     }
