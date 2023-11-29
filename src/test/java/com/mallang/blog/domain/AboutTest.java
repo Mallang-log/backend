@@ -1,7 +1,7 @@
 package com.mallang.blog.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 class AboutTest {
 
     private final AboutValidator aboutValidator = mock(AboutValidator.class);
-    private final Member member = 말랑(1L);
+    private final Member member = 깃허브_말랑(1L);
     private final Blog blog = mallangBlog(member);
 
     @Nested
@@ -72,7 +72,7 @@ class AboutTest {
     void 작성자를_검증한다() {
         // given
         About about = new About(blog, "안녕하세요", member);
-        Member other = 동훈(2L);
+        Member other = 깃허브_동훈(2L);
 
         // when & then
         assertDoesNotThrow(() -> {

@@ -4,7 +4,7 @@ import static com.mallang.auth.presentation.support.AuthConstant.MEMBER_ID;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.mallang.auth.application.OauthService;
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +27,7 @@ public class OauthController {
     private final OauthService oauthService;
 
     @Value("${auth.session.ttl}")
-    private Integer authSessionTtl;
+    private Integer authSessionTTL;
 
     @SneakyThrows
     @GetMapping("/{oauthServerType}")
@@ -49,7 +49,7 @@ public class OauthController {
         Long memberId = oauthService.login(oauthServerType, code);
         HttpSession session = request.getSession(true);
         session.setAttribute(MEMBER_ID, memberId);
-        session.setMaxInactiveInterval(authSessionTtl);
+        session.setMaxInactiveInterval(authSessionTTL);
         return ResponseEntity.status(OK).build();
     }
 }

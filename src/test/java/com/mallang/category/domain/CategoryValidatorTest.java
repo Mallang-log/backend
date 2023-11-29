@@ -1,6 +1,6 @@
 package com.mallang.category.domain;
 
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -29,7 +29,7 @@ class CategoryValidatorTest {
     @Test
     void 한_사용자의_루트_카테고리끼리_이름이_겹치면_예외() {
         // given
-        Member member = 말랑(1L);
+        Member member = 깃허브_말랑(1L);
         Blog mallangBlog = new Blog("mallang-log", member);
         Long memberId = member.getId();
         Category spring = 루트_카테고리("Spring", member, mallangBlog);

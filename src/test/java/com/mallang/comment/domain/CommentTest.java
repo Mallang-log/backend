@@ -1,8 +1,8 @@
 package com.mallang.comment.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
-import static com.mallang.auth.MemberFixture.회원;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -27,15 +27,15 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class CommentTest {
 
-    private final Member postWriter = 회원(100L, "글 작성자");
+    private final Member postWriter = 깃허브_회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .blog(blog)
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
-    private final Member member = 말랑(1L);
-    private final Member other = 동훈(2L);
+    private final Member member = 깃허브_말랑(1L);
+    private final Member other = 깃허브_동훈(2L);
 
     @Nested
     class 대댓글_작성_시 {

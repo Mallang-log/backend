@@ -1,6 +1,6 @@
 package com.mallang.comment.query;
 
-import static com.mallang.auth.MemberFixture.동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -66,7 +66,7 @@ class CommentResponsePostProcessorTest {
         void 글_작성자라면_모두_볼_수_있다() {
             // given
             Post post = mock(Post.class);
-            given(post.getWriter()).willReturn(동훈(1L));
+            given(post.getWriter()).willReturn(깃허브_동훈(1L));
             given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
@@ -109,7 +109,7 @@ class CommentResponsePostProcessorTest {
         void 포스트_작성자가_아니면_비공개_댓글은_숨겨진다() {
             // given
             Post post = mock(Post.class);
-            given(post.getWriter()).willReturn(동훈(1L));
+            given(post.getWriter()).willReturn(깃허브_동훈(1L));
             given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()
@@ -157,7 +157,7 @@ class CommentResponsePostProcessorTest {
         void 포스트_작성자가_아니더라도_자신이_쓴_비밀_댓글은_조회할_수_있다() {
             // given
             Post post = mock(Post.class);
-            given(post.getWriter()).willReturn(동훈(1L));
+            given(post.getWriter()).willReturn(깃허브_동훈(1L));
             given(postRepository.getById(any(), any())).willReturn(post);
             List<CommentResponse> commentResponses = List.of(
                     AuthCommentResponse.builder()

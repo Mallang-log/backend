@@ -1,19 +1,20 @@
 package com.mallang.auth;
 
-import static com.mallang.auth.domain.OauthServerType.GITHUB;
 
-import com.mallang.auth.domain.Member;
+import static com.mallang.auth.domain.OauthId.OauthServerType.GITHUB;
+
 import com.mallang.auth.domain.OauthId;
+import com.mallang.auth.domain.OauthMember;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class MemberFixture {
+public class OauthMemberFixture {
 
-    public static Member 말랑() {
-        return 말랑(null);
+    public static OauthMember 깃허브_말랑() {
+        return 깃허브_말랑(null);
     }
 
-    public static Member 말랑(Long id) {
-        Member member = Member.builder()
+    public static OauthMember 깃허브_말랑(Long id) {
+        OauthMember member = OauthMember.builder()
                 .oauthId(new OauthId("mallang", GITHUB))
                 .nickname("말랑")
                 .profileImageUrl("https://avatars.githubusercontent.com/u/mallang")
@@ -22,13 +23,12 @@ public class MemberFixture {
         return member;
     }
 
-    public static Member 동훈() {
-        return 동훈(null);
+    public static OauthMember 깃허브_동훈() {
+        return 깃허브_동훈(null);
     }
 
-
-    public static Member 동훈(Long id) {
-        Member member = Member.builder()
+    public static OauthMember 깃허브_동훈(Long id) {
+        OauthMember member = OauthMember.builder()
                 .oauthId(new OauthId("donghun", GITHUB))
                 .nickname("동훈")
                 .profileImageUrl("https://avatars.githubusercontent.com/u/donghun")
@@ -37,12 +37,12 @@ public class MemberFixture {
         return member;
     }
 
-    public static Member 회원(String nickname) {
-        return 회원(null, nickname);
+    public static OauthMember 깃허브_회원(String nickname) {
+        return 깃허브_회원(null, nickname);
     }
 
-    public static Member 회원(Long id, String nickname) {
-        Member build = Member.builder()
+    public static OauthMember 깃허브_회원(Long id, String nickname) {
+        OauthMember build = OauthMember.builder()
                 .nickname(nickname)
                 .build();
         ReflectionTestUtils.setField(build, "id", id);
