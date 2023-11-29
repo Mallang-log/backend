@@ -3,6 +3,7 @@ package com.mallang.common;
 import static com.mallang.auth.domain.OauthId.OauthServerType.GITHUB;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 
+import com.mallang.auth.application.BasicAuthService;
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.auth.domain.OauthId;
@@ -70,6 +71,9 @@ public abstract class ServiceTest {
 
     @Autowired
     protected MemberRepository memberRepository;
+
+    @Autowired
+    protected BasicAuthService basicAuthService;
 
     @Autowired
     protected MemberDao memberDao;

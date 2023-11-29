@@ -20,7 +20,12 @@ public class BasicMember extends Member {
     @Column(nullable = false)
     private String password;
 
-    public BasicMember(String nickname, String profileImageUrl, String username, String password) {
+    public BasicMember(
+            String nickname,
+            String profileImageUrl,
+            String username,
+            String password
+    ) {
         super(nickname, profileImageUrl);
         this.username = username;
         this.password = password;
