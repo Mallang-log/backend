@@ -23,4 +23,10 @@ public class BasicAuthService {
         member.signup(validator);
         return basicMemberRepository.save(member).getId();
     }
+
+    public Long login(String username, String rawPassword) {
+        BasicMember member = basicMemberRepository.getByUsername(username);
+        member.login(rawPassword, passwordEncoder);
+        return member.getId();
+    }
 }
