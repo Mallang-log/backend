@@ -3,6 +3,7 @@ package com.mallang.blog.domain;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.mallang.auth.domain.Member;
+import com.mallang.blog.exception.NoAuthorityAboutException;
 import com.mallang.common.domain.CommonDomainModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,5 +43,11 @@ public class About extends CommonDomainModel {
 
     public void update(String content) {
         this.content = content;
+    }
+
+    public void validateWriter(Member member) {
+        if (!writer.equals(member)) {
+            throw new NoAuthorityAboutException();
+        }
     }
 }

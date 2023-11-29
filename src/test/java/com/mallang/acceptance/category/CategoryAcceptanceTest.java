@@ -2,12 +2,12 @@ package com.mallang.acceptance.category;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
+import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
-import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.블로그의_카테고리_조회_요청;
@@ -96,7 +96,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             var 응답 = 카테고리_생성_요청(동훈_세션_ID, JPA_카테고리_생성_요청);
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
         }
     }
 
@@ -172,7 +172,7 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             var 응답 = 카테고리_제거_요청(동훈_세션_ID, Spring_카테고리_ID);
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
         }
     }
 

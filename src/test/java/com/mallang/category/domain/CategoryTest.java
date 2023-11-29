@@ -15,7 +15,9 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
+import com.mallang.category.exception.NoAuthorityCategoryException;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -86,6 +88,17 @@ class CategoryTest {
             assertThatThrownBy(() ->
                     Category.create("최상위", mallang, mallangBlog, null, categoryValidator)
             ).isInstanceOf(DuplicateCategoryNameException.class);
+        }
+
+        @Test
+        void 자신의_카테고리가_아닌_카테고리를_부모로_지정하면_예외() {
+            // given
+            Category 다른회원_최상위 = Category.create("다른회원 최상위", otherMember, otherBlog, null, categoryValidator);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    Category.create("최상위", mallang, mallangBlog, 다른회원_최상위, categoryValidator)
+            ).isInstanceOf(NoAuthorityCategoryException.class);
         }
     }
 
@@ -170,6 +183,17 @@ class CategoryTest {
                     childCategory.update("최상위", null, categoryValidator)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
+
+        @Test
+        void 자신의_카테고리가_아닌_카테고리를_부모로_지정하면_예외() {
+            // given
+            Category 다른회원_최상위 = Category.create("다른회원 최상위", otherMember, otherBlog, null, categoryValidator);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    childCategory.update("하위", 다른회원_최상위, categoryValidator)
+            ).isInstanceOf(NoAuthorityCategoryException.class);
+        }
     }
 
     @Nested
@@ -204,6 +228,21 @@ class CategoryTest {
             assertThat(childCategory.domainEvents().get(0))
                     .isInstanceOf(CategoryDeletedEvent.class);
         }
+    }
+
+    @Test
+    void 주인을_검증한다() {
+        // given
+        Category 최상위 = Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
+
+        // when & then
+        Assertions.assertDoesNotThrow(() -> {
+            최상위.validateOwner(mallang);
+
+        });
+        assertThatThrownBy(() -> {
+            최상위.validateOwner(otherMember);
+        }).isInstanceOf(NoAuthorityCategoryException.class);
     }
 
     @Test

@@ -2,7 +2,7 @@ package com.mallang.blog.presentation;
 
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.blog.application.AboutService;
-import com.mallang.blog.presentation.request.DeleteAboutRequest;
+import com.mallang.blog.application.command.DeleteAboutCommand;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
 import com.mallang.blog.query.AboutQueryService;
@@ -50,10 +50,9 @@ public class AboutController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable("id") Long aboutId,
-            @Auth Long memberId,
-            @RequestBody DeleteAboutRequest request
+            @Auth Long memberId
     ) {
-        aboutService.delete(request.toCommand(aboutId, memberId));
+        aboutService.delete(new DeleteAboutCommand(aboutId, memberId));
         return ResponseEntity.noContent().build();
     }
 

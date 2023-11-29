@@ -9,6 +9,7 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
+import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.common.domain.CommonDomainModel;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
@@ -72,15 +73,11 @@ public class Category extends CommonDomainModel {
     }
 
     private void setParent(@Nullable Category parent, CategoryValidator validator) {
-        if (willBeRoot(parent)) {
+        if (parent == null) {
             beRoot(validator);
             return;
         }
         beChild(parent);
-    }
-
-    private boolean willBeRoot(@Nullable Category parent) {
-        return parent == null;
     }
 
     private void beRoot(CategoryValidator validator) {
@@ -96,8 +93,15 @@ public class Category extends CommonDomainModel {
     }
 
     private void beChild(Category parent) {
+        parent.validateOwner(owner);
         validateHierarchy(parent);
         link(parent);
+    }
+
+    public void validateOwner(Member member) {
+        if (!owner.equals(member)) {
+            throw new NoAuthorityCategoryException();
+        }
     }
 
     private void validateHierarchy(Category parent) {

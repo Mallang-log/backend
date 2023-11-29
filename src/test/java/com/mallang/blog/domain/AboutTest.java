@@ -1,5 +1,6 @@
 package com.mallang.blog.domain;
 
+import static com.mallang.auth.MemberFixture.동훈;
 import static com.mallang.auth.MemberFixture.말랑;
 import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.exception.AlreadyExistAboutException;
+import com.mallang.blog.exception.NoAuthorityAboutException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -22,8 +24,8 @@ import org.junit.jupiter.api.Test;
 class AboutTest {
 
     private final AboutValidator aboutValidator = mock(AboutValidator.class);
-    private final Member member = 말랑();
-    private final Blog blog = mallangBlog(말랑());
+    private final Member member = 말랑(1L);
+    private final Blog blog = mallangBlog(member);
 
     @Nested
     class 작성_시 {
@@ -64,5 +66,20 @@ class AboutTest {
 
         // then
         assertThat(about.getContent()).isEqualTo("1234");
+    }
+
+    @Test
+    void 작성자를_검증한다() {
+        // given
+        About about = new About(blog, "안녕하세요", member);
+        Member other = 동훈(2L);
+
+        // when & then
+        assertDoesNotThrow(() -> {
+            about.validateWriter(member);
+        });
+        assertThatThrownBy(() -> {
+            about.validateWriter(other);
+        }).isInstanceOf(NoAuthorityAboutException.class);
     }
 }

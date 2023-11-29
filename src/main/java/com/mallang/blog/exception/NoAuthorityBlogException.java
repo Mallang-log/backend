@@ -5,9 +5,9 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import com.mallang.common.execption.ErrorCode;
 import com.mallang.common.execption.MallangLogException;
 
-public class IsNotBlogOwnerException extends MallangLogException {
+public class NoAuthorityBlogException extends MallangLogException {
 
-    public IsNotBlogOwnerException() {
-        super(new ErrorCode(FORBIDDEN, "블로그 주인이 아닙니다."));
+    public NoAuthorityBlogException() {
+        super(new ErrorCode(FORBIDDEN, "블로그에 대한 권한이 없습니다."));
     }
 }

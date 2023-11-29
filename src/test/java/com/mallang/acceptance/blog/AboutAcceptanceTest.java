@@ -2,6 +2,7 @@ package com.mallang.acceptance.blog;
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.given;
+import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
@@ -16,7 +17,6 @@ import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
-import com.mallang.blog.presentation.request.DeleteAboutRequest;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
 import com.mallang.blog.query.response.AboutResponse;
@@ -90,7 +90,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
         @BeforeEach
         void setUp() {
             말랑_블로그_소개_ID = ID를_추출한다(블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청));
-            말랑_블로그_소개_수정_요청 = new UpdateAboutRequest(말랑_블로그_이름, "수정입니다.");
+            말랑_블로그_소개_수정_요청 = new UpdateAboutRequest("수정입니다.");
         }
 
         @Test
@@ -114,7 +114,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
             var 응답 = 블로그_소개_수정_요청(동훈_세션_ID, 말랑_블로그_소개_ID, 말랑_블로그_소개_수정_요청);
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
         }
     }
 
@@ -122,18 +122,16 @@ public class AboutAcceptanceTest extends AcceptanceTest {
     class 소개_삭제_API {
 
         private Long 말랑_블로그_소개_ID;
-        private DeleteAboutRequest 말랑_블로그_소개_삭제_요청;
 
         @BeforeEach
         void setUp() {
             말랑_블로그_소개_ID = ID를_추출한다(블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청));
-            말랑_블로그_소개_삭제_요청 = new DeleteAboutRequest(말랑_블로그_이름);
         }
 
         @Test
         void 자신의_소개라면_삭제된다() {
             // when
-            var 응답 = 블로그_소개_삭제_요청(말랑_세션_ID, 말랑_블로그_소개_ID, 말랑_블로그_소개_삭제_요청);
+            var 응답 = 블로그_소개_삭제_요청(말랑_세션_ID, 말랑_블로그_소개_ID);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -142,10 +140,10 @@ public class AboutAcceptanceTest extends AcceptanceTest {
         @Test
         void 자신의_소개가_아니면_예외() {
             // when
-            var 응답 = 블로그_소개_삭제_요청(동훈_세션_ID, 말랑_블로그_소개_ID, 말랑_블로그_소개_삭제_요청);
+            var 응답 = 블로그_소개_삭제_요청(동훈_세션_ID, 말랑_블로그_소개_ID);
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
         }
     }
 

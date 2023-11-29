@@ -2,7 +2,6 @@ package com.mallang.acceptance.blog;
 
 import static com.mallang.acceptance.AcceptanceSteps.given;
 
-import com.mallang.blog.presentation.request.DeleteAboutRequest;
 import com.mallang.blog.presentation.request.UpdateAboutRequest;
 import com.mallang.blog.presentation.request.WriteAboutRequest;
 import io.restassured.response.ExtractableResponse;
@@ -36,11 +35,9 @@ public class AboutAcceptanceSteps {
 
     public static ExtractableResponse<Response> 블로그_소개_삭제_요청(
             String 세션_ID,
-            Long 블로그_소개_ID,
-            DeleteAboutRequest 소개_삭제_요청
+            Long 블로그_소개_ID
     ) {
         return given(세션_ID)
-                .body(소개_삭제_요청)
                 .delete("/abouts/{id}", 블로그_소개_ID)
                 .then().log().all()
                 .extract();

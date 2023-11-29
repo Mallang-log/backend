@@ -16,7 +16,6 @@ import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
@@ -36,10 +35,8 @@ public abstract class Comment extends CommonDomainModel {
     protected String content;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "post_id", referencedColumnName = "post_id"),
-            @JoinColumn(name = "blog_id", referencedColumnName = "blog_id"),
-    })
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id", nullable = false, updatable = false)
+    @JoinColumn(name = "blog_id", referencedColumnName = "blog_id", nullable = false, updatable = false)
     protected Post post;
 
     protected boolean deleted;
@@ -77,11 +74,11 @@ public abstract class Comment extends CommonDomainModel {
 
     public abstract void write(@Nullable String postPassword);
 
-    protected void update(String content) {
+    public void update(String content) {
         this.content = content;
     }
 
-    protected void delete(CommentDeleteService commentDeleteService) {
+    public void delete(CommentDeleteService commentDeleteService) {
         this.deleted = true;
         commentDeleteService.delete(this);
     }

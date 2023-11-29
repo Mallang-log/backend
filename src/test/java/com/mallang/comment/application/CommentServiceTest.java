@@ -13,7 +13,7 @@ import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
 import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
-import com.mallang.comment.exception.NoAuthorityForCommentException;
+import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.comment.exception.NotFoundCommentException;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.domain.PostId;
@@ -259,7 +259,7 @@ class CommentServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     authCommentService.update(command)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            ).isInstanceOf(NoAuthorityCommentException.class);
 
             // then
             AuthComment find = 인증된_댓글을_조회한다(commentId);
@@ -298,7 +298,7 @@ class CommentServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     unAuthCommentService.update(command)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            ).isInstanceOf(NoAuthorityCommentException.class);
 
             // then
             UnAuthComment find = 비인증_댓글을_조회한다(commentId);
@@ -319,7 +319,7 @@ class CommentServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     authCommentService.update(command)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            ).isInstanceOf(NoAuthorityCommentException.class);
 
             // then
             AuthComment find = 인증된_댓글을_조회한다(commentId);
@@ -362,7 +362,7 @@ class CommentServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     authCommentService.delete(command)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            ).isInstanceOf(NoAuthorityCommentException.class);
 
             // then
             Comment find = 인증된_댓글을_조회한다(commentId);
@@ -399,7 +399,7 @@ class CommentServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     unAuthCommentService.delete(command)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            ).isInstanceOf(NoAuthorityCommentException.class);
 
             // then
             Comment find = 비인증_댓글을_조회한다(commentId);

@@ -29,19 +29,20 @@ public class AboutService {
         Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
         About about = command.toAbout(member, blog);
         about.write(aboutValidator);
-        return aboutRepository.save(about)
-                .getId();
+        return aboutRepository.save(about).getId();
     }
 
     public void update(UpdateAboutCommand command) {
-        About about = aboutRepository
-                .getByIdAndWriterAndBlog(command.aboutId(), command.memberId(), command.blogName());
+        About about = aboutRepository.getById(command.aboutId());
+        Member member = memberRepository.getById(command.memberId());
+        about.validateWriter(member);
         about.update(command.content());
     }
 
     public void delete(DeleteAboutCommand command) {
-        About about = aboutRepository
-                .getByIdAndWriterAndBlog(command.aboutId(), command.memberId(), command.blogName());
+        About about = aboutRepository.getById(command.aboutId());
+        Member member = memberRepository.getById(command.memberId());
+        about.validateWriter(member);
         aboutRepository.delete(about);
     }
 }

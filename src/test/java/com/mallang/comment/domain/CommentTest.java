@@ -30,6 +30,7 @@ class CommentTest {
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
+            .blog(blog)
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
@@ -171,7 +172,7 @@ class CommentTest {
                     .build();
 
             // when
-            child.delete(null, "1234", commentDeleteService, null);
+            child.delete(commentDeleteService);
 
             // then
             assertThat(child.isDeleted()).isTrue();
@@ -197,7 +198,7 @@ class CommentTest {
                     .build();
 
             // when
-            parent.delete(member, commentDeleteService, null);
+            parent.delete(commentDeleteService);
 
             // then
             assertThat(parent.isDeleted()).isTrue();
@@ -231,7 +232,7 @@ class CommentTest {
                     .build();
 
             // when
-            childComment.delete(member, commentDeleteService, null);
+            childComment.delete(commentDeleteService);
 
             // then
             assertThat(childComment.getParent()).isNull();
@@ -257,10 +258,10 @@ class CommentTest {
                     .secret(true)
                     .parent(parentComment)
                     .build();
-            parentComment.delete(member, commentDeleteService, null);
+            parentComment.delete(commentDeleteService);
 
             // when
-            childComment.delete(member, commentDeleteService, null);
+            childComment.delete(commentDeleteService);
 
             // then
             assertThat(childComment.getParent()).isNull();
@@ -287,7 +288,7 @@ class CommentTest {
                     .build();
 
             // when
-            childComment.delete(member, commentDeleteService, null);
+            childComment.delete(commentDeleteService);
 
             // then
             assertThat(childComment.getParent()).isNull();
@@ -314,7 +315,7 @@ class CommentTest {
                     .build();
 
             // when
-            parentComment.delete(member, commentDeleteService, null);
+            parentComment.delete(commentDeleteService);
 
             // then
             assertThat(childComment.getParent()).isEqualTo(parentComment);

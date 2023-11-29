@@ -37,12 +37,14 @@ public class AuthCommentService {
     public void update(UpdateAuthCommentCommand command) {
         AuthComment comment = commentRepository.getAuthCommentById(command.commentId());
         Member writer = memberRepository.getById(command.memberId());
-        comment.update(writer, command.content(), command.secret(), command.postPassword());
+        comment.validateUpdate(writer, command.postPassword());
+        comment.update(command.content(), command.secret());
     }
 
     public void delete(DeleteAuthCommentCommand command) {
         AuthComment comment = commentRepository.getAuthCommentById(command.commentId());
         Member member = memberRepository.getById(command.memberId());
-        comment.delete(member, commentDeleteService, command.postPassword());
+        comment.validateDelete(member, command.postPassword());
+        comment.delete(commentDeleteService);
     }
 }

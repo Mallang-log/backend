@@ -35,6 +35,7 @@ class PostLikeTest {
     private final Member other = 회원(2L, "ohter");
     private final Blog blog = new Blog("mallang", mallang);
     private final Post post = Post.builder()
+            .blog(blog)
             .title("제목")
             .content("내용")
             .writer(mallang)
@@ -93,6 +94,7 @@ class PostLikeTest {
         class 보호_포스트인_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
@@ -140,6 +142,7 @@ class PostLikeTest {
         class 비공개_포스트인_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
@@ -209,6 +212,7 @@ class PostLikeTest {
         class 보호_포스트인_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .title("제목")
                     .content("내용")
                     .writer(mallang)
@@ -262,6 +266,7 @@ class PostLikeTest {
             void 포스트_작성자만_접근할_수_있다() {
                 // given
                 Post post = Post.builder()
+                        .blog(blog)
                         .title("제목")
                         .content("내용")
                         .writer(mallang)
@@ -281,6 +286,7 @@ class PostLikeTest {
             void 포스트_작성자가_아니면_접근할_수_없다() {
                 // given
                 Post post = Post.builder()
+                        .blog(blog)
                         .title("제목")
                         .content("내용")
                         .writer(mallang)

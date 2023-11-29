@@ -14,7 +14,7 @@ import com.mallang.blog.application.command.WriteAboutCommand;
 import com.mallang.blog.domain.About;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.AlreadyExistAboutException;
-import com.mallang.blog.exception.NotFoundAboutException;
+import com.mallang.blog.exception.NoAuthorityAboutException;
 import com.mallang.blog.exception.NotFoundBlogException;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +90,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 자신의_소개라면_수정된다() {
             // given
-            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, member.getId(), blog.getName(), "수정");
+            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, member.getId(), "수정");
 
             // when
             aboutService.update(command);
@@ -103,12 +103,12 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 자신의_소개가_아니면_예외() {
             // given
-            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, other.getId(), blog.getName(), "수정");
+            UpdateAboutCommand command = new UpdateAboutCommand(aboutId, other.getId(), "수정");
 
             // when & then
             assertThatThrownBy(() -> {
                 aboutService.update(command);
-            }).isInstanceOf(NotFoundAboutException.class);
+            }).isInstanceOf(NoAuthorityAboutException.class);
         }
     }
 
@@ -125,7 +125,7 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 자신의_소개라면_삭제된다() {
             // given
-            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, member.getId(), blog.getName());
+            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, member.getId());
 
             // when
             aboutService.delete(command);
@@ -137,12 +137,12 @@ class AboutServiceTest extends ServiceTest {
         @Test
         void 자신의_소개가_아니면_예외() {
             // given
-            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, other.getId(), blog.getName());
+            DeleteAboutCommand command = new DeleteAboutCommand(aboutId, other.getId());
 
             // when & then
             assertThatThrownBy(() -> {
                 aboutService.delete(command);
-            }).isInstanceOf(NotFoundAboutException.class);
+            }).isInstanceOf(NoAuthorityAboutException.class);
         }
     }
 }

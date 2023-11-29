@@ -5,7 +5,9 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.application.command.CreateCategoryCommand;
+import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
@@ -15,7 +17,7 @@ import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.exception.NotFoundPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,6 +42,37 @@ class PostServiceTest extends ServiceTest {
         void setUp() {
             memberId = 회원을_저장한다("말랑");
             blogName = 블로그_개설(memberId, "mallang-log");
+        }
+
+        @Test
+        void 다른_사람의_블로그에_대한_포스트를_작성시_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .blogName(otherBlogName)
+                    .title("포스트 1")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .content("content")
+                    .build();
+            CreatePostCommand command2 = CreatePostCommand.builder()
+                    .memberId(otherMemberId)
+                    .blogName(blogName)
+                    .title("포스트 1")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .content("content")
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() -> {
+                postService.create(command);
+            }).isInstanceOf(NoAuthorityBlogException.class);
+            assertThatThrownBy(() -> {
+                postService.create(command2);
+            }).isInstanceOf(NoAuthorityBlogException.class);
         }
 
         @Test
@@ -104,6 +137,30 @@ class PostServiceTest extends ServiceTest {
             assertThatThrownBy(() ->
                     postService.create(command)
             ).isInstanceOf(NotFoundCategoryException.class);
+        }
+
+        @Test
+        void 다른_사람의_카테고리라면_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            Long categoryId = categoryService.create(new CreateCategoryCommand(
+                    otherMemberId, otherBlogName, "Spring", null
+            ));
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .blogName(blogName)
+                    .title("포스트 1")
+                    .content("content")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .categoryId(categoryId)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postService.create(command)
+            ).isInstanceOf(NoAuthorityCategoryException.class);
         }
 
         @Test
@@ -181,7 +238,7 @@ class PostServiceTest extends ServiceTest {
                                     null, "수정인트로",
                                     PUBLIC, null,
                                     null, emptyList()))
-            ).isInstanceOf(NotFoundPostException.class);
+            ).isInstanceOf(NoAuthorityPostException.class);
 
             // then
             Post post = postRepository.getById(포스트_ID, blogName);
@@ -287,9 +344,14 @@ class PostServiceTest extends ServiceTest {
         }
 
         @Test
-        void 자신이_작성한_글이_아닌_경우_아무것도_지워지지_않는다() {
+        void 자신이_작성한_글이_아닌_경우_예외() {
+            // given
+            DeletePostCommand command = new DeletePostCommand(otherId, List.of(myPostId1.getId()), blogName);
+
             // when
-            postService.delete(new DeletePostCommand(otherId, List.of(myPostId1.getId()), blogName));
+            assertThatThrownBy(() -> {
+                postService.delete(command);
+            }).isInstanceOf(NoAuthorityPostException.class);
 
             // then
             assertThat(postRepository.findById(myPostId1.getId(), blogName)).isPresent();
