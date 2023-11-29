@@ -1,7 +1,7 @@
 package com.mallang.blog.application;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,8 +36,8 @@ class AboutServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        member = memberRepository.save(말랑());
-        other = memberRepository.save(동훈());
+        member = memberRepository.save(깃허브_말랑());
+        other = memberRepository.save(깃허브_동훈());
         blog = blogRepository.save(mallangBlog(member));
         writeAboutCommand =
                 new WriteAboutCommand(member.getId(), blog.getName(), "안녕하세요");

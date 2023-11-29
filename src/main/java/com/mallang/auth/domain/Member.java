@@ -1,37 +1,27 @@
 package com.mallang.auth.domain;
 
+import static jakarta.persistence.InheritanceType.JOINED;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.common.domain.CommonDomainModel;
-import jakarta.persistence.Embedded;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.Inheritance;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-@Table(name = "member",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "oauth_id_unique",
-                        columnNames = {
-                                "oauth_server_id",
-                                "oauth_server"
-                        }
-                ),
-        }
-)
+@Inheritance(strategy = JOINED)
+@DiscriminatorColumn(name = "auth_type")
 @Entity
-public class Member extends CommonDomainModel {
+public abstract class Member extends CommonDomainModel {
 
-    @Embedded
-    private OauthId oauthId;
-    private String nickname;
-    private String profileImageUrl;
+    protected String nickname;
+    protected String profileImageUrl;
+
+    protected Member(String nickname, String profileImageUrl) {
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+    }
 }

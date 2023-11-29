@@ -4,7 +4,7 @@ import static com.mallang.auth.presentation.support.AuthConstant.MEMBER_ID;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.mallang.auth.application.OauthService;
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

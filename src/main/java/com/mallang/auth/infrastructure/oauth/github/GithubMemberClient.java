@@ -1,7 +1,7 @@
 package com.mallang.auth.infrastructure.oauth.github;
 
-import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
+import com.mallang.auth.domain.OauthMember;
 import com.mallang.auth.domain.oauth.OauthMemberClient;
 import com.mallang.auth.infrastructure.oauth.github.client.GithubApiClient;
 import com.mallang.auth.infrastructure.oauth.github.dto.GithubMemberResponse;
@@ -23,7 +23,7 @@ public class GithubMemberClient implements OauthMemberClient {
     }
 
     @Override
-    public Member fetch(String authCode) {
+    public OauthMember fetch(String authCode) {
         GithubToken token = githubApiClient.fetchToken(tokenRequestParams(authCode));
         GithubMemberResponse githubMemberResponse = githubApiClient.fetchMember("Bearer " + token.accessToken());
         return githubMemberResponse.toMember();

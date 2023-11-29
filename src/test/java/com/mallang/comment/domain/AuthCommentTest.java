@@ -1,8 +1,8 @@
 package com.mallang.comment.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
-import static com.mallang.auth.MemberFixture.회원;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,15 +29,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class AuthCommentTest {
 
-    private final Member postWriter = 회원(100L, "글 작성자");
+    private final Member postWriter = 깃허브_회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .blog(blog)
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
-    private final Member member = 말랑(1L);
-    private final Member other = 동훈(2L);
+    private final Member member = 깃허브_말랑(1L);
+    private final Member other = 깃허브_동훈(2L);
 
     @Nested
     class 작성_시 {
@@ -394,7 +394,7 @@ class AuthCommentTest {
         @Test
         void 댓글_작성자도_아니며_포스트_작성자도_아닌_경우_제거할_수_없다() {
             // given
-            Member another = 회원(999L, "another");
+            Member another = 깃허브_회원(999L, "another");
             AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)

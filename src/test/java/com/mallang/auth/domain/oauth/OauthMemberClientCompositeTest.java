@@ -1,12 +1,12 @@
 package com.mallang.auth.domain.oauth;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.domain.OauthServerType.GITHUB;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.domain.OauthId.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
+import com.mallang.auth.domain.OauthMember;
 import com.mallang.auth.exception.UnsupportedOauthTypeException;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -29,14 +29,14 @@ class OauthMemberClientCompositeTest {
             }
 
             @Override
-            public Member fetch(String code) {
-                return 동훈();
+            public OauthMember fetch(String code) {
+                return 깃허브_동훈();
             }
         };
         OauthMemberClientComposite composite = new OauthMemberClientComposite(Set.of(provider1));
 
         // when
-        Member member = composite.fetch(GITHUB, "test");
+        OauthMember member = composite.fetch(GITHUB, "test");
 
         // then
         assertThat(member.getNickname()).isEqualTo("동훈");

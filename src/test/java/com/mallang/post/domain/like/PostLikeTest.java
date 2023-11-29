@@ -1,7 +1,7 @@
 package com.mallang.post.domain.like;
 
-import static com.mallang.auth.MemberFixture.말랑;
-import static com.mallang.auth.MemberFixture.회원;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Test;
 class PostLikeTest {
 
     private final PostLikeValidator postLikeValidator = mock(PostLikeValidator.class);
-    private final Member mallang = 말랑(1L);
-    private final Member other = 회원(2L, "ohter");
+    private final Member mallang = 깃허브_말랑(1L);
+    private final Member other = 깃허브_회원(2L, "ohter");
     private final Blog blog = new Blog("mallang", mallang);
     private final Post post = Post.builder()
             .blog(blog)

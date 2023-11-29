@@ -1,7 +1,7 @@
 package com.mallang.blog.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 class BlogTest {
 
     private final BlogValidator blogValidator = mock(BlogValidator.class);
-    private final Member owner = 말랑(1L);
+    private final Member owner = 깃허브_말랑(1L);
     private final Blog blog = mallangBlog(owner);
 
     @Nested
@@ -75,7 +75,7 @@ class BlogTest {
     @Test
     void 주인_검증() {
         // given
-        Member other = 동훈(2L);
+        Member other = 깃허브_동훈(2L);
 
         // when & then
         assertDoesNotThrow(() -> {

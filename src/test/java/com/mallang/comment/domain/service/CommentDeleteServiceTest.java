@@ -1,7 +1,7 @@
 package com.mallang.comment.domain.service;
 
-import static com.mallang.auth.MemberFixture.말랑;
-import static com.mallang.auth.MemberFixture.회원;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,7 +28,7 @@ class CommentDeleteServiceTest {
     private final CommentRepository commentRepository = mock(CommentRepository.class);
     private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
 
-    private final Member postWriter = 회원(1L, "writer");
+    private final Member postWriter = 깃허브_회원(1L, "writer");
     private final Blog blog = Blog.builder()
             .name("mallang")
             .owner(postWriter)
@@ -38,7 +38,7 @@ class CommentDeleteServiceTest {
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
-    private final Member member = 말랑(1L);
+    private final Member member = 깃허브_말랑(1L);
 
     @Test
     void 자식_댓글이_존재한다면_부모와의_연관관계는_유지되며_논리적으로만_제거시킨다() {

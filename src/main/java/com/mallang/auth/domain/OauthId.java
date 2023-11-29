@@ -1,6 +1,7 @@
 package com.mallang.auth.domain;
 
 import static jakarta.persistence.EnumType.STRING;
+import static java.util.Locale.ENGLISH;
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
@@ -22,4 +23,13 @@ public class OauthId {
     @Enumerated(STRING)
     @Column(nullable = false, name = "oauth_server")
     private OauthServerType oauthServerType;
+
+    public enum OauthServerType {
+        GITHUB,
+        ;
+
+        public static OauthServerType fromName(String type) {
+            return OauthServerType.valueOf(type.toUpperCase(ENGLISH));
+        }
+    }
 }

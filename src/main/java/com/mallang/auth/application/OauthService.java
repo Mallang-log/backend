@@ -1,8 +1,8 @@
 package com.mallang.auth.application;
 
-import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.MemberRepository;
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
+import com.mallang.auth.domain.OauthMember;
+import com.mallang.auth.domain.OauthMemberRepository;
 import com.mallang.auth.domain.oauth.AuthCodeRequestUrlProviderComposite;
 import com.mallang.auth.domain.oauth.OauthMemberClientComposite;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class OauthService {
 
-    private final MemberRepository memberRepository;
+    private final OauthMemberRepository oauthMemberRepository;
     private final OauthMemberClientComposite oauthMemberClientComposite;
     private final AuthCodeRequestUrlProviderComposite authCodeRequestUrlProviderComposite;
 
@@ -21,13 +21,13 @@ public class OauthService {
     }
 
     public Long login(OauthServerType oauthServerType, String authCode) {
-        Member member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-        Member find = memberRepository.findByOauthId(member.getOauthId())
+        OauthMember member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
+        OauthMember find = oauthMemberRepository.findByOauthId(member.getOauthId())
                 .orElseGet(() -> signUp(member));
         return find.getId();
     }
 
-    private Member signUp(Member member) {
-        return memberRepository.save(member);
+    private OauthMember signUp(OauthMember member) {
+        return oauthMemberRepository.save(member);
     }
 }

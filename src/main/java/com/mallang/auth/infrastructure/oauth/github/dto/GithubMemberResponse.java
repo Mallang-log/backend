@@ -1,11 +1,12 @@
 package com.mallang.auth.infrastructure.oauth.github.dto;
 
-import static com.mallang.auth.domain.OauthServerType.GITHUB;
+
+import static com.mallang.auth.domain.OauthId.OauthServerType.GITHUB;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.OauthId;
+import com.mallang.auth.domain.OauthMember;
 
 @JsonNaming(SnakeCaseStrategy.class)
 public record GithubMemberResponse(
@@ -14,8 +15,8 @@ public record GithubMemberResponse(
         String avatarUrl
 ) {
 
-    public Member toMember() {
-        return Member.builder()
+    public OauthMember toMember() {
+        return OauthMember.builder()
                 .oauthId(new OauthId(id, GITHUB))
                 .nickname(name)
                 .profileImageUrl(avatarUrl)

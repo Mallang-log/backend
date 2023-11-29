@@ -1,10 +1,10 @@
 package com.mallang.auth.domain.oauth;
 
-import static com.mallang.auth.domain.OauthServerType.GITHUB;
+import static com.mallang.auth.domain.OauthId.OauthServerType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
 import com.mallang.auth.exception.UnsupportedOauthTypeException;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;

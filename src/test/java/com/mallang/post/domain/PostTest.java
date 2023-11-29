@@ -1,7 +1,7 @@
 package com.mallang.post.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
@@ -35,8 +35,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostTest {
 
-    private final Member mallang = 말랑(1L);
-    private final Member otherMember = 동훈(3L);
+    private final Member mallang = 깃허브_말랑(1L);
+    private final Member otherMember = 깃허브_동훈(3L);
     private final Blog blog = new Blog("mallang", mallang);
     private final Blog otherBlog = new Blog("ohter", otherMember);
     private final Category springCategory = 루트_카테고리("Spring", mallang, blog);
