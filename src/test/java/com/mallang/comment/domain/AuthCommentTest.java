@@ -34,6 +34,7 @@ class AuthCommentTest {
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
+            .blog(blog)
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
@@ -104,6 +105,7 @@ class AuthCommentTest {
         class 보호_포스트에_작성하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -163,6 +165,7 @@ class AuthCommentTest {
         class 비공개_포스트에_작성하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -286,6 +289,7 @@ class AuthCommentTest {
         class 보호_포스트의_댓글을_수정하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -346,6 +350,7 @@ class AuthCommentTest {
         class 비공개_포스트의_댓글을_수정하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -472,6 +477,7 @@ class AuthCommentTest {
         class 보호_포스트의_댓글을_삭제하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -529,6 +535,7 @@ class AuthCommentTest {
         class 비공개_포스트의_댓글을_삭제하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();

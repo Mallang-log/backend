@@ -34,6 +34,7 @@ class CommentDeleteServiceTest {
             .owner(postWriter)
             .build();
     private final Post post = Post.builder()
+            .blog(blog)
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();

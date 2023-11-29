@@ -34,17 +34,18 @@ public class PostService {
 
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
+        Blog blog = blogRepository.getByName(command.blogName());
         Category category = getCategoryByIdIfPresent(command.categoryId());
         PostId postId = postOrderInBlogGenerator.generate(blog.getId());
-        Post post = command.toPost(member, category, postId);
+        Post post = command.toPost(member, category, postId, blog);
         return postRepository.save(post).getPostId();
     }
 
     public void update(UpdatePostCommand command) {
-        Post post = postRepository
-                .getByIdAndWriter(command.postId(), command.blogName(), command.memberId());
+        Member member = memberRepository.getById(command.memberId());
+        Post post = postRepository.getById(command.postId(), command.blogName());
         Category category = getCategoryByIdIfPresent(command.categoryId());
+        post.validateWriter(member);
         post.update(
                 command.title(),
                 command.content(),
@@ -57,9 +58,10 @@ public class PostService {
     }
 
     public void delete(DeletePostCommand command) {
-        List<Post> posts = postRepository
-                .findAllByIdInAndWriter(command.postIds(), command.blogName(), command.memberId());
+        Member member = memberRepository.getById(command.memberId());
+        List<Post> posts = postRepository.findAllByIdIn(command.postIds(), command.blogName());
         for (Post post : posts) {
+            post.validateWriter(member);
             post.delete();
             postRepository.delete(post);
         }
