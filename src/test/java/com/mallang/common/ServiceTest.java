@@ -29,6 +29,7 @@ import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.query.CommentQueryService;
+import com.mallang.post.application.DraftService;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.application.PostService;
 import com.mallang.post.application.PostStarService;
@@ -41,6 +42,7 @@ import com.mallang.post.domain.PostOrderInBlogGenerator;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.query.PostQueryService;
@@ -95,6 +97,12 @@ public abstract class ServiceTest {
 
     @Autowired
     protected PostService postService;
+
+    @Autowired
+    protected DraftRepository draftRepository;
+
+    @Autowired
+    protected DraftService draftService;
 
     @Autowired
     protected PostOrderInBlogGenerator postOrderInBlogGenerator;
