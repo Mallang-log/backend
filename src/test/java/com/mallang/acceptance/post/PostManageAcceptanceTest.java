@@ -64,58 +64,72 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         Front_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Front", 없음());
     }
 
-    @Test
-    void 포스트를_작성한다() {
-        // when
-        CreatePostRequest 요청 = new CreatePostRequest(말랑_블로그_이름,
-                "첫 포스트",
-                "첫 포스트이네요.",
-                "포스트 썸네일 이름",
-                "첫 포스트 인트로",
-                PUBLIC,
-                없음(),
-                Spring_카테고리_ID,
-                List.of("태그1", "태그2")
-        );
-        var 응답 = 포스트_생성_요청(말랑_세션_ID, 요청);
+    @Nested
+    class 포스트_작성_API {
 
-        // then
-        응답_상태를_검증한다(응답, 생성됨);
+        @Test
+        void 포스트를_작성한다() {
+            // given
+            CreatePostRequest 요청 = new CreatePostRequest(말랑_블로그_이름,
+                    "첫 포스트",
+                    "첫 포스트이네요.",
+                    "포스트 썸네일 이름",
+                    "첫 포스트 인트로",
+                    PUBLIC,
+                    없음(),
+                    Spring_카테고리_ID,
+                    List.of("태그1", "태그2")
+            );
+
+            // when
+            var 응답 = 포스트_생성_요청(말랑_세션_ID, 요청);
+
+            // then
+            응답_상태를_검증한다(응답, 생성됨);
+        }
     }
 
-    @Test
-    void 포스트를_업데이트한다() {
-        // given
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+    @Nested
+    class 포스트_수정_API {
 
-        // when
-        UpdatePostRequest 포스트_업데이트_요청 = new UpdatePostRequest(
-                말랑_블로그_이름,
-                "업데이트 제목",
-                "업데이트 내용",
-                "업데이트 포스트 썸네일 이름",
-                "업데이트 인트로",
-                PRIVATE,
-                없음(),
-                Spring_카테고리_ID,
-                List.of("태그1", "태그2")
-        );
-        var 응답 = 포스트_수정_요청(말랑_세션_ID, 포스트_ID, 포스트_업데이트_요청);
+        @Test
+        void 포스트를_업데이트한다() {
+            // given
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+            UpdatePostRequest 포스트_업데이트_요청 = new UpdatePostRequest(
+                    말랑_블로그_이름,
+                    "업데이트 제목",
+                    "업데이트 내용",
+                    "업데이트 포스트 썸네일 이름",
+                    "업데이트 인트로",
+                    PRIVATE,
+                    없음(),
+                    Spring_카테고리_ID,
+                    List.of("태그1", "태그2")
+            );
 
-        // then
-        응답_상태를_검증한다(응답, 정상_처리);
+            // when
+            var 응답 = 포스트_수정_요청(말랑_세션_ID, 포스트_ID, 포스트_업데이트_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+        }
     }
 
-    @Test
-    void 포스트를_삭제한다() {
-        // given
-        var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+    @Nested
+    class 포스트_삭제_API {
 
-        // when
-        var 응답 = 포스트_삭제_요청(말랑_세션_ID, 포스트_ID, 말랑_블로그_이름);
+        @Test
+        void 포스트를_삭제한다() {
+            // given
+            var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
 
-        // then
-        응답_상태를_검증한다(응답, 본문_없음);
+            // when
+            var 응답 = 포스트_삭제_요청(말랑_세션_ID, 포스트_ID, 말랑_블로그_이름);
+
+            // then
+            응답_상태를_검증한다(응답, 본문_없음);
+        }
     }
 
     @Nested
