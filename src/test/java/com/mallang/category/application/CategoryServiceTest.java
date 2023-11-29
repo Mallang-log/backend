@@ -11,6 +11,7 @@ import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
+import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
@@ -112,7 +113,7 @@ class CategoryServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     categoryService.create(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NoAuthorityCategoryException.class);
         }
 
         @Test
@@ -275,7 +276,7 @@ class CategoryServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     categoryService.update(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NoAuthorityCategoryException.class);
 
             // then
             Category category = categoryRepository.getById(categoryId);
@@ -302,7 +303,7 @@ class CategoryServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     categoryService.update(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NoAuthorityCategoryException.class);
 
             // then
             transactionHelper.doAssert(() -> {
@@ -402,7 +403,7 @@ class CategoryServiceTest extends ServiceTest {
             // when
             assertThatThrownBy(() ->
                     categoryService.delete(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NoAuthorityCategoryException.class);
 
             // then
             assertThat(categoryRepository.getById(categoryId)).isNotNull();

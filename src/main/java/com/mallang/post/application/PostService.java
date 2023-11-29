@@ -35,7 +35,7 @@ public class PostService {
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
-        Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
+        Category category = getCategoryByIdIfPresent(command.categoryId());
         PostId postId = postOrderInBlogGenerator.generate(blog.getId());
         Post post = command.toPost(member, category, postId);
         return postRepository.save(post).getPostId();
@@ -44,7 +44,7 @@ public class PostService {
     public void update(UpdatePostCommand command) {
         Post post = postRepository
                 .getByIdAndWriter(command.postId(), command.blogName(), command.memberId());
-        Category category = getCategoryByIdAndOwnerIdIfPresent(command.categoryId(), command.memberId());
+        Category category = getCategoryByIdIfPresent(command.categoryId());
         post.update(
                 command.title(),
                 command.content(),
@@ -65,10 +65,10 @@ public class PostService {
         }
     }
 
-    private Category getCategoryByIdAndOwnerIdIfPresent(@Nullable Long id, Long ownerId) {
+    private Category getCategoryByIdIfPresent(@Nullable Long id) {
         if (id == null) {
             return null;
         }
-        return categoryRepository.getByIdAndOwner(id, ownerId);
+        return categoryRepository.getById(id);
     }
 }
