@@ -73,15 +73,11 @@ public class Category extends CommonDomainModel {
     }
 
     private void setParent(@Nullable Category parent, CategoryValidator validator) {
-        if (willBeRoot(parent)) {
+        if (parent == null) {
             beRoot(validator);
             return;
         }
         beChild(parent);
-    }
-
-    private boolean willBeRoot(@Nullable Category parent) {
-        return parent == null;
     }
 
     private void beRoot(CategoryValidator validator) {
