@@ -1,4 +1,4 @@
-package com.mallang.post.domain;
+package com.mallang.post.domain.draft;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
@@ -10,8 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
+import com.mallang.post.domain.PostIntro;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import java.util.Collections;
@@ -21,11 +23,12 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
-@DisplayName("포스트 내용 (PostContent) 은(는)")
+@DisplayName("임시 글 (Draft) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class PostContentTest {
+class DraftTest {
 
     private final Member mallang = 깃허브_말랑(1L);
     private final Member otherMember = 깃허브_동훈(3L);
@@ -36,9 +39,35 @@ class PostContentTest {
     private final Category otherCategory = 루트_카테고리("Spring", otherMember, otherBlog);
 
     @Test
+    void Id가_같으면_동일하다() {
+        // given
+        Draft draft1 = Draft.builder()
+                .blog(blog)
+                .writer(mallang)
+                .title("1234")
+                .build();
+        Draft draft2 = Draft.builder()
+                .blog(blog)
+                .writer(mallang)
+                .title("5678")
+                .build();
+        ReflectionTestUtils.setField(draft1, "id", 1L);
+        ReflectionTestUtils.setField(draft2, "id", 1L);
+        Draft same = draft1;
+
+        // when & then
+        assertThat(draft1)
+                .isEqualTo(same)
+                .hasSameHashCodeAs(draft2)
+                .isEqualTo(draft2)
+                .isNotEqualTo(new Object());
+    }
+
+    @Test
     void 카테고리를_없앨_수_있다() {
         // given
-        PostContent postContent = PostContent.builder()
+        Draft draft = Draft.builder()
+                .blog(blog)
                 .title("제목")
                 .bodyText("내용")
                 .writer(mallang)
@@ -46,20 +75,38 @@ class PostContentTest {
                 .build();
 
         // when
-        postContent.removeCategory();
+        draft.removeCategory();
 
         // then
-        assertThat(postContent.getCategory()).isNull();
+        assertThat(draft.getCategory()).isNull();
     }
 
     @Nested
     class 생성_시 {
 
         @Test
+        void 임시_글_작성자와_블로그_주인이_다른_경우_예외() {
+            // when & then
+            assertThatThrownBy(() -> {
+                Draft.builder()
+                        .blog(otherBlog)
+                        .writer(mallang)
+                        .build();
+            }).isInstanceOf(NoAuthorityBlogException.class);
+            assertThatThrownBy(() -> {
+                Draft.builder()
+                        .blog(blog)
+                        .writer(otherMember)
+                        .build();
+            }).isInstanceOf(NoAuthorityBlogException.class);
+        }
+
+        @Test
         void 다른_사람의_카테고리를_섫정한_경우_예외() {
             // when & then
             assertThatThrownBy(() -> {
-                PostContent.builder()
+                Draft.builder()
+                        .blog(blog)
                         .writer(mallang)
                         .category(otherCategory)
                         .build();
@@ -69,36 +116,46 @@ class PostContentTest {
         @Test
         void 태그들도_함께_세팅되어_생성된다() {
             // given
-            PostContent taggedPost = PostContent.builder()
+            Draft taggedDraft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro(new PostIntro("intro"))
+                    .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
                     .build();
 
             // when & then
-            assertThat(taggedPost.getTags())
+            assertThat(taggedDraft.getBlog()).isEqualTo(blog);
+            assertThat(taggedDraft.getTitle()).isEqualTo("제목");
+            assertThat(taggedDraft.getBodyText()).isEqualTo("내용");
+            assertThat(taggedDraft.getPostIntro()).isEqualTo("intro");
+            assertThat(taggedDraft.getWriter()).isEqualTo(mallang);
+            assertThat(taggedDraft.getTags())
                     .containsExactly("tag1", "tag2");
         }
 
         @Test
         void 태그가_없어도_된다() {
             // given
-            PostContent taggedPost = PostContent.builder()
+            Draft taggedDraft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
                     .build();
 
             // when & then
-            assertThat(taggedPost.getTags()).isEmpty();
+            assertThat(taggedDraft.getTags()).isEmpty();
         }
 
         @Test
-        void 한_포스트에_동일한_태그가_붙을_수_없다() {
+        void 한_임시_글에_동일한_태그가_붙을_수_없다() {
             // when & then
             assertThatThrownBy(() ->
-                    PostContent.builder()
+                    Draft.builder()
+                            .blog(blog)
                             .title("제목")
                             .bodyText("내용")
                             .writer(mallang)
@@ -110,7 +167,8 @@ class PostContentTest {
         @Test
         void 카테고리를_설정할_수_있다() {
             // when
-            PostContent postContent = PostContent.builder()
+            Draft draft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
@@ -118,13 +176,14 @@ class PostContentTest {
                     .build();
 
             // then
-            assertThat(postContent.getCategory().getName()).isEqualTo("JPA");
+            assertThat(draft.getCategory().getName()).isEqualTo("JPA");
         }
 
         @Test
         void 썸네일_사진_설정이_가능하다() {
             // given
-            PostContent postContent = PostContent.builder()
+            Draft draft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
                     .postThumbnailImageName("thumbnail")
@@ -132,20 +191,21 @@ class PostContentTest {
                     .build();
 
             // when & then
-            assertThat(postContent.getPostThumbnailImageName()).isEqualTo("thumbnail");
+            assertThat(draft.getPostThumbnailImageName()).isEqualTo("thumbnail");
         }
 
         @Test
         void 썸네일은_없어도_된다() {
             // given
-            PostContent postContent = PostContent.builder()
+            Draft draft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
                     .build();
 
             // when & then
-            assertThat(postContent.getPostThumbnailImageName()).isNull();
+            assertThat(draft.getPostThumbnailImageName()).isNull();
         }
     }
 
@@ -155,7 +215,8 @@ class PostContentTest {
         @Test
         void 수정에_성공한다() {
             // given
-            PostContent postContent = PostContent.builder()
+            Draft draft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
@@ -163,7 +224,7 @@ class PostContentTest {
                     .build();
 
             // when
-            postContent.update(
+            draft.update(
                     "수정제목",
                     "수정내용",
                     "postThumbnailImageName",
@@ -173,16 +234,17 @@ class PostContentTest {
             );
 
             // then
-            assertThat(postContent.getTitle()).isEqualTo("수정제목");
-            assertThat(postContent.getBodyText()).isEqualTo("수정내용");
-            assertThat(postContent.getTags())
+            assertThat(draft.getTitle()).isEqualTo("수정제목");
+            assertThat(draft.getBodyText()).isEqualTo("수정내용");
+            assertThat(draft.getTags())
                     .containsExactly("태그2");
         }
 
         @Test
         void 다른_사람의_카테고리로_수정_시_예외() {
             // given
-            PostContent postContent = PostContent.builder()
+            Draft draft = Draft.builder()
+                    .blog(blog)
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
@@ -191,7 +253,7 @@ class PostContentTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                postContent.update(
+                draft.update(
                         "수정제목",
                         "수정내용",
                         "postThumbnailImageName",
@@ -206,19 +268,20 @@ class PostContentTest {
     @Test
     void 작성자_검증() {
         // given
-        PostContent postContent = PostContent.builder()
+        Draft draft = Draft.builder()
+                .blog(blog)
                 .title("제목")
                 .bodyText("내용")
                 .writer(mallang)
-                .tags(List.of("태그1"))
+                .category(springCategory)
                 .build();
 
         // when & then
         assertDoesNotThrow(() -> {
-            postContent.validateWriter(mallang);
+            draft.validateWriter(mallang);
         });
         assertThatThrownBy(() -> {
-            postContent.validateWriter(otherMember);
+            draft.validateWriter(otherMember);
         }).isInstanceOf(NoAuthorityPostException.class);
     }
 }

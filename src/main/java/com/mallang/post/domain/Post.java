@@ -8,7 +8,6 @@ import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
-import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
@@ -96,9 +95,7 @@ public class Post extends AbstractAggregateRoot<Post> {
     }
 
     public void validateWriter(Member member) {
-        if (!getWriter().equals(member)) {
-            throw new NoAuthorityPostException();
-        }
+        content.validateWriter(member);
     }
 
     public void clickLike() {
