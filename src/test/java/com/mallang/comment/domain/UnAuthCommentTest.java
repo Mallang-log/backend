@@ -7,12 +7,10 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.comment.domain.service.CommentDeleteService;
-import com.mallang.comment.exception.NoAuthorityForCommentException;
+import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
@@ -144,11 +142,12 @@ class UnAuthCommentTest {
         }
     }
 
+
     @Nested
     class 수정_시 {
 
         @Test
-        void 비밀번호가_다른_경우_예외() {
+        void 비밀번호가_일치해야_수정_가능하다() {
             // given
             UnAuthComment comment = UnAuthComment.builder()
                     .content("내용")
@@ -158,10 +157,14 @@ class UnAuthCommentTest {
                     .build();
 
             // when & then
-            assertThatThrownBy(() ->
-                    comment.update("12345", "말랑", null)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            assertDoesNotThrow(() -> {
+                comment.validateUpdate("1234", null);
+            });
+            assertThatThrownBy(() -> {
+                comment.validateUpdate("123", null);
+            }).isInstanceOf(NoAuthorityCommentException.class);
         }
+
 
         @Test
         void 댓글을_변경한다() {
@@ -174,7 +177,7 @@ class UnAuthCommentTest {
                     .build();
 
             // when
-            comment.update("1234", "변경", null);
+            comment.update("변경");
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
@@ -201,9 +204,8 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    comment.update("comment password", "update", "1234");
+                    comment.validateUpdate("comment password", "1234");
                 });
-                assertThat(comment.getContent()).isEqualTo("update");
             }
 
             @Test
@@ -218,9 +220,8 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() -> {
-                    comment.update("comment password", "update", "12");
+                    comment.validateUpdate("comment password", "123");
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
-                assertThat(comment.getContent()).isEqualTo("내용");
             }
         }
 
@@ -245,18 +246,14 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() -> {
-                    comment.update("comment password", "update", null);
+                    comment.validateUpdate("update", null);
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
-                assertThat(comment.getContent()).isEqualTo("내용");
             }
         }
     }
 
     @Nested
-    class 삭제_시 {
-
-        private final CommentRepository commentRepository = mock(CommentRepository.class);
-        private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
+    class 삭제_권한_확인시 {
 
         @Test
         void 비밀번호가_일치하면_제거할_수_있다() {
@@ -270,7 +267,7 @@ class UnAuthCommentTest {
 
             // when & then
             assertDoesNotThrow(() ->
-                    comment.delete(null, "1234", commentDeleteService, null)
+                    comment.validateDelete(null, "1234", null)
             );
         }
 
@@ -286,8 +283,8 @@ class UnAuthCommentTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    comment.delete(null, "12345", commentDeleteService, null)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+                    comment.validateDelete(null, "wrong", null)
+            ).isInstanceOf(NoAuthorityCommentException.class);
         }
 
         @Test
@@ -302,7 +299,7 @@ class UnAuthCommentTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                unAuth.delete(postWriter, null, commentDeleteService, null);
+                unAuth.validateDelete(postWriter, null, null);
             });
         }
 
@@ -327,7 +324,7 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() ->
-                        comment.delete(null, "comment password", commentDeleteService, "1234")
+                        comment.validateDelete(null, "comment password", "1234")
                 );
             }
 
@@ -343,7 +340,7 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() ->
-                        comment.delete(postWriter, null, commentDeleteService, null)
+                        comment.validateDelete(postWriter, null, null)
                 );
             }
 
@@ -359,7 +356,7 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() ->
-                        comment.delete(null, "comment password", commentDeleteService, "12")
+                        comment.validateDelete(null, "comment password", "12")
                 ).isInstanceOf(NoAuthorityAccessPostException.class);
             }
         }
@@ -385,7 +382,7 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() ->
-                        comment.delete(postWriter, null, commentDeleteService, null)
+                        comment.validateDelete(postWriter, null, null)
                 );
             }
 
@@ -401,7 +398,7 @@ class UnAuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() ->
-                        comment.delete(null, "comment password", commentDeleteService, null)
+                        comment.validateDelete(null, "comment password", null)
                 ).isInstanceOf(NoAuthorityAccessPostException.class);
             }
         }

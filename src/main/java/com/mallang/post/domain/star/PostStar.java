@@ -8,7 +8,6 @@ import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,10 +19,8 @@ import lombok.NoArgsConstructor;
 public class PostStar extends CommonDomainModel {
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "post_id", referencedColumnName = "post_id"),
-            @JoinColumn(name = "blog_id", referencedColumnName = "blog_id"),
-    })
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id", nullable = false, updatable = false)
+    @JoinColumn(name = "blog_id", referencedColumnName = "blog_id", nullable = false, updatable = false)
     private Post post;
 
     @ManyToOne(fetch = LAZY)

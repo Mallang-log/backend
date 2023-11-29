@@ -112,7 +112,7 @@ class CommentDeleteServiceTest {
                 .build();
         ReflectionTestUtils.setField(parentComment, "id", 1L);
         ReflectionTestUtils.setField(childComment, "id", 2L);
-        parentComment.delete(member, "1234", commentDeleteService, null);
+        parentComment.delete(commentDeleteService);
 
         // when
         commentDeleteService.delete(childComment);
@@ -175,7 +175,7 @@ class CommentDeleteServiceTest {
         ReflectionTestUtils.setField(parentComment, "id", 1L);
         ReflectionTestUtils.setField(childComment, "id", 2L);
         ReflectionTestUtils.setField(otherChildComment, "id", 3L);
-        parentComment.delete(member, commentDeleteService, null);
+        parentComment.delete(commentDeleteService);
 
         // when
         commentDeleteService.delete(childComment);

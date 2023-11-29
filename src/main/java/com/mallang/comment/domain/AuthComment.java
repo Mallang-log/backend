@@ -3,8 +3,7 @@ package com.mallang.comment.domain;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.comment.domain.service.CommentDeleteService;
-import com.mallang.comment.exception.NoAuthorityForCommentException;
+import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
@@ -44,29 +43,27 @@ public class AuthComment extends Comment {
         post.validatePostAccessibility(writer, postPassword);
     }
 
+    public void validateUpdate(Member member, @Nullable String postPassword) {
+        post.validatePostAccessibility(member, postPassword);
+        if (member.equals(writer)) {
+            return;
+        }
+        throw new NoAuthorityCommentException();
+    }
+
     public void update(
-            Member writer,
             String content,
-            boolean secret,
-            @Nullable String postPassword
+            boolean secret
     ) {
-        post.validatePostAccessibility(writer, postPassword);
-        validateWriter(writer);
         super.update(content);
         this.secret = secret;
     }
 
-    public void delete(Member member, CommentDeleteService commentDeleteService, @Nullable String postPassword) {
+    public void validateDelete(Member member, @Nullable String postPassword) {
         post.validatePostAccessibility(member, postPassword);
-        if (!isPostOwner(member)) {
-            validateWriter(member);
+        if (isPostOwner(member) || member.equals(writer)) {
+            return;
         }
-        super.delete(commentDeleteService);
-    }
-
-    private void validateWriter(Member writer) {
-        if (!writer.equals(getWriter())) {
-            throw new NoAuthorityForCommentException();
-        }
+        throw new NoAuthorityCommentException();
     }
 }
