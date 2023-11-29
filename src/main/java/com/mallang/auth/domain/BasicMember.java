@@ -18,13 +18,13 @@ public class BasicMember extends Member {
     private String username;
 
     @Column(nullable = false)
-    private String password;
+    private Password password;
 
     public BasicMember(
             String nickname,
             String profileImageUrl,
             String username,
-            String password
+            Password password
     ) {
         super(nickname, profileImageUrl);
         this.username = username;
@@ -33,5 +33,9 @@ public class BasicMember extends Member {
 
     public void signup(BasicMemberValidator validator) {
         validator.validateDuplicateUsername(username);
+    }
+
+    public String getPassword() {
+        return password.getEncryptedPassword();
     }
 }

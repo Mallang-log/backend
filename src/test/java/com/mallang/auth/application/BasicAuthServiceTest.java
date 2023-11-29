@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.auth.application.command.BasicSignupCommand;
+import com.mallang.auth.domain.BasicMember;
 import com.mallang.auth.exception.DuplicateUsernameException;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,16 @@ class BasicAuthServiceTest extends ServiceTest {
 
             // then
             assertThat(id).isNotNull();
+        }
+
+        @Test
+        void 비밀번호는_암호화되어_원문을_찾을_수_없다() {
+            // given
+            Long id = basicAuthService.signup(command);
+            BasicMember saved = (BasicMember) memberRepository.getById(id);
+
+            // when
+            assertThat(saved.getPassword()).isNotEqualTo("password");
         }
     }
 }

@@ -25,7 +25,7 @@ class BasicMemberTest {
                 "nickname",
                 "profile",
                 "username",
-                "password"
+                new Password("password")
         );
 
         @Test

@@ -1,6 +1,7 @@
 package com.mallang.auth.application.command;
 
 import com.mallang.auth.domain.BasicMember;
+import com.mallang.auth.domain.Password;
 import jakarta.annotation.Nullable;
 
 public record BasicSignupCommand(
@@ -9,7 +10,7 @@ public record BasicSignupCommand(
         String nickname,
         @Nullable String profileImageUrl
 ) {
-    public BasicMember toMember() {
+    public BasicMember toMember(Password password) {
         return new BasicMember(
                 nickname,
                 profileImageUrl,
