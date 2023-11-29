@@ -38,4 +38,8 @@ public class BasicMember extends Member {
     public String getPassword() {
         return password.getEncryptedPassword();
     }
+
+    public void login(String rawPassword, PasswordEncoder passwordEncoder) {
+        this.password.validatePassword(rawPassword, passwordEncoder);
+    }
 }

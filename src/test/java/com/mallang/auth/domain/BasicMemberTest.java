@@ -2,10 +2,12 @@ package com.mallang.auth.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.exception.DuplicateUsernameException;
+import com.mallang.auth.exception.NotMatchPasswordException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -17,16 +19,16 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class BasicMemberTest {
 
+    private final BasicMemberValidator basicMemberValidator = mock(BasicMemberValidator.class);
+    private final BasicMember member = new BasicMember(
+            "nickname",
+            "profile",
+            "username",
+            new Password("password")
+    );
+
     @Nested
     class 회원가입_시 {
-
-        private final BasicMemberValidator basicMemberValidator = mock(BasicMemberValidator.class);
-        private final BasicMember member = new BasicMember(
-                "nickname",
-                "profile",
-                "username",
-                new Password("password")
-        );
 
         @Test
         void 아이디가_중복되지_않는다면_가입된다() {
@@ -47,6 +49,36 @@ class BasicMemberTest {
             assertThatThrownBy(() -> {
                 member.signup(basicMemberValidator);
             }).isInstanceOf(DuplicateUsernameException.class);
+        }
+    }
+
+    @Nested
+    class 로그인_시 {
+
+        private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+
+        @Test
+        void 비밀번호가_일치하면_성공() {
+            // given
+            given(passwordEncoder.match("password", "password"))
+                    .willReturn(true);
+
+            // when & then
+            assertDoesNotThrow(() -> {
+                member.login("password", passwordEncoder);
+            });
+        }
+
+        @Test
+        void 비밀번호가_다르면_실패() {
+            // given
+            given(passwordEncoder.match("password", "password"))
+                    .willReturn(false);
+
+            // when & then
+            assertThatThrownBy(() -> {
+                member.login("password", passwordEncoder);
+            }).isInstanceOf(NotMatchPasswordException.class);
         }
     }
 }
