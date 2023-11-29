@@ -13,7 +13,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.post.domain.PostIntro;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import java.util.Collections;
@@ -120,7 +119,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
-                    .postIntro(new PostIntro("intro"))
+                    .postIntro("intro")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
@@ -228,7 +227,7 @@ class DraftTest {
                     "수정제목",
                     "수정내용",
                     "postThumbnailImageName",
-                    new PostIntro("수정인트로"),
+                    "수정인트로",
                     null,
                     List.of("태그2")
             );
@@ -257,7 +256,7 @@ class DraftTest {
                         "수정제목",
                         "수정내용",
                         "postThumbnailImageName",
-                        new PostIntro("수정인트로"),
+                        "수정인트로",
                         otherCategory,
                         Collections.emptyList()
                 );

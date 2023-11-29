@@ -61,7 +61,7 @@ public class Post extends AbstractAggregateRoot<Post> {
             String title,
             String bodyText,
             String postThumbnailImageName,
-            PostIntro postIntro,
+            String postIntro,
             @Nullable Category category,
             List<String> tags,
             Member writer
@@ -78,7 +78,7 @@ public class Post extends AbstractAggregateRoot<Post> {
             String title,
             String bodyText,
             String postThumbnailImageName,
-            PostIntro intro,
+            String intro,
             @Nullable Category category,
             List<String> tags
     ) {

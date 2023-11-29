@@ -54,7 +54,7 @@ public class PostContent {
             String title,
             String bodyText,
             String postThumbnailImageName,
-            PostIntro postIntro,
+            String postIntro,
             Category category,
             List<String> tags,
             Member writer
@@ -62,7 +62,7 @@ public class PostContent {
         this.title = title;
         this.bodyText = bodyText;
         this.postThumbnailImageName = postThumbnailImageName;
-        this.postIntro = postIntro;
+        this.postIntro = new PostIntro(postIntro);
         this.writer = writer;
         setCategory(category);
         setTags(tags);
@@ -72,14 +72,14 @@ public class PostContent {
             String title,
             String bodyText,
             String postThumbnailImageName,
-            PostIntro postIntro,
+            String postIntro,
             @Nullable Category category,
             List<String> tags
     ) {
         this.title = title;
         this.bodyText = bodyText;
         this.postThumbnailImageName = postThumbnailImageName;
-        this.postIntro = postIntro;
+        this.postIntro = new PostIntro(postIntro);
         setCategory(category);
         setTags(tags);
     }

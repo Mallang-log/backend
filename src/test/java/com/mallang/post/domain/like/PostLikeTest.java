@@ -15,7 +15,6 @@ import static org.mockito.Mockito.mock;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostIntro;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
@@ -299,7 +298,7 @@ class PostLikeTest {
                         "up",
                         "up",
                         null,
-                        new PostIntro("update"),
+                        "update",
                         null, emptyList());
 
                 // when & then

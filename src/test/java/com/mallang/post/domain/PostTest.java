@@ -229,7 +229,7 @@ class PostTest {
                     "수정제목",
                     "수정내용",
                     "postThumbnailImageName",
-                    new PostIntro("수정인트로"),
+                    "수정인트로",
                     null,
                     List.of("태그2")
             );
@@ -261,7 +261,7 @@ class PostTest {
                         "수정제목",
                         "수정내용",
                         "postThumbnailImageName",
-                        new PostIntro("수정인트로"),
+                        "수정인트로",
                         otherCategory,
                         Collections.emptyList()
                 );

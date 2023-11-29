@@ -5,7 +5,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.domain.PostIntro;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
@@ -25,7 +24,7 @@ public record CreatePostCommand(
         @Nullable Long categoryId,
         List<String> tags
 ) {
-    public Post toPost(Member member, Category category, PostId postId, Blog blog) {
+    public Post toPost(Member member, PostId postId, Blog blog, @Nullable Category category) {
         return Post.builder()
                 .postId(postId)
                 .blog(blog)
@@ -35,7 +34,7 @@ public record CreatePostCommand(
                 .writer(member)
                 .visibilityPolish(new PostVisibilityPolicy(visibility, password))
                 .category(category)
-                .postIntro(new PostIntro(intro))
+                .postIntro(intro)
                 .tags(tags)
                 .build();
     }
