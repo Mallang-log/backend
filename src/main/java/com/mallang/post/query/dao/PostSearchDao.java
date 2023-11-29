@@ -47,9 +47,9 @@ public class PostSearchDao {
         List<Post> result = query.selectFrom(post)
                 .distinct()
                 .leftJoin(post.blog, blog).fetchJoin()
-                .leftJoin(post.tags, tag)
-                .join(post.writer, member).fetchJoin()
-                .leftJoin(post.category, category).fetchJoin()
+                .leftJoin(post.content.tags, tag)
+                .join(post.content.writer, member).fetchJoin()
+                .leftJoin(post.content.category, category).fetchJoin()
                 .where(
                         filterPrivatePost(memberId),
                         blogEq(cond.blogName()),
@@ -72,7 +72,7 @@ public class PostSearchDao {
         }
         return post.visibilityPolish.visibility.ne(PRIVATE)
                 .or(post.visibilityPolish.visibility.eq(PRIVATE)
-                        .and(post.writer.id.eq(memberId)));
+                        .and(post.content.writer.id.eq(memberId)));
     }
 
     private BooleanExpression blogEq(@Nullable String blogName) {
@@ -87,7 +87,7 @@ public class PostSearchDao {
             return null;
         }
         List<Long> categoryIds = categoryQuerySupport.getCategoryAndDescendants(categoryId);
-        return post.category.id.in(categoryIds);
+        return post.content.category.id.in(categoryIds);
     }
 
     private BooleanExpression hasTag(@Nullable String tagName) {
@@ -101,24 +101,27 @@ public class PostSearchDao {
         if (writerId == null) {
             return null;
         }
-        return post.writer.id.eq(writerId);
+        return post.content.writer.id.eq(writerId);
     }
 
-    private BooleanExpression titleOrContentContains(@Nullable String title, @Nullable String content,
-                                                     @Nullable String titleOrContent) {
+    private BooleanExpression titleOrContentContains(
+            @Nullable String title,
+            @Nullable String content,
+            @Nullable String titleOrContent
+    ) {
         if ((!ObjectUtils.isEmpty(title) || !ObjectUtils.isEmpty(content))
                 && (!ObjectUtils.isEmpty(titleOrContent))) {
             throw new BadPostSearchCondException("제목이나 내용을 검색하는 경우 제목 + 내용으로는 검색할 수 없습니다");
         }
         if (!ObjectUtils.isEmpty(title)) {
-            return post.title.containsIgnoreCase(title);
+            return post.content.title.containsIgnoreCase(title);
         }
         if (!ObjectUtils.isEmpty(content)) {
-            return post.bodyText.containsIgnoreCase(content);
+            return post.content.bodyText.containsIgnoreCase(content);
         }
         if (!ObjectUtils.isEmpty(titleOrContent)) {
-            return post.title.containsIgnoreCase(titleOrContent)
-                    .or(post.bodyText.containsIgnoreCase(titleOrContent));
+            return post.content.title.containsIgnoreCase(titleOrContent)
+                    .or(post.content.bodyText.containsIgnoreCase(titleOrContent));
         }
         return null;
     }

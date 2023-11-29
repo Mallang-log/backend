@@ -295,11 +295,11 @@ class PostLikeTest {
                 PostLike postLike = new PostLike(post, other);
                 postLike.like(postLikeValidator, null);
                 post.update(
+                        new PostVisibilityPolicy(PRIVATE, null),
                         "up",
                         "up",
                         null,
                         new PostIntro("update"),
-                        new PostVisibilityPolicy(PRIVATE, null),
                         null, emptyList());
 
                 // when & then

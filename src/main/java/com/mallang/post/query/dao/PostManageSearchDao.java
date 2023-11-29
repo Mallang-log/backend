@@ -43,7 +43,7 @@ public class PostManageSearchDao {
                 );
         List<Post> result = query.selectFrom(post)
                 .distinct()
-                .leftJoin(post.category, category).fetchJoin()
+                .leftJoin(post.content.category, category).fetchJoin()
                 .where(
                         memberAndBlogEq(memberId, cond.blogName()),
                         hasCategory(cond.categoryId()),
@@ -60,7 +60,7 @@ public class PostManageSearchDao {
     }
 
     private BooleanExpression memberAndBlogEq(Long memberId, String blogName) {
-        return post.writer.id.eq(memberId).and(post.blog.name.value.eq(blogName));
+        return post.content.writer.id.eq(memberId).and(post.blog.name.value.eq(blogName));
     }
 
     private BooleanExpression hasCategory(@Nullable Long categoryId) {
@@ -68,24 +68,24 @@ public class PostManageSearchDao {
             return null;
         }
         if (categoryId == NO_CATEGORY_CONDITION) {
-            return post.category.isNull();
+            return post.content.category.isNull();
         }
         List<Long> categoryIds = categoryQuerySupport.getCategoryAndDescendants(categoryId);
-        return post.category.id.in(categoryIds);
+        return post.content.category.id.in(categoryIds);
     }
 
     private BooleanExpression titleContains(@Nullable String title) {
         if (ObjectUtils.isEmpty(title)) {
             return null;
         }
-        return post.title.containsIgnoreCase(title);
+        return post.content.title.containsIgnoreCase(title);
     }
 
     private BooleanExpression bodyTextContains(@Nullable String bodyText) {
         if (ObjectUtils.isEmpty(bodyText)) {
             return null;
         }
-        return post.bodyText.containsIgnoreCase(bodyText);
+        return post.content.bodyText.containsIgnoreCase(bodyText);
     }
 
     private BooleanExpression visibilityEq(@Nullable Visibility visibility) {

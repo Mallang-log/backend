@@ -16,7 +16,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
@@ -220,14 +219,18 @@ class PostTest {
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
+                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
                     .tags(List.of("태그1"))
                     .build();
 
             // when
-            post.update("수정제목", "수정내용",
-                    "postThumbnailImageName", new PostIntro("수정인트로"),
-                    new PostVisibilityPolicy(PRIVATE), null,
+            post.update(
+                    new PostVisibilityPolicy(PRIVATE),
+                    "수정제목",
+                    "수정내용",
+                    "postThumbnailImageName",
+                    new PostIntro("수정인트로"),
+                    null,
                     List.of("태그2")
             );
 
@@ -247,15 +250,21 @@ class PostTest {
                     .title("제목")
                     .bodyText("내용")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
+                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
                     .tags(List.of("태그1"))
                     .build();
 
             // when & then
             assertThatThrownBy(() -> {
-                post.update("수정제목", "수정내용",
-                        "postThumbnailImageName", new PostIntro("수정인트로"),
-                        new PostVisibilityPolicy(PRIVATE), otherCategory, Collections.emptyList());
+                post.update(
+                        new PostVisibilityPolicy(PRIVATE),
+                        "수정제목",
+                        "수정내용",
+                        "postThumbnailImageName",
+                        new PostIntro("수정인트로"),
+                        otherCategory,
+                        Collections.emptyList()
+                );
             }).isInstanceOf(NoAuthorityCategoryException.class);
         }
     }
@@ -284,7 +293,8 @@ class PostTest {
             post.delete();
 
             // then
-            assertThat(post.domainEvents().get(0)).isInstanceOf(PostDeleteEvent.class);
+            List<Object> domainEvents = (List<Object>) ReflectionTestUtils.getField(post, "domainEvents");
+            assertThat(domainEvents.get(0)).isInstanceOf(PostDeleteEvent.class);
         }
     }
 
@@ -459,6 +469,6 @@ class PostTest {
         }).isInstanceOf(PostLikeCountNegativeException.class);
 
         // then
-        assertThat(post.getLikeCount()).isEqualTo(0);
+        assertThat(post.getLikeCount()).isZero();
     }
 }

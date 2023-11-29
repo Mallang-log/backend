@@ -47,11 +47,11 @@ public class PostService {
         Category category = getCategoryByIdIfPresent(command.categoryId());
         post.validateWriter(member);
         post.update(
+                new PostVisibilityPolicy(command.visibility(), command.password()),
                 command.title(),
                 command.bodyText(),
                 command.postThumbnailImageName(),
                 new PostIntro(command.intro()),
-                new PostVisibilityPolicy(command.visibility(), command.password()),
                 category,
                 command.tags()
         );
