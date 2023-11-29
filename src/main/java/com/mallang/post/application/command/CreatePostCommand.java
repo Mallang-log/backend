@@ -17,7 +17,7 @@ public record CreatePostCommand(
         Long memberId,
         String blogName,
         String title,
-        String content,
+        String bodyText,
         @Nullable String postThumbnailImageName,
         String intro,
         Visibility visibility,
@@ -30,7 +30,7 @@ public record CreatePostCommand(
                 .postId(postId)
                 .blog(blog)
                 .title(title)
-                .content(content)
+                .bodyText(bodyText)
                 .postThumbnailImageName(postThumbnailImageName)
                 .writer(member)
                 .visibilityPolish(new PostVisibilityPolicy(visibility, password))

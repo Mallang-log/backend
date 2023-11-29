@@ -67,7 +67,7 @@ class PostViewStatisticDaoTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         blogName = 블로그_개설(memberId, "mallang-log");
-        postId = 포스트를_저장한다(memberId, blogName, "title", "content");
+        postId = 포스트를_저장한다(memberId, blogName, "title", "bodyText");
     }
 
     @Test

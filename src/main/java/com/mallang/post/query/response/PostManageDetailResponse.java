@@ -13,7 +13,7 @@ public record PostManageDetailResponse(
         Long id,
         String title,
         String intro,
-        String content,
+        String bodyText,
         @Nullable String postThumbnailImageName,
         Visibility visibility,
         @Nullable String password,
@@ -26,7 +26,7 @@ public record PostManageDetailResponse(
                 .id(post.getPostId().getId())
                 .title(post.getTitle())
                 .intro(post.getPostIntro())
-                .content(post.getContent())
+                .bodyText(post.getBodyText())
                 .postThumbnailImageName(post.getPostThumbnailImageName())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .password(post.getVisibilityPolish().getPassword())

@@ -76,7 +76,7 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
                 .writer(mallang)
                 .category(springCategory)
                 .build();
@@ -126,7 +126,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
                     .build();
@@ -142,7 +142,7 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .build();
 
@@ -157,7 +157,7 @@ class PostTest {
                     Post.builder()
                             .blog(blog)
                             .title("제목")
-                            .content("내용")
+                            .bodyText("내용")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -170,7 +170,7 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .category(jpaCategory)
                     .build();
@@ -185,7 +185,7 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .build();
@@ -200,7 +200,7 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .build();
 
@@ -218,7 +218,7 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
                     .tags(List.of("태그1"))
@@ -233,7 +233,7 @@ class PostTest {
 
             // then
             assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getBodyText()).isEqualTo("수정내용");
             assertThat(post.getVisibilityPolish().getVisibility()).isEqualTo(PRIVATE);
             assertThat(post.getTags())
                     .containsExactly("태그2");
@@ -245,7 +245,7 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
                     .tags(List.of("태그1"))
@@ -266,7 +266,7 @@ class PostTest {
         private final Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
                 .writer(mallang)
                 .build();
 
@@ -300,7 +300,7 @@ class PostTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .content("내용")
+                        .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                         .category(springCategory)
@@ -325,7 +325,7 @@ class PostTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .category(springCategory)
@@ -362,7 +362,7 @@ class PostTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .category(springCategory)
@@ -392,7 +392,7 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
                 .writer(mallang)
                 .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                 .category(springCategory)
@@ -413,7 +413,7 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
                 .writer(mallang)
                 .build();
 
@@ -429,7 +429,7 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
                 .writer(mallang)
                 .build();
         post.clickLike();
@@ -449,7 +449,7 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
                 .writer(mallang)
                 .build();
 

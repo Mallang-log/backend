@@ -42,7 +42,7 @@ public class PostSearchDao {
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
-                        titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
+                        titleOrContentContains(cond.title(), cond.bodyText(), cond.titleOrBodyText())
                 );
         List<Post> result = query.selectFrom(post)
                 .distinct()
@@ -56,7 +56,7 @@ public class PostSearchDao {
                         hasCategory(cond.categoryId()),
                         hasTag(cond.tag()),
                         writerIdEq(cond.writerId()),
-                        titleOrContentContains(cond.title(), cond.content(), cond.titleOrContent())
+                        titleOrContentContains(cond.title(), cond.bodyText(), cond.titleOrBodyText())
                 )
                 .orderBy(post.createdDate.desc())
                 .offset(pageable.getOffset())
@@ -114,11 +114,11 @@ public class PostSearchDao {
             return post.title.containsIgnoreCase(title);
         }
         if (!ObjectUtils.isEmpty(content)) {
-            return post.content.containsIgnoreCase(content);
+            return post.bodyText.containsIgnoreCase(content);
         }
         if (!ObjectUtils.isEmpty(titleOrContent)) {
             return post.title.containsIgnoreCase(titleOrContent)
-                    .or(post.content.containsIgnoreCase(titleOrContent));
+                    .or(post.bodyText.containsIgnoreCase(titleOrContent));
         }
         return null;
     }
@@ -130,8 +130,8 @@ public class PostSearchDao {
             @Nullable Long categoryId,
             @Nullable String tag,
             @Nullable String title,
-            @Nullable String content,
-            @Nullable String titleOrContent
+            @Nullable String bodyText,
+            @Nullable String titleOrBodyText
     ) {
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public record CreatePostRequest(
         String blogName,
         String title,
-        String content,
+        String bodyText,
         @Nullable String postThumbnailImageName,
         String intro,
         Visibility visibility,
@@ -22,7 +22,7 @@ public record CreatePostRequest(
                 .memberId(memberId)
                 .blogName(blogName)
                 .title(title)
-                .content(content)
+                .bodyText(bodyText)
                 .postThumbnailImageName(postThumbnailImageName)
                 .intro(intro)
                 .visibility(visibility)

@@ -37,7 +37,7 @@ class PostLikeTest {
     private final Post post = Post.builder()
             .blog(blog)
             .title("제목")
-            .content("내용")
+            .bodyText("내용")
             .writer(mallang)
             .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .build();
@@ -96,7 +96,7 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -144,7 +144,7 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -214,7 +214,7 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -268,7 +268,7 @@ class PostLikeTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .content("내용")
+                        .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                         .build();
@@ -288,7 +288,7 @@ class PostLikeTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .content("내용")
+                        .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                         .build();

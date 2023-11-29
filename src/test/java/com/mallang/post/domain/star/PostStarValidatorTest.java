@@ -27,7 +27,7 @@ class PostStarValidatorTest {
     private final Post post = Post.builder()
             .blog(blog)
             .title("제목")
-            .content("내용")
+            .bodyText("내용")
             .writer(mallang)
             .build();
 

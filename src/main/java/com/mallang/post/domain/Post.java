@@ -55,7 +55,7 @@ public class Post extends AbstractAggregateRoot<Post> {
     private String title;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    private String bodyText;
 
     @Column(nullable = true)
     private String postThumbnailImageName;
@@ -89,7 +89,7 @@ public class Post extends AbstractAggregateRoot<Post> {
             PostId postId,
             Blog blog,
             String title,
-            String content,
+            String bodyText,
             String postThumbnailImageName,
             PostIntro postIntro,
             PostVisibilityPolicy visibilityPolish,
@@ -100,7 +100,7 @@ public class Post extends AbstractAggregateRoot<Post> {
         this.postId = postId;
         this.blog = blog;
         this.title = title;
-        this.content = content;
+        this.bodyText = bodyText;
         this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = postIntro;
         this.visibilityPolish = visibilityPolish;
@@ -120,7 +120,7 @@ public class Post extends AbstractAggregateRoot<Post> {
             List<String> tags
     ) {
         this.title = title;
-        this.content = content;
+        this.bodyText = content;
         this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = intro;
         this.visibilityPolish = visibility;

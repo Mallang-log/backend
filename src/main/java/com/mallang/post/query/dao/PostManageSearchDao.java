@@ -38,7 +38,7 @@ public class PostManageSearchDao {
                         memberAndBlogEq(memberId, cond.blogName()),
                         hasCategory(cond.categoryId()),
                         titleContains(cond.title()),
-                        contentContains(cond.content()),
+                        bodyTextContains(cond.bodyText()),
                         visibilityEq(cond.visibility())
                 );
         List<Post> result = query.selectFrom(post)
@@ -48,7 +48,7 @@ public class PostManageSearchDao {
                         memberAndBlogEq(memberId, cond.blogName()),
                         hasCategory(cond.categoryId()),
                         titleContains(cond.title()),
-                        contentContains(cond.content()),
+                        bodyTextContains(cond.bodyText()),
                         visibilityEq(cond.visibility())
                 )
                 .orderBy(post.postId.id.desc())
@@ -81,11 +81,11 @@ public class PostManageSearchDao {
         return post.title.containsIgnoreCase(title);
     }
 
-    private BooleanExpression contentContains(@Nullable String content) {
-        if (ObjectUtils.isEmpty(content)) {
+    private BooleanExpression bodyTextContains(@Nullable String bodyText) {
+        if (ObjectUtils.isEmpty(bodyText)) {
             return null;
         }
-        return post.content.containsIgnoreCase(content);
+        return post.bodyText.containsIgnoreCase(bodyText);
     }
 
     private BooleanExpression visibilityEq(@Nullable Visibility visibility) {
@@ -99,7 +99,7 @@ public class PostManageSearchDao {
     public record PostManageSearchCond(
             @NotNull String blogName,
             @Nullable String title,
-            @Nullable String content,
+            @Nullable String bodyText,
             @Nullable Long categoryId,
             @Nullable Visibility visibility
     ) {

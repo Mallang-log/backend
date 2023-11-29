@@ -342,7 +342,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result.content())
-                    .extracting(StaredPostResponse::content)
+                    .extracting(StaredPostResponse::bodyText)
                     .containsExactly("내용3", "내용2", "보호되어 있는 글입니다.");
         }
 
@@ -365,7 +365,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result.content())
-                    .extracting(StaredPostResponse::content)
+                    .extracting(StaredPostResponse::bodyText)
                     .containsExactly("내용3", "내용2", "공개글에서 보호됨");
         }
 
@@ -387,7 +387,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result.content())
-                    .extracting(StaredPostResponse::content)
+                    .extracting(StaredPostResponse::bodyText)
                     .containsExactly("내용3", "내용2");
         }
 
@@ -410,7 +410,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             PageResponse<StaredPostResponse> result = 응답.as(new TypeRef<>() {
             });
             assertThat(result.content())
-                    .extracting(StaredPostResponse::content)
+                    .extracting(StaredPostResponse::bodyText)
                     .containsExactly("내용3", "내용2", "공개글에서 보호됨");
         }
     }

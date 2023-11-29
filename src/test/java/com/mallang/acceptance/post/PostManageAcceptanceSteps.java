@@ -116,7 +116,7 @@ public class PostManageAcceptanceSteps {
                 .queryParam("blogName", 블로그_이름)
                 .queryParam("categoryId", 카테고리_ID)
                 .queryParam("title", 제목)
-                .queryParam("content", 내용)
+                .queryParam("bodyText", 내용)
                 .queryParam("visibility", 공개여부)
                 .get("/manage/posts")
                 .then().log().all()

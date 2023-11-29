@@ -223,7 +223,7 @@ public abstract class ServiceTest {
                 postId,
                 blogName,
                 post.getTitle(),
-                post.getContent(),
+                post.getBodyText(),
                 post.getPostThumbnailImageName(),
                 post.getPostIntro(),
                 visibility,

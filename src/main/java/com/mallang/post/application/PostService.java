@@ -48,7 +48,7 @@ public class PostService {
         post.validateWriter(member);
         post.update(
                 command.title(),
-                command.content(),
+                command.bodyText(),
                 command.postThumbnailImageName(),
                 new PostIntro(command.intro()),
                 new PostVisibilityPolicy(command.visibility(), command.password()),

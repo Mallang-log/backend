@@ -55,7 +55,7 @@ class PostServiceTest extends ServiceTest {
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
-                    .content("content")
+                    .bodyText("bodyText")
                     .build();
             CreatePostCommand command2 = CreatePostCommand.builder()
                     .memberId(otherMemberId)
@@ -63,7 +63,7 @@ class PostServiceTest extends ServiceTest {
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
-                    .content("content")
+                    .bodyText("bodyText")
                     .build();
 
             // when & then
@@ -84,7 +84,7 @@ class PostServiceTest extends ServiceTest {
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
-                    .content("content")
+                    .bodyText("bodyText")
                     .build();
 
             // when
@@ -104,7 +104,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .categoryId(categoryId)
@@ -127,7 +127,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .categoryId(1000L)
@@ -151,7 +151,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .categoryId(categoryId)
@@ -170,7 +170,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .tags(List.of("tag1", "tag2", "tag3"))
@@ -215,7 +215,7 @@ class PostServiceTest extends ServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
-                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getBodyText()).isEqualTo("수정내용");
                 assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
                 assertThat(post.getPostIntro()).isEqualTo("수정인트로");
                 assertThat(post.getTags())
@@ -243,7 +243,7 @@ class PostServiceTest extends ServiceTest {
             // then
             Post post = postRepository.getById(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("포스트");
-            assertThat(post.getContent()).isEqualTo("내용");
+            assertThat(post.getBodyText()).isEqualTo("내용");
         }
 
         @Test
@@ -265,7 +265,7 @@ class PostServiceTest extends ServiceTest {
             // then
             Post post = postRepository.getById(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getBodyText()).isEqualTo("수정내용");
             assertThat(post.getCategory()).isNull();
         }
 
@@ -290,7 +290,7 @@ class PostServiceTest extends ServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
-                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getBodyText()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
             });
         }
@@ -316,7 +316,7 @@ class PostServiceTest extends ServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
-                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getBodyText()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Node");
             });
         }
