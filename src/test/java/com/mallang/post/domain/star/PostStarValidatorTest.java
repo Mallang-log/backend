@@ -25,6 +25,7 @@ class PostStarValidatorTest {
     private final Member mallang = 말랑(1L);
     private final Blog blog = new Blog("mallang", mallang);
     private final Post post = Post.builder()
+            .blog(blog)
             .title("제목")
             .content("내용")
             .writer(mallang)

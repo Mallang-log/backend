@@ -35,14 +35,15 @@ public class UnAuthCommentService {
 
     public void update(UpdateUnAuthCommentCommand command) {
         UnAuthComment comment = commentRepository.getUnAuthCommentById(command.commentId());
-        comment.update(command.password(), command.content(), command.postPassword());
+        comment.validateUpdate(command.password(), command.postPassword());
+        comment.update(command.content());
     }
 
     public void delete(DeleteUnAuthCommentCommand command) {
         UnAuthComment comment = commentRepository.getUnAuthCommentById(command.commentId());
-        Member member = (command.memberId() == null)
-                ? null
+        Member member = (command.memberId() == null) ? null
                 : memberRepository.getById(command.memberId());
-        comment.delete(member, command.password(), commentDeleteService, command.postPassword());
+        comment.validateDelete(member, command.password(), command.postPassword());
+        comment.delete(commentDeleteService);
     }
 }

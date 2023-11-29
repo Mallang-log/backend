@@ -12,6 +12,7 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -86,6 +87,7 @@ public class Post extends AbstractAggregateRoot<Post> {
     @Builder
     public Post(
             PostId postId,
+            Blog blog,
             String title,
             String content,
             String postThumbnailImageName,
@@ -96,13 +98,15 @@ public class Post extends AbstractAggregateRoot<Post> {
             List<String> tags
     ) {
         this.postId = postId;
+        this.blog = blog;
         this.title = title;
         this.content = content;
         this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = postIntro;
         this.visibilityPolish = visibilityPolish;
         this.writer = writer;
-        this.category = category;
+        blog.validateOwner(writer);
+        setCategory(category);
         setTags(tags);
     }
 
@@ -115,13 +119,13 @@ public class Post extends AbstractAggregateRoot<Post> {
             @Nullable Category category,
             List<String> tags
     ) {
-        setTags(tags);
         this.title = title;
         this.content = content;
         this.postThumbnailImageName = postThumbnailImageName;
         this.postIntro = intro;
         this.visibilityPolish = visibility;
-        this.category = category;
+        setCategory(category);
+        setTags(tags);
     }
 
     public void delete() {
@@ -137,6 +141,15 @@ public class Post extends AbstractAggregateRoot<Post> {
         tags.stream()
                 .map(Tag::new)
                 .forEach(it -> this.tags.add(it));
+    }
+
+    private void setCategory(@Nullable Category category) {
+        if (category == null) {
+            this.category = null;
+            return;
+        }
+        category.validateOwner(writer);
+        this.category = category;
     }
 
     private void validateDuplicateTags(List<String> list) {
@@ -155,6 +168,12 @@ public class Post extends AbstractAggregateRoot<Post> {
             throw new PostLikeCountNegativeException();
         }
         this.likeCount--;
+    }
+
+    public void validateWriter(Member member) {
+        if (!writer.equals(member)) {
+            throw new NoAuthorityPostException();
+        }
     }
 
     public void validatePostAccessibility(@Nullable Member member,

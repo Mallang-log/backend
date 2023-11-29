@@ -4,6 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.common.domain.CommonDomainModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,5 +38,11 @@ public class Blog extends CommonDomainModel {
 
     public String getName() {
         return name.getValue();
+    }
+
+    public void validateOwner(Member member) {
+        if (!owner.equals(member)) {
+            throw new NoAuthorityBlogException();
+        }
     }
 }

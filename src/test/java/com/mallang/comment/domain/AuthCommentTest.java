@@ -8,12 +8,10 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.comment.domain.service.CommentDeleteService;
-import com.mallang.comment.exception.NoAuthorityForCommentException;
+import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
@@ -34,6 +32,7 @@ class AuthCommentTest {
     private final Member postWriter = 회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
+            .blog(blog)
             .writer(postWriter)
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
@@ -104,6 +103,7 @@ class AuthCommentTest {
         class 보호_포스트에_작성하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -163,6 +163,7 @@ class AuthCommentTest {
         class 비공개_포스트에_작성하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -206,19 +207,22 @@ class AuthCommentTest {
     class 수정_시 {
 
         @Test
-        void 자신의_댓글이_아닌_경우_예외() {
+        void 작성자만_수정할_수_있다() {
             // given
             AuthComment comment = AuthComment.builder()
                     .content("내용")
                     .post(post)
                     .secret(false)
-                    .writer(postWriter)
+                    .writer(other)
                     .build();
 
             // when & then
-            assertThatThrownBy(() ->
-                    comment.update(other, "수정", true, null)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
+            assertDoesNotThrow(() -> {
+                comment.validateUpdate(other, null);
+            });
+            assertThatThrownBy(() -> {
+                comment.validateUpdate(postWriter, null);
+            }).isInstanceOf(NoAuthorityCommentException.class);
         }
 
         @Test
@@ -232,7 +236,7 @@ class AuthCommentTest {
                     .build();
 
             // when
-            comment.update(member, "update", true, null);
+            comment.update("update", true);
 
             // then
             assertThat(comment.getContent()).isEqualTo("update");
@@ -254,7 +258,7 @@ class AuthCommentTest {
                     .build();
 
             // when
-            comment.update(member, "변경", after, null);
+            comment.update("변경", after);
 
             // then
             assertThat(comment.getContent()).isEqualTo("변경");
@@ -276,7 +280,7 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    comment.update(other, "update", true, null);
+                    comment.update("update", true);
                 });
                 assertThat(comment.getContent()).isEqualTo("update");
             }
@@ -286,6 +290,7 @@ class AuthCommentTest {
         class 보호_포스트의_댓글을_수정하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -302,13 +307,12 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    comment.update(other, "update", true, "1234");
+                    comment.validateUpdate(other, "1234");
                 });
-                assertThat(comment.getContent()).isEqualTo("update");
             }
 
             @Test
-            void 댓글_작성자가_포스트_작성자라면_수정할_수_있다() {
+            void 댓글_작성자가_포스트_작성자라면_비밀번호_없이_수정할_수_있다() {
                 // given
                 AuthComment comment = AuthComment.builder()
                         .content("내용")
@@ -319,9 +323,8 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    comment.update(postWriter, "update", true, null);
+                    comment.validateUpdate(postWriter, null);
                 });
-                assertThat(comment.getContent()).isEqualTo("update");
             }
 
             @Test
@@ -336,9 +339,8 @@ class AuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() -> {
-                    comment.update(other, "update", true, "12");
+                    comment.validateUpdate(other, "123");
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
-                assertThat(comment.getContent()).isEqualTo("내용");
             }
         }
 
@@ -346,6 +348,7 @@ class AuthCommentTest {
         class 비공개_포스트의_댓글을_수정하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -362,9 +365,8 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    comment.update(postWriter, "update", true, null);
+                    comment.validateUpdate(postWriter, "123");
                 });
-                assertThat(comment.getContent()).isEqualTo("update");
             }
 
             @Test
@@ -379,7 +381,7 @@ class AuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() -> {
-                    comment.update(other, "update", true, null);
+                    comment.validateUpdate(other, null);
                 }).isInstanceOf(NoAuthorityAccessPostException.class);
                 assertThat(comment.getContent()).isEqualTo("내용");
             }
@@ -387,10 +389,24 @@ class AuthCommentTest {
     }
 
     @Nested
-    class 삭제_시 {
+    class 삭제_권한_확인_시 {
 
-        private final CommentRepository commentRepository = mock(CommentRepository.class);
-        private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
+        @Test
+        void 댓글_작성자도_아니며_포스트_작성자도_아닌_경우_제거할_수_없다() {
+            // given
+            Member another = 회원(999L, "another");
+            AuthComment comment = AuthComment.builder()
+                    .content("내용")
+                    .post(post)
+                    .secret(false)
+                    .writer(other)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() -> {
+                comment.validateDelete(another, null);
+            }).isInstanceOf(NoAuthorityCommentException.class);
+        }
 
         @Test
         void 자신의_댓글인_경우_제거할_수_있다() {
@@ -403,37 +419,14 @@ class AuthCommentTest {
                     .build();
 
             // when & then
-            assertDoesNotThrow(() ->
-                    comment.delete(member, commentDeleteService, null)
-            );
+            assertDoesNotThrow(() -> {
+                comment.validateDelete(member, null);
+            });
         }
 
         @Test
-        void 자신의_댓글이_아닌_경우_예외() {
+        void 포스트_작성자는_모든_댓글을_삭제할_수_있다() {
             // given
-            AuthComment comment = AuthComment.builder()
-                    .content("내용")
-                    .post(post)
-                    .secret(false)
-                    .writer(member)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() ->
-                    comment.delete(other, commentDeleteService, null)
-            ).isInstanceOf(NoAuthorityForCommentException.class);
-        }
-
-        @Test
-        void 포스트_작성자는_모든_댓글_삭제_가능하다() {
-            // given
-            AuthComment comment = AuthComment.builder()
-                    .content("내용")
-                    .post(post)
-                    .secret(false)
-                    .writer(member)
-                    .build();
-
             AuthComment secretComment = AuthComment.builder()
                     .content("내용")
                     .post(post)
@@ -443,35 +436,15 @@ class AuthCommentTest {
 
             // when & then
             assertDoesNotThrow(() -> {
-                comment.delete(postWriter, commentDeleteService, null);
-                secretComment.delete(postWriter, commentDeleteService, null);
+                secretComment.validateDelete(postWriter, null);
             });
-        }
-
-        @Nested
-        class 공개_포스트의_댓글을_삭제하는_경우 {
-
-            @Test
-            void 댓글_작성자라면_가능하다() {
-                // given
-                AuthComment comment = AuthComment.builder()
-                        .content("내용")
-                        .post(post)
-                        .secret(false)
-                        .writer(other)
-                        .build();
-
-                // when & then
-                assertDoesNotThrow(() ->
-                        comment.delete(other, commentDeleteService, null)
-                );
-            }
         }
 
         @Nested
         class 보호_포스트의_댓글을_삭제하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -488,7 +461,7 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() ->
-                        comment.delete(other, commentDeleteService, "1234")
+                        comment.validateDelete(other, "1234")
                 );
             }
 
@@ -504,7 +477,7 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() ->
-                        comment.delete(postWriter, commentDeleteService, null)
+                        comment.validateDelete(postWriter, null)
                 );
             }
 
@@ -520,7 +493,7 @@ class AuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() ->
-                        comment.delete(other, commentDeleteService, "wrong")
+                        comment.validateDelete(other, "wrong")
                 ).isInstanceOf(NoAuthorityAccessPostException.class);
             }
         }
@@ -529,6 +502,7 @@ class AuthCommentTest {
         class 비공개_포스트의_댓글을_삭제하는_경우 {
 
             private final Post post = Post.builder()
+                    .blog(blog)
                     .writer(postWriter)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -551,10 +525,10 @@ class AuthCommentTest {
 
                 // when & then
                 assertDoesNotThrow(() ->
-                        comment.delete(postWriter, commentDeleteService, null)
+                        comment.validateDelete(postWriter, null)
                 );
                 assertDoesNotThrow(() ->
-                        otherComment.delete(postWriter, commentDeleteService, null)
+                        otherComment.validateDelete(postWriter, null)
                 );
             }
 
@@ -570,7 +544,7 @@ class AuthCommentTest {
 
                 // when & then
                 assertThatThrownBy(() ->
-                        comment.delete(other, commentDeleteService, null)
+                        comment.validateDelete(other, null)
                 ).isInstanceOf(NoAuthorityAccessPostException.class);
             }
         }
