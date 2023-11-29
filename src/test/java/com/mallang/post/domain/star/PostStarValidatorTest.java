@@ -1,6 +1,6 @@
 package com.mallang.post.domain.star;
 
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
@@ -22,7 +22,7 @@ class PostStarValidatorTest {
 
     private final PostStarRepository postStartRepository = mock(PostStarRepository.class);
     private final PostStarValidator postStartValidator = new PostStarValidator(postStartRepository);
-    private final Member mallang = 말랑(1L);
+    private final Member mallang = 깃허브_말랑(1L);
     private final Blog blog = new Blog("mallang", mallang);
     private final Post post = Post.builder()
             .blog(blog)

@@ -1,7 +1,7 @@
 package com.mallang.category.domain;
 
-import static com.mallang.auth.MemberFixture.동훈;
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,8 +30,8 @@ import org.junit.jupiter.api.Test;
 class CategoryTest {
 
     private final CategoryValidator categoryValidator = mock(CategoryValidator.class);
-    private final Member mallang = 말랑(1L);
-    private final Member otherMember = 동훈(2L);
+    private final Member mallang = 깃허브_말랑(1L);
+    private final Member otherMember = 깃허브_동훈(2L);
     private final Blog mallangBlog = new Blog("mallang-log", mallang);
     private final Blog otherBlog = new Blog("other-log", otherMember);
 

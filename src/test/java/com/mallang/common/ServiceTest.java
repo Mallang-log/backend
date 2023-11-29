@@ -1,11 +1,13 @@
 package com.mallang.common;
 
-import static com.mallang.auth.domain.OauthServerType.GITHUB;
+import static com.mallang.auth.domain.OauthId.OauthServerType.GITHUB;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 
+import com.mallang.auth.application.BasicAuthService;
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.auth.domain.OauthId;
+import com.mallang.auth.domain.OauthMember;
 import com.mallang.auth.query.dao.MemberDao;
 import com.mallang.blog.application.AboutService;
 import com.mallang.blog.application.BlogService;
@@ -69,6 +71,9 @@ public abstract class ServiceTest {
 
     @Autowired
     protected MemberRepository memberRepository;
+
+    @Autowired
+    protected BasicAuthService basicAuthService;
 
     @Autowired
     protected MemberDao memberDao;
@@ -156,7 +161,7 @@ public abstract class ServiceTest {
 
 
     protected Long 회원을_저장한다(String 닉네임) {
-        Member member = Member.builder()
+        Member member = OauthMember.builder()
                 .oauthId(new OauthId(UUID.randomUUID().toString(), GITHUB))
                 .nickname(닉네임)
                 .profileImageUrl(닉네임)

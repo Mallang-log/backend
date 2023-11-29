@@ -4,7 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.OauthId;
-import com.mallang.auth.domain.OauthServerType;
+import com.mallang.auth.domain.OauthId.OauthServerType;
+import com.mallang.auth.domain.OauthMember;
 import com.mallang.auth.query.response.MemberResponse;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,7 @@ class MemberDaoTest extends ServiceTest {
     @Test
     void 회원정보를_조회한다() {
         // given
-        Member member = Member.builder()
+        Member member = OauthMember.builder()
                 .nickname("mallang")
                 .profileImageUrl("profile")
                 .oauthId(new OauthId("test", OauthServerType.GITHUB))

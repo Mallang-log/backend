@@ -1,6 +1,6 @@
 package com.mallang.comment.query;
 
-import static com.mallang.auth.MemberFixture.말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
@@ -31,7 +31,7 @@ class CommentResponseValidatorTest {
     private final CommentDataValidator commentDataValidator =
             new CommentDataValidator(memberRepository, postRepository);
 
-    private final Member owner = 말랑(10L);
+    private final Member owner = 깃허브_말랑(10L);
     private final Blog blog = Blog.builder()
             .owner(owner)
             .name("mallang-log")

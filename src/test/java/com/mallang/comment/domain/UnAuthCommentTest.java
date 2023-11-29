@@ -1,6 +1,6 @@
 package com.mallang.comment.domain;
 
-import static com.mallang.auth.MemberFixture.회원;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class UnAuthCommentTest {
 
-    private final Member postWriter = 회원(100L, "글 작성자");
+    private final Member postWriter = 깃허브_회원(100L, "글 작성자");
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .blog(blog)
