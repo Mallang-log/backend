@@ -13,9 +13,9 @@ public record BasicSignupRequest(
     public BasicSignupCommand toCommand() {
         return new BasicSignupCommand(
                 nickname,
-                profileImageUrl,
+                password,
                 username,
-                password
+                profileImageUrl
         );
     }
 }

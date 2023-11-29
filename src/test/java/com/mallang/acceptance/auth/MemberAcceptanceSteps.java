@@ -3,6 +3,7 @@ package com.mallang.acceptance.auth;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.auth.presentation.request.BasicLoginRequest;
 import com.mallang.auth.presentation.request.BasicSignupRequest;
 import com.mallang.auth.query.response.MemberResponse;
 import io.restassured.response.ExtractableResponse;
@@ -17,6 +18,17 @@ public class MemberAcceptanceSteps {
                 .post("/members")
                 .then()
                 .log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 일반_로그인_요청(
+            String 아이디,
+            String 비밀번호
+    ) {
+        return given()
+                .body(new BasicLoginRequest(아이디, 비밀번호))
+                .post("/members/login")
+                .then().log().all()
                 .extract();
     }
 

@@ -21,10 +21,10 @@ public class BasicMember extends Member {
     private Password password;
 
     public BasicMember(
-            String nickname,
-            String profileImageUrl,
             String username,
-            Password password
+            Password password,
+            String nickname,
+            String profileImageUrl
     ) {
         super(nickname, profileImageUrl);
         this.username = username;

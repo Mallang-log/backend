@@ -21,10 +21,10 @@ class BasicMemberTest {
 
     private final BasicMemberValidator basicMemberValidator = mock(BasicMemberValidator.class);
     private final BasicMember member = new BasicMember(
-            "nickname",
-            "profile",
             "username",
-            new Password("password")
+            new Password("password"),
+            "nickname",
+            "profile"
     );
 
     @Nested

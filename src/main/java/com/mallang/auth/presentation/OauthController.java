@@ -27,7 +27,7 @@ public class OauthController {
     private final OauthService oauthService;
 
     @Value("${auth.session.ttl}")
-    private Integer authSessionTtl;
+    private Integer authSessionTTL;
 
     @SneakyThrows
     @GetMapping("/{oauthServerType}")
@@ -49,7 +49,7 @@ public class OauthController {
         Long memberId = oauthService.login(oauthServerType, code);
         HttpSession session = request.getSession(true);
         session.setAttribute(MEMBER_ID, memberId);
-        session.setMaxInactiveInterval(authSessionTtl);
+        session.setMaxInactiveInterval(authSessionTTL);
         return ResponseEntity.status(OK).build();
     }
 }

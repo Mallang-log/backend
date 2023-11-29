@@ -12,10 +12,10 @@ public record BasicSignupCommand(
 ) {
     public BasicMember toMember(Password password) {
         return new BasicMember(
-                nickname,
-                profileImageUrl,
                 username,
-                password
+                password,
+                nickname,
+                profileImageUrl
         );
     }
 }
