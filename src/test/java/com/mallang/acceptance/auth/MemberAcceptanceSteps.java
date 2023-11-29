@@ -3,12 +3,22 @@ package com.mallang.acceptance.auth;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.auth.presentation.request.BasicSignupRequest;
 import com.mallang.auth.query.response.MemberResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MemberAcceptanceSteps {
+
+    public static ExtractableResponse<Response> 일반_회원가입_요청(BasicSignupRequest request) {
+        return given()
+                .body(request)
+                .post("/members")
+                .then()
+                .log().all()
+                .extract();
+    }
 
     public static ExtractableResponse<Response> 내_정보_조회_요청(
             String 세션_ID
