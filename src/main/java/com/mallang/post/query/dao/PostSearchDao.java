@@ -8,7 +8,7 @@ import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
 import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
-import com.mallang.category.query.support.CategoryQuerySupport;
+import com.mallang.category.query.repository.CategoryQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.query.response.PostSearchResponse;
@@ -31,7 +31,7 @@ import org.springframework.util.ObjectUtils;
 public class PostSearchDao {
 
     private final JPAQueryFactory query;
-    private final CategoryQuerySupport categoryQuerySupport;
+    private final CategoryQueryRepository categoryQueryRepository;
 
     public Page<PostSearchResponse> search(@Nullable Long memberId, PostSearchCond cond, Pageable pageable) {
         JPAQuery<Long> countQuery = query.select(post.countDistinct())
@@ -86,7 +86,7 @@ public class PostSearchDao {
         if (categoryId == null) {
             return null;
         }
-        List<Long> categoryIds = categoryQuerySupport.getCategoryAndDescendants(categoryId);
+        List<Long> categoryIds = categoryQueryRepository.getCategoryAndDescendants(categoryId);
         return post.content.category.id.in(categoryIds);
     }
 

@@ -4,7 +4,7 @@ import static com.mallang.category.domain.QCategory.category;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
-import com.mallang.category.query.support.CategoryQuerySupport;
+import com.mallang.category.query.repository.CategoryQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.query.response.PostManageSearchResponse;
@@ -29,7 +29,7 @@ import org.springframework.util.ObjectUtils;
 public class PostManageSearchDao {
 
     private final JPAQueryFactory query;
-    private final CategoryQuerySupport categoryQuerySupport;
+    private final CategoryQueryRepository categoryQueryRepository;
 
     public Page<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond, Pageable pageable) {
         JPAQuery<Long> countQuery = query.select(post.countDistinct())
@@ -70,7 +70,7 @@ public class PostManageSearchDao {
         if (categoryId == NO_CATEGORY_CONDITION) {
             return post.content.category.isNull();
         }
-        List<Long> categoryIds = categoryQuerySupport.getCategoryAndDescendants(categoryId);
+        List<Long> categoryIds = categoryQueryRepository.getCategoryAndDescendants(categoryId);
         return post.content.category.id.in(categoryIds);
     }
 

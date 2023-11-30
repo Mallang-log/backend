@@ -1,4 +1,4 @@
-package com.mallang.category.query.support;
+package com.mallang.category.query.repository;
 
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NotFoundCategoryException;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CategoryQuerySupport extends JpaRepository<Category, Long> {
+public interface CategoryQueryRepository extends JpaRepository<Category, Long> {
 
     default List<Long> getCategoryAndDescendants(Long id) {
         Category category = getById(id);
