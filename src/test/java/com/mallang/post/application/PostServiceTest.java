@@ -11,6 +11,7 @@ import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
+import com.mallang.post.application.command.CreateDraftCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -185,6 +186,90 @@ class PostServiceTest extends ServiceTest {
                 assertThat(post.getTags())
                         .containsExactly("tag1", "tag2", "tag3");
             });
+        }
+    }
+
+    @Nested
+    class 임시_글로부터_포스트_생성_시 {
+
+        private Long draftId;
+
+        @BeforeEach
+        void setUp() {
+            memberId = 회원을_저장한다("말랑");
+            blogName = 블로그_개설(memberId, "mallang-log");
+            CreateDraftCommand createDraftCommand = CreateDraftCommand.builder()
+                    .memberId(memberId)
+                    .blogName(blogName)
+                    .title("임시_글 1")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .tags(List.of("tag1"))
+                    .build();
+            draftId = draftService.create(createDraftCommand);
+        }
+
+        @Test
+        void 포스트는_생성되고_임시_글은_제거된다() {
+            // given
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .blogName(blogName)
+                    .title("임시 글로부터 작성된 포스트")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .tags(List.of("tag1"))
+                    .build();
+
+            // when
+            PostId postId = postService.createFromDraft(command, draftId);
+
+            // then
+            assertThat(postId).isNotNull();
+            assertThat(draftRepository.existsById(draftId)).isFalse();
+        }
+
+        @Test
+        void 다른_사람의_블로그에_작성하는_경우_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .blogName(otherBlogName)
+                    .title("임시 글로부터 작성된 포스트")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .tags(List.of("tag1"))
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postService.createFromDraft(command, draftId)
+            ).isInstanceOf(NoAuthorityBlogException.class);
+        }
+
+        @Test
+        void 다른_블로그의_임시_글을_통해_생성하려는_경우_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(otherMemberId)
+                    .blogName(otherBlogName)
+                    .title("임시 글로부터 작성된 포스트")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .tags(List.of("tag1"))
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postService.createFromDraft(command, draftId)
+            ).isInstanceOf(NoAuthorityPostException.class);
         }
     }
 

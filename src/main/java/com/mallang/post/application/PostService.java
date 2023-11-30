@@ -14,6 +14,8 @@ import com.mallang.post.domain.PostId;
 import com.mallang.post.domain.PostIdGenerator;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.draft.Draft;
+import com.mallang.post.domain.draft.DraftRepository;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +27,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
-    private final BlogRepository blogRepository;
-    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
+    private final PostRepository postRepository;
+    private final DraftRepository draftRepository;
     private final PostIdGenerator postIdGenerator;
+
+    public PostId createFromDraft(CreatePostCommand command, Long draftId) {
+        Member member = memberRepository.getById(command.memberId());
+        Draft draft = draftRepository.getById(draftId);
+        draft.validateWriter(member);
+        PostId postId = create(command);
+        draftRepository.delete(draft);
+        return postId;
+    }
 
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
