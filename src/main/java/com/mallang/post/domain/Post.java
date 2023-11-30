@@ -98,6 +98,10 @@ public class Post extends AbstractAggregateRoot<Post> {
         content.validateWriter(member);
     }
 
+    public boolean isWriter(Member member) {
+        return content.isWriter(member);
+    }
+
     public void clickLike() {
         this.likeCount++;
     }

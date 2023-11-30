@@ -112,9 +112,13 @@ public class PostContent {
     }
 
     public void validateWriter(Member member) {
-        if (!writer.equals(member)) {
+        if (!isWriter(member)) {
             throw new NoAuthorityPostException();
         }
+    }
+
+    public boolean isWriter(Member member) {
+        return writer.equals(member);
     }
 
     public void removeCategory() {

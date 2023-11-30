@@ -80,6 +80,7 @@ public abstract class Comment extends CommonDomainModel {
 
     public void delete(CommentDeleteService commentDeleteService) {
         this.deleted = true;
+        this.content = "삭제된 댓글입니다.";
         commentDeleteService.delete(this);
     }
 
