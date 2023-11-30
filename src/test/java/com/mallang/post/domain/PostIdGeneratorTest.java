@@ -8,10 +8,10 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("블로그의 포스트 ID 생성기 (PostOrderInBlogGenerator) 은(는)")
+@DisplayName("포스트 ID 생성기 (PostIdGenerator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class PostOrderInBlogGeneratorTest extends ServiceTest {
+class PostIdGeneratorTest extends ServiceTest {
 
     @Test
     void 특정_블로그의_포스트_수보다_1큰_값을_반환한다() {
@@ -27,9 +27,9 @@ class PostOrderInBlogGeneratorTest extends ServiceTest {
         포스트를_저장한다(otherId, otherBlogName, "글1", "1");
 
         // when & then
-        PostId postId = postOrderInBlogGenerator.generate(blogRepository.getByName(blogName).getId());
-        PostId ohterPostId = postOrderInBlogGenerator.generate(blogRepository.getByName(otherBlogName).getId());
-        PostId thirdPostId = postOrderInBlogGenerator.generate(blogRepository.getByName(thirdBlogName).getId());
+        PostId postId = postIdGenerator.generate(blogRepository.getByName(blogName).getId());
+        PostId ohterPostId = postIdGenerator.generate(blogRepository.getByName(otherBlogName).getId());
+        PostId thirdPostId = postIdGenerator.generate(blogRepository.getByName(thirdBlogName).getId());
         assertThat(postId.getId()).isEqualTo(3);
         assertThat(ohterPostId.getId()).isEqualTo(2);
         assertThat(thirdPostId.getId()).isEqualTo(1);

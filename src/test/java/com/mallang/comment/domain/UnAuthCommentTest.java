@@ -29,6 +29,7 @@ class UnAuthCommentTest {
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .blog(blog)
+            .postIntro("intro")
             .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .writer(postWriter)
             .build();
@@ -78,6 +79,7 @@ class UnAuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
+                    .postIntro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
@@ -121,6 +123,7 @@ class UnAuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
+                    .postIntro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
@@ -189,6 +192,7 @@ class UnAuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
+                    .postIntro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
@@ -231,6 +235,7 @@ class UnAuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
+                    .postIntro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
@@ -309,6 +314,7 @@ class UnAuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
+                    .postIntro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
@@ -367,6 +373,7 @@ class UnAuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
+                    .postIntro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 

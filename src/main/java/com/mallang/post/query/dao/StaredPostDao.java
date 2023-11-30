@@ -51,7 +51,7 @@ public class StaredPostDao {
     private BooleanExpression filterPrivatePost(Long memberId) {
         return post.visibilityPolish.visibility.ne(PRIVATE)
                 .or(post.visibilityPolish.visibility.eq(PRIVATE)
-                        .and(post.writer.id.eq(memberId))
+                        .and(post.content.writer.id.eq(memberId))
                 );
     }
 }

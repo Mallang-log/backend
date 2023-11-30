@@ -16,7 +16,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
@@ -50,12 +49,14 @@ class PostTest {
                 .blog(blog)
                 .writer(mallang)
                 .title("1234")
+                .postIntro("intro")
                 .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                 .build();
         Post post2 = Post.builder()
                 .blog(blog)
                 .writer(mallang)
                 .title("5678")
+                .postIntro("intro")
                 .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                 .build();
         ReflectionTestUtils.setField(post1, "postId", new PostId(1L, 2L));
@@ -76,7 +77,8 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .category(springCategory)
                 .build();
@@ -98,12 +100,14 @@ class PostTest {
                 Post.builder()
                         .blog(otherBlog)
                         .writer(mallang)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
             assertThatThrownBy(() -> {
                 Post.builder()
                         .blog(blog)
                         .writer(otherMember)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
         }
@@ -115,6 +119,7 @@ class PostTest {
                 Post.builder()
                         .blog(blog)
                         .writer(mallang)
+                        .postIntro("intro")
                         .category(otherCategory)
                         .build();
             }).isInstanceOf(NoAuthorityCategoryException.class);
@@ -126,7 +131,8 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
                     .build();
@@ -142,7 +148,8 @@ class PostTest {
             Post taggedPost = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .build();
 
@@ -157,7 +164,8 @@ class PostTest {
                     Post.builder()
                             .blog(blog)
                             .title("제목")
-                            .content("내용")
+                            .bodyText("내용")
+                            .postIntro("intro")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -170,7 +178,8 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .category(jpaCategory)
                     .build();
@@ -185,7 +194,8 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .build();
@@ -200,7 +210,8 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .build();
 
@@ -218,22 +229,27 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
+                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
                     .tags(List.of("태그1"))
                     .build();
 
             // when
-            post.update("수정제목", "수정내용",
-                    "postThumbnailImageName", new PostIntro("수정인트로"),
-                    new PostVisibilityPolicy(PRIVATE), null,
+            post.update(
+                    new PostVisibilityPolicy(PRIVATE),
+                    "수정제목",
+                    "수정내용",
+                    "postThumbnailImageName",
+                    "수정인트로",
+                    null,
                     List.of("태그2")
             );
 
             // then
             assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getBodyText()).isEqualTo("수정내용");
             assertThat(post.getVisibilityPolish().getVisibility()).isEqualTo(PRIVATE);
             assertThat(post.getTags())
                     .containsExactly("태그2");
@@ -245,17 +261,24 @@ class PostTest {
             Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(Visibility.PROTECTED, "123"))
+                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
                     .tags(List.of("태그1"))
                     .build();
 
             // when & then
             assertThatThrownBy(() -> {
-                post.update("수정제목", "수정내용",
-                        "postThumbnailImageName", new PostIntro("수정인트로"),
-                        new PostVisibilityPolicy(PRIVATE), otherCategory, Collections.emptyList());
+                post.update(
+                        new PostVisibilityPolicy(PRIVATE),
+                        "수정제목",
+                        "수정내용",
+                        "postThumbnailImageName",
+                        "수정인트로",
+                        otherCategory,
+                        Collections.emptyList()
+                );
             }).isInstanceOf(NoAuthorityCategoryException.class);
         }
     }
@@ -266,7 +289,8 @@ class PostTest {
         private final Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
 
@@ -284,7 +308,8 @@ class PostTest {
             post.delete();
 
             // then
-            assertThat(post.domainEvents().get(0)).isInstanceOf(PostDeleteEvent.class);
+            List<Object> domainEvents = (List<Object>) ReflectionTestUtils.getField(post, "domainEvents");
+            assertThat(domainEvents.get(0)).isInstanceOf(PostDeleteEvent.class);
         }
     }
 
@@ -300,7 +325,8 @@ class PostTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .content("내용")
+                        .bodyText("내용")
+                        .postIntro("intro")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                         .category(springCategory)
@@ -325,7 +351,8 @@ class PostTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .category(springCategory)
@@ -362,7 +389,8 @@ class PostTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .category(springCategory)
@@ -392,7 +420,8 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                 .category(springCategory)
@@ -413,7 +442,8 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
 
@@ -429,7 +459,8 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
         post.clickLike();
@@ -449,7 +480,8 @@ class PostTest {
         Post post = Post.builder()
                 .blog(blog)
                 .title("제목")
-                .content("내용")
+                .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
 
@@ -459,6 +491,6 @@ class PostTest {
         }).isInstanceOf(PostLikeCountNegativeException.class);
 
         // then
-        assertThat(post.getLikeCount()).isEqualTo(0);
+        assertThat(post.getLikeCount()).isZero();
     }
 }

@@ -75,8 +75,8 @@ public class PostAcceptanceSteps {
                 .queryParam("tag", 태그)
                 .queryParam("writerId", 작성자_ID)
                 .queryParam("title", 제목)
-                .queryParam("content", 내용)
-                .queryParam("titleOrContent", 제목_또는_내용)
+                .queryParam("bodyText", 내용)
+                .queryParam("titleOrBodyText", 제목_또는_내용)
                 .get("/posts")
                 .then().log().all()
                 .extract();

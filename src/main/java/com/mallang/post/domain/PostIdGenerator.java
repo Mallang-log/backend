@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class PostOrderInBlogGenerator {
+public class PostIdGenerator {
 
     private final PostRepository postRepository;
 

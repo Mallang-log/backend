@@ -2,6 +2,7 @@ package com.mallang.post.query.response;
 
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostContent;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public record PostManageDetailResponse(
         Long id,
         String title,
         String intro,
-        String content,
+        String bodyText,
         @Nullable String postThumbnailImageName,
         Visibility visibility,
         @Nullable String password,
@@ -26,13 +27,13 @@ public record PostManageDetailResponse(
                 .id(post.getPostId().getId())
                 .title(post.getTitle())
                 .intro(post.getPostIntro())
-                .content(post.getContent())
+                .bodyText(post.getBodyText())
                 .postThumbnailImageName(post.getPostThumbnailImageName())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .password(post.getVisibilityPolish().getPassword())
                 .createdDate(post.getCreatedDate())
-                .category(CategoryResponse.from(post))
-                .tags(TagResponses.from(post))
+                .category(CategoryResponse.from(post.getContent()))
+                .tags(TagResponses.from(post.getContent()))
                 .build();
     }
 
@@ -40,8 +41,8 @@ public record PostManageDetailResponse(
             Long categoryId,
             String categoryName
     ) {
-        private static CategoryResponse from(Post post) {
-            Category category = post.getCategory();
+        private static CategoryResponse from(PostContent postContent) {
+            Category category = postContent.getCategory();
             if (category == null) {
                 return new CategoryResponse(null, null);
             }
@@ -52,8 +53,8 @@ public record PostManageDetailResponse(
     public record TagResponses(
             List<String> tagContents
     ) {
-        private static TagResponses from(Post post) {
-            return new TagResponses(post.getTags());
+        private static TagResponses from(PostContent postContent) {
+            return new TagResponses(postContent.getTags());
         }
     }
 }

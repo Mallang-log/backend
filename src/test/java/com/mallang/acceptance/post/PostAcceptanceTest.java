@@ -151,7 +151,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             // then
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
             assertThat(postDetailResponse.postId()).isEqualTo(비공개_포스트_ID);
-            assertThat(postDetailResponse.content()).isEqualTo("[비공개] 내용");
+            assertThat(postDetailResponse.bodyText()).isEqualTo("[비공개] 내용");
         }
 
         @Test
@@ -172,7 +172,7 @@ class PostAcceptanceTest extends AcceptanceTest {
             PostDetailResponse postDetailResponse = 응답.as(PostDetailResponse.class);
             assertThat(postDetailResponse.postId()).isEqualTo(보호_포스트_ID);
             assertThat(postDetailResponse.isProtected()).isFalse();
-            assertThat(postDetailResponse.content()).isEqualTo("[보호] 내용");
+            assertThat(postDetailResponse.bodyText()).isEqualTo("[보호] 내용");
             assertThat(postDetailResponse.password()).isNull();
         }
 

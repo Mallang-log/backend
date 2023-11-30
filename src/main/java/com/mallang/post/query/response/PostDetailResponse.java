@@ -16,7 +16,7 @@ public record PostDetailResponse(
         Long blogId,
         String blogName,
         String title,
-        String content,
+        String bodyText,
         @Nullable String postThumbnailImageName,
         Visibility visibility,
         boolean isProtected,
@@ -38,7 +38,7 @@ public record PostDetailResponse(
                 .blogId(post.getPostId().getBlogId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
-                .content(post.getContent())
+                .bodyText(post.getBodyText())
                 .postThumbnailImageName(post.getPostThumbnailImageName())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .password(post.getVisibilityPolish().getPassword())

@@ -11,6 +11,7 @@ import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
+import com.mallang.post.application.command.CreateDraftCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -55,7 +56,7 @@ class PostServiceTest extends ServiceTest {
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
-                    .content("content")
+                    .bodyText("bodyText")
                     .build();
             CreatePostCommand command2 = CreatePostCommand.builder()
                     .memberId(otherMemberId)
@@ -63,7 +64,7 @@ class PostServiceTest extends ServiceTest {
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
-                    .content("content")
+                    .bodyText("bodyText")
                     .build();
 
             // when & then
@@ -84,7 +85,7 @@ class PostServiceTest extends ServiceTest {
                     .title("포스트 1")
                     .intro("intro")
                     .visibility(PUBLIC)
-                    .content("content")
+                    .bodyText("bodyText")
                     .build();
 
             // when
@@ -104,7 +105,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .categoryId(categoryId)
@@ -127,7 +128,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .categoryId(1000L)
@@ -151,7 +152,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .categoryId(categoryId)
@@ -170,7 +171,7 @@ class PostServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(blogName)
                     .title("포스트 1")
-                    .content("content")
+                    .bodyText("bodyText")
                     .intro("intro")
                     .visibility(PUBLIC)
                     .tags(List.of("tag1", "tag2", "tag3"))
@@ -185,6 +186,90 @@ class PostServiceTest extends ServiceTest {
                 assertThat(post.getTags())
                         .containsExactly("tag1", "tag2", "tag3");
             });
+        }
+    }
+
+    @Nested
+    class 임시_글로부터_포스트_생성_시 {
+
+        private Long draftId;
+
+        @BeforeEach
+        void setUp() {
+            memberId = 회원을_저장한다("말랑");
+            blogName = 블로그_개설(memberId, "mallang-log");
+            CreateDraftCommand createDraftCommand = CreateDraftCommand.builder()
+                    .memberId(memberId)
+                    .blogName(blogName)
+                    .title("임시_글 1")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .tags(List.of("tag1"))
+                    .build();
+            draftId = draftService.create(createDraftCommand);
+        }
+
+        @Test
+        void 포스트는_생성되고_임시_글은_제거된다() {
+            // given
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .blogName(blogName)
+                    .title("임시 글로부터 작성된 포스트")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .tags(List.of("tag1"))
+                    .build();
+
+            // when
+            PostId postId = postService.createFromDraft(command, draftId);
+
+            // then
+            assertThat(postId).isNotNull();
+            assertThat(draftRepository.existsById(draftId)).isFalse();
+        }
+
+        @Test
+        void 다른_사람의_블로그에_작성하는_경우_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(memberId)
+                    .blogName(otherBlogName)
+                    .title("임시 글로부터 작성된 포스트")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .tags(List.of("tag1"))
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postService.createFromDraft(command, draftId)
+            ).isInstanceOf(NoAuthorityBlogException.class);
+        }
+
+        @Test
+        void 다른_블로그의_임시_글을_통해_생성하려는_경우_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            CreatePostCommand command = CreatePostCommand.builder()
+                    .memberId(otherMemberId)
+                    .blogName(otherBlogName)
+                    .title("임시 글로부터 작성된 포스트")
+                    .bodyText("bodyText")
+                    .intro("intro")
+                    .visibility(PUBLIC)
+                    .tags(List.of("tag1"))
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postService.createFromDraft(command, draftId)
+            ).isInstanceOf(NoAuthorityPostException.class);
         }
     }
 
@@ -215,7 +300,7 @@ class PostServiceTest extends ServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
-                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getBodyText()).isEqualTo("수정내용");
                 assertThat(post.getPostThumbnailImageName()).isEqualTo("수정썸네일");
                 assertThat(post.getPostIntro()).isEqualTo("수정인트로");
                 assertThat(post.getTags())
@@ -243,7 +328,7 @@ class PostServiceTest extends ServiceTest {
             // then
             Post post = postRepository.getById(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("포스트");
-            assertThat(post.getContent()).isEqualTo("내용");
+            assertThat(post.getBodyText()).isEqualTo("내용");
         }
 
         @Test
@@ -265,7 +350,7 @@ class PostServiceTest extends ServiceTest {
             // then
             Post post = postRepository.getById(포스트_ID, blogName);
             assertThat(post.getTitle()).isEqualTo("수정제목");
-            assertThat(post.getContent()).isEqualTo("수정내용");
+            assertThat(post.getBodyText()).isEqualTo("수정내용");
             assertThat(post.getCategory()).isNull();
         }
 
@@ -290,7 +375,7 @@ class PostServiceTest extends ServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
-                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getBodyText()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Spring");
             });
         }
@@ -316,7 +401,7 @@ class PostServiceTest extends ServiceTest {
             transactionHelper.doAssert(() -> {
                 Post post = postRepository.getById(포스트_ID, blogName);
                 assertThat(post.getTitle()).isEqualTo("수정제목");
-                assertThat(post.getContent()).isEqualTo("수정내용");
+                assertThat(post.getBodyText()).isEqualTo("수정내용");
                 assertThat(post.getCategory().getName()).isEqualTo("Node");
             });
         }

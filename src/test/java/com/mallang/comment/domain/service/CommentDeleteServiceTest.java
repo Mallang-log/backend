@@ -36,6 +36,7 @@ class CommentDeleteServiceTest {
     private final Post post = Post.builder()
             .blog(blog)
             .writer(postWriter)
+            .postIntro("intro")
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
     private final Member member = 깃허브_말랑(1L);
