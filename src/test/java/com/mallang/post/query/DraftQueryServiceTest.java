@@ -101,7 +101,7 @@ class DraftQueryServiceTest extends ServiceTest {
         void 작성자가_아니면_예외() {
             // when & then
             assertThatThrownBy(() ->
-                    draftQueryService.findById(memberId, 임시_글_1_ID)
+                    draftQueryService.findById(otherMemberId, 임시_글_1_ID)
             ).isInstanceOf(NoAuthorityPostException.class);
         }
     }

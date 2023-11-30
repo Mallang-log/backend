@@ -43,11 +43,13 @@ class DraftTest {
         Draft draft1 = Draft.builder()
                 .blog(blog)
                 .writer(mallang)
+                .postIntro("intro")
                 .title("1234")
                 .build();
         Draft draft2 = Draft.builder()
                 .blog(blog)
                 .writer(mallang)
+                .postIntro("intro")
                 .title("5678")
                 .build();
         ReflectionTestUtils.setField(draft1, "id", 1L);
@@ -69,6 +71,7 @@ class DraftTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .category(springCategory)
                 .build();
@@ -90,12 +93,14 @@ class DraftTest {
                 Draft.builder()
                         .blog(otherBlog)
                         .writer(mallang)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
             assertThatThrownBy(() -> {
                 Draft.builder()
                         .blog(blog)
                         .writer(otherMember)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
         }
@@ -107,6 +112,7 @@ class DraftTest {
                 Draft.builder()
                         .blog(blog)
                         .writer(mallang)
+                        .postIntro("intro")
                         .category(otherCategory)
                         .build();
             }).isInstanceOf(NoAuthorityCategoryException.class);
@@ -142,6 +148,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .build();
 
@@ -157,6 +164,7 @@ class DraftTest {
                             .blog(blog)
                             .title("제목")
                             .bodyText("내용")
+                            .postIntro("intro")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -170,6 +178,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .category(jpaCategory)
                     .build();
@@ -185,6 +194,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .build();
@@ -200,6 +210,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .build();
 
@@ -218,6 +229,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .tags(List.of("태그1"))
                     .build();
@@ -246,6 +258,7 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .tags(List.of("태그1"))
                     .build();
@@ -272,6 +285,7 @@ class DraftTest {
                 .title("제목")
                 .bodyText("내용")
                 .writer(mallang)
+                .postIntro("intro")
                 .category(springCategory)
                 .build();
 

@@ -42,6 +42,7 @@ class PostContentTest {
                 .title("제목")
                 .bodyText("내용")
                 .writer(mallang)
+                .postIntro("intro")
                 .category(springCategory)
                 .build();
 
@@ -62,6 +63,7 @@ class PostContentTest {
                 PostContent.builder()
                         .writer(mallang)
                         .category(otherCategory)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityCategoryException.class);
         }
@@ -71,6 +73,7 @@ class PostContentTest {
             // given
             PostContent taggedPost = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
@@ -86,6 +89,7 @@ class PostContentTest {
             // given
             PostContent taggedPost = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .build();
@@ -100,6 +104,7 @@ class PostContentTest {
             assertThatThrownBy(() ->
                     PostContent.builder()
                             .title("제목")
+                            .postIntro("intro")
                             .bodyText("내용")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
@@ -112,6 +117,7 @@ class PostContentTest {
             // when
             PostContent postContent = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .category(jpaCategory)
@@ -126,6 +132,7 @@ class PostContentTest {
             // given
             PostContent postContent = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
@@ -140,6 +147,7 @@ class PostContentTest {
             // given
             PostContent postContent = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .build();
@@ -157,6 +165,7 @@ class PostContentTest {
             // given
             PostContent postContent = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .tags(List.of("태그1"))
@@ -184,6 +193,7 @@ class PostContentTest {
             // given
             PostContent postContent = PostContent.builder()
                     .title("제목")
+                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .tags(List.of("태그1"))
@@ -208,6 +218,7 @@ class PostContentTest {
         // given
         PostContent postContent = PostContent.builder()
                 .title("제목")
+                .postIntro("intro")
                 .bodyText("내용")
                 .writer(mallang)
                 .tags(List.of("태그1"))

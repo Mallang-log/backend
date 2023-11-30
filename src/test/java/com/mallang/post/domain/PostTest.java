@@ -49,12 +49,14 @@ class PostTest {
                 .blog(blog)
                 .writer(mallang)
                 .title("1234")
+                .postIntro("intro")
                 .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                 .build();
         Post post2 = Post.builder()
                 .blog(blog)
                 .writer(mallang)
                 .title("5678")
+                .postIntro("intro")
                 .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                 .build();
         ReflectionTestUtils.setField(post1, "postId", new PostId(1L, 2L));
@@ -76,6 +78,7 @@ class PostTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .category(springCategory)
                 .build();
@@ -97,12 +100,14 @@ class PostTest {
                 Post.builder()
                         .blog(otherBlog)
                         .writer(mallang)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
             assertThatThrownBy(() -> {
                 Post.builder()
                         .blog(blog)
                         .writer(otherMember)
+                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
         }
@@ -114,6 +119,7 @@ class PostTest {
                 Post.builder()
                         .blog(blog)
                         .writer(mallang)
+                        .postIntro("intro")
                         .category(otherCategory)
                         .build();
             }).isInstanceOf(NoAuthorityCategoryException.class);
@@ -126,6 +132,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
                     .build();
@@ -142,6 +149,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .build();
 
@@ -157,6 +165,7 @@ class PostTest {
                             .blog(blog)
                             .title("제목")
                             .bodyText("내용")
+                            .postIntro("intro")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -170,6 +179,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .category(jpaCategory)
                     .build();
@@ -185,6 +195,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .build();
@@ -200,6 +211,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .build();
 
@@ -218,6 +230,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
                     .tags(List.of("태그1"))
@@ -249,6 +262,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
                     .tags(List.of("태그1"))
@@ -276,6 +290,7 @@ class PostTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
 
@@ -311,6 +326,7 @@ class PostTest {
                         .blog(blog)
                         .title("제목")
                         .bodyText("내용")
+                        .postIntro("intro")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                         .category(springCategory)
@@ -336,6 +352,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .category(springCategory)
@@ -373,6 +390,7 @@ class PostTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
+                    .postIntro("intro")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .category(springCategory)
@@ -403,6 +421,7 @@ class PostTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                 .category(springCategory)
@@ -424,6 +443,7 @@ class PostTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
 
@@ -440,6 +460,7 @@ class PostTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
         post.clickLike();
@@ -460,6 +481,7 @@ class PostTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
+                .postIntro("intro")
                 .writer(mallang)
                 .build();
 
