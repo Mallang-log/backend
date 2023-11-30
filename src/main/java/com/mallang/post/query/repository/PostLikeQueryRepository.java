@@ -1,4 +1,4 @@
-package com.mallang.post.query.support;
+package com.mallang.post.query.repository;
 
 import com.mallang.post.domain.like.PostLike;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface PostLikeQuerySupport extends JpaRepository<PostLike, Long> {
+public interface PostLikeQueryRepository extends JpaRepository<PostLike, Long> {
 
     default boolean existsByMemberIdAndPostId(
             Long memberId,

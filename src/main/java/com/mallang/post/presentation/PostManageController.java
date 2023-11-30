@@ -10,7 +10,7 @@ import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.PostManageQueryService;
-import com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond;
+import com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import java.net.URI;

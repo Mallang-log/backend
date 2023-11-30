@@ -1,4 +1,4 @@
-package com.mallang.post.query.support;
+package com.mallang.post.query.repository;
 
 import com.mallang.post.domain.Post;
 import com.mallang.post.exception.NotFoundPostException;
@@ -7,7 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface PostQuerySupport extends JpaRepository<Post, Long> {
+public interface PostQueryRepository extends
+        JpaRepository<Post, Long>,
+        PostManageSearchDao,
+        PostSearchDao {
 
     default Post getByIdAndBlogName(Long id, String blogName) {
         return findByIdAndBlogName(id, blogName)
@@ -19,7 +22,8 @@ public interface PostQuerySupport extends JpaRepository<Post, Long> {
                                        @Param("blogName") String blogName);
 
     default Post getByPostIdAndBlogNameAndWriterId(Long id, String blogName, Long writerId) {
-        return findByPostIdAndBlogNameAndWriterId(id, blogName, writerId).orElseThrow(NotFoundPostException::new);
+        return findByPostIdAndBlogNameAndWriterId(id, blogName, writerId)
+                .orElseThrow(NotFoundPostException::new);
     }
 
     @Query("""

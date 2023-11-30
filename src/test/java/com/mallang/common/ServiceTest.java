@@ -47,7 +47,6 @@ import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.query.DraftQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
-import com.mallang.post.query.dao.PostSearchDao;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -109,9 +108,6 @@ public abstract class ServiceTest {
 
     @Autowired
     protected PostIdGenerator postIdGenerator;
-
-    @Autowired
-    protected PostSearchDao postSearchDao;
 
     @Autowired
     protected PostQueryService postQueryService;

@@ -5,7 +5,7 @@ import static com.mallang.post.presentation.support.PostPresentationConstant.POS
 import com.mallang.auth.presentation.support.OptionalAuth;
 import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.query.PostQueryService;
-import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import lombok.RequiredArgsConstructor;

@@ -7,7 +7,7 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.post.domain.draft.Draft;
 import com.mallang.post.domain.draft.DraftRepository;
-import com.mallang.post.query.dao.DraftListDao;
+import com.mallang.post.query.repository.DraftQueryRepository;
 import com.mallang.post.query.response.DraftDetailResponse;
 import com.mallang.post.query.response.DraftListResponse;
 import java.util.List;
@@ -24,13 +24,16 @@ public class DraftQueryService {
     private final DraftRepository draftRepository;
     private final BlogRepository blogRepository;
 
-    private final DraftListDao draftListDao;
+    private final DraftQueryRepository draftQueryRepository;
 
     public List<DraftListResponse> findAllByBlog(Long memberId, String blogName) {
         Member member = memberRepository.getById(memberId);
         Blog blog = blogRepository.getByName(blogName);
         blog.validateOwner(member);
-        return draftListDao.find(blog);
+        return draftQueryRepository.findAllByBlogOrderByUpdatedDateDesc(blog)
+                .stream()
+                .map(DraftListResponse::from)
+                .toList();
     }
 
     public DraftDetailResponse findById(Long memberId, Long draftId) {

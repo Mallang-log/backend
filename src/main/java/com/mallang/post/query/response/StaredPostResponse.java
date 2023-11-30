@@ -45,6 +45,25 @@ public record StaredPostResponse(
                 .build();
     }
 
+    public static StaredPostResponse protectedPost(PostStar postStar) {
+        Post post = postStar.getPost();
+        return new StaredPostResponse(
+                postStar.getId(),
+                postStar.getCreatedDate(),
+                post.getPostId().getId(),
+                post.getBlog().getName(),
+                post.getTitle(),
+                "보호되어 있는 글입니다.",
+                "보호되어 있는 글입니다.",
+                "",
+                post.getVisibilityPolish().getVisibility(),
+                post.getCreatedDate(),
+                WriterResponse.from(post),
+                CategoryResponse.from(post),
+                null
+        );
+    }
+
     public record WriterResponse(
             Long writerId,
             String writerNickname,

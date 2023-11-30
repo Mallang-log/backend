@@ -3,7 +3,7 @@ package com.mallang.statistics.api.query.dao;
 import static com.mallang.statistics.statistic.QPostViewStatistic.postViewStatistic;
 
 import com.mallang.post.domain.Post;
-import com.mallang.post.query.support.PostQuerySupport;
+import com.mallang.post.query.repository.PostQueryRepository;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.PostViewStatisticResponse;
 import com.mallang.statistics.api.query.support.PeriodPartitioner;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostViewStatisticDao {
 
-    private final PostQuerySupport postQuerySupport;
+    private final PostQueryRepository postQueryRepository;
     private final JPAQueryFactory query;
 
     public List<PostViewStatisticResponse> find(
@@ -31,7 +31,7 @@ public class PostViewStatisticDao {
             Long postId,
             StatisticCondition condition
     ) {
-        Post post = postQuerySupport.getByPostIdAndBlogNameAndWriterId(postId, blogName, memberId);
+        Post post = postQueryRepository.getByPostIdAndBlogNameAndWriterId(postId, blogName, memberId);
         List<PostViewStatistic> result = query.selectFrom(postViewStatistic)
                 .where(
                         postViewStatistic.postId.eq(post.getPostId()),
