@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CategoryService {
 
-    private final MemberRepository memberRepository;
     private final BlogRepository blogRepository;
+    private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
     private final CategoryValidator categoryValidator;
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
+        Blog blog = blogRepository.getByName(command.blogName());
         Category parentCategory = categoryRepository.getParentById(command.parentCategoryId());
         Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
         return categoryRepository.save(category).getId();
