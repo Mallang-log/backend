@@ -15,7 +15,7 @@ plugins {
 group = 'com.mallang.log'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = '21'
 }
 
 configurations {
