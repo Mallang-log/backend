@@ -1,7 +1,7 @@
 package com.mallang.post.query;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.MemberRepository;
+import com.mallang.auth.query.repository.MemberQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.query.repository.PostStarQueryRepository;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostStarQueryService {
 
-    private final MemberRepository memberRepository;
+    private final MemberQueryRepository memberQueryRepository;
     private final PostStarQueryRepository postStarQueryRepository;
 
     public Page<StaredPostResponse> findAllByMemberId(
@@ -26,7 +26,7 @@ public class PostStarQueryService {
             @Nullable Long requesterId,
             Pageable pageable
     ) {
-        Member member = findMember(requesterId);
+        Member member = memberQueryRepository.getMemberIfIdNotNull(requesterId);
         return postStarQueryRepository.findAllByMemberId(targetMemberId, pageable)
                 .map(postStar -> {
                     try {
@@ -37,14 +37,6 @@ public class PostStarQueryService {
                         return StaredPostResponse.protectedPost(postStar);
                     }
                 });
-    }
-
-    @Nullable
-    private Member findMember(@Nullable Long memberId) {
-        if (memberId == null) {
-            return null;
-        }
-        return memberRepository.getById(memberId);
     }
 }
 

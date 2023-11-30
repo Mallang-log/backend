@@ -1,7 +1,7 @@
 package com.mallang.post.query;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.MemberRepository;
+import com.mallang.auth.query.repository.MemberQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityPostException;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostQueryService {
 
-    private final MemberRepository memberRepository;
+    private final MemberQueryRepository memberQueryRepository;
     private final PostQueryRepository postQueryRepository;
     private final PostLikeQueryRepository postLikeQueryRepository;
 
@@ -32,7 +32,7 @@ public class PostQueryService {
             @Nullable Long memberId,
             @Nullable String postPassword
     ) {
-        Member member = findMember(memberId);
+        Member member = memberQueryRepository.getMemberIfIdNotNull(memberId);
         Post post = postQueryRepository.getById(postId, blogName);
         try {
             post.validateAccess(member, postPassword);
@@ -57,7 +57,7 @@ public class PostQueryService {
             Pageable pageable,
             @Nullable Long memberId
     ) {
-        Member member = findMember(memberId);
+        Member member = memberQueryRepository.getMemberIfIdNotNull(memberId);
         return postQueryRepository.search(memberId, cond, pageable)
                 .map(post -> {
                     try {
@@ -67,14 +67,6 @@ public class PostQueryService {
                         return PostSearchResponse.protectedPost(post);
                     }
                 });
-    }
-
-    @Nullable
-    private Member findMember(@Nullable Long memberId) {
-        if (memberId == null) {
-            return null;
-        }
-        return memberRepository.getById(memberId);
     }
 }
 

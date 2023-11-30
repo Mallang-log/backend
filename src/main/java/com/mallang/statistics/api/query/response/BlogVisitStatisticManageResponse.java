@@ -11,10 +11,6 @@ public class BlogVisitStatisticManageResponse implements CommonStatisticResponse
     private LocalDate endDateInclude;
     private int visitCount;
 
-    public static BlogVisitStatisticManageResponse from(PeriodPart periodPart) {
-        return new BlogVisitStatisticManageResponse(periodPart.startInclude(), periodPart.endInclude());
-    }
-
     public BlogVisitStatisticManageResponse() {
     }
 
@@ -26,6 +22,10 @@ public class BlogVisitStatisticManageResponse implements CommonStatisticResponse
         this.startDateInclude = startDateInclude;
         this.endDateInclude = endDateInclude;
         this.visitCount = visitCount;
+    }
+
+    public static BlogVisitStatisticManageResponse from(PeriodPart periodPart) {
+        return new BlogVisitStatisticManageResponse(periodPart.startInclude(), periodPart.endInclude());
     }
 
     public void addVisitCount(int count) {

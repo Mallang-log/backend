@@ -92,17 +92,6 @@ public class PostContent {
         this.category = category;
     }
 
-    private void setTags(List<String> tags) {
-        this.tags.clear();
-        if (tags == null) {
-            return;
-        }
-        validateDuplicateTags(tags);
-        tags.stream()
-                .map(Tag::new)
-                .forEach(it -> this.tags.add(it));
-    }
-
     private void validateDuplicateTags(List<String> list) {
         HashSet<String> distinct = new HashSet<>(list);
         if (distinct.size() != list.size()) {
@@ -126,5 +115,16 @@ public class PostContent {
         return tags.stream()
                 .map(Tag::getContent)
                 .toList();
+    }
+
+    private void setTags(List<String> tags) {
+        this.tags.clear();
+        if (tags == null) {
+            return;
+        }
+        validateDuplicateTags(tags);
+        tags.stream()
+                .map(Tag::new)
+                .forEach(it -> this.tags.add(it));
     }
 }

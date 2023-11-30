@@ -1,11 +1,10 @@
 package com.mallang.statistics.api.query;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.MemberRepository;
+import com.mallang.auth.query.repository.MemberQueryRepository;
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.domain.BlogRepository;
+import com.mallang.blog.query.repository.BlogQueryRepository;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostRepository;
 import com.mallang.post.query.repository.PostQueryRepository;
 import com.mallang.statistics.api.query.repository.BlogVisitStatisticQueryRepository;
 import com.mallang.statistics.api.query.repository.PostViewStatisticQueryRepository;
@@ -33,20 +32,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class StatisticQueryService {
 
-    private final MemberRepository memberRepository;
-    private final BlogRepository blogRepository;
-    private final PostRepository postRepository;
+    private final MemberQueryRepository memberQueryRepository;
+    private final BlogQueryRepository blogQueryRepository;
     private final PostQueryRepository postQueryRepository;
     private final BlogVisitStatisticQueryRepository blogVisitStatisticQueryRepository;
     private final PostViewStatisticQueryRepository postViewStatisticQueryRepository;
+
+    public BlogVisitStatisticSimpleResponse getSimpleBlogVisitStatistics(String blogName, LocalDate today) {
+        return blogVisitStatisticQueryRepository.getSimpleBlogVisitStatistics(blogName, today);
+    }
+
+    public PostTotalViewsResponse getPostTotalViews(String blogName, Long postId) {
+        Post post = postQueryRepository.getById(postId, blogName);
+        int totalViewCount = postViewStatisticQueryRepository.findAllByPostId(post.getPostId())
+                .stream()
+                .mapToInt(PostViewStatistic::getCount)
+                .sum();
+        return new PostTotalViewsResponse(totalViewCount);
+    }
 
     public List<BlogVisitStatisticManageResponse> getBlogVisitStatistics(
             Long memberId,
             String blogName,
             StatisticQueryCondition cond
     ) {
-        Blog blog = blogRepository.getByName(blogName);
-        Member member = memberRepository.getById(memberId);
+        Blog blog = blogQueryRepository.getByName(blogName);
+        Member member = memberQueryRepository.getById(memberId);
         blog.validateOwner(member);
         List<BlogVisitStatistic> blogVisitStatistics = blogVisitStatisticQueryRepository.findByBlog(blog, cond);
         List<BlogVisitStatisticManageResponse> responses = PeriodPartitioner.partition(cond)
@@ -60,18 +71,14 @@ public class StatisticQueryService {
         return responses;
     }
 
-    public BlogVisitStatisticSimpleResponse getSimpleBlogVisitStatistics(String blogName, LocalDate today) {
-        return blogVisitStatisticQueryRepository.getSimpleBlogVisitStatistics(blogName, today);
-    }
-
     public List<PostViewStatisticResponse> getPostViewStatistics(
             Long memberId,
             String blogName,
             Long postId,
             StatisticQueryCondition cond
     ) {
-        Post post = postRepository.getById(postId, blogName);
-        Member member = memberRepository.getById(memberId);
+        Post post = postQueryRepository.getById(postId, blogName);
+        Member member = memberQueryRepository.getById(memberId);
         post.validateWriter(member);
         List<PostViewStatisticResponse> responses = PeriodPartitioner.partition(cond)
                 .map(PostViewStatisticResponse::from)
@@ -83,15 +90,6 @@ public class StatisticQueryService {
                 (statistic, response) -> response.addViewCount(statistic.getCount())
         );
         return responses;
-    }
-
-    public PostTotalViewsResponse getPostTotalViews(String blogName, Long postId) {
-        Post post = postQueryRepository.getById(postId, blogName);
-        int totalViewCount = postViewStatisticQueryRepository.findAllByPostId(post.getPostId())
-                .stream()
-                .mapToInt(PostViewStatistic::getCount)
-                .sum();
-        return new PostTotalViewsResponse(totalViewCount);
     }
 
     private <S extends CommonStatistic, R extends CommonStatisticResponse> void accumulate(

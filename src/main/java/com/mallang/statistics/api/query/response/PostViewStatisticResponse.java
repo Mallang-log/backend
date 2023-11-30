@@ -11,10 +11,6 @@ public class PostViewStatisticResponse implements CommonStatisticResponse {
     private LocalDate endDateInclude;
     private int viewCount;
 
-    public static PostViewStatisticResponse from(PeriodPart periodPart) {
-        return new PostViewStatisticResponse(periodPart.startInclude(), periodPart.endInclude());
-    }
-
     public PostViewStatisticResponse() {
         this(null, null);
     }
@@ -27,6 +23,10 @@ public class PostViewStatisticResponse implements CommonStatisticResponse {
         this.startDateInclude = startDateInclude;
         this.endDateInclude = endDateInclude;
         this.viewCount = viewCount;
+    }
+
+    public static PostViewStatisticResponse from(PeriodPart periodPart) {
+        return new PostViewStatisticResponse(periodPart.startInclude(), periodPart.endInclude());
     }
 
     public void addViewCount(int count) {

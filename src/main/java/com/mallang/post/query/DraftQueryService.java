@@ -2,11 +2,10 @@ package com.mallang.post.query;
 
 
 import com.mallang.auth.domain.Member;
-import com.mallang.auth.domain.MemberRepository;
+import com.mallang.auth.query.repository.MemberQueryRepository;
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.domain.BlogRepository;
+import com.mallang.blog.query.repository.BlogQueryRepository;
 import com.mallang.post.domain.draft.Draft;
-import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.query.repository.DraftQueryRepository;
 import com.mallang.post.query.response.DraftDetailResponse;
 import com.mallang.post.query.response.DraftListResponse;
@@ -20,15 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DraftQueryService {
 
-    private final MemberRepository memberRepository;
-    private final DraftRepository draftRepository;
-    private final BlogRepository blogRepository;
+    private final MemberQueryRepository memberQueryRepository;
+    private final BlogQueryRepository blogQueryRepository;
 
     private final DraftQueryRepository draftQueryRepository;
 
     public List<DraftListResponse> findAllByBlog(Long memberId, String blogName) {
-        Member member = memberRepository.getById(memberId);
-        Blog blog = blogRepository.getByName(blogName);
+        Member member = memberQueryRepository.getById(memberId);
+        Blog blog = blogQueryRepository.getByName(blogName);
         blog.validateOwner(member);
         return draftQueryRepository.findAllByBlogOrderByUpdatedDateDesc(blog)
                 .stream()
@@ -37,8 +35,8 @@ public class DraftQueryService {
     }
 
     public DraftDetailResponse findById(Long memberId, Long draftId) {
-        Member member = memberRepository.getById(memberId);
-        Draft draft = draftRepository.getById(draftId);
+        Member member = memberQueryRepository.getById(memberId);
+        Draft draft = draftQueryRepository.getById(draftId);
         draft.validateWriter(member);
         return DraftDetailResponse.from(draft);
     }
