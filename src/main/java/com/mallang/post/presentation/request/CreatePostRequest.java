@@ -16,7 +16,6 @@ public record CreatePostRequest(
         @Nullable Long categoryId,
         List<String> tags
 ) {
-
     public CreatePostCommand toCommand(Long memberId) {
         return CreatePostCommand.builder()
                 .memberId(memberId)

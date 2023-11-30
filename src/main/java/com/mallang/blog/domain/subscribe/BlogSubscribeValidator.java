@@ -11,13 +11,15 @@ public class BlogSubscribeValidator {
 
     private final BlogSubscribeRepository blogSubscribeRepository;
 
-    public void validateSubscribe(BlogSubscribe blogSubscribe) {
-        if (blogSubscribe.getBlog().getOwner().equals(blogSubscribe.getSubscriber())) {
+    public void validateSubscribe(BlogSubscribe subscribe) {
+        if (subscribe.getBlog().getOwner().equals(subscribe.getSubscriber())) {
             throw new SelfSubscribeException();
         }
-        if (blogSubscribeRepository.existsBySubscriberAndBlog(
-                blogSubscribe.getSubscriber(), blogSubscribe.getBlog()
-        )) {
+        boolean alreadyExist = blogSubscribeRepository.existsBySubscriberAndBlog(
+                subscribe.getSubscriber(),
+                subscribe.getBlog()
+        );
+        if (alreadyExist) {
             throw new AlreadySubscribedException();
         }
     }

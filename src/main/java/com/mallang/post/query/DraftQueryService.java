@@ -19,10 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DraftQueryService {
 
-    private final MemberQueryRepository memberQueryRepository;
     private final BlogQueryRepository blogQueryRepository;
-
     private final DraftQueryRepository draftQueryRepository;
+    private final MemberQueryRepository memberQueryRepository;
 
     public List<DraftListResponse> findAllByBlog(Long memberId, String blogName) {
         Member member = memberQueryRepository.getById(memberId);

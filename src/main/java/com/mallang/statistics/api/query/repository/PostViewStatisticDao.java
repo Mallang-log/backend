@@ -28,8 +28,10 @@ public interface PostViewStatisticDao {
             return query.selectFrom(postViewStatistic)
                     .where(
                             postViewStatistic.postId.eq(post.getPostId()),
-                            postViewStatistic.statisticDate.between(condition.startDayInclude(),
-                                    condition.lastDayInclude())
+                            postViewStatistic.statisticDate.between(
+                                    condition.startDayInclude(),
+                                    condition.lastDayInclude()
+                            )
                     )
                     .orderBy(postViewStatistic.statisticDate.asc())
                     .fetch();

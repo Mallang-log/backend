@@ -15,6 +15,7 @@ import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -92,6 +93,7 @@ public class PostManageController {
             @ModelAttribute PostManageSearchCond cond,
             @PageableDefault(size = 15) Pageable pageable
     ) {
-        return ResponseEntity.ok(PageResponse.from(postManageQueryService.search(memberId, cond, pageable)));
+        Page<PostManageSearchResponse> response = postManageQueryService.search(memberId, cond, pageable);
+        return ResponseEntity.ok(PageResponse.from(response));
     }
 }

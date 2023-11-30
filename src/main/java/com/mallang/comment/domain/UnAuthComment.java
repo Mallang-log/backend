@@ -46,13 +46,16 @@ public class UnAuthComment extends Comment {
         validatePassword(password);
     }
 
-    public void validateDelete(@Nullable Member member,
-                               @Nullable String password,
-                               @Nullable String postPassword) {
-        if (!isPostOwner(member)) {
-            post.validateAccess(null, postPassword);
-            validatePassword(password);
+    public void validateDelete(
+            @Nullable Member member,
+            @Nullable String password,
+            @Nullable String postPassword
+    ) {
+        if (post.isWriter(member)) {
+            return;
         }
+        post.validateAccess(member, postPassword);
+        validatePassword(password);
     }
 
     private void validatePassword(String password) {

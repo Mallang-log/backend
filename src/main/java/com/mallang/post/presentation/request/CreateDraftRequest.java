@@ -13,7 +13,6 @@ public record CreateDraftRequest(
         @Nullable Long categoryId,
         List<String> tags
 ) {
-
     public CreateDraftCommand toCommand(Long memberId) {
         return CreateDraftCommand.builder()
                 .memberId(memberId)

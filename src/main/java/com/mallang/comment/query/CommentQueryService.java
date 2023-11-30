@@ -23,10 +23,12 @@ public class CommentQueryService {
     private final CommentQueryRepository commentQueryRepository;
     private final CommentDataPostProcessor commentDataPostProcessor;
 
-    public List<CommentResponse> findAllByPost(Long postId,
-                                               String blogName,
-                                               @Nullable Long memberId,
-                                               @Nullable String postPassword) {
+    public List<CommentResponse> findAllByPost(
+            Long postId,
+            String blogName,
+            @Nullable Long memberId,
+            @Nullable String postPassword
+    ) {
         Post post = postQueryRepository.getById(postId, blogName);
         Member member = memberQueryRepository.getMemberIfIdNotNull(memberId);
         post.validateAccess(member, postPassword);

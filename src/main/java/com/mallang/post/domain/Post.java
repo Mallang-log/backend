@@ -104,15 +104,19 @@ public class Post extends AbstractAggregateRoot<Post> {
         this.likeCount--;
     }
 
+    public boolean isWriter(Member member) {
+        return content.isWriter(member);
+    }
+
     public void validateWriter(Member member) {
-        if (!content.isWriter(member)) {
+        if (!isWriter(member)) {
             throw new NoAuthorityPostException();
         }
     }
 
     public void validateAccess(@Nullable Member member,
                                @Nullable String postPassword) {
-        if (content.isWriter(member)) {
+        if (isWriter(member)) {
             return;
         }
         if (visibilityPolish.isVisible(postPassword)) {

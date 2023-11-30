@@ -27,11 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
-    private final MemberRepository memberRepository;
     private final BlogRepository blogRepository;
-    private final CategoryRepository categoryRepository;
     private final PostRepository postRepository;
     private final DraftRepository draftRepository;
+    private final MemberRepository memberRepository;
+    private final CategoryRepository categoryRepository;
     private final PostIdGenerator postIdGenerator;
 
     public PostId createFromDraft(CreatePostCommand command, Long draftId) {

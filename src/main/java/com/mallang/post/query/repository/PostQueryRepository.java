@@ -18,8 +18,10 @@ public interface PostQueryRepository extends
     }
 
     @Query("SELECT p FROM Post p WHERE p.postId.id = :id AND p.blog.name.value = :blogName")
-    Optional<Post> findById(@Param("id") Long id,
-                            @Param("blogName") String blogName);
+    Optional<Post> findById(
+            @Param("id") Long id,
+            @Param("blogName") String blogName
+    );
 
     default Post getByPostIdAndBlogNameAndWriterId(Long id, String blogName, Long writerId) {
         return findByPostIdAndBlogNameAndWriterId(id, blogName, writerId)

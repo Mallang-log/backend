@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostQueryService {
 
-    private final MemberQueryRepository memberQueryRepository;
     private final PostQueryRepository postQueryRepository;
+    private final MemberQueryRepository memberQueryRepository;
     private final PostLikeQueryRepository postLikeQueryRepository;
 
     public PostDetailResponse getByIdAndBlogName(

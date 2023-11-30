@@ -2,7 +2,6 @@ package com.mallang.comment.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.common.domain.CommonDomainModel;
@@ -91,9 +90,5 @@ public abstract class Comment extends CommonDomainModel {
     public void unlinkFromParent() {
         this.parent.getChildren().remove(this);
         this.parent = null;
-    }
-
-    protected boolean isPostOwner(Member member) {
-        return getPost().getWriter().equals(member);
     }
 }

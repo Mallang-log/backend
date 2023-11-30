@@ -7,7 +7,6 @@ public record ClickPostLikeRequest(
         Long postId,
         String blogName
 ) {
-
     public ClickPostLikeCommand toCommand(Long memberId, @Nullable String postPassword) {
         return new ClickPostLikeCommand(postId, blogName, memberId, postPassword);
     }

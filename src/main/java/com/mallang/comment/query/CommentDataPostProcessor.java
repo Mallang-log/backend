@@ -14,23 +14,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommentDataPostProcessor {
 
-    public List<CommentResponse> processSecret(List<CommentResponse> datas,
-                                               @Nullable Long memberId) {
-        return datas.stream()
+    public List<CommentResponse> processSecret(
+            List<CommentResponse> responses,
+            @Nullable Long memberId
+    ) {
+        return responses.stream()
                 .map(it -> processSecret(it, memberId))
                 .toList();
     }
 
-    private CommentResponse processSecret(CommentResponse data, @Nullable Long memberId) {
-        if (data instanceof UnAuthCommentResponse) {
-            return data;
+    private CommentResponse processSecret(CommentResponse response, @Nullable Long memberId) {
+        if (response instanceof UnAuthCommentResponse) {
+            return response;
         }
-        AuthCommentResponse authed = (AuthCommentResponse) data;
+        AuthCommentResponse authed = (AuthCommentResponse) response;
         if (!authed.isSecret() || authed.getWriter().memberId().equals(memberId)) {
-            return data;
+            return response;
         }
         return AuthCommentResponse.builder()
-                .id(data.getId())
+                .id(response.getId())
                 .content("비밀 댓글입니다.")
                 .secret(true)
                 .writer(ANONYMOUS)

@@ -10,7 +10,6 @@ public record WriteAuthCommentRequest(
         boolean secret,
         @Nullable Long parentCommentId
 ) {
-
     public WriteAuthCommentCommand toCommand(Long memberId, @Nullable String postPassword) {
         return WriteAuthCommentCommand.builder()
                 .postId(postId)

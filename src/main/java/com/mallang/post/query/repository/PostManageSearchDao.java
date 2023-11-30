@@ -44,9 +44,7 @@ public interface PostManageSearchDao {
         private final CategoryQueryRepository categoryQueryRepository;
 
         @Override
-        public Page<Post> searchForManage(Long memberId,
-                                          PostManageSearchCond cond,
-                                          Pageable pageable) {
+        public Page<Post> searchForManage(Long memberId, PostManageSearchCond cond, Pageable pageable) {
             JPAQuery<Long> countQuery = query.select(post.countDistinct())
                     .from(post)
                     .where(

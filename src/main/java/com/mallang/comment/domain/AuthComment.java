@@ -61,7 +61,7 @@ public class AuthComment extends Comment {
 
     public void validateDelete(Member member, @Nullable String postPassword) {
         post.validateAccess(member, postPassword);
-        if (isPostOwner(member) || member.equals(writer)) {
+        if (post.isWriter(member) || member.equals(writer)) {
             return;
         }
         throw new NoAuthorityCommentException();
