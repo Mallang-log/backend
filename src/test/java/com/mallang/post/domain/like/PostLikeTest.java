@@ -17,7 +17,7 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -134,7 +134,7 @@ class PostLikeTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     postLike.like(postLikeValidator, "12345");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
                 assertThat(post.getLikeCount()).isZero();
             }
         }
@@ -171,7 +171,7 @@ class PostLikeTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     postLike.like(postLikeValidator, null);
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
                 assertThat(post.getLikeCount()).isZero();
             }
         }
@@ -257,7 +257,7 @@ class PostLikeTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     postLike.cancel("wrong");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
                 assertThat(post.getLikeCount()).isEqualTo(1);
             }
         }
@@ -310,7 +310,7 @@ class PostLikeTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     postLike.cancel("wrong");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
                 assertThat(post.getLikeCount()).isEqualTo(1);
             }
         }

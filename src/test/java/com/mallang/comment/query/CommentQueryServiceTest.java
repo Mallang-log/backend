@@ -11,7 +11,7 @@ import com.mallang.comment.query.response.CommentResponse;
 import com.mallang.comment.query.response.UnAuthCommentResponse;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -114,7 +114,7 @@ class CommentQueryServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 commentQueryService.findAllByPost(protectedPost.getId(), blogName, donghunId, null);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
             assertDoesNotThrow(() -> {
                 commentQueryService.findAllByPost(protectedPost.getId(), blogName, null, "1234");
             });
@@ -132,10 +132,10 @@ class CommentQueryServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 commentQueryService.findAllByPost(protectedPost.getId(), blogName, donghunId, null);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
             assertThatThrownBy(() -> {
                 commentQueryService.findAllByPost(protectedPost.getId(), blogName, null, null);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
             assertDoesNotThrow(() -> {
                 commentQueryService.findAllByPost(protectedPost.getId(), blogName, memberId, null);
             });

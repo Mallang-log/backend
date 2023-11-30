@@ -97,7 +97,6 @@ def excludeCoverage = [
         '**/request/**',
         '**/response/*Response*',
         '**/query/repository/*QueryRepository*',
-        '**/query/support/*Dao*',  // TODO 제거
         '**/domain/*/*Repository*',
         '**/auth/infrastructure/oauth/*',
         '**/auth/presentation/OauthController*',
@@ -154,7 +153,6 @@ jacocoTestCoverageVerification {
                     '*.request.*',
                     '*.response.*Response*',
                     '*.query.repository.*QueryRepository',
-                    '*.query.support.*Support',
                     '*.domain.*Repository',
                     '*.auth.infrastructure.oauth.*',
                     '*.OauthController',

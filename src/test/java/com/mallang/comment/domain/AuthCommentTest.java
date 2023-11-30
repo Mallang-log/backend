@@ -15,7 +15,7 @@ import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -157,7 +157,7 @@ class AuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.write("123");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -201,7 +201,7 @@ class AuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.write(null);
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
     }
@@ -344,7 +344,7 @@ class AuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.validateUpdate(other, "123");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -387,7 +387,7 @@ class AuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.validateUpdate(other, null);
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
                 assertThat(comment.getContent()).isEqualTo("내용");
             }
         }
@@ -500,7 +500,7 @@ class AuthCommentTest {
                 // when & then
                 assertThatThrownBy(() ->
                         comment.validateDelete(other, "wrong")
-                ).isInstanceOf(NoAuthorityAccessPostException.class);
+                ).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -552,7 +552,7 @@ class AuthCommentTest {
                 // when & then
                 assertThatThrownBy(() ->
                         comment.validateDelete(other, null)
-                ).isInstanceOf(NoAuthorityAccessPostException.class);
+                ).isInstanceOf(NoAuthorityPostException.class);
             }
         }
     }

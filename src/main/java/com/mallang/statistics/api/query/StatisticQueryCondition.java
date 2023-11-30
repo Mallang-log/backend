@@ -2,7 +2,7 @@ package com.mallang.statistics.api.query;
 
 import java.time.LocalDate;
 
-public record StatisticCondition(
+public record StatisticQueryCondition(
         PeriodType periodType,
         LocalDate startDayInclude,
         LocalDate lastDayInclude

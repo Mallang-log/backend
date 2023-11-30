@@ -1,4 +1,4 @@
-package com.mallang.statistics.api.query.support;
+package com.mallang.statistics.api.presentation.support;
 
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SUNDAY;
@@ -7,22 +7,25 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.time.temporal.TemporalAdjusters.previousOrSame;
 
 import com.mallang.statistics.api.query.PeriodType;
-import com.mallang.statistics.api.query.StatisticCondition;
+import com.mallang.statistics.api.query.StatisticQueryCondition;
 import java.time.LocalDate;
 
-public final class StatisticConditionConverter {
+public final class StatisticQueryConditionConverter {
 
-    private StatisticConditionConverter() {
+    private StatisticQueryConditionConverter() {
     }
 
-    public static StatisticCondition convert(
+    public static StatisticQueryCondition convert(
             PeriodType periodType,
             LocalDate lastDay,
             int count
     ) {
+        if (count < 1) {
+            throw new IllegalArgumentException("조회 개수는 0개 이상이어야 합니다.");
+        }
         LocalDate lastDateOfPeriod = getLastDate(lastDay, periodType);
         LocalDate startDataOfPeriod = getStartData(lastDateOfPeriod, periodType, count);
-        return new StatisticCondition(periodType, startDataOfPeriod, lastDateOfPeriod);
+        return new StatisticQueryCondition(periodType, startDataOfPeriod, lastDateOfPeriod);
     }
 
     private static LocalDate getLastDate(LocalDate lastDay, PeriodType periodType) {

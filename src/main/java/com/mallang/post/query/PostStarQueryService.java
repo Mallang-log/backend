@@ -3,7 +3,7 @@ package com.mallang.post.query;
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.post.domain.Post;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.query.repository.PostStarQueryRepository;
 import com.mallang.post.query.response.StaredPostResponse;
 import jakarta.annotation.Nullable;
@@ -33,7 +33,7 @@ public class PostStarQueryService {
                         Post post = postStar.getPost();
                         post.validatePostAccessibility(member, null);
                         return StaredPostResponse.from(postStar);
-                    } catch (NoAuthorityAccessPostException e) {
+                    } catch (NoAuthorityPostException e) {
                         return StaredPostResponse.protectedPost(postStar);
                     }
                 });

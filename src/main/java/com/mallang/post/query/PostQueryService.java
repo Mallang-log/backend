@@ -4,7 +4,7 @@ import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.query.repository.PostLikeQueryRepository;
 import com.mallang.post.query.repository.PostQueryRepository;
 import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
@@ -33,7 +33,7 @@ public class PostQueryService {
             @Nullable String postPassword
     ) {
         Member member = findMember(memberId);
-        Post post = postQueryRepository.getByIdAndBlogName(id, blogName);
+        Post post = postQueryRepository.getById(id, blogName);
         try {
             post.validatePostAccessibility(member, postPassword);
             if (memberId == null) {
@@ -41,7 +41,7 @@ public class PostQueryService {
             }
             boolean isLiked = postLikeQueryRepository.existsByMemberIdAndPostId(memberId, id, blogName);
             return PostDetailResponse.withLiked(post, isLiked);
-        } catch (NoAuthorityAccessPostException e) {
+        } catch (NoAuthorityPostException e) {
             if (post.getVisibilityPolish().getVisibility() == Visibility.PRIVATE) {
                 throw e;
             }
@@ -60,7 +60,7 @@ public class PostQueryService {
                     try {
                         post.validatePostAccessibility(member, null);
                         return PostSearchResponse.from(post);
-                    } catch (NoAuthorityAccessPostException e) {
+                    } catch (NoAuthorityPostException e) {
                         return PostSearchResponse.protectedPost(post);
                     }
                 });

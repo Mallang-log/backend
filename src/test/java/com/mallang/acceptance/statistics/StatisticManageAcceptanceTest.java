@@ -2,9 +2,9 @@ package com.mallang.acceptance.statistics;
 
 
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
+import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.인증되지_않음;
-import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
@@ -132,7 +132,7 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
             );
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
             응답_상태를_검증한다(응답2, 인증되지_않음);
         }
     }
@@ -196,7 +196,7 @@ class StatisticManageAcceptanceTest extends AcceptanceTest {
             );
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
             응답_상태를_검증한다(응답2, 인증되지_않음);
         }
     }

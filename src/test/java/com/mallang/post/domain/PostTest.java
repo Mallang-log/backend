@@ -17,7 +17,6 @@ import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import java.util.Collections;
@@ -379,7 +378,7 @@ class PostTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     post.validatePostAccessibility(otherMember, "12345");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -409,7 +408,7 @@ class PostTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     post.validatePostAccessibility(otherMember, null);
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
     }

@@ -12,14 +12,14 @@ public interface PostQueryRepository extends
         PostManageSearchDao,
         PostSearchDao {
 
-    default Post getByIdAndBlogName(Long id, String blogName) {
-        return findByIdAndBlogName(id, blogName)
+    default Post getById(Long id, String blogName) {
+        return findById(id, blogName)
                 .orElseThrow(NotFoundPostException::new);
     }
 
     @Query("SELECT p FROM Post p WHERE p.postId.id = :id AND p.blog.name.value = :blogName")
-    Optional<Post> findByIdAndBlogName(@Param("id") Long id,
-                                       @Param("blogName") String blogName);
+    Optional<Post> findById(@Param("id") Long id,
+                            @Param("blogName") String blogName);
 
     default Post getByPostIdAndBlogNameAndWriterId(Long id, String blogName, Long writerId) {
         return findByPostIdAndBlogNameAndWriterId(id, blogName, writerId)
