@@ -1,30 +1,19 @@
 package com.mallang.post.query.repository;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.post.domain.Post;
 import com.mallang.post.domain.like.PostLike;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface PostLikeQueryRepository extends JpaRepository<PostLike, Long> {
 
-    default boolean existsByMemberIdAndPostId(
-            Long memberId,
-            Long postId,
-            String blogName
+    default boolean existsByMemberAndPost(
+            Member member,
+            Post post
     ) {
-        return findByMemberIdAndPostId(memberId, postId, blogName).isPresent();
+        return findByMemberAndPost(member, post).isPresent();
     }
 
-    @Query("""
-            SELECT pl FROM PostLike pl
-            WHERE pl.member.id = :memberId
-            AND pl.post.postId.id = :postId
-            AND pl.post.blog.name.value = :blogName
-            """)
-    Optional<PostLike> findByMemberIdAndPostId(
-            @Param("memberId") Long memberId,
-            @Param("postId") Long postId,
-            @Param("blogName") String blogName
-    );
+    Optional<PostLike> findByMemberAndPost(Member member, Post post);
 }

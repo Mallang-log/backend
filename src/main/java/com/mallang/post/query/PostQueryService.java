@@ -27,26 +27,29 @@ public class PostQueryService {
     private final PostLikeQueryRepository postLikeQueryRepository;
 
     public PostDetailResponse getByIdAndBlogName(
-            Long id,
+            Long postId,
             String blogName,
             @Nullable Long memberId,
             @Nullable String postPassword
     ) {
         Member member = findMember(memberId);
-        Post post = postQueryRepository.getById(id, blogName);
+        Post post = postQueryRepository.getById(postId, blogName);
         try {
-            post.validatePostAccessibility(member, postPassword);
-            if (memberId == null) {
-                return PostDetailResponse.from(post);
-            }
-            boolean isLiked = postLikeQueryRepository.existsByMemberIdAndPostId(memberId, id, blogName);
-            return PostDetailResponse.withLiked(post, isLiked);
+            post.validateAccess(member, postPassword);
+            return PostDetailResponse.withLiked(post, isLiked(post, member));
         } catch (NoAuthorityPostException e) {
-            if (post.getVisibilityPolish().getVisibility() == Visibility.PRIVATE) {
+            if (post.getVisibility() == Visibility.PRIVATE) {
                 throw e;
             }
             return PostDetailResponse.protectedPost(post);
         }
+    }
+
+    private boolean isLiked(Post post, @Nullable Member member) {
+        if (member == null) {
+            return false;
+        }
+        return postLikeQueryRepository.existsByMemberAndPost(member, post);
     }
 
     public Page<PostSearchResponse> search(
@@ -58,7 +61,7 @@ public class PostQueryService {
         return postQueryRepository.search(memberId, cond, pageable)
                 .map(post -> {
                     try {
-                        post.validatePostAccessibility(member, null);
+                        post.validateAccess(member, null);
                         return PostSearchResponse.from(post);
                     } catch (NoAuthorityPostException e) {
                         return PostSearchResponse.protectedPost(post);

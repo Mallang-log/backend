@@ -31,7 +31,7 @@ public class PostStarQueryService {
                 .map(postStar -> {
                     try {
                         Post post = postStar.getPost();
-                        post.validatePostAccessibility(member, null);
+                        post.validateAccess(member, null);
                         return StaredPostResponse.from(postStar);
                     } catch (NoAuthorityPostException e) {
                         return StaredPostResponse.protectedPost(postStar);

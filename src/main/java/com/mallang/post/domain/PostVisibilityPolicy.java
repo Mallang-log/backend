@@ -1,7 +1,12 @@
 package com.mallang.post.domain;
 
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
+
 import com.mallang.post.exception.ProtectVisibilityPasswordMustRequired;
 import com.mallang.post.exception.VisibilityPasswordNotRequired;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -34,16 +39,22 @@ public class PostVisibilityPolicy {
     }
 
     private void validate(Visibility visibility, String password) {
-        if (visibility == Visibility.PUBLIC || visibility == Visibility.PRIVATE) {
+        if (visibility == PUBLIC || visibility == PRIVATE) {
             if (password != null) {
                 throw new VisibilityPasswordNotRequired();
             }
         }
-        if (visibility == Visibility.PROTECTED) {
-            if (ObjectUtils.isEmpty(password)) {
-                throw new ProtectVisibilityPasswordMustRequired();
-            }
+        if (visibility == PROTECTED && ObjectUtils.isEmpty(password)) {
+            throw new ProtectVisibilityPasswordMustRequired();
         }
+    }
+
+    public boolean isVisible(@Nullable String password) {
+        return switch (visibility) {
+            case PUBLIC -> true;
+            case PRIVATE -> false;
+            case PROTECTED -> this.password.equals(password);
+        };
     }
 
     public enum Visibility {

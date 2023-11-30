@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BlogVisitStatisticRepository extends JpaRepository<BlogVisitStatistic, Long> {
 
-
     Optional<BlogVisitStatistic> findByBlogNameAndStatisticDate(String blogName, LocalDate date);
 }

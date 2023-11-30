@@ -333,13 +333,13 @@ class PostTest {
 
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(mallang, null);
+                    post.validateAccess(mallang, null);
                 });
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(otherMember, null);
+                    post.validateAccess(otherMember, null);
                 });
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(null, null);
+                    post.validateAccess(null, null);
                 });
             }
         }
@@ -361,7 +361,7 @@ class PostTest {
             void 비밀번호가_일치하면_접근할_수_있다() {
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(null, "1234");
+                    post.validateAccess(null, "1234");
                 });
             }
 
@@ -369,7 +369,7 @@ class PostTest {
             void 글_작성자라면_접근할_수_있다() {
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(mallang, null);
+                    post.validateAccess(mallang, null);
                 });
             }
 
@@ -377,7 +377,7 @@ class PostTest {
             void 글_작성자가_아니며_비밀번호도_일치하지_않으면_접근할_수_없다() {
                 // when & then
                 assertThatThrownBy(() -> {
-                    post.validatePostAccessibility(otherMember, "12345");
+                    post.validateAccess(otherMember, "12345");
                 }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
@@ -399,7 +399,7 @@ class PostTest {
             void 포스트_작성자만_접근할_수_있다() {
                 // when & then
                 assertDoesNotThrow(() -> {
-                    post.validatePostAccessibility(mallang, null);
+                    post.validateAccess(mallang, null);
                 });
             }
 
@@ -407,7 +407,7 @@ class PostTest {
             void 포스트_작성자가_아니면_접근할_수_없다() {
                 // when & then
                 assertThatThrownBy(() -> {
-                    post.validatePostAccessibility(otherMember, null);
+                    post.validateAccess(otherMember, null);
                 }).isInstanceOf(NoAuthorityPostException.class);
             }
         }

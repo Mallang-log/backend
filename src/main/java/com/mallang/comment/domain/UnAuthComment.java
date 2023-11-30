@@ -38,11 +38,11 @@ public class UnAuthComment extends Comment {
 
     @Override
     public void write(@Nullable String postPassword) {
-        post.validatePostAccessibility(null, postPassword);
+        post.validateAccess(null, postPassword);
     }
 
     public void validateUpdate(String password, @Nullable String postPassword) {
-        post.validatePostAccessibility(null, postPassword);
+        post.validateAccess(null, postPassword);
         validatePassword(password);
     }
 
@@ -50,7 +50,7 @@ public class UnAuthComment extends Comment {
                                @Nullable String password,
                                @Nullable String postPassword) {
         if (!isPostOwner(member)) {
-            post.validatePostAccessibility(null, postPassword);
+            post.validateAccess(null, postPassword);
             validatePassword(password);
         }
     }

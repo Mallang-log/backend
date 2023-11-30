@@ -6,7 +6,6 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
-import com.mallang.post.exception.NoAuthorityPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -108,12 +107,6 @@ public class PostContent {
         HashSet<String> distinct = new HashSet<>(list);
         if (distinct.size() != list.size()) {
             throw new DuplicatedTagsInPostException();
-        }
-    }
-
-    public void validateWriter(Member member) {
-        if (!isWriter(member)) {
-            throw new NoAuthorityPostException();
         }
     }
 

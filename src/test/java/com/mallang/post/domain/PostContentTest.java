@@ -6,14 +6,12 @@ import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
-import com.mallang.post.exception.NoAuthorityPostException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -214,7 +212,7 @@ class PostContentTest {
     }
 
     @Test
-    void 작성자_검증() {
+    void 작성자_확인() {
         // given
         PostContent postContent = PostContent.builder()
                 .title("제목")
@@ -225,11 +223,7 @@ class PostContentTest {
                 .build();
 
         // when & then
-        assertDoesNotThrow(() -> {
-            postContent.validateWriter(mallang);
-        });
-        assertThatThrownBy(() -> {
-            postContent.validateWriter(otherMember);
-        }).isInstanceOf(NoAuthorityPostException.class);
+        assertThat(postContent.isWriter(mallang)).isTrue();
+        assertThat(postContent.isWriter(otherMember)).isFalse();
     }
 }

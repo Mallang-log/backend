@@ -14,7 +14,7 @@ import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
-import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.exception.NoAuthorityDraftException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -295,6 +295,6 @@ class DraftTest {
         });
         assertThatThrownBy(() -> {
             draft.validateWriter(otherMember);
-        }).isInstanceOf(NoAuthorityPostException.class);
+        }).isInstanceOf(NoAuthorityDraftException.class);
     }
 }
