@@ -9,7 +9,7 @@ import static org.mockito.Mockito.verify;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.post.query.PostQueryService;
-import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -132,8 +132,9 @@ class PostViewHistoryAopTest extends ServiceTest {
     @Test
     void 조회_실패시_동작하지_않는다() {
         // when
+        Long memberId = 회원을_저장한다("말랑");
         assertThatThrownBy(() -> {
-            postQueryService.getByIdAndBlogName(1000L, "name", 1L, null);
+            postQueryService.getByIdAndBlogName(1000L, "name", memberId, null);
         }).isInstanceOf(NotFoundPostException.class);
 
         // then

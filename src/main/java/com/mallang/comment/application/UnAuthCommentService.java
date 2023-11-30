@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UnAuthCommentService {
 
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final CommentDeleteService commentDeleteService;
 

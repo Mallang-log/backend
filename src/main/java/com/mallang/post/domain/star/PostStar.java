@@ -33,7 +33,7 @@ public class PostStar extends CommonDomainModel {
     }
 
     public void star(PostStarValidator validator, @Nullable String postPassword) {
-        post.validatePostAccessibility(member, postPassword);
+        post.validateAccess(member, postPassword);
         validator.validateClickStar(post, member);
     }
 }

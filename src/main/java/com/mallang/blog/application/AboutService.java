@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AboutService {
 
-    private final MemberRepository memberRepository;
     private final BlogRepository blogRepository;
     private final AboutRepository aboutRepository;
+    private final MemberRepository memberRepository;
     private final AboutValidator aboutValidator;
 
     public Long write(WriteAboutCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        Blog blog = blogRepository.getByNameAndOwner(command.blogName(), command.memberId());
+        Blog blog = blogRepository.getByName(command.blogName());
         About about = command.toAbout(member, blog);
         about.write(aboutValidator);
         return aboutRepository.save(about).getId();

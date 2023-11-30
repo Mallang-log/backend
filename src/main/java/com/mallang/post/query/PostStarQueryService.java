@@ -1,6 +1,10 @@
 package com.mallang.post.query;
 
-import com.mallang.post.query.dao.StaredPostDao;
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.query.repository.MemberQueryRepository;
+import com.mallang.post.domain.Post;
+import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.query.repository.PostStarQueryRepository;
 import com.mallang.post.query.response.StaredPostResponse;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -14,16 +18,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostStarQueryService {
 
-    private final StaredPostDao staredPostDao;
-    private final PostDataProtector postDataProtector;
+    private final MemberQueryRepository memberQueryRepository;
+    private final PostStarQueryRepository postStarQueryRepository;
 
     public Page<StaredPostResponse> findAllByMemberId(
             Long targetMemberId,
             @Nullable Long requesterId,
             Pageable pageable
     ) {
-        Page<StaredPostResponse> staredPostData = staredPostDao.find(targetMemberId, pageable);
-        return postDataProtector.protectStaredIfRequired(requesterId, staredPostData);
+        Member member = memberQueryRepository.getMemberIfIdNotNull(requesterId);
+        return postStarQueryRepository.findAllByMemberId(targetMemberId, pageable)
+                .map(postStar -> {
+                    try {
+                        Post post = postStar.getPost();
+                        post.validateAccess(member, null);
+                        return StaredPostResponse.from(postStar);
+                    } catch (NoAuthorityPostException e) {
+                        return StaredPostResponse.protectedPost(postStar);
+                    }
+                });
     }
 }
 

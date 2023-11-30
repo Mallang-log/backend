@@ -7,6 +7,7 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.common.domain.CommonDomainModel;
 import com.mallang.post.domain.PostContent;
+import com.mallang.post.exception.NoAuthorityDraftException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -67,7 +68,9 @@ public class Draft extends CommonDomainModel {
     }
 
     public void validateWriter(Member member) {
-        content.validateWriter(member);
+        if (!content.isWriter(member)) {
+            throw new NoAuthorityDraftException();
+        }
     }
 
     public String getTitle() {

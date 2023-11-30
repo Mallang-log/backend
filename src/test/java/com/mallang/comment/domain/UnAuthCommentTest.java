@@ -13,7 +13,7 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -113,7 +113,7 @@ class UnAuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.write("123");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -140,7 +140,7 @@ class UnAuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.write(null);
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
     }
@@ -225,7 +225,7 @@ class UnAuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.validateUpdate("comment password", "123");
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -252,7 +252,7 @@ class UnAuthCommentTest {
                 // when & then
                 assertThatThrownBy(() -> {
                     comment.validateUpdate("update", null);
-                }).isInstanceOf(NoAuthorityAccessPostException.class);
+                }).isInstanceOf(NoAuthorityPostException.class);
             }
         }
     }
@@ -363,7 +363,7 @@ class UnAuthCommentTest {
                 // when & then
                 assertThatThrownBy(() ->
                         comment.validateDelete(null, "comment password", "12")
-                ).isInstanceOf(NoAuthorityAccessPostException.class);
+                ).isInstanceOf(NoAuthorityPostException.class);
             }
         }
 
@@ -406,7 +406,7 @@ class UnAuthCommentTest {
                 // when & then
                 assertThatThrownBy(() ->
                         comment.validateDelete(null, "comment password", null)
-                ).isInstanceOf(NoAuthorityAccessPostException.class);
+                ).isInstanceOf(NoAuthorityPostException.class);
             }
         }
     }

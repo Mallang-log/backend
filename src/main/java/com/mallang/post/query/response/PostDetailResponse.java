@@ -51,6 +51,26 @@ public record PostDetailResponse(
                 .build();
     }
 
+    public static PostDetailResponse protectedPost(Post post) {
+        return new PostDetailResponse(
+                post.getPostId().getId(),
+                post.getPostId().getBlogId(),
+                post.getBlog().getName(),
+                post.getTitle(),
+                "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",
+                "",
+                post.getVisibilityPolish().getVisibility(),
+                true,
+                "",
+                0,
+                false,
+                post.getCreatedDate(),
+                WriterResponse.from(post),
+                CategoryResponse.from(post),
+                null
+        );
+    }
+
     public record WriterResponse(
             Long writerId,
             String writerNickname,

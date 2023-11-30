@@ -13,7 +13,7 @@ import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -130,7 +130,7 @@ class PostLikeServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 postLikeService.like(command);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
 
         @Test
@@ -145,7 +145,7 @@ class PostLikeServiceTest extends ServiceTest {
             });
             assertThatThrownBy(() -> {
                 postLikeService.like(command2);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
     }
 
@@ -202,7 +202,7 @@ class PostLikeServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, otherMemberId, "12345"));
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
 
         @Test
@@ -218,7 +218,7 @@ class PostLikeServiceTest extends ServiceTest {
             });
             assertThatThrownBy(() -> {
                 postLikeService.cancel(new CancelPostLikeCommand(publicPostId, blogName, otherMemberId, null));
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
     }
 }

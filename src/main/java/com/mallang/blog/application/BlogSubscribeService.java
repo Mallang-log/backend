@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BlogSubscribeService {
 
-    private final BlogSubscribeRepository blogSubscribeRepository;
     private final BlogRepository blogRepository;
     private final MemberRepository memberRepository;
+    private final BlogSubscribeRepository blogSubscribeRepository;
     private final BlogSubscribeValidator blogSubscribeValidator;
 
     public Long subscribe(BlogSubscribeCommand command) {

@@ -40,11 +40,11 @@ public class AuthComment extends Comment {
 
     @Override
     public void write(@Nullable String postPassword) {
-        post.validatePostAccessibility(writer, postPassword);
+        post.validateAccess(writer, postPassword);
     }
 
     public void validateUpdate(Member member, @Nullable String postPassword) {
-        post.validatePostAccessibility(member, postPassword);
+        post.validateAccess(member, postPassword);
         if (member.equals(writer)) {
             return;
         }
@@ -60,8 +60,8 @@ public class AuthComment extends Comment {
     }
 
     public void validateDelete(Member member, @Nullable String postPassword) {
-        post.validatePostAccessibility(member, postPassword);
-        if (isPostOwner(member) || member.equals(writer)) {
+        post.validateAccess(member, postPassword);
+        if (post.isWriter(member) || member.equals(writer)) {
             return;
         }
         throw new NoAuthorityCommentException();

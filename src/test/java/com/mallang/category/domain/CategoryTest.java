@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
@@ -99,6 +100,14 @@ class CategoryTest {
             assertThatThrownBy(() ->
                     Category.create("최상위", mallang, mallangBlog, 다른회원_최상위, categoryValidator)
             ).isInstanceOf(NoAuthorityCategoryException.class);
+        }
+
+        @Test
+        void 다른_사람의_블로그에_카테고리_생성_시도_시_예외() {
+            // when & then
+            assertThatThrownBy(() ->
+                    Category.create("카테고리", mallang, otherBlog, null, categoryValidator)
+            ).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 

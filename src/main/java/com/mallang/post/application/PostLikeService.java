@@ -32,8 +32,11 @@ public class PostLikeService {
     }
 
     public void cancel(CancelPostLikeCommand command) {
-        PostLike postLike = postLikeRepository
-                .getByPostAndMember(command.postId(), command.blogName(), command.memberId());
+        PostLike postLike = postLikeRepository.getByPostAndMember(
+                command.postId(),
+                command.blogName(),
+                command.memberId()
+        );
         postLike.cancel(command.postPassword());
         postLikeRepository.delete(postLike);
     }

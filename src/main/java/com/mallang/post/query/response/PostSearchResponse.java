@@ -41,6 +41,23 @@ public record PostSearchResponse(
                 .build();
     }
 
+    public static PostSearchResponse protectedPost(Post post) {
+        return new PostSearchResponse(
+                post.getPostId().getId(),
+                post.getBlog().getName(),
+                post.getTitle(),
+                "보호되어 있는 글입니다.",
+                "보호되어 있는 글입니다.",
+                "",
+                post.getVisibilityPolish().getVisibility(),
+                0,
+                post.getCreatedDate(),
+                WriterResponse.from(post),
+                CategoryResponse.from(post),
+                null
+        );
+    }
+
     public record WriterResponse(
             Long writerId,
             String writerNickname,

@@ -47,6 +47,7 @@ public class Category extends CommonDomainModel {
         this.name = name;
         this.owner = owner;
         this.blog = blog;
+        blog.validateOwner(owner);
     }
 
     public static Category create(

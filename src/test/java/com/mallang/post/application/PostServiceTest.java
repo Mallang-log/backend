@@ -18,6 +18,7 @@ import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.PostId;
+import com.mallang.post.exception.NoAuthorityDraftException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -269,7 +270,7 @@ class PostServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postService.createFromDraft(command, draftId)
-            ).isInstanceOf(NoAuthorityPostException.class);
+            ).isInstanceOf(NoAuthorityDraftException.class);
         }
     }
 

@@ -35,6 +35,7 @@ public class About extends CommonDomainModel {
         this.blog = blog;
         this.content = content;
         this.writer = writer;
+        blog.validateOwner(writer);
     }
 
     public void write(AboutValidator validator) {

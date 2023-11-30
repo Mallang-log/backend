@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BlogService {
 
-    private final MemberRepository memberRepository;
     private final BlogRepository blogRepository;
+    private final MemberRepository memberRepository;
     private final BlogValidator blogValidator;
 
     public Long open(OpenBlogCommand command) {

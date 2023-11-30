@@ -22,9 +22,9 @@ public class OauthService {
 
     public Long login(OauthServerType oauthServerType, String authCode) {
         OauthMember member = oauthMemberClientComposite.fetch(oauthServerType, authCode);
-        OauthMember find = oauthMemberRepository.findByOauthId(member.getOauthId())
-                .orElseGet(() -> signup(member));
-        return find.getId();
+        return oauthMemberRepository.findByOauthId(member.getOauthId())
+                .orElseGet(() -> signup(member))
+                .getId();
     }
 
     private OauthMember signup(OauthMember member) {

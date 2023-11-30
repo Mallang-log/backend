@@ -13,7 +13,7 @@ import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyStarPostException;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -123,7 +123,7 @@ class PostStarServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 postStarService.star(command);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
 
         @Test
@@ -138,7 +138,7 @@ class PostStarServiceTest extends ServiceTest {
             });
             assertThatThrownBy(() -> {
                 postStarService.star(command2);
-            }).isInstanceOf(NoAuthorityAccessPostException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
     }
 

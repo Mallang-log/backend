@@ -25,9 +25,11 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
             AND ps.post.blog.name.value = :blogName
             AND ps.member.id = :memberId
             """)
-    Optional<PostStar> findByPostAndMember(@Param("postId") Long postId,
-                                           @Param("blogName") String blogName,
-                                           @Param("memberId") Long memberId);
+    Optional<PostStar> findByPostAndMember(
+            @Param("postId") Long postId,
+            @Param("blogName") String blogName,
+            @Param("memberId") Long memberId
+    );
 
     @Modifying
     @Query("DELETE FROM PostStar ps WHERE ps.post.postId = :postId")

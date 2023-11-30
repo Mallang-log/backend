@@ -7,7 +7,7 @@ import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
-import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.exception.NoAuthorityDraftException;
 import com.mallang.post.query.response.DraftDetailResponse;
 import com.mallang.post.query.response.DraftListResponse;
 import java.util.List;
@@ -102,7 +102,7 @@ class DraftQueryServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     draftQueryService.findById(otherMemberId, 임시_글_1_ID)
-            ).isInstanceOf(NoAuthorityPostException.class);
+            ).isInstanceOf(NoAuthorityDraftException.class);
         }
     }
 }

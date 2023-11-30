@@ -13,7 +13,7 @@ import com.mallang.post.application.command.CreateDraftCommand;
 import com.mallang.post.application.command.DeleteDraftCommand;
 import com.mallang.post.application.command.UpdateDraftCommand;
 import com.mallang.post.domain.draft.Draft;
-import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.exception.NoAuthorityDraftException;
 import com.mallang.post.exception.NotFoundDraftException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -218,7 +218,7 @@ class DraftServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     draftService.update(command)
-            ).isInstanceOf(NoAuthorityPostException.class);
+            ).isInstanceOf(NoAuthorityDraftException.class);
         }
     }
 
@@ -250,7 +250,7 @@ class DraftServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() -> {
                 draftService.delete(command);
-            }).isInstanceOf(NoAuthorityPostException.class);
+            }).isInstanceOf(NoAuthorityDraftException.class);
         }
 
         @Test

@@ -1,8 +1,8 @@
 package com.mallang.post.query;
 
-import com.mallang.post.query.dao.PostManageDetailDao;
-import com.mallang.post.query.dao.PostManageSearchDao;
-import com.mallang.post.query.dao.PostManageSearchDao.PostManageSearchCond;
+import com.mallang.post.domain.Post;
+import com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond;
+import com.mallang.post.query.repository.PostQueryRepository;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostManageQueryService {
 
-    private final PostManageDetailDao postManageDetailDao;
-    private final PostManageSearchDao postManageSearchDao;
+    private final PostQueryRepository postQueryRepository;
 
     public PostManageDetailResponse findById(Long memberId, Long id, String blogName) {
-        return postManageDetailDao.find(memberId, id, blogName);
+        Post post = postQueryRepository.getByPostIdAndBlogNameAndWriterId(id, blogName, memberId);
+        return PostManageDetailResponse.from(post);
     }
 
     public Page<PostManageSearchResponse> search(Long memberId, PostManageSearchCond cond, Pageable pageable) {
-        return postManageSearchDao.search(memberId, cond, pageable);
+        return postQueryRepository.searchForManage(memberId, cond, pageable)
+                .map(PostManageSearchResponse::from);
     }
 }

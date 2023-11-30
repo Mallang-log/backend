@@ -86,6 +86,18 @@ class CategoryAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
+        void 다른_사람의_블로그에_카테고리_생성_시_예외() {
+            // given
+            var 카테고리_생성_요청 = new CreateCategoryRequest(말랑_블로그_이름, "Jpa", null);
+
+            // when
+            var 응답 = 카테고리_생성_요청(동훈_세션_ID, 카테고리_생성_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+
+        @Test
         void 타인의_카테고리_하위_카테고리로_지정하는_경우_예외() {
             // given
             var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
