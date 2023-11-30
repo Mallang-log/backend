@@ -53,12 +53,10 @@ public abstract sealed class CommentResponse
     }
 
     public static CommentResponse from(Comment comment) {
-        if (comment instanceof AuthComment authed) {
-            return AuthCommentResponse.from(authed);
-        }
-        if (comment instanceof UnAuthComment unAuthed) {
-            return UnAuthCommentResponse.from(unAuthed);
-        }
-        throw new MallangLogException("해당 Comment 타입이 CommentResponse 에서 지원되지 않습니다.");
+        return switch (comment) {
+            case AuthComment authComment -> AuthCommentResponse.from(authComment);
+            case UnAuthComment unAuthComment -> UnAuthCommentResponse.from(unAuthComment);
+            default -> throw new MallangLogException("해당 Comment 타입이 CommentResponse 에서 지원되지 않습니다.");
+        };
     }
 }

@@ -24,23 +24,22 @@ public class CommentDataPostProcessor {
     }
 
     private CommentResponse processSecret(CommentResponse response, @Nullable Long memberId) {
-        if (response instanceof UnAuthCommentResponse) {
-            return response;
-        }
-        AuthCommentResponse authed = (AuthCommentResponse) response;
-        if (!authed.isSecret() || authed.getWriter().memberId().equals(memberId)) {
-            return response;
-        }
-        return AuthCommentResponse.builder()
-                .id(response.getId())
-                .content("비밀 댓글입니다.")
-                .secret(true)
-                .writer(ANONYMOUS)
-                .createdDate(authed.getCreatedDate())
-                .deleted(authed.isDeleted())
-                .children(authed.getChildren().stream()
-                        .map(it -> processSecret(it, memberId))
-                        .toList())
-                .build();
+        return switch (response) {
+            case UnAuthCommentResponse un -> response;
+            case AuthCommentResponse authed
+                    when !authed.isSecret()
+                    || authed.getWriter().memberId().equals(memberId) -> response;
+            case AuthCommentResponse authed -> AuthCommentResponse.builder()
+                    .id(response.getId())
+                    .content("비밀 댓글입니다.")
+                    .secret(true)
+                    .writer(ANONYMOUS)
+                    .createdDate(authed.getCreatedDate())
+                    .deleted(authed.isDeleted())
+                    .children(authed.getChildren().stream()
+                            .map(it -> processSecret(it, memberId))
+                            .toList()
+                    ).build();
+        };
     }
 }
