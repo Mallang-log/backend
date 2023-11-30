@@ -12,6 +12,7 @@ import static org.mockito.Mockito.mock;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.exception.AlreadyExistAboutException;
 import com.mallang.blog.exception.NoAuthorityAboutException;
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -53,6 +54,17 @@ class AboutTest {
             assertDoesNotThrow(() -> {
                 about.write(aboutValidator);
             });
+        }
+
+        @Test
+        void 다른_사람의_블로그에_생성_시도_시_예외() {
+            // given
+            Member other = 깃허브_동훈(2L);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    new About(blog, "안녕하세요", other)
+            ).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 
