@@ -1,4 +1,4 @@
-package com.mallang.auth.query.dao;
+package com.mallang.auth.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,10 +13,10 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("회원 조회 DAO (MemberDao) 은(는)")
+@DisplayName("회원 조회 서비스 (MemberQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class MemberDaoTest extends ServiceTest {
+class MemberQueryServiceTest extends ServiceTest {
 
     @Test
     void 회원정보를_조회한다() {
@@ -29,7 +29,7 @@ class MemberDaoTest extends ServiceTest {
         Member saved = memberRepository.save(member);
 
         // when
-        MemberResponse memberResponse = memberDao.find(saved.getId());
+        MemberResponse memberResponse = memberQueryService.findProfile(saved.getId());
 
         // then
         assertThat(memberResponse.id()).isEqualTo(saved.getId());

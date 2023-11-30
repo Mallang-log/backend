@@ -8,7 +8,7 @@ import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.auth.domain.OauthId;
 import com.mallang.auth.domain.OauthMember;
-import com.mallang.auth.query.dao.MemberDao;
+import com.mallang.auth.query.MemberQueryService;
 import com.mallang.blog.application.AboutService;
 import com.mallang.blog.application.BlogService;
 import com.mallang.blog.application.BlogSubscribeService;
@@ -79,7 +79,7 @@ public abstract class ServiceTest {
     protected BasicAuthService basicAuthService;
 
     @Autowired
-    protected MemberDao memberDao;
+    protected MemberQueryService memberQueryService;
 
     @Autowired
     protected BlogRepository blogRepository;
