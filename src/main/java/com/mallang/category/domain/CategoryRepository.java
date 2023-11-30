@@ -14,7 +14,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         return findById(id).orElseThrow(NotFoundCategoryException::new);
     }
 
-    @Query("SELECT c FROM Category c WHERE c.owner.id = :memberId AND c.parent = null")
+    @Query("SELECT c FROM Category c WHERE c.owner.id = :memberId AND c.parent IS NULL")
     List<Category> findAllRootByMemberId(@Param("memberId") Long memberId);
 
     @Nullable
