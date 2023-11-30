@@ -1,13 +1,12 @@
 package com.mallang.post.domain;
 
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
@@ -94,10 +93,6 @@ public class Post extends AbstractAggregateRoot<Post> {
         this.content.removeCategory();
     }
 
-    public void validateWriter(Member member) {
-        content.validateWriter(member);
-    }
-
     public void clickLike() {
         this.likeCount++;
     }
@@ -109,19 +104,25 @@ public class Post extends AbstractAggregateRoot<Post> {
         this.likeCount--;
     }
 
-    public void validatePostAccessibility(@Nullable Member member,
-                                          @Nullable String postPassword) {
-        if (visibilityPolish.getVisibility() == PUBLIC) {
+    public boolean isWriter(Member member) {
+        return content.isWriter(member);
+    }
+
+    public void validateWriter(Member member) {
+        if (!isWriter(member)) {
+            throw new NoAuthorityPostException();
+        }
+    }
+
+    public void validateAccess(@Nullable Member member,
+                               @Nullable String postPassword) {
+        if (isWriter(member)) {
             return;
         }
-        if (getWriter().equals(member)) {
+        if (visibilityPolish.isVisible(postPassword)) {
             return;
         }
-        if (visibilityPolish.getVisibility() == PROTECTED
-                && visibilityPolish.getPassword().equals(postPassword)) {
-            return;
-        }
-        throw new NoAuthorityAccessPostException();
+        throw new NoAuthorityPostException();
     }
 
     public String getTitle() {
@@ -150,6 +151,10 @@ public class Post extends AbstractAggregateRoot<Post> {
 
     public Member getWriter() {
         return content.getWriter();
+    }
+
+    public Visibility getVisibility() {
+        return visibilityPolish.getVisibility();
     }
 
     @Override

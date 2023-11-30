@@ -24,7 +24,6 @@ import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostDetailResponse.CategoryResponse;
-import com.mallang.post.query.response.PostDetailResponse.TagResponses;
 import com.mallang.post.query.response.PostDetailResponse.WriterResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import io.restassured.common.mapper.TypeRef;
@@ -198,7 +197,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                             null,
                             new WriterResponse(null, "말랑", "말랑"),
                             new CategoryResponse(말랑_카테고리_ID, "Spring"),
-                            new TagResponses(List.of("[보호] 태그"))
+                            null
                     ));
         }
     }
@@ -376,14 +375,14 @@ class PostAcceptanceTest extends AcceptanceTest {
                             말랑_블로그_이름,
                             "[보호] 말랑 제목",
                             "보호되어 있는 글입니다.",
-                            "",
+                            "보호되어 있는 글입니다.",
                             "",
                             PROTECTED,
                             0,
                             null,
                             new PostSearchResponse.WriterResponse(null, "말랑", "말랑"),
                             new PostSearchResponse.CategoryResponse(말랑_카테고리_ID, "Spring"),
-                            new PostSearchResponse.TagResponses(emptyList())
+                            null
                     ),
                     new PostSearchResponse(
                             말랑_공개_포스트_ID,

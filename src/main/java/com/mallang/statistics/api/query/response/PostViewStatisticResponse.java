@@ -1,10 +1,11 @@
 package com.mallang.statistics.api.query.response;
 
+import com.mallang.statistics.api.query.support.PeriodPartitioner.PeriodPart;
 import java.time.LocalDate;
 import lombok.Getter;
 
 @Getter
-public class PostViewStatisticResponse {
+public class PostViewStatisticResponse implements CommonStatisticResponse {
 
     private LocalDate startDateInclude;
     private LocalDate endDateInclude;
@@ -22,6 +23,10 @@ public class PostViewStatisticResponse {
         this.startDateInclude = startDateInclude;
         this.endDateInclude = endDateInclude;
         this.viewCount = viewCount;
+    }
+
+    public static PostViewStatisticResponse from(PeriodPart periodPart) {
+        return new PostViewStatisticResponse(periodPart.startInclude(), periodPart.endInclude());
     }
 
     public void addViewCount(int count) {

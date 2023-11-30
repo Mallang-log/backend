@@ -17,8 +17,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private final ObjectProvider<PathMatcher> pathMatcher;
     private final AuthContext authContext;
+    private final ObjectProvider<PathMatcher> pathMatcher;
     private final Set<UriAndMethodAndParamCondition> noAuthRequiredConditions = new HashSet<>();
 
     public void setNoAuthRequiredConditions(UriAndMethodAndParamCondition... noAuthRequiredConditions) {

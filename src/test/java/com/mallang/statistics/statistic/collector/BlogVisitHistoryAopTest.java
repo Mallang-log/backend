@@ -11,7 +11,7 @@ import com.mallang.blog.presentation.AboutController;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.exception.NotFoundPostException;
 import com.mallang.post.presentation.PostController;
-import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

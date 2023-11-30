@@ -8,7 +8,7 @@ import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.auth.domain.OauthId;
 import com.mallang.auth.domain.OauthMember;
-import com.mallang.auth.query.dao.MemberDao;
+import com.mallang.auth.query.MemberQueryService;
 import com.mallang.blog.application.AboutService;
 import com.mallang.blog.application.BlogService;
 import com.mallang.blog.application.BlogSubscribeService;
@@ -16,8 +16,7 @@ import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.domain.AboutRepository;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.domain.subscribe.BlogSubscribeRepository;
-import com.mallang.blog.query.dao.SubscriberDao;
-import com.mallang.blog.query.dao.SubscribingBlogDao;
+import com.mallang.blog.query.BlogSubscribeQueryService;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.query.CategoryQueryService;
@@ -48,7 +47,6 @@ import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.query.DraftQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
-import com.mallang.post.query.dao.PostSearchDao;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +77,7 @@ public abstract class ServiceTest {
     protected BasicAuthService basicAuthService;
 
     @Autowired
-    protected MemberDao memberDao;
+    protected MemberQueryService memberQueryService;
 
     @Autowired
     protected BlogRepository blogRepository;
@@ -110,9 +108,6 @@ public abstract class ServiceTest {
 
     @Autowired
     protected PostIdGenerator postIdGenerator;
-
-    @Autowired
-    protected PostSearchDao postSearchDao;
 
     @Autowired
     protected PostQueryService postQueryService;
@@ -148,10 +143,7 @@ public abstract class ServiceTest {
     protected BlogSubscribeService blogSubscribeService;
 
     @Autowired
-    protected SubscriberDao subscriberDao;
-
-    @Autowired
-    protected SubscribingBlogDao subscribingBlogDao;
+    protected BlogSubscribeQueryService blogSubscribeQueryService;
 
     @Autowired
     protected CommentRepository commentRepository;

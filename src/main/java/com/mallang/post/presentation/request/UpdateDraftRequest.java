@@ -12,7 +12,6 @@ public record UpdateDraftRequest(
         @Nullable Long categoryId,
         List<String> tags
 ) {
-
     public UpdateDraftCommand toCommand(Long memberId, Long draftId) {
         return UpdateDraftCommand.builder()
                 .memberId(memberId)

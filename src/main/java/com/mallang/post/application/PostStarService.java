@@ -28,13 +28,15 @@ public class PostStarService {
         Member member = memberRepository.getById(command.memberId());
         PostStar postStar = new PostStar(post, member);
         postStar.star(postStarValidator, command.postPassword());
-        return postStarRepository.save(postStar)
-                .getId();
+        return postStarRepository.save(postStar).getId();
     }
 
     public void cancel(CancelPostStarCommand command) {
-        PostStar postStar = postStarRepository
-                .getByPostAndMember(command.postId(), command.blogName(), command.memberId());
+        PostStar postStar = postStarRepository.getByPostAndMember(
+                command.postId(),
+                command.blogName(),
+                command.memberId()
+        );
         postStarRepository.delete(postStar);
     }
 }

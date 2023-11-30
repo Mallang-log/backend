@@ -25,9 +25,11 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
             AND pl.post.blog.name.value = :blogName
             AND pl.member.id = :memberId
             """)
-    Optional<PostLike> findByPostAndMember(@Param("postId") Long postId,
-                                           @Param("blogName") String blogName,
-                                           @Param("memberId") Long memberId);
+    Optional<PostLike> findByPostAndMember
+            (@Param("postId") Long postId,
+             @Param("blogName") String blogName,
+             @Param("memberId") Long memberId
+            );
 
     @Modifying
     @Query("DELETE FROM PostLike pl WHERE pl.post.postId = :postId")

@@ -6,7 +6,6 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.auth.domain.Member;
 import com.mallang.category.domain.Category;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
-import com.mallang.post.exception.NoAuthorityPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -111,10 +110,8 @@ public class PostContent {
         }
     }
 
-    public void validateWriter(Member member) {
-        if (!writer.equals(member)) {
-            throw new NoAuthorityPostException();
-        }
+    public boolean isWriter(Member member) {
+        return writer.equals(member);
     }
 
     public void removeCategory() {

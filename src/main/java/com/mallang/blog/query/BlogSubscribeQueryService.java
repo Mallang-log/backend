@@ -1,7 +1,6 @@
 package com.mallang.blog.query;
 
-import com.mallang.blog.query.dao.SubscriberDao;
-import com.mallang.blog.query.dao.SubscribingBlogDao;
+import com.mallang.blog.query.repository.BlogSubscribeQueryRepository;
 import com.mallang.blog.query.response.SubscriberResponse;
 import com.mallang.blog.query.response.SubscribingBlogResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BlogSubscribeQueryService {
 
-    private final SubscriberDao subscriberDao;
-    private final SubscribingBlogDao subscribingBlogDataDao;
+    private final BlogSubscribeQueryRepository blogSubscribeQueryRepository;
 
     public Page<SubscriberResponse> findSubscribers(String blogName, Pageable pageable) {
-        return subscriberDao.findSubscribers(blogName, pageable);
+        return blogSubscribeQueryRepository.findSubscribers(blogName, pageable)
+                .map(SubscriberResponse::from);
     }
 
     public Page<SubscribingBlogResponse> findSubscribingBlogs(Long memberId, Pageable pageable) {
-        return subscribingBlogDataDao.findSubscribingBlogs(memberId, pageable);
+        return blogSubscribeQueryRepository.findSubscribingBlogs(memberId, pageable)
+                .map(SubscribingBlogResponse::from);
     }
 }

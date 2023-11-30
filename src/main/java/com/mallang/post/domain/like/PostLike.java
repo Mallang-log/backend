@@ -33,13 +33,13 @@ public class PostLike extends CommonDomainModel {
     }
 
     public void like(PostLikeValidator postLikeValidator, @Nullable String postPassword) {
-        post.validatePostAccessibility(member, postPassword);
+        post.validateAccess(member, postPassword);
         postLikeValidator.validateClickLike(post, member);
         post.clickLike();
     }
 
     public void cancel(@Nullable String postPassword) {
-        post.validatePostAccessibility(member, postPassword);
+        post.validateAccess(member, postPassword);
         post.cancelLike();
     }
 }

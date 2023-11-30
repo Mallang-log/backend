@@ -36,13 +36,13 @@ public class Blog extends CommonDomainModel {
         blogValidator.validateOpen(this.owner.getId(), this.name);
     }
 
-    public String getName() {
-        return name.getValue();
-    }
-
     public void validateOwner(Member member) {
         if (!owner.equals(member)) {
             throw new NoAuthorityBlogException();
         }
+    }
+
+    public String getName() {
+        return name.getValue();
     }
 }

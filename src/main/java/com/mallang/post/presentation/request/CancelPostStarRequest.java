@@ -6,7 +6,6 @@ public record CancelPostStarRequest(
         Long postId,
         String blogName
 ) {
-
     public CancelPostStarCommand toCommand(Long memberId) {
         return new CancelPostStarCommand(memberId, postId, blogName);
     }

@@ -11,7 +11,6 @@ public record WriteUnAuthCommentRequest(
         String password,
         @Nullable Long parentCommentId
 ) {
-
     public WriteUnAuthCommentCommand toCommand(@Nullable String postPassword) {
         return WriteUnAuthCommentCommand.builder()
                 .postId(postId)

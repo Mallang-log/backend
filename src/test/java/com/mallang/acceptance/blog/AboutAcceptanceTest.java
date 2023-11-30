@@ -8,7 +8,6 @@ import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.중복됨;
-import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.AboutAcceptanceSteps.블로그_소개_삭제_요청;
 import static com.mallang.acceptance.blog.AboutAcceptanceSteps.블로그_소개_수정_요청;
@@ -77,7 +76,7 @@ public class AboutAcceptanceTest extends AcceptanceTest {
             var 응답 = 블로그_소개_작성_요청(동훈_세션_ID, 말랑_블로그_소개_작성_요청);
 
             // then
-            응답_상태를_검증한다(응답, 찾을수_없음);
+            응답_상태를_검증한다(응답, 권한_없음);
         }
     }
 

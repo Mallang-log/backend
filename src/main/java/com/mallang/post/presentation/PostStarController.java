@@ -12,6 +12,7 @@ import com.mallang.post.presentation.request.StarPostRequest;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.post.query.response.StaredPostResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +58,11 @@ public class PostStarController {
             @RequestParam("memberId") Long targetMemberId,
             @PageableDefault(size = 9) Pageable pageable
     ) {
-        return ResponseEntity.ok(
-                PageResponse.from(postStarQueryService.findAllByMemberId(targetMemberId, requesterId, pageable)));
+        Page<StaredPostResponse> response = postStarQueryService.findAllByMemberId(
+                targetMemberId,
+                requesterId,
+                pageable
+        );
+        return ResponseEntity.ok(PageResponse.from(response));
     }
 }

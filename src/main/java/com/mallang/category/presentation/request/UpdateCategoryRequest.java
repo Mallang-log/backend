@@ -7,7 +7,6 @@ public record UpdateCategoryRequest(
         String name,
         @Nullable Long parentCategoryId
 ) {
-
     public UpdateCategoryCommand toCommand(Long categoryId, Long memberId) {
         return UpdateCategoryCommand.builder()
                 .categoryId(categoryId)

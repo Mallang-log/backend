@@ -1,6 +1,6 @@
 package com.mallang.category.query;
 
-import com.mallang.category.query.dao.CategoryDao;
+import com.mallang.category.query.repository.CategoryQueryRepository;
 import com.mallang.category.query.response.CategoryResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CategoryQueryService {
 
-    private final CategoryDao categoryDao;
+    private final CategoryQueryRepository categoryQueryRepository;
 
     public List<CategoryResponse> findAllByBlogName(String blogName) {
-        return categoryDao.findAllByBlogName(blogName);
+        return categoryQueryRepository.findAllRootByBlogName(blogName)
+                .stream()
+                .map(CategoryResponse::from)
+                .toList();
     }
 }

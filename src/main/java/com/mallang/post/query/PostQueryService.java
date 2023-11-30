@@ -1,8 +1,13 @@
 package com.mallang.post.query;
 
-import com.mallang.post.query.dao.PostDetailDao;
-import com.mallang.post.query.dao.PostSearchDao;
-import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.query.repository.MemberQueryRepository;
+import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.query.repository.PostLikeQueryRepository;
+import com.mallang.post.query.repository.PostQueryRepository;
+import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import jakarta.annotation.Nullable;
@@ -17,23 +22,51 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostQueryService {
 
-    private final PostDetailDao postDetailDao;
-    private final PostSearchDao postSearchDao;
-    private final PostDataValidator postDataValidator;
-    private final PostDataProtector postDataProtector;
+    private final PostQueryRepository postQueryRepository;
+    private final MemberQueryRepository memberQueryRepository;
+    private final PostLikeQueryRepository postLikeQueryRepository;
 
-    public PostDetailResponse getByIdAndBlogName(Long id,
-                                                 String blogName,
-                                                 @Nullable Long memberId,
-                                                 @Nullable String postPassword) {
-        PostDetailResponse postDetailResponse = postDetailDao.find(id, blogName, memberId);
-        postDataValidator.validateAccessPost(memberId, postDetailResponse);
-        return postDataProtector.protectIfRequired(memberId, postPassword, postDetailResponse);
+    public PostDetailResponse getByIdAndBlogName(
+            Long postId,
+            String blogName,
+            @Nullable Long memberId,
+            @Nullable String postPassword
+    ) {
+        Member member = memberQueryRepository.getMemberIfIdNotNull(memberId);
+        Post post = postQueryRepository.getById(postId, blogName);
+        try {
+            post.validateAccess(member, postPassword);
+            return PostDetailResponse.withLiked(post, isLiked(post, member));
+        } catch (NoAuthorityPostException e) {
+            if (post.getVisibility() == Visibility.PRIVATE) {
+                throw e;
+            }
+            return PostDetailResponse.protectedPost(post);
+        }
     }
 
-    public Page<PostSearchResponse> search(PostSearchCond cond, Pageable pageable, @Nullable Long memberId) {
-        Page<PostSearchResponse> result = postSearchDao.search(memberId, cond, pageable);
-        return postDataProtector.protectIfRequired(memberId, result);
+    private boolean isLiked(Post post, @Nullable Member member) {
+        if (member == null) {
+            return false;
+        }
+        return postLikeQueryRepository.existsByMemberAndPost(member, post);
+    }
+
+    public Page<PostSearchResponse> search(
+            PostSearchCond cond,
+            Pageable pageable,
+            @Nullable Long memberId
+    ) {
+        Member member = memberQueryRepository.getMemberIfIdNotNull(memberId);
+        return postQueryRepository.search(memberId, cond, pageable)
+                .map(post -> {
+                    try {
+                        post.validateAccess(member, null);
+                        return PostSearchResponse.from(post);
+                    } catch (NoAuthorityPostException e) {
+                        return PostSearchResponse.protectedPost(post);
+                    }
+                });
     }
 }
 

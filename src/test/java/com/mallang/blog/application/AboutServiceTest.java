@@ -15,7 +15,7 @@ import com.mallang.blog.domain.About;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.AlreadyExistAboutException;
 import com.mallang.blog.exception.NoAuthorityAboutException;
-import com.mallang.blog.exception.NotFoundBlogException;
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +73,7 @@ class AboutServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     aboutService.write(command)
-            ).isInstanceOf(NotFoundBlogException.class);
+            ).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 

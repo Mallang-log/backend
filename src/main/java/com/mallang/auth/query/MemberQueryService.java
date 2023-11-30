@@ -1,6 +1,7 @@
 package com.mallang.auth.query;
 
-import com.mallang.auth.query.dao.MemberDao;
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.query.repository.MemberQueryRepository;
 import com.mallang.auth.query.response.MemberResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,9 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MemberQueryService {
 
-    private final MemberDao memberDao;
+    private final MemberQueryRepository memberQueryRepository;
 
     public MemberResponse findProfile(Long memberId) {
-        return memberDao.find(memberId);
+        Member member = memberQueryRepository.getById(memberId);
+        return MemberResponse.from(member);
     }
 }

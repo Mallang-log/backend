@@ -150,7 +150,7 @@ class CommentTest {
     }
 
     @Nested
-    class 삭제_시 {
+    class 제거_시 {
 
         private final CommentRepository commentRepository = mock(CommentRepository.class);
         private final CommentDeleteService commentDeleteService = new CommentDeleteService(commentRepository);
@@ -182,7 +182,7 @@ class CommentTest {
         }
 
         @Test
-        void 댓글_제거_시_자식_댓글이_존재한다면_제거된_상태이나_자식_댓글과_관계는_유지된다() {
+        void 댓글_제거_시_자식_댓글이_존재한다면_댓글을_삭제된_상태로_만들지만_실제로_제거하진_않고_내용만_지운_뒤_자식_댓글과_관계를_유지한다() {
             // given
             AuthComment parent = AuthComment.builder()
                     .content("내용")
@@ -202,7 +202,9 @@ class CommentTest {
             parent.delete(commentDeleteService);
 
             // then
+            assertThat(parent.getContent()).isEqualTo("삭제된 댓글입니다.");
             assertThat(parent.isDeleted()).isTrue();
+
             assertThat(child.getParent()).isEqualTo(parent);
             assertThat(parent.getChildren()).hasSize(1);
             assertThat(parent.getChildren().get(0)).isEqualTo(child);

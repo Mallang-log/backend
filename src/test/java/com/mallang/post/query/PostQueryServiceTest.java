@@ -11,8 +11,8 @@ import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.exception.BadPostSearchCondException;
-import com.mallang.post.exception.NoAuthorityAccessPostException;
-import com.mallang.post.query.dao.PostSearchDao.PostSearchCond;
+import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
 import com.mallang.post.query.response.PostSearchResponse.CategoryResponse;
@@ -185,7 +185,7 @@ class PostQueryServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1, null)
-            ).isInstanceOf(NoAuthorityAccessPostException.class);
+            ).isInstanceOf(NoAuthorityPostException.class);
         }
 
         @Test

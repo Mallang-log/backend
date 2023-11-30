@@ -29,6 +29,7 @@ import static com.mallang.statistics.api.query.PeriodType.WEEK;
 import static com.mallang.statistics.api.query.PeriodType.YEAR;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.mallang.statistics.api.query.StatisticQueryCondition;
 import com.mallang.statistics.api.query.support.PeriodPartitioner.PeriodPart;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +46,8 @@ class PeriodPartitionerTest {
     void 주어진_기간을_일_단위로_분리한다() {
         // when
         List<PeriodPart> partition = PeriodPartitioner
-                .partition(DAY, 날짜_2023_11_1_수, 날짜_2023_11_3_금);
+                .partition(new StatisticQueryCondition(DAY, 날짜_2023_11_1_수, 날짜_2023_11_3_금))
+                .toList();
 
         // then
         assertThat(partition)
@@ -61,7 +63,8 @@ class PeriodPartitionerTest {
     void 주어진_기간을_주_단위로_분리한다() {
         // when
         List<PeriodPart> partition = PeriodPartitioner
-                .partition(WEEK, 날짜_2023_11_6_월, 날짜_2023_11_24_금);
+                .partition(new StatisticQueryCondition(WEEK, 날짜_2023_11_6_월, 날짜_2023_11_24_금))
+                .toList();
 
         // then
         assertThat(partition)
@@ -77,7 +80,8 @@ class PeriodPartitionerTest {
     void 주어진_기간을_월_단위로_분리한다() {
         // when
         List<PeriodPart> partition = PeriodPartitioner
-                .partition(MONTH, 날짜_2023_9_1, 날짜_2023_10_20);
+                .partition(new StatisticQueryCondition(MONTH, 날짜_2023_9_1, 날짜_2023_10_20))
+                .toList();
 
         // then
         assertThat(partition)
@@ -92,7 +96,8 @@ class PeriodPartitionerTest {
     void 주이진_기간을_년_단위로_분리한다() {
         // when
         List<PeriodPart> partition = PeriodPartitioner
-                .partition(YEAR, 날짜_2020_1_1, 날짜_2023_10_1);
+                .partition(new StatisticQueryCondition(YEAR, 날짜_2020_1_1, 날짜_2023_10_1))
+                .toList();
 
         // then
         assertThat(partition)

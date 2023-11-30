@@ -8,7 +8,6 @@ public record CreateCategoryRequest(
         String name,
         @Nullable Long parentCategoryId
 ) {
-
     public CreateCategoryCommand toCommand(Long memberId) {
         return CreateCategoryCommand.builder()
                 .name(name)
