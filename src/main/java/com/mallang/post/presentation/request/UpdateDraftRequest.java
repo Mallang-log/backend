@@ -1,32 +1,26 @@
 package com.mallang.post.presentation.request;
 
-import com.mallang.post.application.command.CreatePostCommand;
-import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.application.command.UpdateDraftCommand;
 import jakarta.annotation.Nullable;
 import java.util.List;
 
-public record CreatePostRequest(
-        String blogName,
+public record UpdateDraftRequest(
         String title,
         String bodyText,
         @Nullable String postThumbnailImageName,
         String intro,
-        Visibility visibility,
-        @Nullable String password,
         @Nullable Long categoryId,
         List<String> tags
 ) {
 
-    public CreatePostCommand toCommand(Long memberId) {
-        return CreatePostCommand.builder()
+    public UpdateDraftCommand toCommand(Long memberId, Long draftId) {
+        return UpdateDraftCommand.builder()
                 .memberId(memberId)
-                .blogName(blogName)
+                .draftId(draftId)
                 .title(title)
                 .bodyText(bodyText)
                 .postThumbnailImageName(postThumbnailImageName)
                 .intro(intro)
-                .visibility(visibility)
-                .password(password)
                 .categoryId(categoryId)
                 .tags(tags)
                 .build();

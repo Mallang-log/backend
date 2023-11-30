@@ -91,7 +91,7 @@ class PostStarQueryServiceTest extends ServiceTest {
 
             // then
             assertThat(result.getContent())
-                    .extracting(StaredPostResponse::content)
+                    .extracting(StaredPostResponse::bodyText)
                     .containsExactly("내용3", "내용2", "보호되어 있는 글입니다.");
         }
 
@@ -109,7 +109,7 @@ class PostStarQueryServiceTest extends ServiceTest {
 
             // then
             assertThat(result.getContent())
-                    .extracting(StaredPostResponse::content)
+                    .extracting(StaredPostResponse::bodyText)
                     .containsExactly("내용3", "내용2", "내용1");
         }
 

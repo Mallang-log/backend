@@ -15,7 +15,6 @@ import static org.mockito.Mockito.mock;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostIntro;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import com.mallang.post.exception.NoAuthorityAccessPostException;
@@ -37,7 +36,8 @@ class PostLikeTest {
     private final Post post = Post.builder()
             .blog(blog)
             .title("제목")
-            .content("내용")
+            .postIntro("intro")
+            .bodyText("내용")
             .writer(mallang)
             .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .build();
@@ -96,7 +96,8 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .postIntro("intro")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -144,7 +145,8 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .postIntro("intro")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
@@ -214,7 +216,8 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .content("내용")
+                    .postIntro("intro")
+                    .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
@@ -268,7 +271,8 @@ class PostLikeTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .content("내용")
+                        .postIntro("intro")
+                        .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                         .build();
@@ -288,18 +292,19 @@ class PostLikeTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .content("내용")
+                        .postIntro("intro")
+                        .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                         .build();
                 PostLike postLike = new PostLike(post, other);
                 postLike.like(postLikeValidator, null);
                 post.update(
+                        new PostVisibilityPolicy(PRIVATE, null),
                         "up",
                         "up",
                         null,
-                        new PostIntro("update"),
-                        new PostVisibilityPolicy(PRIVATE, null),
+                        "update",
                         null, emptyList());
 
                 // when & then

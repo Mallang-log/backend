@@ -26,7 +26,7 @@ public interface PostQuerySupport extends JpaRepository<Post, Long> {
             SELECT p FROM  Post p
             WHERE p.postId.id = :id
             AND p.blog.name.value = :blogName
-            AND p.writer.id = :writerId
+            AND p.content.writer.id = :writerId
             """)
     Optional<Post> findByPostIdAndBlogNameAndWriterId(
             @Param("id") Long id,

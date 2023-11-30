@@ -3,7 +3,9 @@ package com.mallang.post.presentation;
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.application.PostService;
+import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.domain.PostId;
+import com.mallang.post.presentation.request.CreatePostFromDraftRequest;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -41,6 +43,18 @@ public class PostManageController {
     ) {
         PostId id = postService.create(request.toCommand(memberId));
         URI uri = URI.create("/posts/%s/%d".formatted(request.blogName(), id.getId()));
+        return ResponseEntity.created(uri).build();
+    }
+
+    @PostMapping("/from-draft")
+    public ResponseEntity<Void> create(
+            @Auth Long memberId,
+            @RequestBody CreatePostFromDraftRequest request
+    ) {
+        CreatePostRequest createPostRequest = request.createPostRequest();
+        CreatePostCommand command = createPostRequest.toCommand(memberId);
+        PostId id = postService.createFromDraft(command, request.draftId());
+        URI uri = URI.create("/posts/%s/%d".formatted(createPostRequest.blogName(), id.getId()));
         return ResponseEntity.created(uri).build();
     }
 

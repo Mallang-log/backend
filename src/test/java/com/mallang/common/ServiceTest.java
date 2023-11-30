@@ -29,6 +29,7 @@ import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.query.CommentQueryService;
+import com.mallang.post.application.DraftService;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.application.PostService;
 import com.mallang.post.application.PostStarService;
@@ -37,12 +38,14 @@ import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.domain.PostOrderInBlogGenerator;
+import com.mallang.post.domain.PostIdGenerator;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
+import com.mallang.post.query.DraftQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.post.query.dao.PostSearchDao;
@@ -97,7 +100,16 @@ public abstract class ServiceTest {
     protected PostService postService;
 
     @Autowired
-    protected PostOrderInBlogGenerator postOrderInBlogGenerator;
+    protected DraftRepository draftRepository;
+
+    @Autowired
+    protected DraftService draftService;
+
+    @Autowired
+    protected DraftQueryService draftQueryService;
+
+    @Autowired
+    protected PostIdGenerator postIdGenerator;
 
     @Autowired
     protected PostSearchDao postSearchDao;
@@ -223,7 +235,7 @@ public abstract class ServiceTest {
                 postId,
                 blogName,
                 post.getTitle(),
-                post.getContent(),
+                post.getBodyText(),
                 post.getPostThumbnailImageName(),
                 post.getPostIntro(),
                 visibility,

@@ -143,7 +143,7 @@ class PostQueryServiceTest extends ServiceTest {
                     .isEqualTo(PostDetailResponse.builder()
                             .postId(id)
                             .title("mallang-public")
-                            .content("mallang-public")
+                            .bodyText("mallang-public")
                             .visibility(PUBLIC)
                             .writer(new PostDetailResponse.WriterResponse(mallangId, "말랑", "말랑"))
                             .build());
@@ -199,7 +199,7 @@ class PostQueryServiceTest extends ServiceTest {
             // then
             assertThat(response.postId()).isEqualTo(id);
             assertThat(response.title()).isEqualTo("mallang-protected");
-            assertThat(response.content()).isEqualTo("mallang-protected");
+            assertThat(response.bodyText()).isEqualTo("mallang-protected");
         }
 
         @Test
@@ -214,7 +214,7 @@ class PostQueryServiceTest extends ServiceTest {
             // then
             assertThat(response.postId()).isEqualTo(id);
             assertThat(response.title()).isEqualTo("mallang-protected");
-            assertThat(response.content()).isEqualTo("mallang-protected");
+            assertThat(response.bodyText()).isEqualTo("mallang-protected");
         }
 
         @Test
@@ -233,7 +233,7 @@ class PostQueryServiceTest extends ServiceTest {
                     .isEqualTo(PostDetailResponse.builder()
                             .postId(id)
                             .title("mallang-protected")
-                            .content("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.")
+                            .bodyText("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.")
                             .visibility(PROTECTED)
                             .isProtected(true)
                             .writer(new PostDetailResponse.WriterResponse(mallangId, "말랑", "말랑"))
@@ -283,7 +283,7 @@ class PostQueryServiceTest extends ServiceTest {
                     .containsExactly("donghun-protected", "donghun-public",
                             "mallang-private", "mallang-protected", "mallang-public");
             assertThat(search)
-                    .extracting(PostSearchResponse::content)
+                    .extracting(PostSearchResponse::bodyText)
                     .containsExactly("보호되어 있는 글입니다.", "donghun-public",
                             "mallang-private", "mallang-protected", "mallang-public");
         }
@@ -312,7 +312,7 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post1Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트1")
-                                            .content("content1")
+                                            .bodyText("content1")
                                             .category(new CategoryResponse(스프링, "스프링"))
                                             .build()
                             )
@@ -343,14 +343,14 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post2Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트2")
-                                            .content("content2")
+                                            .bodyText("content2")
                                             .category(new CategoryResponse(JPA, "JPA"))
                                             .build(),
                                     PostSearchResponse.builder()
                                             .id(post1Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트1")
-                                            .content("content1")
+                                            .bodyText("content1")
                                             .category(new CategoryResponse(스프링, "스프링"))
                                             .build()
                             )
@@ -379,7 +379,7 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post2Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트2")
-                                            .content("content2")
+                                            .bodyText("content2")
                                             .tags(new TagResponses(List.of("tag1", "tag2")))
                                             .build()
                             )
@@ -410,7 +410,7 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post1Id)
                                             .writer(new WriterResponse(findWriterId, "말랑말랑", "말랑말랑"))
                                             .title("포스트1")
-                                            .content("content1")
+                                            .bodyText("content1")
                                             .tags(new TagResponses(List.of("tag1")))
                                             .build()
                             )
@@ -439,7 +439,7 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post3Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("안녕")
-                                            .content("히히")
+                                            .bodyText("히히")
                                             .build()
                             )
                     );
@@ -452,7 +452,7 @@ class PostQueryServiceTest extends ServiceTest {
             Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getId();
             Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히").getId();
             PostSearchCond cond = PostSearchCond.builder()
-                    .content("안녕")
+                    .bodyText("안녕")
                     .build();
 
             // when
@@ -467,13 +467,13 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post2Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트2")
-                                            .content("안녕하세요")
+                                            .bodyText("안녕하세요")
                                             .build(),
                                     PostSearchResponse.builder()
                                             .id(post1Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트1")
-                                            .content("안녕")
+                                            .bodyText("안녕")
                                             .build()
                             )
                     );
@@ -487,7 +487,7 @@ class PostQueryServiceTest extends ServiceTest {
             Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getId();
             Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히").getId();
             PostSearchCond cond = PostSearchCond.builder()
-                    .titleOrContent("안녕")
+                    .titleOrBodyText("안녕")
                     .build();
 
             // when
@@ -502,19 +502,19 @@ class PostQueryServiceTest extends ServiceTest {
                                             .id(post3Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("안녕히")
-                                            .content("히히")
+                                            .bodyText("히히")
                                             .build(),
                                     PostSearchResponse.builder()
                                             .id(post2Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트2")
-                                            .content("안녕하세요")
+                                            .bodyText("안녕하세요")
                                             .build(),
                                     PostSearchResponse.builder()
                                             .id(post1Id)
                                             .writer(new WriterResponse(mallangId, "말랑", "말랑"))
                                             .title("포스트1")
-                                            .content("안녕")
+                                            .bodyText("안녕")
                                             .build()
                             )
                     );
@@ -526,7 +526,7 @@ class PostQueryServiceTest extends ServiceTest {
             // given
             PostSearchCond cond = PostSearchCond.builder()
                     .title("1")
-                    .titleOrContent("안녕")
+                    .titleOrBodyText("안녕")
                     .build();
 
             // when & then

@@ -11,10 +11,11 @@ import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.domain.PostIntro;
-import com.mallang.post.domain.PostOrderInBlogGenerator;
+import com.mallang.post.domain.PostIdGenerator;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.draft.Draft;
+import com.mallang.post.domain.draft.DraftRepository;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,18 +27,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
-    private final BlogRepository blogRepository;
-    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final BlogRepository blogRepository;
     private final CategoryRepository categoryRepository;
-    private final PostOrderInBlogGenerator postOrderInBlogGenerator;
+    private final PostRepository postRepository;
+    private final DraftRepository draftRepository;
+    private final PostIdGenerator postIdGenerator;
+
+    public PostId createFromDraft(CreatePostCommand command, Long draftId) {
+        Member member = memberRepository.getById(command.memberId());
+        Draft draft = draftRepository.getById(draftId);
+        draft.validateWriter(member);
+        PostId postId = create(command);
+        draftRepository.delete(draft);
+        return postId;
+    }
 
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
         Category category = getCategoryByIdIfPresent(command.categoryId());
-        PostId postId = postOrderInBlogGenerator.generate(blog.getId());
-        Post post = command.toPost(member, category, postId, blog);
+        PostId postId = postIdGenerator.generate(blog.getId());
+        Post post = command.toPost(member, postId, blog, category);
         return postRepository.save(post).getPostId();
     }
 
@@ -47,11 +58,11 @@ public class PostService {
         Category category = getCategoryByIdIfPresent(command.categoryId());
         post.validateWriter(member);
         post.update(
-                command.title(),
-                command.content(),
-                command.postThumbnailImageName(),
-                new PostIntro(command.intro()),
                 new PostVisibilityPolicy(command.visibility(), command.password()),
+                command.title(),
+                command.bodyText(),
+                command.postThumbnailImageName(),
+                command.intro(),
                 category,
                 command.tags()
         );

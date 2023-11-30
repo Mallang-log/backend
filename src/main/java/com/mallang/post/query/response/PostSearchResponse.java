@@ -14,7 +14,7 @@ public record PostSearchResponse(
         Long id,
         String blogName,
         String title,
-        String content,
+        String bodyText,
         String intro,
         @Nullable String postThumbnailImageName,
         Visibility visibility,
@@ -29,7 +29,7 @@ public record PostSearchResponse(
                 .id(post.getPostId().getId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
-                .content(post.getContent())
+                .bodyText(post.getBodyText())
                 .intro(post.getPostIntro())
                 .postThumbnailImageName(post.getPostThumbnailImageName())
                 .visibility(post.getVisibilityPolish().getVisibility())

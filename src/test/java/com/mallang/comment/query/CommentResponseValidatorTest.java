@@ -38,16 +38,19 @@ class CommentResponseValidatorTest {
             .build();
     private final Post 공개_포스트 = Post.builder()
             .blog(blog)
+            .postIntro("intro")
             .writer(owner)
             .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .build();
     private final Post 보호_포스트 = Post.builder()
             .blog(blog)
+            .postIntro("intro")
             .writer(owner)
             .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
             .build();
     private final Post 비공개_포스트 = Post.builder()
             .blog(blog)
+            .postIntro("intro")
             .writer(owner)
             .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
             .build();
