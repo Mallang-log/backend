@@ -1,4 +1,4 @@
-package com.mallang.blog.query.support;
+package com.mallang.blog.query.repository;
 
 import com.mallang.blog.domain.About;
 import com.mallang.blog.exception.NotFoundAboutException;
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface AboutQuerySupport extends JpaRepository<About, Long> {
+public interface AboutQueryRepository extends JpaRepository<About, Long> {
 
     default About getByBlogName(String blogName) {
         return findByBlogName(blogName)

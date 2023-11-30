@@ -3,7 +3,7 @@ package com.mallang.statistics.api.query.dao;
 import static com.mallang.statistics.statistic.QBlogVisitStatistic.blogVisitStatistic;
 
 import com.mallang.blog.domain.Blog;
-import com.mallang.blog.query.support.BlogQuerySupport;
+import com.mallang.blog.query.repository.BlogQueryRepository;
 import com.mallang.statistics.api.query.StatisticCondition;
 import com.mallang.statistics.api.query.response.BlogVisitStatisticManageResponse;
 import com.mallang.statistics.api.query.support.PeriodPartitioner;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlogVisitStatisticManageDao {
 
-    private final BlogQuerySupport blogQuerySupport;
+    private final BlogQueryRepository blogQueryRepository;
     private final JPAQueryFactory query;
 
     public List<BlogVisitStatisticManageResponse> find(
@@ -30,7 +30,7 @@ public class BlogVisitStatisticManageDao {
             String blogName,
             StatisticCondition condition
     ) {
-        Blog blog = blogQuerySupport.getByMemberAndBlog(memberId, blogName);
+        Blog blog = blogQueryRepository.getByMemberAndBlog(memberId, blogName);
         List<BlogVisitStatistic> result = query.selectFrom(blogVisitStatistic)
                 .where(
                         blogVisitStatistic.blogName.eq(blog.getName()),

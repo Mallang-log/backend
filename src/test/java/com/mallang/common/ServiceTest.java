@@ -16,8 +16,7 @@ import com.mallang.blog.application.command.OpenBlogCommand;
 import com.mallang.blog.domain.AboutRepository;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.domain.subscribe.BlogSubscribeRepository;
-import com.mallang.blog.query.dao.SubscriberDao;
-import com.mallang.blog.query.dao.SubscribingBlogDao;
+import com.mallang.blog.query.BlogSubscribeQueryService;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.query.CategoryQueryService;
@@ -148,10 +147,7 @@ public abstract class ServiceTest {
     protected BlogSubscribeService blogSubscribeService;
 
     @Autowired
-    protected SubscriberDao subscriberDao;
-
-    @Autowired
-    protected SubscribingBlogDao subscribingBlogDao;
+    protected BlogSubscribeQueryService blogSubscribeQueryService;
 
     @Autowired
     protected CommentRepository commentRepository;
