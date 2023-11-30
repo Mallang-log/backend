@@ -36,7 +36,7 @@ public class Post extends AbstractAggregateRoot<Post> {
     @EmbeddedId
     private PostId postId;
 
-    @MapsId("blog_id")
+    @MapsId("blogId")
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "blog_id", nullable = false, updatable = false)
     private Blog blog;

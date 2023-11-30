@@ -12,10 +12,7 @@ import org.springframework.stereotype.Component;
 
 public interface PostViewStatisticDao {
 
-    List<PostViewStatistic> findByPost(
-            Post post,
-            StatisticQueryCondition condition
-    );
+    List<PostViewStatistic> findByPost(Post post, StatisticQueryCondition condition);
 
     @RequiredArgsConstructor
     @Component
@@ -27,7 +24,8 @@ public interface PostViewStatisticDao {
         public List<PostViewStatistic> findByPost(Post post, StatisticQueryCondition condition) {
             return query.selectFrom(postViewStatistic)
                     .where(
-                            postViewStatistic.postId.eq(post.getPostId()),
+                            postViewStatistic.postId.id.eq(post.getPostId().getId()),
+                            postViewStatistic.postId.blogId.eq(post.getPostId().getBlogId()),
                             postViewStatistic.statisticDate.between(
                                     condition.startDayInclude(),
                                     condition.lastDayInclude()

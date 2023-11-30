@@ -24,6 +24,6 @@ public interface CategoryQueryRepository extends JpaRepository<Category, Long> {
         return findById(id).orElseThrow(NotFoundCategoryException::new);
     }
 
-    @Query("SELECT c FROM Category c WHERE c.blog.name.value = :blogName AND c.parent = null")
+    @Query("SELECT c FROM Category c WHERE c.blog.name.value = :blogName AND c.parent IS NULL")
     List<Category> findAllRootByBlogName(@Param("blogName") String blogName);
 }
