@@ -7,16 +7,24 @@ import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
+import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성;
+import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_단일_조회_요청;
+import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_목록_조회_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_삭제_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_생성_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_수정_요청;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.post.presentation.request.CreateDraftRequest;
 import com.mallang.post.presentation.request.UpdateDraftRequest;
+import com.mallang.post.query.response.DraftDetailResponse;
+import com.mallang.post.query.response.DraftListResponse;
+import io.restassured.common.mapper.TypeRef;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -159,6 +167,93 @@ class DraftAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
+        }
+    }
+
+    @Nested
+    class 임시_글_목록_조회_API {
+
+        @Test
+        void 블로그의_임시_글_목록을_조회한다() {
+            // given
+            CreateDraftRequest 임시_글_1_생성_요청 = new CreateDraftRequest(
+                    말랑_블로그_이름,
+                    "임시 글 1",
+                    "첫 임시 글이네요.",
+                    "임시 글 썸네일 이름",
+                    "첫 임시 글 인트로",
+                    Spring_카테고리_ID,
+                    List.of("태그1", "태그2")
+            );
+            CreateDraftRequest 임시_글_2_생성_요청 = new CreateDraftRequest(
+                    말랑_블로그_이름,
+                    "임시 글 2",
+                    "두번째",
+                    "임시 글 썸네일 이름",
+                    "임시 글 2 인트로",
+                    null,
+                    Collections.emptyList()
+            );
+            임시_글_생성_요청(말랑_세션_ID, 임시_글_1_생성_요청);
+            임시_글_생성_요청(말랑_세션_ID, 임시_글_2_생성_요청);
+
+            // when
+            var 응답 = 임시_글_목록_조회_요청(말랑_세션_ID, 말랑_블로그_이름);
+
+            // then
+            List<DraftListResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses)
+                    .extracting(DraftListResponse::title)
+                    .containsExactly("임시 글 2", "임시 글 1");
+        }
+
+        @Test
+        void 블로그_주인이_아닌_경우_예외() {
+            // when
+            var 응답 = 임시_글_목록_조회_요청(동훈_세션_ID, 말랑_블로그_이름);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+    }
+
+    @Nested
+    class 임시_글_불러오기_API {
+
+        @Test
+        void 임시_글을_조회한다() {
+            // given
+            var 임시_글_ID = ID를_추출한다(임시_글_생성_요청(말랑_세션_ID, 임시_글_생성_요청));
+
+            // when
+            var 응답 = 임시_글_단일_조회_요청(말랑_세션_ID, 임시_글_ID);
+
+            // then
+            DraftDetailResponse draftDetailResponse = 응답.as(DraftDetailResponse.class);
+            assertThat(draftDetailResponse.title())
+                    .isEqualTo("첫 임시_글");
+        }
+
+        @Test
+        void 임시_글_작성자가_아니면_예외() {
+            // given
+            var 임시_글_ID = ID를_추출한다(임시_글_생성_요청(말랑_세션_ID, 임시_글_생성_요청));
+
+            // when
+            var 응답 = 임시_글_단일_조회_요청(동훈_세션_ID, 임시_글_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+
+        @Test
+        void 없는_글_조회_시_예외() {
+            // when
+            var 응답 = 임시_글_단일_조회_요청(말랑_세션_ID, 100L);
+
+            // then
+            응답_상태를_검증한다(응답, 찾을수_없음);
         }
     }
 }
