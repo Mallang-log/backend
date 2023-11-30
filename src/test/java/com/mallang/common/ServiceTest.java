@@ -45,6 +45,7 @@ import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
+import com.mallang.post.query.DraftQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.post.query.dao.PostSearchDao;
@@ -103,6 +104,9 @@ public abstract class ServiceTest {
 
     @Autowired
     protected DraftService draftService;
+
+    @Autowired
+    protected DraftQueryService draftQueryService;
 
     @Autowired
     protected PostIdGenerator postIdGenerator;
