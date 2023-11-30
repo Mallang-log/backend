@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.presentation.request.CreatePostFromDraftRequest;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.DeletePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
@@ -79,6 +80,18 @@ public class PostManageAcceptanceSteps {
                 .body(요청)
                 .when()
                 .post("/manage/posts")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 임시_글로부터_포스트_생성_요청(
+            String 세션_ID,
+            CreatePostFromDraftRequest 요청
+    ) {
+        return given(세션_ID)
+                .body(요청)
+                .when()
+                .post("/manage/posts/from-draft")
                 .then().log().all()
                 .extract();
     }

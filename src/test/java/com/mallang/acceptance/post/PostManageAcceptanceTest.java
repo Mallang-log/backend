@@ -1,5 +1,7 @@
 package com.mallang.acceptance.post;
 
+import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
+import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
@@ -9,11 +11,14 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성;
+import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_단일_조회_요청;
+import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_생성_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.공개_포스트_생성_데이터;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_관리_글_단일_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_관리_글_단일_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_관리_글_목록_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.내_관리_글_전체_조회_응답을_검증한다;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.임시_글로부터_포스트_생성_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_삭제_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성_요청;
@@ -24,6 +29,8 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
 
 import com.mallang.acceptance.AcceptanceTest;
+import com.mallang.post.presentation.request.CreateDraftRequest;
+import com.mallang.post.presentation.request.CreatePostFromDraftRequest;
 import com.mallang.post.presentation.request.CreatePostRequest;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import com.mallang.post.query.response.PostManageDetailResponse;
@@ -70,7 +77,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         @Test
         void 포스트를_작성한다() {
             // given
-            CreatePostRequest 요청 = new CreatePostRequest(말랑_블로그_이름,
+            CreatePostRequest 요청 = new CreatePostRequest(
+                    말랑_블로그_이름,
                     "첫 포스트",
                     "첫 포스트이네요.",
                     "포스트 썸네일 이름",
@@ -86,6 +94,77 @@ class PostManageAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
+        }
+    }
+
+    @Nested
+    class 임시_글로부터_포스트_작성_API {
+
+        private Long 말랑_임시_글_ID;
+
+        @BeforeEach
+        void setUp() {
+            var 임시_글_생성_요청 = new CreateDraftRequest(
+                    말랑_블로그_이름,
+                    "첫 임시_글",
+                    "첫 임시_글이네요.",
+                    "임시_글 썸네일 이름",
+                    "첫 임시_글 인트로",
+                    Spring_카테고리_ID,
+                    List.of("태그1", "태그2")
+            );
+            말랑_임시_글_ID = ID를_추출한다(임시_글_생성_요청(말랑_세션_ID, 임시_글_생성_요청));
+        }
+
+        @Test
+        void 임시_글로부터_포스트를_작성한다() {
+            // given
+            CreatePostFromDraftRequest 요청 = new CreatePostFromDraftRequest(
+                    말랑_임시_글_ID,
+                    new CreatePostRequest(
+                            말랑_블로그_이름,
+                            "첫 포스트",
+                            "첫 포스트이네요.",
+                            "포스트 썸네일 이름",
+                            "첫 포스트 인트로",
+                            PUBLIC,
+                            없음(),
+                            Spring_카테고리_ID,
+                            List.of("태그1", "태그2")
+                    )
+            );
+
+            // when
+            var 응답 = 임시_글로부터_포스트_생성_요청(말랑_세션_ID, 요청);
+
+            // then
+            응답_상태를_검증한다(응답, 생성됨);
+            응답_상태를_검증한다(임시_글_단일_조회_요청(말랑_세션_ID, 말랑_임시_글_ID), 찾을수_없음);
+        }
+
+        @Test
+        void 타인의_임시_글이라면_예외() {
+            // given
+            CreatePostFromDraftRequest 요청 = new CreatePostFromDraftRequest(
+                    말랑_임시_글_ID,
+                    new CreatePostRequest(
+                            동훈_블로그_이름,
+                            "첫 포스트",
+                            "첫 포스트이네요.",
+                            "포스트 썸네일 이름",
+                            "첫 포스트 인트로",
+                            PUBLIC,
+                            없음(),
+                            Spring_카테고리_ID,
+                            List.of("태그1", "태그2")
+                    )
+            );
+
+            // when
+            var 응답 = 임시_글로부터_포스트_생성_요청(동훈_세션_ID, 요청);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
         }
     }
 
