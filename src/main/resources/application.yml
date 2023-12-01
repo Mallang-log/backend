@@ -10,6 +10,13 @@ spring:
     hibernate:
       ddl-auto: create
 
+  batch:
+    job:
+      enabled: false
+
+    jdbc:
+      initialize-schema: embedded
+
 auth:
   oauth:
     github:
