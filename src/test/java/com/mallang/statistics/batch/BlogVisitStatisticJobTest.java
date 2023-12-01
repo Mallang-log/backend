@@ -17,15 +17,23 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@DisplayName("블로그 방문자수 통계 작업 (BlogVisitStatisticJob) 은(는)")
+@DisplayName("블로그 방문자수 통계 작업 (BlogVisitStatisticJobConfig) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith(DataClearExtension.class)
 @SpringBootTest
+@SpringBatchTest
 class BlogVisitStatisticJobTest {
+
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
     private BlogVisitHistoryRepository blogVisitHistoryRepository;
@@ -34,13 +42,13 @@ class BlogVisitStatisticJobTest {
     private BlogVisitStatisticRepository blogVisitStatisticRepository;
 
     @Autowired
-    private BlogVisitStatisticJob blogVisitStatisticJob;
+    private Job blogVisitStatisticJob;
 
     private final String blog1Name = "blog1name";
     private final String blog2Name = "blog2name";
 
     @Test
-    void 집계되지_않은_모든_조회_이력을_가져와_블로그별로_그리고_일자별로_개수를_집계한다() {
+    void 집계되지_않은_모든_조회_이력을_가져와_블로그별로_그리고_일자별로_개수를_집계한다() throws Exception {
         // given
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
@@ -59,11 +67,13 @@ class BlogVisitStatisticJobTest {
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2001년_10월_19일_20시_2분));
 
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog2Name, "", "", 시간_2000년_10월_4일_10시_0분));
+        jobLauncherTestUtils.setJob(blogVisitStatisticJob);
 
         // when
-        blogVisitStatisticJob.blogVisitsAggregationJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 
         // then
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
         assertThat(blogVisitHistoryRepository.findAll()).isEmpty();
         List<BlogVisitStatistic> all = blogVisitStatisticRepository.findAll();
         assertThat(all).hasSize(4);
@@ -93,14 +103,15 @@ class BlogVisitStatisticJobTest {
     }
 
     @Test
-    void 이미_존재하는_통계에_대해서는_개수가_증가한다() {
+    void 이미_존재하는_통계에_대해서는_개수가_증가한다() throws Exception {
         // given
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
         LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_10시_0분));
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_10시_59분));
-        blogVisitStatisticJob.blogVisitsAggregationJob();
+        jobLauncherTestUtils.setJob(blogVisitStatisticJob);
+        jobLauncherTestUtils.launchJob();
 
         LocalDate 시간_2000년_10월_4일 = LocalDate.of(2000, 10, 4);
         Optional<BlogVisitStatistic> statistic = blogVisitStatisticRepository
@@ -113,9 +124,10 @@ class BlogVisitStatisticJobTest {
 
         // when
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_11시_0분));
-        blogVisitStatisticJob.blogVisitsAggregationJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 
         // then
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
         assertThat(blogVisitHistoryRepository.findAll()).isEmpty();
 
         statistic = blogVisitStatisticRepository.findByBlogNameAndStatisticDate(blog1Name, 시간_2000년_10월_4일);

@@ -18,15 +18,23 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@DisplayName("포스트 조회수 통계 작업 (PostViewStatisticJob) 은(는)")
+@DisplayName("포스트 조회수 통계 작업 (PostViewStatisticJobConfig) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith(DataClearExtension.class)
 @SpringBootTest
+@SpringBatchTest
 class PostViewStatisticJobTest {
+
+    @Autowired
+    private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
     private PostViewHistoryRepository postViewHistoryRepository;
@@ -35,13 +43,13 @@ class PostViewStatisticJobTest {
     private PostViewStatisticRepository postViewStatisticRepository;
 
     @Autowired
-    private PostViewStatisticJob postViewStatisticJob;
+    private Job postViewStatisticJob;
 
     private final PostId postId1 = new PostId(1L, 1L);
     private final PostId postId2 = new PostId(2L, 1L);
 
     @Test
-    void 집계되지_않은_모든_조회_이력을_가져와_포스트별로_그리고_일자별로_개수를_집계한다() {
+    void 집계되지_않은_모든_조회_이력을_가져와_포스트별로_그리고_일자별로_개수를_집계한다() throws Exception {
         // given
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
@@ -59,11 +67,13 @@ class PostViewStatisticJobTest {
 
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2001년_10월_19일_20시_2분));
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId2, 시간_2000년_10월_4일_10시_0분));
+        jobLauncherTestUtils.setJob(postViewStatisticJob);
 
         // when
-        postViewStatisticJob.postViewsAggregationJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 
         // then
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
         assertThat(postViewHistoryRepository.findAll()).isEmpty();
         List<PostViewStatistic> all = postViewStatisticRepository.findAll();
         assertThat(all).hasSize(4);
@@ -93,14 +103,15 @@ class PostViewStatisticJobTest {
     }
 
     @Test
-    void 이미_존재하는_통계에_대해서는_개수가_증가한다() {
+    void 이미_존재하는_통계에_대해서는_개수가_증가한다() throws Exception {
         // given
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
         LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_0분));
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_59분));
-        postViewStatisticJob.postViewsAggregationJob();
+        jobLauncherTestUtils.setJob(postViewStatisticJob);
+        jobLauncherTestUtils.launchJob();
         LocalDate 시간_2000년_10월_4일 = LocalDate.of(2000, 10, 4);
         Optional<PostViewStatistic> statistic = postViewStatisticRepository
                 .findByPostIdAndStatisticDate(postId1, 시간_2000년_10월_4일);
@@ -112,9 +123,10 @@ class PostViewStatisticJobTest {
 
         // when
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_11시_0분));
-        postViewStatisticJob.postViewsAggregationJob();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob();
 
         // then
+        assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
         assertThat(postViewHistoryRepository.findAll()).isEmpty();
 
         statistic = postViewStatisticRepository.findByPostIdAndStatisticDate(postId1, 시간_2000년_10월_4일);
