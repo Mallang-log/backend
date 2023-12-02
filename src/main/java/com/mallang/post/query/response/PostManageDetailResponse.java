@@ -24,7 +24,7 @@ public record PostManageDetailResponse(
 ) {
     public static PostManageDetailResponse from(Post post) {
         return PostManageDetailResponse.builder()
-                .id(post.getPostId().getId())
+                .id(post.getId().getPostId())
                 .title(post.getTitle())
                 .intro(post.getPostIntro())
                 .bodyText(post.getBodyText())

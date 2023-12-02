@@ -19,13 +19,13 @@ public class PostViewStatistic extends CommonStatistic {
     @Column
     private int count;
 
-    public PostViewStatistic(LocalDate statisticDate, PostId postId) {
-        this(statisticDate, postId, 0);
+    public PostViewStatistic(LocalDate statisticDate, PostId id) {
+        this(statisticDate, id, 0);
     }
 
-    public PostViewStatistic(LocalDate statisticDate, PostId postId, int count) {
+    public PostViewStatistic(LocalDate statisticDate, PostId id, int count) {
         super(statisticDate);
-        this.postId = postId;
+        this.postId = id;
         this.count = count;
     }
 

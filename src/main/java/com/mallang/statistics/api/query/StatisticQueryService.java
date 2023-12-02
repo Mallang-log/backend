@@ -44,7 +44,7 @@ public class StatisticQueryService {
 
     public PostTotalViewsResponse getPostTotalViews(String blogName, Long postId) {
         Post post = postQueryRepository.getById(postId, blogName);
-        int totalViewCount = postViewStatisticQueryRepository.findAllByPostId(post.getPostId())
+        int totalViewCount = postViewStatisticQueryRepository.findAllByPostId(post.getId())
                 .stream()
                 .mapToInt(PostViewStatistic::getCount)
                 .sum();

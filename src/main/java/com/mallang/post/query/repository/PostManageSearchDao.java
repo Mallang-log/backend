@@ -64,7 +64,7 @@ public interface PostManageSearchDao {
                             bodyTextContains(cond.bodyText()),
                             visibilityEq(cond.visibility())
                     )
-                    .orderBy(post.postId.id.desc())
+                    .orderBy(post.id.postId.desc())
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .fetch();

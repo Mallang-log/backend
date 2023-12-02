@@ -14,7 +14,7 @@ public interface PostRepository extends JpaRepository<Post, PostId> {
                 .orElseThrow(NotFoundPostException::new);
     }
 
-    @Query("SELECT p FROM Post p WHERE p.postId.id = :postId AND p.blog.name.value = :blogName")
+    @Query("SELECT p FROM Post p WHERE p.id.postId = :postId AND p.blog.name.value = :blogName")
     Optional<Post> findById(
             @Param("postId") Long postId,
             @Param("blogName") String blogName
@@ -23,12 +23,12 @@ public interface PostRepository extends JpaRepository<Post, PostId> {
     @Query("SELECT p FROM Post p WHERE p.content.category.id = :categoryId")
     List<Post> findAllByCategoryId(@Param("categoryId") Long categoryId);
 
-    @Query("SELECT p FROM Post p WHERE p.postId.id in :ids AND p.blog.name.value = :blogName")
+    @Query("SELECT p FROM Post p WHERE p.id.postId in :ids AND p.blog.name.value = :blogName")
     List<Post> findAllByIdIn(
             @Param("ids") List<Long> ids,
             @Param("blogName") String blogName
     );
 
-    @Query("SELECT COUNT(p) FROM Post p WHERE p.postId.blogId = :blogId")
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.id.blogId = :blogId")
     Long countByBlog(Long blogId);
 }

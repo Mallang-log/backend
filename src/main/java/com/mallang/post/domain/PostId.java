@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 public class PostId implements Serializable {
 
     @Column(name = "post_id", nullable = false, updatable = false)
-    private Long id;
+    private Long postId;
 
     @Column(name = "blog_id", nullable = false, updatable = false)
     private Long blogId;
 
-    public PostId(Long id, Long blogId) {
-        this.id = id;
+    public PostId(Long postId, Long blogId) {
+        this.postId = postId;
         this.blogId = blogId;
     }
 
@@ -33,12 +33,12 @@ public class PostId implements Serializable {
         if (!(o instanceof PostId postId)) {
             return false;
         }
-        return Objects.equals(getId(), postId.getId())
+        return Objects.equals(getPostId(), postId.getPostId())
                 && Objects.equals(getBlogId(), postId.getBlogId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getBlogId());
+        return Objects.hash(getPostId(), getBlogId());
     }
 }

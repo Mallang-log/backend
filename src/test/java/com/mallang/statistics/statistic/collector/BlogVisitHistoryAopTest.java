@@ -64,7 +64,7 @@ class BlogVisitHistoryAopTest extends ServiceTest {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getPostId();
 
         // when
         postController.getById(null, null, "mallang-log", postId);
@@ -80,7 +80,7 @@ class BlogVisitHistoryAopTest extends ServiceTest {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getPostId();
         postController.getById(null, null, "mallang-log", postId);
 
         // when
