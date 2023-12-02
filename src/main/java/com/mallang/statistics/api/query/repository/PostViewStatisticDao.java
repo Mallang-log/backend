@@ -24,8 +24,8 @@ public interface PostViewStatisticDao {
         public List<PostViewStatistic> findByPost(Post post, StatisticQueryCondition condition) {
             return query.selectFrom(postViewStatistic)
                     .where(
-                            postViewStatistic.postId.id.eq(post.getPostId().getId()),
-                            postViewStatistic.postId.blogId.eq(post.getPostId().getBlogId()),
+                            postViewStatistic.postId.postId.eq(post.getId().getPostId()),
+                            postViewStatistic.postId.blogId.eq(post.getId().getBlogId()),
                             postViewStatistic.statisticDate.between(
                                     condition.startDayInclude(),
                                     condition.lastDayInclude()

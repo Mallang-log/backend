@@ -1,10 +1,12 @@
 package com.mallang.post.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
+import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
@@ -12,29 +14,22 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.domain.AbstractAggregateRoot;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
-@EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Post extends AbstractAggregateRoot<Post> {
+public class Post extends CommonRootEntity<PostId> {
 
     @EmbeddedId
-    private PostId postId;
+    private PostId id;
 
     @MapsId("blogId")
     @ManyToOne(fetch = LAZY)
@@ -47,14 +42,11 @@ public class Post extends AbstractAggregateRoot<Post> {
     @Embedded
     private PostContent content;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
-
     private int likeCount = 0;
 
     @Builder
     public Post(
-            PostId postId,
+            PostId id,
             Blog blog,
             PostVisibilityPolicy visibilityPolish,
             String title,
@@ -65,7 +57,7 @@ public class Post extends AbstractAggregateRoot<Post> {
             List<String> tags,
             Member writer
     ) {
-        this.postId = postId;
+        this.id = id;
         this.blog = blog;
         this.visibilityPolish = visibilityPolish;
         this.content = new PostContent(title, bodyText, postThumbnailImageName, postIntro, category, tags, writer);
@@ -86,7 +78,7 @@ public class Post extends AbstractAggregateRoot<Post> {
     }
 
     public void delete() {
-        registerEvent(new PostDeleteEvent(getPostId()));
+        registerEvent(new PostDeleteEvent(getId()));
     }
 
     public void removeCategory() {
@@ -165,11 +157,11 @@ public class Post extends AbstractAggregateRoot<Post> {
         if (!(o instanceof Post post)) {
             return false;
         }
-        return Objects.equals(getPostId(), post.getPostId());
+        return Objects.equals(getId(), post.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPostId());
+        return Objects.hash(getId());
     }
 }

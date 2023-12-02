@@ -81,7 +81,7 @@ class PostViewHistoryAopTest extends ServiceTest {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getPostId();
 
         // when
         postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
@@ -97,7 +97,7 @@ class PostViewHistoryAopTest extends ServiceTest {
         // given
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getPostId();
         postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);
 
         // when
@@ -118,7 +118,7 @@ class PostViewHistoryAopTest extends ServiceTest {
         request.setCookies(new Cookie("POST_VIEW_COOKIE", UUID.randomUUID().toString()));
         Long memberId = 회원을_저장한다("말랑");
         String blogName = 블로그_개설(memberId, "mallang-log");
-        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getId();
+        Long postId = 포스트를_저장한다(memberId, blogName, "안녕", "내용").getPostId();
 
         // when
         postQueryService.getByIdAndBlogName(postId, blogName, memberId, null);

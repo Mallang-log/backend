@@ -392,7 +392,7 @@ class StatisticQueryServiceTest extends ServiceTest {
             postViewStatisticRepository.saveAll(List.of(통계_2023_11_25, 통계_2023_11_26, 통계_2023_11_27, 통계_2023_11_28));
 
             // when
-            PostTotalViewsResponse response = statisticQueryService.getPostTotalViews(blogName, postId.getId());
+            PostTotalViewsResponse response = statisticQueryService.getPostTotalViews(blogName, postId.getPostId());
 
             // then
             assertThat(response.totalViewCount()).isEqualTo(115);
@@ -430,7 +430,7 @@ class StatisticQueryServiceTest extends ServiceTest {
             List<PostViewStatisticResponse> result = statisticQueryService.getPostViewStatistics(
                     memberId,
                     blogName,
-                    postId.getId(),
+                    postId.getPostId(),
                     cond
             );
 
@@ -453,7 +453,7 @@ class StatisticQueryServiceTest extends ServiceTest {
                 statisticQueryService.getPostViewStatistics(
                         otherMemberId,
                         blogName,
-                        postId.getId(),
+                        postId.getPostId(),
                         cond
                 );
             }).isInstanceOf(NoAuthorityPostException.class);
@@ -473,7 +473,7 @@ class StatisticQueryServiceTest extends ServiceTest {
             List<PostViewStatisticResponse> result = statisticQueryService.getPostViewStatistics(
                     memberId,
                     blogName,
-                    postId.getId(),
+                    postId.getPostId(),
                     cond
             );
 
@@ -511,7 +511,7 @@ class StatisticQueryServiceTest extends ServiceTest {
             List<PostViewStatisticResponse> result = statisticQueryService.getPostViewStatistics(
                     memberId,
                     blogName,
-                    postId.getId(),
+                    postId.getPostId(),
                     cond
             );
 
@@ -550,7 +550,7 @@ class StatisticQueryServiceTest extends ServiceTest {
             List<PostViewStatisticResponse> result = statisticQueryService.getPostViewStatistics(
                     memberId,
                     blogName,
-                    postId.getId(),
+                    postId.getPostId(),
                     cond
             );
 
@@ -590,7 +590,7 @@ class StatisticQueryServiceTest extends ServiceTest {
             List<PostViewStatisticResponse> result = statisticQueryService.getPostViewStatistics(
                     memberId,
                     blogName,
-                    postId.getId(),
+                    postId.getPostId(),
                     cond
             );
 

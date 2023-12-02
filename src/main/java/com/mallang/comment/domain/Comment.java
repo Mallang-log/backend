@@ -1,10 +1,11 @@
 package com.mallang.comment.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
-import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -12,6 +13,8 @@ import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -28,7 +31,11 @@ import lombok.NoArgsConstructor;
 @DiscriminatorColumn
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
-public abstract class Comment extends CommonDomainModel {
+public abstract class Comment extends CommonRootEntity<Long> {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     protected String content;

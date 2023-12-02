@@ -24,7 +24,7 @@ class PostLikeEventHandlerTest extends ServiceTest {
     void setUp() {
         memberId = 회원을_저장한다("말랑");
         blogName = 블로그_개설(memberId, "mallang-log");
-        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1").getId();
+        postId = 포스트를_저장한다(memberId, blogName, "포스트", "내용", "태그1").getPostId();
     }
 
     @Nested

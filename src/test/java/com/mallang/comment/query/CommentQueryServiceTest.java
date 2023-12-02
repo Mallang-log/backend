@@ -42,12 +42,12 @@ class CommentQueryServiceTest extends ServiceTest {
         @Test
         void 인증되지_않은_요청인_경우_비밀_댓글은_비밀_댓글로_조회된다() {
             // given
-            댓글을_작성한다(postId.getId(), blogName, "댓글1", false, memberId);
-            댓글을_작성한다(postId.getId(), blogName, "[비밀] 댓글2", true, memberId);
-            비인증_댓글을_작성한다(postId.getId(), blogName, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId.getPostId(), blogName, "댓글1", false, memberId);
+            댓글을_작성한다(postId.getPostId(), blogName, "[비밀] 댓글2", true, memberId);
+            비인증_댓글을_작성한다(postId.getPostId(), blogName, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getId(), blogName, null, null);
+            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getPostId(), blogName, null, null);
 
             // then
             assertThat(result)
@@ -70,14 +70,14 @@ class CommentQueryServiceTest extends ServiceTest {
             // given
             Long dong = 회원을_저장한다("동훈");
             Long hehe = 회원을_저장한다("헤헤");
-            댓글을_작성한다(postId.getId(), blogName, "동훈 댓글", false, dong);
-            댓글을_작성한다(postId.getId(), blogName, "헤헤 댓글", false, hehe);
-            댓글을_작성한다(postId.getId(), blogName, "[비밀] 동훈 댓글2", true, dong); // 제외
-            댓글을_작성한다(postId.getId(), blogName, "[비밀] 헤헤 댓글2", true, hehe);
-            비인증_댓글을_작성한다(postId.getId(), blogName, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId.getPostId(), blogName, "동훈 댓글", false, dong);
+            댓글을_작성한다(postId.getPostId(), blogName, "헤헤 댓글", false, hehe);
+            댓글을_작성한다(postId.getPostId(), blogName, "[비밀] 동훈 댓글2", true, dong); // 제외
+            댓글을_작성한다(postId.getPostId(), blogName, "[비밀] 헤헤 댓글2", true, hehe);
+            비인증_댓글을_작성한다(postId.getPostId(), blogName, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getId(), blogName, dong, null);
+            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getPostId(), blogName, dong, null);
 
             // then
             assertThat(result)
@@ -90,14 +90,15 @@ class CommentQueryServiceTest extends ServiceTest {
             // given
             Long dong = 회원을_저장한다("동훈");
             Long hehe = 회원을_저장한다("헤헤");
-            댓글을_작성한다(postId.getId(), blogName, "동훈 댓글", false, memberId);
-            댓글을_작성한다(postId.getId(), blogName, "헤헤 댓글", false, hehe);
-            댓글을_작성한다(postId.getId(), blogName, "[비밀] 동훈 댓글2", true, memberId); // 제외
-            댓글을_작성한다(postId.getId(), blogName, "[비밀] 헤헤 댓글2", true, hehe);
-            비인증_댓글을_작성한다(postId.getId(), blogName, "댓글3", "랑말", "1234");
+            댓글을_작성한다(postId.getPostId(), blogName, "동훈 댓글", false, memberId);
+            댓글을_작성한다(postId.getPostId(), blogName, "헤헤 댓글", false, hehe);
+            댓글을_작성한다(postId.getPostId(), blogName, "[비밀] 동훈 댓글2", true, memberId); // 제외
+            댓글을_작성한다(postId.getPostId(), blogName, "[비밀] 헤헤 댓글2", true, hehe);
+            비인증_댓글을_작성한다(postId.getPostId(), blogName, "댓글3", "랑말", "1234");
 
             // when
-            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getId(), blogName, memberId, null);
+            List<CommentResponse> result = commentQueryService.findAllByPost(postId.getPostId(), blogName, memberId,
+                    null);
 
             // then
             assertThat(result)
@@ -113,13 +114,13 @@ class CommentQueryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                commentQueryService.findAllByPost(protectedPost.getId(), blogName, donghunId, null);
+                commentQueryService.findAllByPost(protectedPost.getPostId(), blogName, donghunId, null);
             }).isInstanceOf(NoAuthorityPostException.class);
             assertDoesNotThrow(() -> {
-                commentQueryService.findAllByPost(protectedPost.getId(), blogName, null, "1234");
+                commentQueryService.findAllByPost(protectedPost.getPostId(), blogName, null, "1234");
             });
             assertDoesNotThrow(() -> {
-                commentQueryService.findAllByPost(protectedPost.getId(), blogName, memberId, null);
+                commentQueryService.findAllByPost(protectedPost.getPostId(), blogName, memberId, null);
             });
         }
 
@@ -131,13 +132,13 @@ class CommentQueryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() -> {
-                commentQueryService.findAllByPost(protectedPost.getId(), blogName, donghunId, null);
+                commentQueryService.findAllByPost(protectedPost.getPostId(), blogName, donghunId, null);
             }).isInstanceOf(NoAuthorityPostException.class);
             assertThatThrownBy(() -> {
-                commentQueryService.findAllByPost(protectedPost.getId(), blogName, null, null);
+                commentQueryService.findAllByPost(protectedPost.getPostId(), blogName, null, null);
             }).isInstanceOf(NoAuthorityPostException.class);
             assertDoesNotThrow(() -> {
-                commentQueryService.findAllByPost(protectedPost.getId(), blogName, memberId, null);
+                commentQueryService.findAllByPost(protectedPost.getPostId(), blogName, memberId, null);
             });
         }
     }

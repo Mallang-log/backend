@@ -26,7 +26,7 @@ public record PostSearchResponse(
 ) {
     public static PostSearchResponse from(Post post) {
         return PostSearchResponse.builder()
-                .id(post.getPostId().getId())
+                .id(post.getId().getPostId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
                 .bodyText(post.getBodyText())
@@ -43,7 +43,7 @@ public record PostSearchResponse(
 
     public static PostSearchResponse protectedPost(Post post) {
         return new PostSearchResponse(
-                post.getPostId().getId(),
+                post.getId().getPostId(),
                 post.getBlog().getName(),
                 post.getTitle(),
                 "보호되어 있는 글입니다.",

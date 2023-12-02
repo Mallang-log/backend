@@ -26,7 +26,7 @@ public record CreatePostCommand(
 ) {
     public Post toPost(Member member, PostId postId, Blog blog, @Nullable Category category) {
         return Post.builder()
-                .postId(postId)
+                .id(postId)
                 .blog(blog)
                 .title(title)
                 .bodyText(bodyText)
