@@ -1,6 +1,7 @@
 package com.mallang.category.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
@@ -10,9 +11,11 @@ import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.domain.CommonRootEntity;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -24,7 +27,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @Getter
 @Entity
-public class Category extends CommonDomainModel {
+public class Category extends CommonRootEntity<Long> {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
     private String name;
 

@@ -43,7 +43,7 @@ public class PostManageController {
             @RequestBody CreatePostRequest request
     ) {
         PostId id = postService.create(request.toCommand(memberId));
-        URI uri = URI.create("/posts/%s/%d".formatted(request.blogName(), id.getId()));
+        URI uri = URI.create("/posts/%s/%d".formatted(request.blogName(), id.getPostId()));
         return ResponseEntity.created(uri).build();
     }
 
@@ -55,7 +55,7 @@ public class PostManageController {
         CreatePostRequest createPostRequest = request.createPostRequest();
         CreatePostCommand command = createPostRequest.toCommand(memberId);
         PostId id = postService.createFromDraft(command, request.draftId());
-        URI uri = URI.create("/posts/%s/%d".formatted(createPostRequest.blogName(), id.getId()));
+        URI uri = URI.create("/posts/%s/%d".formatted(createPostRequest.blogName(), id.getPostId()));
         return ResponseEntity.created(uri).build();
     }
 

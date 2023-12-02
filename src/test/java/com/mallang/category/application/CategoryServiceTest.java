@@ -15,7 +15,7 @@ import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
-import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.domain.CommonRootEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -221,7 +221,7 @@ class CategoryServiceTest extends ServiceTest {
                 assertThat(category.getName()).isEqualTo("수정");
                 assertThat(category.getParent().getId()).isEqualTo(otherRootCategory);
                 assertThat(category.getChildren())
-                        .extracting(CommonDomainModel::getId)
+                        .extracting(CommonRootEntity::getId)
                         .containsExactly(childChildCategoryId1, childChildCategoryId2);
             });
         }

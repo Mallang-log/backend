@@ -1,16 +1,19 @@
 package com.mallang.post.domain.draft;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
-import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.PostContent;
 import com.mallang.post.exception.NoAuthorityDraftException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
@@ -24,7 +27,11 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Draft extends CommonDomainModel {
+public class Draft extends CommonRootEntity<Long> {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "blog_id", nullable = false, updatable = false)

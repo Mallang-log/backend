@@ -29,12 +29,12 @@ class CommentEventHandlerTest extends ServiceTest {
             String blogName = 블로그_개설(memberId, "mallang-log");
             PostId postId1 = 포스트를_저장한다(memberId, blogName, "제목", "내용");
             PostId postId2 = 포스트를_저장한다(memberId, blogName, "제목2", "내용1");
-            Long post1Comment1 = 댓글을_작성한다(postId1.getId(), blogName, "댓1", true, otherMemberId);
-            대댓글을_작성한다(postId1.getId(), blogName, "댓1", true, memberId, post1Comment1);
-            비인증_대댓글을_작성한다(postId1.getId(), blogName, "댓1", "익1", "1234", post1Comment1);
-            비인증_댓글을_작성한다(postId1.getId(), blogName, "댓1", "익2", "12345");
+            Long post1Comment1 = 댓글을_작성한다(postId1.getPostId(), blogName, "댓1", true, otherMemberId);
+            대댓글을_작성한다(postId1.getPostId(), blogName, "댓1", true, memberId, post1Comment1);
+            비인증_대댓글을_작성한다(postId1.getPostId(), blogName, "댓1", "익1", "1234", post1Comment1);
+            비인증_댓글을_작성한다(postId1.getPostId(), blogName, "댓1", "익2", "12345");
 
-            댓글을_작성한다(postId2.getId(), blogName, "댓1", true, otherMemberId); // no delete
+            댓글을_작성한다(postId2.getPostId(), blogName, "댓1", true, otherMemberId); // no delete
 
             // when
             publisher.publishEvent(new PostDeleteEvent(postId1));
@@ -42,7 +42,7 @@ class CommentEventHandlerTest extends ServiceTest {
             // then
             List<Comment> all = commentRepository.findAll();
             boolean nonDeleteCommentExist = all.stream()
-                    .anyMatch(it -> (it.getPost().getPostId().equals(postId1)));
+                    .anyMatch(it -> (it.getPost().getId().equals(postId1)));
             assertThat(nonDeleteCommentExist).isFalse();
         }
     }

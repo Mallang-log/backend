@@ -40,21 +40,21 @@ class PostStarQueryServiceTest extends ServiceTest {
                 "포스트1",
                 "내용1",
                 new PostVisibilityPolicy(PUBLIC, null)
-        ).getId();
+        ).getPostId();
         post2Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트2",
                 "내용2",
                 new PostVisibilityPolicy(PUBLIC, null)
-        ).getId();
+        ).getPostId();
         post3Id = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트3",
                 "내용3",
                 new PostVisibilityPolicy(PUBLIC, null)
-        ).getId();
+        ).getPostId();
     }
 
     @Nested

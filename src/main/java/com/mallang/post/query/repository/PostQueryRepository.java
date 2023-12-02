@@ -17,7 +17,7 @@ public interface PostQueryRepository extends
                 .orElseThrow(NotFoundPostException::new);
     }
 
-    @Query("SELECT p FROM Post p WHERE p.postId.id = :id AND p.blog.name.value = :blogName")
+    @Query("SELECT p FROM Post p WHERE p.id.postId = :id AND p.blog.name.value = :blogName")
     Optional<Post> findById(
             @Param("id") Long id,
             @Param("blogName") String blogName
@@ -30,7 +30,7 @@ public interface PostQueryRepository extends
 
     @Query("""
             SELECT p FROM  Post p
-            WHERE p.postId.id = :id
+            WHERE p.id.postId = :id
             AND p.blog.name.value = :blogName
             AND p.content.writer.id = :writerId
             """)

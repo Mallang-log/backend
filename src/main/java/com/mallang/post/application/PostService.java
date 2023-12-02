@@ -49,7 +49,7 @@ public class PostService {
         Category category = getCategoryByIdIfPresent(command.categoryId());
         PostId postId = postIdGenerator.generate(blog.getId());
         Post post = command.toPost(member, postId, blog, category);
-        return postRepository.save(post).getPostId();
+        return postRepository.save(post).getId();
     }
 
     public void update(UpdatePostCommand command) {

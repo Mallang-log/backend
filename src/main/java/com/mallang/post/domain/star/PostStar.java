@@ -1,12 +1,15 @@
 package com.mallang.post.domain.star;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
@@ -16,7 +19,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class PostStar extends CommonDomainModel {
+public class PostStar extends CommonRootEntity<Long> {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "post_id", nullable = false, updatable = false)

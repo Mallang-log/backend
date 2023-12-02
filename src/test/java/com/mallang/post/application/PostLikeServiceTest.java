@@ -45,21 +45,21 @@ class PostLikeServiceTest extends ServiceTest {
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PUBLIC, null)
-        ).getId();
+        ).getPostId();
         protectedPostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PROTECTED, "1234")
-        ).getId();
+        ).getPostId();
         privatePostId = 포스트를_저장한다(
                 memberId,
                 blogName,
                 "포스트",
                 "내용",
                 new PostVisibilityPolicy(PRIVATE, null)
-        ).getId();
+        ).getPostId();
     }
 
     @Nested

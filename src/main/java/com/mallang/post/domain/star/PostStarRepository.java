@@ -21,7 +21,7 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
 
     @Query("""
             SELECT ps FROM PostStar ps
-            WHERE ps.post.postId.id = :postId
+            WHERE ps.post.id.postId = :postId
             AND ps.post.blog.name.value = :blogName
             AND ps.member.id = :memberId
             """)
@@ -32,6 +32,6 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
     );
 
     @Modifying
-    @Query("DELETE FROM PostStar ps WHERE ps.post.postId = :postId")
+    @Query("DELETE FROM PostStar ps WHERE ps.post.id = :postId")
     void deleteAllByPostId(@Param("postId") PostId postId);
 }

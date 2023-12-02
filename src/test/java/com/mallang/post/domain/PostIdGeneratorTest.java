@@ -30,8 +30,8 @@ class PostIdGeneratorTest extends ServiceTest {
         PostId postId = postIdGenerator.generate(blogRepository.getByName(blogName).getId());
         PostId ohterPostId = postIdGenerator.generate(blogRepository.getByName(otherBlogName).getId());
         PostId thirdPostId = postIdGenerator.generate(blogRepository.getByName(thirdBlogName).getId());
-        assertThat(postId.getId()).isEqualTo(3);
-        assertThat(ohterPostId.getId()).isEqualTo(2);
-        assertThat(thirdPostId.getId()).isEqualTo(1);
+        assertThat(postId.getPostId()).isEqualTo(3);
+        assertThat(ohterPostId.getPostId()).isEqualTo(2);
+        assertThat(thirdPostId.getPostId()).isEqualTo(1);
     }
 }
