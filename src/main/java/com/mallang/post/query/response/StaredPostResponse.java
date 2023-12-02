@@ -31,7 +31,7 @@ public record StaredPostResponse(
         return StaredPostResponse.builder()
                 .starId(postStar.getId())
                 .staredData(postStar.getCreatedDate())
-                .postId(post.getPostId().getId())
+                .postId(post.getId().getPostId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
                 .bodyText(post.getBodyText())
@@ -50,7 +50,7 @@ public record StaredPostResponse(
         return new StaredPostResponse(
                 postStar.getId(),
                 postStar.getCreatedDate(),
-                post.getPostId().getId(),
+                post.getId().getPostId(),
                 post.getBlog().getName(),
                 post.getTitle(),
                 "보호되어 있는 글입니다.",

@@ -21,7 +21,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     @Query("""
             SELECT pl FROM PostLike pl
-            WHERE pl.post.postId.id = :postId
+            WHERE pl.post.id.postId = :postId
             AND pl.post.blog.name.value = :blogName
             AND pl.member.id = :memberId
             """)
@@ -32,6 +32,6 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
             );
 
     @Modifying
-    @Query("DELETE FROM PostLike pl WHERE pl.post.postId = :postId")
+    @Query("DELETE FROM PostLike pl WHERE pl.post.id = :postId")
     void deleteAllByPostId(@Param("postId") PostId postId);
 }

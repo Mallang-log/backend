@@ -70,24 +70,24 @@ class PostViewStatisticJobTest {
 
         LocalDate 시간_2000년_10월_4일 = LocalDate.of(2000, 10, 4);
         PostViewStatistic 포스트_2_통계_2000년_10월_4일 = all.get(0);
-        assertThat(포스트_2_통계_2000년_10월_4일.getPostId().getId()).isEqualTo(2);
+        assertThat(포스트_2_통계_2000년_10월_4일.getPostId().getPostId()).isEqualTo(2);
         assertThat(포스트_2_통계_2000년_10월_4일.getStatisticDate()).isEqualTo(시간_2000년_10월_4일);
         assertThat(포스트_2_통계_2000년_10월_4일.getCount()).isEqualTo(1);
 
         PostViewStatistic 포스트_1_통계_2000년_10월_4일 = all.get(1);
-        assertThat(포스트_1_통계_2000년_10월_4일.getPostId().getId()).isEqualTo(1);
+        assertThat(포스트_1_통계_2000년_10월_4일.getPostId().getPostId()).isEqualTo(1);
         assertThat(포스트_1_통계_2000년_10월_4일.getStatisticDate()).isEqualTo(시간_2000년_10월_4일);
         assertThat(포스트_1_통계_2000년_10월_4일.getCount()).isEqualTo(3);
 
         LocalDate 시간_2000년_10월_5일 = LocalDate.of(2000, 10, 5);
         PostViewStatistic 포스트_1_통계_2000년_10월_5일 = all.get(2);
-        assertThat(포스트_1_통계_2000년_10월_5일.getPostId().getId()).isEqualTo(1);
+        assertThat(포스트_1_통계_2000년_10월_5일.getPostId().getPostId()).isEqualTo(1);
         assertThat(포스트_1_통계_2000년_10월_5일.getStatisticDate()).isEqualTo(시간_2000년_10월_5일);
         assertThat(포스트_1_통계_2000년_10월_5일.getCount()).isEqualTo(3);
 
         LocalDate 시간_2001년_10월_19일 = LocalDate.of(2001, 10, 19);
         PostViewStatistic 포스트_1_통계_2001년_10월_19일 = all.get(3);
-        assertThat(포스트_1_통계_2001년_10월_19일.getPostId().getId()).isEqualTo(1);
+        assertThat(포스트_1_통계_2001년_10월_19일.getPostId().getPostId()).isEqualTo(1);
         assertThat(포스트_1_통계_2001년_10월_19일.getStatisticDate()).isEqualTo(시간_2001년_10월_19일);
         assertThat(포스트_1_통계_2001년_10월_19일.getCount()).isEqualTo(1);
     }
@@ -106,7 +106,7 @@ class PostViewStatisticJobTest {
                 .findByPostIdAndStatisticDate(postId1, 시간_2000년_10월_4일);
         assertThat(statistic).isPresent();
         PostViewStatistic postViewStatistic = statistic.get();
-        assertThat(postViewStatistic.getPostId().getId()).isEqualTo(1);
+        assertThat(postViewStatistic.getPostId().getPostId()).isEqualTo(1);
         assertThat(postViewStatistic.getStatisticDate()).isEqualTo(시간_2000년_10월_4일);
         assertThat(postViewStatistic.getCount()).isEqualTo(2);
 
@@ -120,7 +120,7 @@ class PostViewStatisticJobTest {
         statistic = postViewStatisticRepository.findByPostIdAndStatisticDate(postId1, 시간_2000년_10월_4일);
         assertThat(statistic).isPresent();
         postViewStatistic = statistic.get();
-        assertThat(postViewStatistic.getPostId().getId()).isEqualTo(1);
+        assertThat(postViewStatistic.getPostId().getPostId()).isEqualTo(1);
         assertThat(postViewStatistic.getStatisticDate()).isEqualTo(시간_2000년_10월_4일);
         assertThat(postViewStatistic.getCount()).isEqualTo(3);
     }

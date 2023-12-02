@@ -34,8 +34,8 @@ public record PostDetailResponse(
 
     public static PostDetailResponse withLiked(Post post, boolean isLiked) {
         return PostDetailResponse.builder()
-                .postId(post.getPostId().getId())
-                .blogId(post.getPostId().getBlogId())
+                .postId(post.getId().getPostId())
+                .blogId(post.getId().getBlogId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
                 .bodyText(post.getBodyText())
@@ -53,8 +53,8 @@ public record PostDetailResponse(
 
     public static PostDetailResponse protectedPost(Post post) {
         return new PostDetailResponse(
-                post.getPostId().getId(),
-                post.getPostId().getBlogId(),
+                post.getId().getPostId(),
+                post.getId().getBlogId(),
                 post.getBlog().getName(),
                 post.getTitle(),
                 "보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.",

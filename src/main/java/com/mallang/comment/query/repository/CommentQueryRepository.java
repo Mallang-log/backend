@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface CommentQueryRepository extends JpaRepository<Comment, Long> {
 
-    @Query("SELECT c FROM Comment c WHERE c.post.postId.id = :postId AND c.post.blog.name.value = :blogName")
+    @Query("SELECT c FROM Comment c WHERE c.post.id.postId = :postId AND c.post.blog.name.value = :blogName")
     List<Comment> findAllByPost(@Param("postId") Long postId, @Param("blogName") String blogName);
 }

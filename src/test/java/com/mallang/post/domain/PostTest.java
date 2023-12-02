@@ -58,8 +58,8 @@ class PostTest {
                 .postIntro("intro")
                 .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                 .build();
-        ReflectionTestUtils.setField(post1, "postId", new PostId(1L, 2L));
-        ReflectionTestUtils.setField(post2, "postId", new PostId(1L, 2L));
+        ReflectionTestUtils.setField(post1, "id", new PostId(1L, 2L));
+        ReflectionTestUtils.setField(post2, "id", new PostId(1L, 2L));
         Post same = post1;
 
         // when & then

@@ -2,7 +2,7 @@ package com.mallang.category.query.repository;
 
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NotFoundCategoryException;
-import com.mallang.common.domain.CommonDomainModel;
+import com.mallang.common.domain.CommonRootEntity;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,7 +15,7 @@ public interface CategoryQueryRepository extends JpaRepository<Category, Long> {
         List<Category> descendants = category.getDescendants();
         descendants.add(category);
         return descendants.stream()
-                .map(CommonDomainModel::getId)
+                .map(CommonRootEntity::getId)
                 .toList();
     }
 

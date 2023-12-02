@@ -17,7 +17,7 @@ public record PostManageSearchResponse(
 ) {
     public static PostManageSearchResponse from(Post post) {
         return PostManageSearchResponse.builder()
-                .id(post.getPostId().getId())
+                .id(post.getId().getPostId())
                 .title(post.getTitle())
                 .visibility(post.getVisibilityPolish().getVisibility())
                 .password(post.getVisibilityPolish().getPassword())
