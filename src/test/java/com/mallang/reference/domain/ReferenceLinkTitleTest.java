@@ -2,7 +2,6 @@ package com.mallang.reference.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.reference.exception.BadReferenceLinkTitleException;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +35,7 @@ class ReferenceLinkTitleTest {
                 "",
                 " ",
                 "  ",
+                "\n",
         })
         void 제목은_공백으로만_이루어져_있으면_안된다(String title) {
             // when & then
@@ -45,23 +45,27 @@ class ReferenceLinkTitleTest {
         }
 
         @Test
-        void 제목은_최대_30글자이다() {
-            // when & then
-            assertDoesNotThrow(() ->
-                    new ReferenceLinkTitle("1".repeat(30))
-            );
-            assertThatThrownBy(() ->
-                    new ReferenceLinkTitle("1".repeat(31))
-            ).isInstanceOf(BadReferenceLinkTitleException.class);
-        }
-
-        @Test
         void 앞뒤_공백은_제거된다() {
             // when
-            ReferenceLinkTitle referenceLinkTitle = new ReferenceLinkTitle("  1  ");
+            ReferenceLinkTitle referenceLinkTitle = new ReferenceLinkTitle(" \n 1 \n ");
 
             // then
             assertThat(referenceLinkTitle.getTitle()).isEqualTo("1");
+        }
+
+        @Test
+        void 앞뒤_공백을_제거하고_제목이_100글자보다_길면_잘라내진다() {
+            // given
+            String size100 = "1".repeat(100);
+            String size101 = "1".repeat(101);
+
+            // when
+            ReferenceLinkTitle titleSize100 = new ReferenceLinkTitle(size100);
+            ReferenceLinkTitle titleSize101 = new ReferenceLinkTitle(size101);
+
+            // then
+            assertThat(titleSize100.getTitle()).isEqualTo(size100);
+            assertThat(titleSize101.getTitle()).isEqualTo("1".repeat(96) + " ...");
         }
     }
 }

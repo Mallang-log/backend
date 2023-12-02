@@ -14,23 +14,27 @@ import org.springframework.util.StringUtils;
 @Embeddable
 public class ReferenceLinkTitle {
 
-    private static final int TITLE_MAX_LENGTH = 30;
+    private static final int TITLE_MAX_LENGTH = 100;
 
     @Column(nullable = false, length = TITLE_MAX_LENGTH)
     private String title;
 
     public ReferenceLinkTitle(String title) {
-        validate(title);
-        this.title = title.strip();
+        validateNullOrBlank(title);
+        this.title = cutting(title);
     }
 
-    private void validate(String title) {
-        if (!StringUtils.hasText(title)) {
-            throw new BadReferenceLinkTitleException("링크의 제목이 입력되지 않았거나 공백으로만 이루어져 있습니다.");
-        }
+    private String cutting(String title) {
         title = title.strip();
         if (title.length() > TITLE_MAX_LENGTH) {
-            throw new BadReferenceLinkTitleException("링크 제목의 길이는 최대 " + TITLE_MAX_LENGTH + "글자입니다.");
+            title = title.substring(0, TITLE_MAX_LENGTH - 4) + " ...";
+        }
+        return title;
+    }
+
+    private void validateNullOrBlank(String title) {
+        if (!StringUtils.hasText(title)) {
+            throw new BadReferenceLinkTitleException("링크의 제목이 입력되지 않았거나 공백으로만 이루어져 있습니다.");
         }
     }
 }

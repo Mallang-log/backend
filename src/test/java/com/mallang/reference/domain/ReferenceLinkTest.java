@@ -54,23 +54,27 @@ class ReferenceLinkTest {
         }
 
         @Test
-        void 제목은_최대_30글자이다() {
-            // when & then
-            assertDoesNotThrow(() ->
-                    new ReferenceLink("url", "1".repeat(30), "memo", blog)
-            );
-            assertThatThrownBy(() ->
-                    new ReferenceLink("url", "1".repeat(31), "memo", blog)
-            ).isInstanceOf(BadReferenceLinkTitleException.class);
-        }
-
-        @Test
         void 제목의_앞뒤_공백은_제거된다() {
             // when
-            ReferenceLink link = new ReferenceLink("url", "  1  ", null, blog);
+            ReferenceLink link = new ReferenceLink("url", " \n 1 \n ", null, blog);
 
             // then
             assertThat(link.getTitle()).isEqualTo("1");
+        }
+
+        @Test
+        void 제목의_앞뒤_공백을_제거하고_제목이_100글자보다_길면_잘라내진다() {
+            // given
+            String size100 = "1".repeat(100);
+            String size101 = "1".repeat(101);
+
+            // when
+            ReferenceLinkTitle titleSize100 = new ReferenceLinkTitle(size100);
+            ReferenceLinkTitle titleSize101 = new ReferenceLinkTitle(size101);
+
+            // then
+            assertThat(titleSize100.getTitle()).isEqualTo(size100);
+            assertThat(titleSize101.getTitle()).isEqualTo("1".repeat(96) + " ...");
         }
 
         @ParameterizedTest
@@ -84,13 +88,13 @@ class ReferenceLinkTest {
         }
 
         @Test
-        void 메모의_최대_길이는_100글자이다() {
+        void 메모의_최대_길이는_300글자이다() {
             // when & then
             assertDoesNotThrow(() ->
-                    new ReferenceLink("url", "title", "1".repeat(100), blog)
+                    new ReferenceLink("url", "title", "1".repeat(300), blog)
             );
             assertThatThrownBy(() ->
-                    new ReferenceLink("url", "title", "1".repeat(101), blog)
+                    new ReferenceLink("url", "title", "1".repeat(301), blog)
             ).isInstanceOf(BadReferenceLinkMemoException.class);
         }
 
@@ -146,14 +150,18 @@ class ReferenceLinkTest {
         }
 
         @Test
-        void 제목은_최대_30글자이다() {
-            // when & then
-            assertDoesNotThrow(() -> {
-                link.update("url", "1".repeat(30), "memo");
-            });
-            assertThatThrownBy(() ->
-                    link.update("url", "1".repeat(31), "memo")
-            ).isInstanceOf(BadReferenceLinkTitleException.class);
+        void 제목의_앞뒤_공백을_제거하고_제목이_100글자보다_길면_잘라내진다() {
+            // given
+            String size100 = "1".repeat(100);
+            String size101 = "1".repeat(101);
+
+            // when
+            ReferenceLinkTitle titleSize100 = new ReferenceLinkTitle(size100);
+            ReferenceLinkTitle titleSize101 = new ReferenceLinkTitle(size101);
+
+            // then
+            assertThat(titleSize100.getTitle()).isEqualTo(size100);
+            assertThat(titleSize101.getTitle()).isEqualTo("1".repeat(96) + " ...");
         }
 
         @ParameterizedTest
@@ -166,13 +174,13 @@ class ReferenceLinkTest {
         }
 
         @Test
-        void 메모의_최대_길이는_100글자이다() {
+        void 메모의_최대_길이는_300글자이다() {
             // when & then
             assertDoesNotThrow(() -> {
-                link.update("url", "title", "1".repeat(100));
+                link.update("url", "title", "1".repeat(300));
             });
             assertThatThrownBy(() ->
-                    link.update("url", "title", "1".repeat(101))
+                    link.update("url", "title", "1".repeat(301))
             ).isInstanceOf(BadReferenceLinkMemoException.class);
         }
 

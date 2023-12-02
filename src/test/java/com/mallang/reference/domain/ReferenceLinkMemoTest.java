@@ -30,13 +30,13 @@ class ReferenceLinkMemoTest {
         }
 
         @Test
-        void 메모의_최대_길이는_100글자이다() {
+        void 메모의_최대_길이는_300글자이다() {
             // when & then
             assertDoesNotThrow(() ->
-                    new ReferenceLinkMemo("1".repeat(100))
+                    new ReferenceLinkMemo("1".repeat(300))
             );
             assertThatThrownBy(() ->
-                    new ReferenceLinkMemo("1".repeat(101))
+                    new ReferenceLinkMemo("1".repeat(301))
             ).isInstanceOf(BadReferenceLinkMemoException.class);
         }
     }

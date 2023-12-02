@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class ReferenceLinkMemo {
 
-    private static final int MEMO_MAX_LENGTH = 100;
+    private static final int MEMO_MAX_LENGTH = 300;
 
     @Column(length = MEMO_MAX_LENGTH)
     private String memo;
