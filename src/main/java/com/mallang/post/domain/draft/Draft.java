@@ -10,11 +10,14 @@ import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.PostContent;
 import com.mallang.post.exception.NoAuthorityDraftException;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.AssociationOverride;
+import jakarta.persistence.AssociationOverrides;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +41,9 @@ public class Draft extends CommonRootEntity<Long> {
     private Blog blog;
 
     @Embedded
+    @AssociationOverrides(
+            @AssociationOverride(name = "tags", joinTable = @JoinTable(name = "draf_tags"))
+    )
     private PostContent content;
 
     @LastModifiedDate
