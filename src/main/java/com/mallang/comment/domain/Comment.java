@@ -35,7 +35,7 @@ public abstract class Comment extends CommonRootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    protected Long id;
 
     @Column(nullable = false)
     protected String content;

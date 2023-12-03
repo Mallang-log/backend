@@ -23,7 +23,7 @@ public abstract class Member extends CommonRootEntity<Long> {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     protected Long id;
-    
+
     protected String nickname;
     protected String profileImageUrl;
 

@@ -20,10 +20,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class CommonRootEntity<ID> extends AbstractAggregateRoot<CommonRootEntity<ID>> {
 
-    public abstract ID getId();
-
     @CreatedDate
     private LocalDateTime createdDate;
+
+    public abstract ID getId();
 
     @Override
     public List<Object> domainEvents() {
