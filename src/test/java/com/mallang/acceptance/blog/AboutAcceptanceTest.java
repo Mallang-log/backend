@@ -94,9 +94,6 @@ public class AboutAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 자신의_소개라면_수정된다() {
-            // given
-            블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청);
-
             // when
             var 응답 = 블로그_소개_수정_요청(말랑_세션_ID, 말랑_블로그_소개_ID, 말랑_블로그_소개_수정_요청);
 
@@ -106,9 +103,6 @@ public class AboutAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 자신의_소개가_아니면_예외() {
-            // given
-            블로그_소개_작성_요청(말랑_세션_ID, 말랑_블로그_소개_작성_요청);
-
             // when
             var 응답 = 블로그_소개_수정_요청(동훈_세션_ID, 말랑_블로그_소개_ID, 말랑_블로그_소개_수정_요청);
 

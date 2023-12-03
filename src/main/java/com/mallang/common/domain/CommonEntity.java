@@ -17,10 +17,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class CommonEntity<ID> {
 
-    public abstract ID getId();
-
     @CreatedDate
     private LocalDateTime createdDate;
+
+    public abstract ID getId();
 
     @Override
     public boolean equals(Object o) {

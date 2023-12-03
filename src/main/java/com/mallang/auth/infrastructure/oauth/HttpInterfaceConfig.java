@@ -10,13 +10,18 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class HttpInterfaceConfig {
 
+    private final RestClient restClient;
+
+    public HttpInterfaceConfig(RestClient.Builder builder) {
+        this.restClient = builder.build();
+    }
+
     @Bean
     public GithubApiClient googleApiClient() {
         return createHttpInterface(GithubApiClient.class);
     }
 
     private <T> T createHttpInterface(Class<T> clazz) {
-        RestClient restClient = RestClient.create();
         HttpServiceProxyFactory build = HttpServiceProxyFactory
                 .builderFor(RestClientAdapter.create(restClient)).build();
         return build.createClient(clazz);
