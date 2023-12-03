@@ -143,6 +143,7 @@ class JsoupUrlTitleMetaInfoFetcherTest {
     }
 }
 
+@DisplayName("Url로부터 제목 정보 추출기 (JsoupUrlTitleMetaInfoFetcherTest) 실제 요청 테스트")
 @SpringBootTest
 class RealRequestTest {
 

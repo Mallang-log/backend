@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("첨조 링크의 URL (ReferenceLinkUrl) 은(는)")
+@DisplayName("참고 링크의 URL (ReferenceLinkUrl) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class ReferenceLinkUrlTest {

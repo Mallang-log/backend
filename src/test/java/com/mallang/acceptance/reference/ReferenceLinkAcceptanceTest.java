@@ -12,10 +12,10 @@ import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.URL_의_제목_추출_요청;
-import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_검색_요청;
-import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_삭제_요청;
-import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_업데이트_요청;
-import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_저장_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_검색_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_삭제_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_업데이트_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_저장_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
@@ -38,13 +38,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-@DisplayName("일반 사용자용 통계 조회 인수테스트")
+@DisplayName("참고 링크 인수테스트")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @Import({ReferenceLinkIntegrationTestConfig.class})
 public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
 
-    private final SaveReferenceLinkRequest 참조_링크_저장_요청 = new SaveReferenceLinkRequest(
+    private final SaveReferenceLinkRequest 참고_링크_저장_요청 = new SaveReferenceLinkRequest(
             "https://ttl-blog.tistory.com",
             "말링이 블로그",
             "말랑이 블로그임"
@@ -64,12 +64,12 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 참조_링크_저장_API {
+    class 참고_링크_저장_API {
 
         @Test
-        void 참조_링크를_저장한다() {
+        void 참고_링크를_저장한다() {
             // when
-            var 응답 = 참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청);
+            var 응답 = 참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
@@ -81,7 +81,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
 
             // when
-            var 응답 = 참조_링크_저장_요청(다른회원_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청);
+            var 응답 = 참고_링크_저장_요청(다른회원_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청);
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
@@ -89,21 +89,21 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 참조_링크_정보_업데이트_API {
+    class 참고_링크_정보_업데이트_API {
 
-        private final UpdateReferenceLinkRequest 참조_링크_업데이트_요청 = new UpdateReferenceLinkRequest(
+        private final UpdateReferenceLinkRequest 참고_링크_업데이트_요청 = new UpdateReferenceLinkRequest(
                 "https://donghun.com",
                 "동훈이 블로그",
                 "동훈이 블로그임"
         );
 
         @Test
-        void 참조_링크를_정보를_수정한다() {
+        void 참고_링크를_정보를_수정한다() {
             // given
-            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
 
             // when
-            var 응답 = 참조_링크_업데이트_요청(말랑_세션_ID, 참조_링크_ID, 참조_링크_업데이트_요청);
+            var 응답 = 참고_링크_업데이트_요청(말랑_세션_ID, 참고_링크_ID, 참고_링크_업데이트_요청);
 
             // then
             응답_상태를_검증한다(응답, 정상_처리);
@@ -113,10 +113,10 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         void 자신이_등록한_링크가_아니라면_예외() {
             // given
             var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
 
             // when
-            var 응답 = 참조_링크_업데이트_요청(다른회원_세션_ID, 참조_링크_ID, 참조_링크_업데이트_요청);
+            var 응답 = 참고_링크_업데이트_요청(다른회원_세션_ID, 참고_링크_ID, 참고_링크_업데이트_요청);
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
@@ -124,15 +124,15 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 참조_링크_삭제_API {
+    class 참고_링크_삭제_API {
 
         @Test
-        void 참조_링크를_저장한다() {
+        void 참고_링크를_저장한다() {
             // given
-            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
 
             // when
-            var 응답 = 참조_링크_삭제_요청(말랑_세션_ID, 참조_링크_ID);
+            var 응답 = 참고_링크_삭제_요청(말랑_세션_ID, 참고_링크_ID);
 
             // then
             응답_상태를_검증한다(응답, 본문_없음);
@@ -142,10 +142,10 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         void 자신이_등록한_링크가_아니라면_예외() {
             // given
             var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
 
             // when
-            var 응답 = 참조_링크_삭제_요청(다른회원_세션_ID, 참조_링크_ID);
+            var 응답 = 참고_링크_삭제_요청(다른회원_세션_ID, 참고_링크_ID);
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
@@ -153,14 +153,14 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
     }
 
     @Nested
-    class 참조_링크_목록_검색_API {
+    class 참고_링크_목록_검색_API {
 
         private Long 말랑이_블로그_링크_ID;
         private Long Spring_글_참고_링크_ID;
 
         @BeforeEach
         void setUp() {
-            말랑이_블로그_링크_ID = ID를_추출한다(참조_링크_저장_요청(
+            말랑이_블로그_링크_ID = ID를_추출한다(참고_링크_저장_요청(
                     말랑_세션_ID,
                     말랑_블로그_이름,
                     new SaveReferenceLinkRequest(
@@ -169,7 +169,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
                             "말랑이 블로그 메인 페이지이다."
                     )
             ));
-            Spring_글_참고_링크_ID = ID를_추출한다(참조_링크_저장_요청(
+            Spring_글_참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(
                     말랑_세션_ID,
                     말랑_블로그_이름,
                     new SaveReferenceLinkRequest(
@@ -186,7 +186,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -199,7 +199,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             // given
             var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
             var 다른_사람_블로그_이름 = 블로그_개설(다른_사람_세션_ID, "other-log");
-            Long 다른사람_링크_ID = ID를_추출한다(참조_링크_저장_요청(
+            Long 다른사람_링크_ID = ID를_추출한다(참고_링크_저장_요청(
                     다른_사람_세션_ID,
                     다른_사람_블로그_이름,
                     new SaveReferenceLinkRequest(
@@ -211,7 +211,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -229,7 +229,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            var 응답 = 참조_링크_검색_요청(다른_사람_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(다른_사람_세션_ID, 말랑_블로그_이름, emptyCond);
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
@@ -241,7 +241,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond("12", null, null);
 
             // when
-            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -257,7 +257,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, "랑이", null);
 
             // when
-            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -273,7 +273,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에");
 
             // when
-            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
