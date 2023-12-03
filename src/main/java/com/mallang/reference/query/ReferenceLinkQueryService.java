@@ -21,6 +21,13 @@ public class ReferenceLinkQueryService {
     private final MemberQueryRepository memberQueryRepository;
     private final ReferenceLinkQueryRepository referenceLinkQueryRepository;
 
+    public boolean existsReferenceLinkByUrl(Long memberId, String blogName, String url) {
+        Blog blog = blogQueryRepository.getByName(blogName);
+        Member member = memberQueryRepository.getById(memberId);
+        blog.validateOwner(member);
+        return referenceLinkQueryRepository.existsByBlogAndUrl(blog, url);
+    }
+
     public List<ReferenceLinkSearchResponse> search(Long memberId, String blogName, ReferenceLinkSearchDaoCond cond) {
         Blog blog = blogQueryRepository.getByName(blogName);
         Member member = memberQueryRepository.getById(memberId);

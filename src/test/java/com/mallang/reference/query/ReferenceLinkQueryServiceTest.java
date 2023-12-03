@@ -32,6 +32,89 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
     }
 
     @Nested
+    class 주어진_Url로_등록된_링크가_이미_존재하는지_확인_시 {
+
+        @Test
+        void Url이_정확히_일치해야_일치하는_것이다() {
+            // given
+            referenceLinkService.save(new SaveReferenceLinkCommand(
+                    memberId,
+                    blogName,
+                    "https://ttl-blog.tistory.com",
+                    "말랑이 블로그",
+                    "말랑이 블로그 메인 페이지이다."
+            ));
+
+            // when
+            boolean exactlyMatch = referenceLinkQueryService.existsReferenceLinkByUrl(
+                    memberId,
+                    blogName,
+                    "https://ttl-blog.tistory.com"
+            );
+            boolean notMatch1 = referenceLinkQueryService.existsReferenceLinkByUrl(
+                    memberId,
+                    blogName,
+                    "https://ttl-blog.tistory.com/"
+            );
+            boolean notMatch2 = referenceLinkQueryService.existsReferenceLinkByUrl(
+                    memberId,
+                    blogName,
+                    "ttl-blog.tistory.com"
+            );
+
+            // then
+            assertThat(exactlyMatch).isTrue();
+            assertThat(notMatch1).isFalse();
+            assertThat(notMatch2).isFalse();
+        }
+
+        @Test
+        void 다른_블로그에_등록된것과는_무관하다() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
+            referenceLinkService.save(new SaveReferenceLinkCommand(
+                    otherMemberId,
+                    otherBlogName,
+                    "https://ttl-blog.tistory.com/123",
+                    "스프링이란?",
+                    "누군가 쓴 스프링에 대한 내용."
+            ));
+
+            // when
+            boolean notExist = referenceLinkQueryService.existsReferenceLinkByUrl(
+                    memberId,
+                    blogName,
+                    "https://ttl-blog.tistory.com/123"
+            );
+            boolean exist = referenceLinkQueryService.existsReferenceLinkByUrl(
+                    otherMemberId,
+                    otherBlogName,
+                    "https://ttl-blog.tistory.com/123"
+            );
+
+            // then
+            assertThat(notExist).isFalse();
+            assertThat(exist).isTrue();
+        }
+
+        @Test
+        void 블로그_주인이_아니라면_예외() {
+            // given
+            Long otherMemberId = 회원을_저장한다("other");
+
+            // when & then
+            assertThatThrownBy(() ->
+                    referenceLinkQueryService.existsReferenceLinkByUrl(
+                            otherMemberId,
+                            blogName,
+                            "https://ttl-blog.tistory.com/123"
+                    )
+            ).isInstanceOf(NoAuthorityBlogException.class);
+        }
+    }
+
+    @Nested
     class 검색_시 {
 
         private Long 말랑이_블로그_링크_ID;
