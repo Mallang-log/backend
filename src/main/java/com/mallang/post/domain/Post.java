@@ -11,10 +11,13 @@ import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.AssociationOverride;
+import jakarta.persistence.AssociationOverrides;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import java.util.List;
@@ -40,6 +43,9 @@ public class Post extends CommonRootEntity<PostId> {
     private PostVisibilityPolicy visibilityPolish;
 
     @Embedded
+    @AssociationOverrides(
+            @AssociationOverride(name = "tags", joinTable = @JoinTable(name = "post_tags"))
+    )
     private PostContent content;
 
     private int likeCount = 0;
