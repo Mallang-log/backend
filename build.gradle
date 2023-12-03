@@ -32,12 +32,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
     implementation "com.querydsl:querydsl-core"
     implementation "com.querydsl:querydsl-collections"
-
     implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'org.jsoup:jsoup:1.16.1'
 
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
 
