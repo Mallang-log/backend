@@ -47,6 +47,7 @@ import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.query.DraftQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
+import com.mallang.reference.application.ReferenceLinkService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -156,6 +157,9 @@ public abstract class ServiceTest {
 
     @Autowired
     protected CommentQueryService commentQueryService;
+
+    @Autowired
+    protected ReferenceLinkService referenceLinkService;
 
     @Autowired
     protected ApplicationEvents events;
