@@ -57,9 +57,8 @@ class DraftAcceptanceTest extends AcceptanceTest {
         임시_글_생성_요청 = new CreateDraftRequest(
                 말랑_블로그_이름,
                 "첫 임시_글",
-                "첫 임시_글이네요.",
+                "첫 임시_글 인트로", "첫 임시_글이네요.",
                 "임시_글 썸네일 이름",
-                "첫 임시_글 인트로",
                 Spring_카테고리_ID,
                 List.of("태그1", "태그2")
         );
@@ -83,9 +82,8 @@ class DraftAcceptanceTest extends AcceptanceTest {
             CreateDraftRequest createDraftRequest = new CreateDraftRequest(
                     말랑_블로그_이름,
                     "첫 임시_글",
-                    "첫 임시_글이네요.",
+                    "첫 임시_글 인트로", "첫 임시_글이네요.",
                     "임시_글 썸네일 이름",
-                    "첫 임시_글 인트로",
                     Spring_카테고리_ID,
                     List.of("태그1", "태그2")
             );
@@ -107,9 +105,8 @@ class DraftAcceptanceTest extends AcceptanceTest {
             var 임시_글_ID = ID를_추출한다(임시_글_생성_요청(말랑_세션_ID, 임시_글_생성_요청));
             UpdateDraftRequest 임시_글_수정_요청 = new UpdateDraftRequest(
                     "업데이트 제목",
-                    "업데이트 내용",
+                    "업데이트 인트로", "업데이트 내용",
                     "업데이트 임시_글 썸네일 이름",
-                    "업데이트 인트로",
                     Spring_카테고리_ID,
                     List.of("태그1", "태그2")
             );
@@ -127,9 +124,8 @@ class DraftAcceptanceTest extends AcceptanceTest {
             var 임시_글_ID = ID를_추출한다(임시_글_생성_요청(말랑_세션_ID, 임시_글_생성_요청));
             UpdateDraftRequest 임시_글_수정_요청 = new UpdateDraftRequest(
                     "업데이트 제목",
-                    "업데이트 내용",
+                    "업데이트 인트로", "업데이트 내용",
                     "업데이트 임시_글 썸네일 이름",
-                    "업데이트 인트로",
                     Spring_카테고리_ID,
                     List.of("태그1", "태그2")
             );
@@ -179,18 +175,16 @@ class DraftAcceptanceTest extends AcceptanceTest {
             CreateDraftRequest 임시_글_1_생성_요청 = new CreateDraftRequest(
                     말랑_블로그_이름,
                     "임시 글 1",
-                    "첫 임시 글이네요.",
+                    "첫 임시 글 인트로", "첫 임시 글이네요.",
                     "임시 글 썸네일 이름",
-                    "첫 임시 글 인트로",
                     Spring_카테고리_ID,
                     List.of("태그1", "태그2")
             );
             CreateDraftRequest 임시_글_2_생성_요청 = new CreateDraftRequest(
                     말랑_블로그_이름,
                     "임시 글 2",
-                    "두번째",
+                    "임시 글 2 인트로", "두번째",
                     "임시 글 썸네일 이름",
-                    "임시 글 2 인트로",
                     null,
                     Collections.emptyList()
             );

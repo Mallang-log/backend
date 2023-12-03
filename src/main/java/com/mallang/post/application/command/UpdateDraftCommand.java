@@ -9,9 +9,9 @@ public record UpdateDraftCommand(
         Long memberId,
         Long draftId,
         String title,
+        String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
-        String intro,
         @Nullable Long categoryId,
         List<String> tags
 ) {

@@ -6,9 +6,9 @@ import java.util.List;
 
 public record UpdateDraftRequest(
         String title,
+        String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
-        String intro,
         @Nullable Long categoryId,
         List<String> tags
 ) {

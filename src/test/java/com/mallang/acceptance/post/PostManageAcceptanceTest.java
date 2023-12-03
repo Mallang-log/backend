@@ -80,9 +80,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             CreatePostRequest 요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "첫 포스트",
-                    "첫 포스트이네요.",
+                    "첫 포스트 인트로", "첫 포스트이네요.",
                     "포스트 썸네일 이름",
-                    "첫 포스트 인트로",
                     PUBLIC,
                     없음(),
                     Spring_카테고리_ID,
@@ -107,9 +106,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             var 임시_글_생성_요청 = new CreateDraftRequest(
                     말랑_블로그_이름,
                     "첫 임시_글",
-                    "첫 임시_글이네요.",
+                    "첫 임시_글 인트로", "첫 임시_글이네요.",
                     "임시_글 썸네일 이름",
-                    "첫 임시_글 인트로",
                     Spring_카테고리_ID,
                     List.of("태그1", "태그2")
             );
@@ -124,9 +122,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
                     new CreatePostRequest(
                             말랑_블로그_이름,
                             "첫 포스트",
-                            "첫 포스트이네요.",
+                            "첫 포스트 인트로", "첫 포스트이네요.",
                             "포스트 썸네일 이름",
-                            "첫 포스트 인트로",
                             PUBLIC,
                             없음(),
                             Spring_카테고리_ID,
@@ -150,9 +147,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
                     new CreatePostRequest(
                             동훈_블로그_이름,
                             "첫 포스트",
-                            "첫 포스트이네요.",
+                            "첫 포스트 인트로", "첫 포스트이네요.",
                             "포스트 썸네일 이름",
-                            "첫 포스트 인트로",
                             PUBLIC,
                             없음(),
                             Spring_카테고리_ID,
@@ -178,9 +174,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             UpdatePostRequest 포스트_업데이트_요청 = new UpdatePostRequest(
                     말랑_블로그_이름,
                     "업데이트 제목",
-                    "업데이트 내용",
+                    "업데이트 인트로", "업데이트 내용",
                     "업데이트 포스트 썸네일 이름",
-                    "업데이트 인트로",
                     PRIVATE,
                     없음(),
                     Spring_카테고리_ID,
@@ -223,9 +218,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             CreatePostRequest public_spring_포스트_요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "Spring 입니다",
-                    "첫 포스트이네요.",
+                    "첫 포스트 인트로", "첫 포스트이네요.",
                     "포스트 썸네일 이름",
-                    "첫 포스트 인트로",
                     PUBLIC,
                     null,
                     Spring_카테고리_ID,
@@ -236,9 +230,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             CreatePostRequest protected_jpa_포스트_요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "Jpa 입니다",
-                    "이번에는 이것 저것들에 대해 알아보아요",
+                    "2 포스트 인트로", "이번에는 이것 저것들에 대해 알아보아요",
                     "썸넬2",
-                    "2 포스트 인트로",
                     PROTECTED,
                     "1234",
                     JPA_카테고리_ID,
@@ -249,9 +242,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             CreatePostRequest private_front_포스트_요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "Front 입니다",
-                    "잘 알아보았어요!",
+                    "3 포스트 인트로", "잘 알아보았어요!",
                     null,
-                    "3 포스트 인트로",
                     PRIVATE,
                     null,
                     Front_카테고리_ID,
@@ -350,9 +342,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             var 카테고리_없음_조건 = -1L;
             CreatePostRequest 카테고리_없는_포스트_생성_요청 = new CreatePostRequest(말랑_블로그_이름,
                     "카테고리 없는거입니다.",
-                    "포스트이네요.",
+                    "첫 포스트 인트로", "포스트이네요.",
                     null,
-                    "첫 포스트 인트로",
                     PUBLIC,
                     없음(),
                     null,
@@ -454,9 +445,8 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             CreatePostRequest public_spring_포스트_요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "포스트1",
-                    "이건 첫번째 포스트이네요.",
+                    "첫 포스트 인트로", "이건 첫번째 포스트이네요.",
                     "썸넬1",
-                    "첫 포스트 인트로",
                     PROTECTED,
                     "12345",
                     Spring_카테고리_ID,

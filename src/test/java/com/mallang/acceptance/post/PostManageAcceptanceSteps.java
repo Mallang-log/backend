@@ -30,9 +30,8 @@ public class PostManageAcceptanceSteps {
         return new CreatePostRequest(
                 블로그_이름,
                 "제목",
-                "내용",
+                "포스트 인트로 입니다.", "내용",
                 "섬네일",
-                "포스트 인트로 입니다.",
                 PUBLIC,
                 없음(),
                 없음(),
@@ -43,9 +42,8 @@ public class PostManageAcceptanceSteps {
         return new CreatePostRequest(
                 블로그_이름,
                 "제목",
-                "내용",
+                "포스트 인트로 입니다.", "내용",
                 "섬네일",
-                "포스트 인트로 입니다.",
                 PROTECTED,
                 "1234",
                 없음(),
@@ -56,9 +54,8 @@ public class PostManageAcceptanceSteps {
         return new CreatePostRequest(
                 블로그_이름,
                 "제목",
-                "내용",
+                "포스트 인트로 입니다.", "내용",
                 "섬네일",
-                "포스트 인트로 입니다.",
                 PRIVATE,
                 없음(),
                 없음(),

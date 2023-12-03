@@ -182,9 +182,8 @@ class DraftServiceTest extends ServiceTest {
                     memberId,
                     임시_글_ID,
                     "수정제목",
-                    "수정내용",
+                    "수정인트로", "수정내용",
                     "수정썸네일",
-                    "수정인트로",
                     null,
                     List.of("태그2")
             );
@@ -210,8 +209,8 @@ class DraftServiceTest extends ServiceTest {
             Long otherMemberId = 회원을_저장한다("동훈");
             UpdateDraftCommand command = new UpdateDraftCommand(
                     otherMemberId, 임시_글_ID,
-                    "수정제목", "수정내용",
-                    null, "수정인트로",
+                    "수정제목", "수정인트로", "수정내용",
+                    null,
                     null, emptyList()
             );
 
