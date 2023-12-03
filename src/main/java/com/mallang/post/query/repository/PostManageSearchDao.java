@@ -4,6 +4,7 @@ import static com.mallang.category.domain.QCategory.category;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.query.repository.CategoryQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
@@ -11,7 +12,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +23,10 @@ import org.springframework.util.ObjectUtils;
 
 public interface PostManageSearchDao {
 
-    Page<Post> searchForManage(Long memberId, PostManageSearchCond cond, Pageable pageable);
+    Page<Post> searchForManage(Blog blog, PostManageSearchCond cond, Pageable pageable);
 
     @Builder
     record PostManageSearchCond(
-            @NotNull String blogName,
             @Nullable String title,
             @Nullable String bodyText,
             @Nullable Long categoryId,
@@ -44,11 +43,11 @@ public interface PostManageSearchDao {
         private final CategoryQueryRepository categoryQueryRepository;
 
         @Override
-        public Page<Post> searchForManage(Long memberId, PostManageSearchCond cond, Pageable pageable) {
+        public Page<Post> searchForManage(Blog blog, PostManageSearchCond cond, Pageable pageable) {
             JPAQuery<Long> countQuery = query.select(post.countDistinct())
                     .from(post)
                     .where(
-                            memberAndBlogEq(memberId, cond.blogName()),
+                            blogEq(blog),
                             hasCategory(cond.categoryId()),
                             titleContains(cond.title()),
                             bodyTextContains(cond.bodyText()),
@@ -58,7 +57,7 @@ public interface PostManageSearchDao {
                     .distinct()
                     .leftJoin(post.content.category, category).fetchJoin()
                     .where(
-                            memberAndBlogEq(memberId, cond.blogName()),
+                            blogEq(blog),
                             hasCategory(cond.categoryId()),
                             titleContains(cond.title()),
                             bodyTextContains(cond.bodyText()),
@@ -71,8 +70,8 @@ public interface PostManageSearchDao {
             return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
         }
 
-        private BooleanExpression memberAndBlogEq(Long memberId, String blogName) {
-            return post.content.writer.id.eq(memberId).and(post.blog.name.value.eq(blogName));
+        private BooleanExpression blogEq(Blog blog) {
+            return post.blog.eq(blog);
         }
 
         private BooleanExpression hasCategory(@Nullable Long categoryId) {
