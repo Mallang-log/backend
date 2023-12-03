@@ -16,9 +16,9 @@ public record CreatePostCommand(
         Long memberId,
         String blogName,
         String title,
+        String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
-        String intro,
         Visibility visibility,
         @Nullable String password,
         @Nullable Long categoryId,
@@ -34,7 +34,7 @@ public record CreatePostCommand(
                 .writer(member)
                 .visibilityPolish(new PostVisibilityPolicy(visibility, password))
                 .category(category)
-                .postIntro(intro)
+                .intro(intro)
                 .tags(tags)
                 .build();
     }

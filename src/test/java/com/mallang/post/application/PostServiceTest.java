@@ -291,9 +291,8 @@ class PostServiceTest extends ServiceTest {
             // when
             postService.update(new UpdatePostCommand(
                     memberId, 포스트_ID, blogName,
-                    "수정제목", "수정내용",
+                    "수정제목", "수정인트로", "수정내용",
                     "수정썸네일",
-                    "수정인트로",
                     PUBLIC, null,
                     null, List.of("태그2")));
 
@@ -320,8 +319,8 @@ class PostServiceTest extends ServiceTest {
                     postService.update(
                             new UpdatePostCommand(
                                     otherMemberId, 포스트_ID, blogName,
-                                    "수정제목", "수정내용",
-                                    null, "수정인트로",
+                                    "수정제목", "수정인트로", "수정내용",
+                                    null,
                                     PUBLIC, null,
                                     null, emptyList()))
             ).isInstanceOf(NoAuthorityPostException.class);
@@ -343,8 +342,8 @@ class PostServiceTest extends ServiceTest {
             // when
             postService.update(new UpdatePostCommand(
                     memberId, 포스트_ID, blogName,
-                    "수정제목", "수정내용",
-                    null, "수정인트로",
+                    "수정제목", "수정인트로", "수정내용",
+                    null,
                     PUBLIC, null,
                     null, emptyList()));
 
@@ -367,8 +366,8 @@ class PostServiceTest extends ServiceTest {
             postService.update(
                     new UpdatePostCommand(
                             memberId, 포스트_ID, blogName,
-                            "수정제목", "수정내용",
-                            null, "수정인트로",
+                            "수정제목", "수정인트로", "수정내용",
+                            null,
                             PUBLIC, null,
                             springCategoryId, emptyList()));
 
@@ -393,8 +392,8 @@ class PostServiceTest extends ServiceTest {
             // when
             postService.update(new UpdatePostCommand(
                     memberId, 포스트_ID, blogName,
-                    "수정제목", "수정내용",
-                    null, "수정인트로",
+                    "수정제목", "수정인트로", "수정내용",
+                    null,
                     PUBLIC, null,
                     nodeCategoryId, emptyList()));
 

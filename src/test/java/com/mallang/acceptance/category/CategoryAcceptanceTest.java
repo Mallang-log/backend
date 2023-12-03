@@ -149,9 +149,8 @@ class CategoryAcceptanceTest extends AcceptanceTest {
             CreatePostRequest 포스트_생성_요청 = new CreatePostRequest(
                     말랑_블로그_이름,
                     "제목",
-                    "내용",
+                    "인트로", "내용",
                     null,
-                    "인트로",
                     PUBLIC,
                     null,
                     JPA_카테고리_ID,

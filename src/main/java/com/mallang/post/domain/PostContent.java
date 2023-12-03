@@ -51,10 +51,10 @@ public class PostContent {
     @Builder
     public PostContent(
             String title,
-            String bodyText,
-            String postThumbnailImageName,
             String postIntro,
-            Category category,
+            String bodyText,
+            @Nullable String postThumbnailImageName,
+            @Nullable Category category,
             List<String> tags,
             Member writer
     ) {
@@ -69,9 +69,9 @@ public class PostContent {
 
     public void update(
             String title,
-            String bodyText,
-            String postThumbnailImageName,
             String postIntro,
+            String bodyText,
+            @Nullable String postThumbnailImageName,
             @Nullable Category category,
             List<String> tags
     ) {

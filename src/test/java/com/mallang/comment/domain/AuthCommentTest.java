@@ -34,7 +34,7 @@ class AuthCommentTest {
     private final Post post = Post.builder()
             .blog(blog)
             .writer(postWriter)
-            .postIntro("intro")
+            .intro("intro")
             .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
     private final Member member = 깃허브_말랑(1L);
@@ -106,7 +106,7 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
-                    .postIntro("intro")
+                    .intro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
@@ -167,7 +167,7 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
-                    .postIntro("intro")
+                    .intro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
@@ -295,7 +295,7 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
-                    .postIntro("intro")
+                    .intro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
@@ -354,7 +354,7 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
-                    .postIntro("intro")
+                    .intro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
@@ -451,7 +451,7 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
-                    .postIntro("intro")
+                    .intro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
@@ -510,7 +510,7 @@ class AuthCommentTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .writer(postWriter)
-                    .postIntro("intro")
+                    .intro("intro")
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 

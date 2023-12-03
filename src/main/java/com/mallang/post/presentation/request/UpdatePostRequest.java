@@ -8,11 +8,11 @@ import java.util.List;
 public record UpdatePostRequest(
         String blogName,
         String title,
+        String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
-        String intro,
         Visibility visibility,
-        String password,
+        @Nullable String password,
         @Nullable Long categoryId,
         List<String> tags
 ) {

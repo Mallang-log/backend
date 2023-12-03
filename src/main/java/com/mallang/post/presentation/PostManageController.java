@@ -84,16 +84,17 @@ public class PostManageController {
             @PathVariable(name = "id") Long postId,
             @Auth Long memberId
     ) {
-        return ResponseEntity.ok(postManageQueryService.findById(memberId, postId, blogName));
+        return ResponseEntity.ok(postManageQueryService.getById(memberId, postId, blogName));
     }
 
-    @GetMapping
+    @GetMapping("/{blogName}")
     public ResponseEntity<PageResponse<PostManageSearchResponse>> search(
             @Auth Long memberId,
+            @PathVariable(name = "blogName") String blogName,
             @ModelAttribute PostManageSearchCond cond,
             @PageableDefault(size = 15) Pageable pageable
     ) {
-        Page<PostManageSearchResponse> response = postManageQueryService.search(memberId, cond, pageable);
+        Page<PostManageSearchResponse> response = postManageQueryService.search(memberId, blogName, cond, pageable);
         return ResponseEntity.ok(PageResponse.from(response));
     }
 }

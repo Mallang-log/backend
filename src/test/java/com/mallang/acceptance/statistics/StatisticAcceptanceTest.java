@@ -58,9 +58,8 @@ class StatisticAcceptanceTest extends AcceptanceTest {
         CreatePostRequest 포스트_요청 = new CreatePostRequest(
                 말랑_블로그_이름,
                 "[공개] 제목",
-                "[공개] 내용",
+                "[공개] 포스트 인트로 입니다.", "[공개] 내용",
                 "[공개] 섬네일",
-                "[공개] 포스트 인트로 입니다.",
                 PUBLIC,
                 null,
                 null,

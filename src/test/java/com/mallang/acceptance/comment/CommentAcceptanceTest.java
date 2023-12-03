@@ -79,9 +79,8 @@ class CommentAcceptanceTest extends AcceptanceTest {
         공개_포스트를_비공개로_바꾸는_요청 = new UpdatePostRequest(
                 말랑_블로그_이름,
                 "보호로 변경",
-                "보호",
+                "인트로", "보호",
                 null,
-                "인트로",
                 PRIVATE,
                 null,
                 null,

@@ -8,9 +8,9 @@ import java.util.List;
 public record CreatePostRequest(
         String blogName,
         String title,
+        String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
-        String intro,
         Visibility visibility,
         @Nullable String password,
         @Nullable Long categoryId,

@@ -47,27 +47,27 @@ public class Draft extends CommonRootEntity<Long> {
     public Draft(
             Blog blog,
             String title,
+            String intro,
             String bodyText,
-            String postThumbnailImageName,
-            String postIntro,
+            @Nullable String postThumbnailImageName,
             @Nullable Category category,
             List<String> tags,
             Member writer
     ) {
         this.blog = blog;
-        this.content = new PostContent(title, bodyText, postThumbnailImageName, postIntro, category, tags, writer);
+        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, writer);
         blog.validateOwner(writer);
     }
 
     public void update(
             String title,
-            String bodyText,
-            String postThumbnailImageName,
             String intro,
+            String bodyText,
+            @Nullable String postThumbnailImageName,
             @Nullable Category category,
             List<String> tags
     ) {
-        this.content.update(title, bodyText, postThumbnailImageName, intro, category, tags);
+        this.content.update(title, intro, bodyText, postThumbnailImageName, category, tags);
     }
 
     public void removeCategory() {
