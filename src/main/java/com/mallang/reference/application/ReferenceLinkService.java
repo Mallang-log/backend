@@ -5,6 +5,7 @@ import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.reference.application.command.SaveReferenceLinkCommand;
+import com.mallang.reference.application.command.UpdateReferenceLinkCommand;
 import com.mallang.reference.domain.ReferenceLink;
 import com.mallang.reference.domain.ReferenceLinkRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,21 @@ public class ReferenceLinkService {
     public Long save(SaveReferenceLinkCommand command) {
         Blog blog = blogRepository.getByName(command.blogName());
         Member member = memberRepository.getById(command.memberId());
-        blog.validateOwner(member);
-        ReferenceLink referenceLink = command.toReferenceLink(blog);
+        ReferenceLink referenceLink = command.toReferenceLink(member, blog);
         return referenceLinkRepository.save(referenceLink).getId();
+    }
+
+    public void update(UpdateReferenceLinkCommand command) {
+        Member member = memberRepository.getById(command.memberId());
+        ReferenceLink link = referenceLinkRepository.getById(command.referenceLinkId());
+        link.validateMember(member);
+        link.update(command.url(), command.title(), command.memo());
+    }
+
+    public void delete(Long referenceLinkId, Long memberId) {
+        Member member = memberRepository.getById(memberId);
+        ReferenceLink link = referenceLinkRepository.getById(referenceLinkId);
+        link.validateMember(member);
+        referenceLinkRepository.delete(link);
     }
 }

@@ -4,8 +4,10 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.common.domain.CommonRootEntity;
+import com.mallang.reference.exception.NoAuthorityReferenceLinkException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,14 +36,20 @@ public class ReferenceLink extends CommonRootEntity<Long> {
     private ReferenceLinkMemo memo;
 
     @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
 
-    public ReferenceLink(String url, String title, String memo, Blog blog) {
+    public ReferenceLink(String url, String title, String memo, Member member, Blog blog) {
         this.url = new ReferenceLinkUrl(url);
         this.title = new ReferenceLinkTitle(title);
         this.memo = new ReferenceLinkMemo(memo);
         this.blog = blog;
+        this.member = member;
+        blog.validateOwner(member);
     }
 
     public void update(String url, String title, String memo) {
@@ -60,5 +68,11 @@ public class ReferenceLink extends CommonRootEntity<Long> {
 
     public String getMemo() {
         return memo.getMemo();
+    }
+
+    public void validateMember(Member member) {
+        if (!this.member.equals(member)) {
+            throw new NoAuthorityReferenceLinkException();
+        }
     }
 }
