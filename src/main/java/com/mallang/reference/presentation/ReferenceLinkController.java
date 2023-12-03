@@ -1,9 +1,22 @@
 package com.mallang.reference.presentation;
 
+import com.mallang.auth.presentation.support.Auth;
 import com.mallang.reference.application.FetchUrlTitleMetaInfoService;
+import com.mallang.reference.application.ReferenceLinkService;
+import com.mallang.reference.application.command.SaveReferenceLinkCommand;
+import com.mallang.reference.application.command.UpdateReferenceLinkCommand;
+import com.mallang.reference.presentation.request.SaveReferenceLinkRequest;
+import com.mallang.reference.presentation.request.UpdateReferenceLinkRequest;
+import jakarta.validation.Valid;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +27,43 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReferenceLinkController {
 
     private final FetchUrlTitleMetaInfoService fetchReferenceLinkTitleService;
+    private final ReferenceLinkService referenceLinkService;
 
     @GetMapping("/title-info")
     public ResponseEntity<String> fetchTitleInfo(
             @RequestParam("url") String url
     ) {
         return ResponseEntity.ok(fetchReferenceLinkTitleService.fetchTitleMetaInfo(url));
+    }
+
+    @PostMapping("/{blogName}")
+    public ResponseEntity<Void> save(
+            @Auth Long memberId,
+            @PathVariable(name = "blogName") String blogName,
+            @Valid @RequestBody SaveReferenceLinkRequest request
+    ) {
+        SaveReferenceLinkCommand command = request.toCommand(memberId, blogName);
+        Long referenceLinkId = referenceLinkService.save(command);
+        return ResponseEntity.created(URI.create("/reference-title/" + referenceLinkId)).build();
+    }
+
+    @PutMapping("/{referenceLinkId}")
+    public ResponseEntity<Void> update(
+            @Auth Long memberId,
+            @PathVariable(name = "referenceLinkId") Long referenceLinkId,
+            @Valid @RequestBody UpdateReferenceLinkRequest request
+    ) {
+        UpdateReferenceLinkCommand command = request.toCommand(referenceLinkId, memberId);
+        referenceLinkService.update(command);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{referenceLinkId}")
+    public ResponseEntity<Void> delete(
+            @Auth Long memberId,
+            @PathVariable(name = "referenceLinkId") Long referenceLinkId
+    ) {
+        referenceLinkService.delete(referenceLinkId, memberId);
+        return ResponseEntity.noContent().build();
     }
 }

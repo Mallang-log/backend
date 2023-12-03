@@ -1,12 +1,20 @@
 package com.mallang.acceptance.reference;
 
 
+import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
+import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
+import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
+import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.인증되지_않음;
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
+import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.URL_의_제목_추출_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_삭제_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_업데이트_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_저장_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
@@ -14,6 +22,8 @@ import com.mallang.reference.config.ReferenceLinkIntegrationTestConfig;
 import com.mallang.reference.domain.MockUrlTitleMetaInfoFetcher;
 import com.mallang.reference.exception.InvalidReferenceLinkUrlException;
 import com.mallang.reference.exception.NotFoundReferenceLinkMetaTitleException;
+import com.mallang.reference.presentation.request.SaveReferenceLinkRequest;
+import com.mallang.reference.presentation.request.UpdateReferenceLinkRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -29,9 +39,14 @@ import org.springframework.context.annotation.Import;
 @Import({ReferenceLinkIntegrationTestConfig.class})
 public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
 
+    private final SaveReferenceLinkRequest 참조_링크_저장_요청 = new SaveReferenceLinkRequest(
+            "https://ttl-blog.tistory.com",
+            "말링이 블로그",
+            "말랑이 블로그임"
+    );
+
     @Autowired
     private MockUrlTitleMetaInfoFetcher fetcher;
-
     private String 말랑_세션_ID;
     private String 말랑_블로그_이름;
 
@@ -41,6 +56,95 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+    }
+
+    @Nested
+    class 참조_링크_저장_API {
+
+        @Test
+        void 참조_링크를_저장한다() {
+            // when
+            var 응답 = 참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 생성됨);
+        }
+
+        @Test
+        void 자신의_블로그가_아니라면_예외() {
+            // given
+            var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+
+            // when
+            var 응답 = 참조_링크_저장_요청(다른회원_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+    }
+
+    @Nested
+    class 참조_링크_정보_업데이트_API {
+
+        private final UpdateReferenceLinkRequest 참조_링크_업데이트_요청 = new UpdateReferenceLinkRequest(
+                "https://donghun.com",
+                "동훈이 블로그",
+                "동훈이 블로그임"
+        );
+
+        @Test
+        void 참조_링크를_정보를_수정한다() {
+            // given
+            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+
+            // when
+            var 응답 = 참조_링크_업데이트_요청(말랑_세션_ID, 참조_링크_ID, 참조_링크_업데이트_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+        }
+
+        @Test
+        void 자신이_등록한_링크가_아니라면_예외() {
+            // given
+            var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+
+            // when
+            var 응답 = 참조_링크_업데이트_요청(다른회원_세션_ID, 참조_링크_ID, 참조_링크_업데이트_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+    }
+
+    @Nested
+    class 참조_링크_삭제_API {
+
+        @Test
+        void 참조_링크를_저장한다() {
+            // given
+            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+
+            // when
+            var 응답 = 참조_링크_삭제_요청(말랑_세션_ID, 참조_링크_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 본문_없음);
+        }
+
+        @Test
+        void 자신이_등록한_링크가_아니라면_예외() {
+            // given
+            var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+            var 참조_링크_ID = ID를_추출한다(참조_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참조_링크_저장_요청));
+
+            // when
+            var 응답 = 참조_링크_삭제_요청(다른회원_세션_ID, 참조_링크_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
     }
 
     @Nested
