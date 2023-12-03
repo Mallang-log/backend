@@ -45,6 +45,18 @@ public class ReferenceLinkAcceptanceSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+            String 세션_ID,
+            String 블로그_이름,
+            String URL
+    ) {
+        return given(세션_ID)
+                .queryParam("url", URL)
+                .get("/reference-links/{blogName}/exists", 블로그_이름)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> 참고_링크_검색_요청(
             String 세션_ID,
             String 블로그_이름,

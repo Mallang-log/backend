@@ -12,6 +12,7 @@ import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.URL_의_제목_추출_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.주어진_URL_로_이미_등록된_링크_존재여부_확인_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_검색_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_삭제_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_업데이트_요청;
@@ -146,6 +147,100 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
 
             // when
             var 응답 = 참고_링크_삭제_요청(다른회원_세션_ID, 참고_링크_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+    }
+
+    @Nested
+    class 주어진_URL_로_이미_등록된_링크_존재여부_확인_API {
+
+        @Test
+        void Url이_정확히_일치해야_일치하는_것이다() {
+            // given
+            참고_링크_저장_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    new SaveReferenceLinkRequest(
+                            "https://ttl-blog.tistory.com",
+                            "말랑이 블로그",
+                            "말랑이 블로그 메인 페이지이다."
+                    )
+            );
+
+            // when
+            var exactlyMatch = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    "https://ttl-blog.tistory.com"
+            );
+            var exactlyMatch2 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    " https://ttl-blog.tistory.com "  // 앞뒤 공백은 제거됨
+            );
+            var notMatch1 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    "//ttl-blog.tistory.com"
+            );
+            var notMatch2 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    "https://ttl-blog.tistory.com/"
+            );
+
+            // then
+            assertThat(exactlyMatch.as(Boolean.class)).isTrue();
+            assertThat(exactlyMatch2.as(Boolean.class)).isTrue();
+            assertThat(notMatch1.as(Boolean.class)).isFalse();
+            assertThat(notMatch2.as(Boolean.class)).isFalse();
+        }
+
+        @Test
+        void 다른_블로그에_등록된것과는_무관하다() {
+            // given
+            var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+            var 다른_사람_블로그_이름 = 블로그_개설(다른_사람_세션_ID, "other-log");
+            참고_링크_저장_요청(
+                    다른_사람_세션_ID,
+                    다른_사람_블로그_이름,
+                    new SaveReferenceLinkRequest(
+                            "https://ttl-blog.tistory.com",
+                            "말랑이 블로그",
+                            "말랑이 블로그 메인 페이지이다."
+                    )
+            );
+
+            // when
+            var notExist = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    "https://ttl-blog.tistory.com"
+            );
+            var exist = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    다른_사람_세션_ID,
+                    다른_사람_블로그_이름,
+                    "https://ttl-blog.tistory.com"
+            );
+
+            // then
+            assertThat(exist.as(Boolean.class)).isTrue();
+            assertThat(notExist.as(Boolean.class)).isFalse();
+        }
+
+        @Test
+        void 블로그_주인이_아니라면_예외() {
+            // given
+            var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+
+            // when
+            var 응답 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
+                    다른_사람_세션_ID,
+                    말랑_블로그_이름,
+                    "https://ttl-blog.tistory.com"
+            );
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);

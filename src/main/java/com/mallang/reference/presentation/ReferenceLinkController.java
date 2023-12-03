@@ -73,6 +73,16 @@ public class ReferenceLinkController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{blogName}/exists")
+    public ResponseEntity<Boolean> checkExistsUrl(
+            @Auth Long memberId,
+            @PathVariable("blogName") String blogName,
+            @RequestParam("url") String url
+    ) {
+        boolean isExists = referenceLinkQueryService.existsReferenceLinkByUrl(memberId, blogName, url.strip());
+        return ResponseEntity.ok(isExists);
+    }
+
     @GetMapping("/{blogName}")
     public ResponseEntity<List<ReferenceLinkSearchResponse>> search(
             @Auth Long memberId,
