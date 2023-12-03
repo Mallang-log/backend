@@ -50,9 +50,9 @@ public class Post extends CommonRootEntity<PostId> {
             Blog blog,
             PostVisibilityPolicy visibilityPolish,
             String title,
+            String intro,
             String bodyText,
-            String postThumbnailImageName,
-            String postIntro,
+            @Nullable String postThumbnailImageName,
             @Nullable Category category,
             List<String> tags,
             Member writer
@@ -60,21 +60,21 @@ public class Post extends CommonRootEntity<PostId> {
         this.id = id;
         this.blog = blog;
         this.visibilityPolish = visibilityPolish;
-        this.content = new PostContent(title, bodyText, postThumbnailImageName, postIntro, category, tags, writer);
+        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, writer);
         blog.validateOwner(writer);
     }
 
     public void update(
             PostVisibilityPolicy visibility,
             String title,
-            String bodyText,
-            String postThumbnailImageName,
             String intro,
+            String bodyText,
+            @Nullable String postThumbnailImageName,
             @Nullable Category category,
             List<String> tags
     ) {
         this.visibilityPolish = visibility;
-        this.content.update(title, bodyText, postThumbnailImageName, intro, category, tags);
+        this.content.update(title, intro, bodyText, postThumbnailImageName, category, tags);
     }
 
     public void delete() {

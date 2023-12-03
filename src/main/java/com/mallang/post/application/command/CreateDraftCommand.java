@@ -13,9 +13,9 @@ public record CreateDraftCommand(
         Long memberId,
         String blogName,
         String title,
+        String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
-        String intro,
         @Nullable Long categoryId,
         List<String> tags
 ) {
@@ -23,9 +23,9 @@ public record CreateDraftCommand(
         return Draft.builder()
                 .blog(blog)
                 .title(title)
+                .intro(intro)
                 .bodyText(bodyText)
                 .postThumbnailImageName(postThumbnailImageName)
-                .postIntro(intro)
                 .category(category)
                 .tags(tags)
                 .writer(member)

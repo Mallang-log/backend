@@ -36,7 +36,7 @@ class PostLikeTest {
     private final Post post = Post.builder()
             .blog(blog)
             .title("제목")
-            .postIntro("intro")
+            .intro("intro")
             .bodyText("내용")
             .writer(mallang)
             .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
@@ -96,7 +96,7 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .postIntro("intro")
+                    .intro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
@@ -145,7 +145,7 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .postIntro("intro")
+                    .intro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
@@ -216,7 +216,7 @@ class PostLikeTest {
             private final Post post = Post.builder()
                     .blog(blog)
                     .title("제목")
-                    .postIntro("intro")
+                    .intro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
@@ -271,7 +271,7 @@ class PostLikeTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .postIntro("intro")
+                        .intro("intro")
                         .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
@@ -292,7 +292,7 @@ class PostLikeTest {
                 Post post = Post.builder()
                         .blog(blog)
                         .title("제목")
-                        .postIntro("intro")
+                        .intro("intro")
                         .bodyText("내용")
                         .writer(mallang)
                         .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
@@ -302,9 +302,8 @@ class PostLikeTest {
                 post.update(
                         new PostVisibilityPolicy(PRIVATE, null),
                         "up",
-                        "up",
+                        "update", "up",
                         null,
-                        "update",
                         null, emptyList());
 
                 // when & then

@@ -45,6 +45,7 @@ import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.query.DraftQueryService;
+import com.mallang.post.query.PostManageQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.reference.application.ReferenceLinkService;
@@ -101,6 +102,15 @@ public abstract class ServiceTest {
     protected PostService postService;
 
     @Autowired
+    protected PostIdGenerator postIdGenerator;
+
+    @Autowired
+    protected PostQueryService postQueryService;
+
+    @Autowired
+    protected PostManageQueryService postManageQueryService;
+
+    @Autowired
     protected DraftRepository draftRepository;
 
     @Autowired
@@ -108,12 +118,6 @@ public abstract class ServiceTest {
 
     @Autowired
     protected DraftQueryService draftQueryService;
-
-    @Autowired
-    protected PostIdGenerator postIdGenerator;
-
-    @Autowired
-    protected PostQueryService postQueryService;
 
     @Autowired
     protected CategoryRepository categoryRepository;
@@ -222,9 +226,8 @@ public abstract class ServiceTest {
                 회원_ID,
                 블로그_이름,
                 제목,
-                내용,
+                내용.substring(0, Math.min(내용.length(), 50)), 내용,
                 null,
-                내용.substring(0, Math.min(내용.length(), 50)),
                 visibility,
                 password,
                 카테고리_ID,
@@ -239,9 +242,8 @@ public abstract class ServiceTest {
                 postId,
                 blogName,
                 post.getTitle(),
-                post.getBodyText(),
+                post.getPostIntro(), post.getBodyText(),
                 post.getPostThumbnailImageName(),
-                post.getPostIntro(),
                 visibility,
                 password,
                 null,

@@ -60,9 +60,8 @@ public class PostService {
         post.update(
                 new PostVisibilityPolicy(command.visibility(), command.password()),
                 command.title(),
-                command.bodyText(),
+                command.intro(), command.bodyText(),
                 command.postThumbnailImageName(),
-                command.intro(),
                 category,
                 command.tags()
         );

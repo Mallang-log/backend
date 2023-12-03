@@ -49,9 +49,8 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         공개_포스트를_보호로_바꾸는_요청 = new UpdatePostRequest(
                 블로그_이름,
                 "보호로 변경",
-                "보호",
+                "인트로", "보호",
                 null,
-                "인트로",
                 PROTECTED,
                 "1234",
                 null,
@@ -60,9 +59,8 @@ class PostLikeAcceptanceTest extends AcceptanceTest {
         공개_포스트를_비공개로_바꾸는_요청 = new UpdatePostRequest(
                 블로그_이름,
                 "보호로 변경",
-                "보호",
+                "인트로", "보호",
                 null,
-                "인트로",
                 PRIVATE,
                 null,
                 null,

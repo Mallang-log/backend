@@ -30,9 +30,8 @@ public class PostManageAcceptanceSteps {
         return new CreatePostRequest(
                 블로그_이름,
                 "제목",
-                "내용",
+                "포스트 인트로 입니다.", "내용",
                 "섬네일",
-                "포스트 인트로 입니다.",
                 PUBLIC,
                 없음(),
                 없음(),
@@ -43,9 +42,8 @@ public class PostManageAcceptanceSteps {
         return new CreatePostRequest(
                 블로그_이름,
                 "제목",
-                "내용",
+                "포스트 인트로 입니다.", "내용",
                 "섬네일",
-                "포스트 인트로 입니다.",
                 PROTECTED,
                 "1234",
                 없음(),
@@ -56,9 +54,8 @@ public class PostManageAcceptanceSteps {
         return new CreatePostRequest(
                 블로그_이름,
                 "제목",
-                "내용",
+                "포스트 인트로 입니다.", "내용",
                 "섬네일",
-                "포스트 인트로 입니다.",
                 PRIVATE,
                 없음(),
                 없음(),
@@ -126,12 +123,11 @@ public class PostManageAcceptanceSteps {
             Visibility 공개여부
     ) {
         return given(세션_ID)
-                .queryParam("blogName", 블로그_이름)
                 .queryParam("categoryId", 카테고리_ID)
                 .queryParam("title", 제목)
                 .queryParam("bodyText", 내용)
                 .queryParam("visibility", 공개여부)
-                .get("/manage/posts")
+                .get("/manage/posts/{blogName}", 블로그_이름)
                 .then().log().all()
                 .extract();
     }
