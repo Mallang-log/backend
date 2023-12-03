@@ -13,7 +13,6 @@ import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.domain.PostIdGenerator;
 import com.mallang.post.domain.PostRepository;
-import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.draft.Draft;
 import com.mallang.post.domain.draft.DraftRepository;
 import jakarta.annotation.Nullable;
@@ -58,7 +57,8 @@ public class PostService {
         Category category = getCategoryByIdIfPresent(command.categoryId());
         post.validateWriter(member);
         post.update(
-                new PostVisibilityPolicy(command.visibility(), command.password()),
+                command.visibility(),
+                command.password(),
                 command.title(),
                 command.intro(), command.bodyText(),
                 command.postThumbnailImageName(),

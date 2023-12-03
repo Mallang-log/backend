@@ -3,6 +3,7 @@ package com.mallang.comment.domain;
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
+import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -14,8 +15,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.comment.domain.service.CommentDeleteService;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostVisibilityPolicy;
-import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,8 +31,9 @@ class CommentTest {
     private final Post post = Post.builder()
             .blog(blog)
             .writer(postWriter)
+            .visibility(PUBLIC)
+            .password(null)
             .intro("intro")
-            .visibilityPolish(new PostVisibilityPolicy(Visibility.PUBLIC, null))
             .build();
     private final Member member = 깃허브_말랑(1L);
     private final Member other = 깃허브_동훈(2L);

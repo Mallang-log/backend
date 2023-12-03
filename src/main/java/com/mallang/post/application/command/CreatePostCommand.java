@@ -5,7 +5,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -28,14 +27,15 @@ public record CreatePostCommand(
         return Post.builder()
                 .id(postId)
                 .blog(blog)
+                .visibility(visibility)
+                .password(password)
                 .title(title)
+                .intro(intro)
                 .bodyText(bodyText)
                 .postThumbnailImageName(postThumbnailImageName)
-                .writer(member)
-                .visibilityPolish(new PostVisibilityPolicy(visibility, password))
                 .category(category)
-                .intro(intro)
                 .tags(tags)
+                .writer(member)
                 .build();
     }
 }
