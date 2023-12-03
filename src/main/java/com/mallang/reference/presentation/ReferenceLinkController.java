@@ -7,12 +7,17 @@ import com.mallang.reference.application.command.SaveReferenceLinkCommand;
 import com.mallang.reference.application.command.UpdateReferenceLinkCommand;
 import com.mallang.reference.presentation.request.SaveReferenceLinkRequest;
 import com.mallang.reference.presentation.request.UpdateReferenceLinkRequest;
+import com.mallang.reference.query.ReferenceLinkQueryService;
+import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoCond;
+import com.mallang.reference.query.response.ReferenceLinkSearchResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,8 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ReferenceLinkController {
 
-    private final FetchUrlTitleMetaInfoService fetchReferenceLinkTitleService;
     private final ReferenceLinkService referenceLinkService;
+    private final ReferenceLinkQueryService referenceLinkQueryService;
+    private final FetchUrlTitleMetaInfoService fetchReferenceLinkTitleService;
 
     @GetMapping("/title-info")
     public ResponseEntity<String> fetchTitleInfo(
@@ -65,5 +71,15 @@ public class ReferenceLinkController {
     ) {
         referenceLinkService.delete(referenceLinkId, memberId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{blogName}")
+    public ResponseEntity<List<ReferenceLinkSearchResponse>> search(
+            @Auth Long memberId,
+            @PathVariable("blogName") String blogName,
+            @ModelAttribute ReferenceLinkSearchDaoCond cond
+    ) {
+        List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, cond);
+        return ResponseEntity.ok(result);
     }
 }

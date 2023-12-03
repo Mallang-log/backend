@@ -12,6 +12,7 @@ import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.URL_의_제목_추출_요청;
+import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_검색_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_삭제_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_업데이트_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참조_링크_저장_요청;
@@ -24,6 +25,10 @@ import com.mallang.reference.exception.InvalidReferenceLinkUrlException;
 import com.mallang.reference.exception.NotFoundReferenceLinkMetaTitleException;
 import com.mallang.reference.presentation.request.SaveReferenceLinkRequest;
 import com.mallang.reference.presentation.request.UpdateReferenceLinkRequest;
+import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoCond;
+import com.mallang.reference.query.response.ReferenceLinkSearchResponse;
+import io.restassured.common.mapper.TypeRef;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -144,6 +149,138 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
+        }
+    }
+
+    @Nested
+    class 참조_링크_목록_검색_API {
+
+        private Long 말랑이_블로그_링크_ID;
+        private Long Spring_글_참고_링크_ID;
+
+        @BeforeEach
+        void setUp() {
+            말랑이_블로그_링크_ID = ID를_추출한다(참조_링크_저장_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    new SaveReferenceLinkRequest(
+                            "https://ttl-blog.tistory.com",
+                            "말랑이 블로그",
+                            "말랑이 블로그 메인 페이지이다."
+                    )
+            ));
+            Spring_글_참고_링크_ID = ID를_추출한다(참조_링크_저장_요청(
+                    말랑_세션_ID,
+                    말랑_블로그_이름,
+                    new SaveReferenceLinkRequest(
+                            "https://ttl-blog.tistory.com/123",
+                            "스프링이란?",
+                            "말랑이가 쓴 스프링에 대한 내용."
+                    )
+            ));
+        }
+
+        @Test
+        void 조건_없이_검색하면_해당_블로그의_모든_링크가_조회된다() {
+            // given
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+
+            // when
+            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+
+            // then
+            List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses).hasSize(2);
+        }
+
+        @Test
+        void 다른_블로그의_링크는_조회되지_않는다() {
+            // given
+            var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+            var 다른_사람_블로그_이름 = 블로그_개설(다른_사람_세션_ID, "other-log");
+            Long 다른사람_링크_ID = ID를_추출한다(참조_링크_저장_요청(
+                    다른_사람_세션_ID,
+                    다른_사람_블로그_이름,
+                    new SaveReferenceLinkRequest(
+                            "https://ttl-blog.tistory.com/13",
+                            "자바",
+                            "말랑이가 쓴 자바에 대한 내용."
+                    )
+            ));
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+
+            // when
+            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+
+            // then
+            List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses).hasSize(2);
+            assertThat(responses)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .doesNotContain(다른사람_링크_ID);
+        }
+
+        @Test
+        void 블로그_주인이_아니면_조회할_수_없다() {
+            // given
+            var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+
+            // when
+            var 응답 = 참조_링크_검색_요청(다른_사람_세션_ID, 말랑_블로그_이름, emptyCond);
+
+            // then
+            응답_상태를_검증한다(응답, 권한_없음);
+        }
+
+        @Test
+        void Url_포함조건으로_검색한다() {
+            // given
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond("12", null, null);
+
+            // when
+            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+
+            // then
+            List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .containsExactly(Spring_글_참고_링크_ID);
+        }
+
+        @Test
+        void 제목_포함조건으로_검색한다() {
+            // given
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, "랑이", null);
+
+            // when
+            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+
+            // then
+            List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .containsExactly(말랑이_블로그_링크_ID);
+        }
+
+        @Test
+        void 메모_검색조건으로_검색한다() {
+            // given
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에");
+
+            // when
+            var 응답 = 참조_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+
+            // then
+            List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .containsExactly(Spring_글_참고_링크_ID);
         }
     }
 

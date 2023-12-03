@@ -4,6 +4,7 @@ import static com.mallang.acceptance.AcceptanceSteps.given;
 
 import com.mallang.reference.presentation.request.SaveReferenceLinkRequest;
 import com.mallang.reference.presentation.request.UpdateReferenceLinkRequest;
+import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoCond;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
@@ -40,6 +41,20 @@ public class ReferenceLinkAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .delete("/reference-links/{referenceLinkId}", 참조_링크_ID)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 참조_링크_검색_요청(
+            String 세션_ID,
+            String 블로그_이름,
+            ReferenceLinkSearchDaoCond 검색_조건
+    ) {
+        return given(세션_ID)
+                .queryParam("url", 검색_조건.url())
+                .queryParam("title", 검색_조건.title())
+                .queryParam("memo", 검색_조건.memo())
+                .get("/reference-links/{blogName}", 블로그_이름)
                 .then().log().all()
                 .extract();
     }
