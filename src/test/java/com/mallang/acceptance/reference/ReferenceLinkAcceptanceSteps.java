@@ -19,7 +19,7 @@ public class ReferenceLinkAcceptanceSteps {
         return given(세션_ID)
                 .body(참고_링크_저장_요청)
                 .post("/reference-links/{blogName}", 블로그_이름)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -31,7 +31,7 @@ public class ReferenceLinkAcceptanceSteps {
         return given(세션_ID)
                 .body(참고_링크_업데이트_요청)
                 .put("/reference-links/{referenceLinkId}", 참고_링크_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -41,7 +41,7 @@ public class ReferenceLinkAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .delete("/reference-links/{referenceLinkId}", 참고_링크_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -53,7 +53,7 @@ public class ReferenceLinkAcceptanceSteps {
         return given(세션_ID)
                 .queryParam("url", URL)
                 .get("/reference-links/{blogName}/exists", 블로그_이름)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -67,7 +67,7 @@ public class ReferenceLinkAcceptanceSteps {
                 .queryParam("title", 검색_조건.title())
                 .queryParam("memo", 검색_조건.memo())
                 .get("/reference-links/{blogName}", 블로그_이름)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -75,7 +75,7 @@ public class ReferenceLinkAcceptanceSteps {
         return given(세션_ID)
                 .queryParam("url", URL)
                 .get("/reference-links/title-info")
-                .then().log().all()
+                .then()
                 .extract();
     }
 }

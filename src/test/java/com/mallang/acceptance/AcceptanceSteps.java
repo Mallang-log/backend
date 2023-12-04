@@ -34,13 +34,13 @@ public final class AcceptanceSteps {
 
     public static RequestSpecification given() {
         return RestAssured
-                .given().log().all()
+                .given()
                 .contentType(JSON);
     }
 
     public static RequestSpecification given(String 세션_ID) {
         return RestAssured
-                .given().log().all()
+                .given()
                 .cookie(JSESSION_ID, 세션_ID)
                 .contentType(JSON);
     }

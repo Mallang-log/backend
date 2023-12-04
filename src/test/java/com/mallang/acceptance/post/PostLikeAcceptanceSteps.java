@@ -22,7 +22,7 @@ public class PostLikeAcceptanceSteps {
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
                 .body(new ClickPostLikeRequest(포스트_ID, 블로그_이름))
                 .post("/post-likes")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -36,7 +36,7 @@ public class PostLikeAcceptanceSteps {
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
                 .body(new CancelPostLikeRequest(포스트_ID, 블로그_이름))
                 .delete("/post-likes")
-                .then().log().all()
+                .then()
                 .extract();
     }
 }

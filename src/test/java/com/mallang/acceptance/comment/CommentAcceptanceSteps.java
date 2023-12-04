@@ -43,7 +43,7 @@ public class CommentAcceptanceSteps {
                 .body(request)
                 .post("/comments")
                 .then()
-                .log().all()
+                //.log().all()
                 .extract();
     }
 
@@ -64,7 +64,7 @@ public class CommentAcceptanceSteps {
                 .queryParam("unauthenticated", true)
                 .post("/comments")
                 .then()
-                .log().all()
+                //.log().all()
                 .extract();
     }
 
@@ -78,7 +78,8 @@ public class CommentAcceptanceSteps {
                 .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .body(request)
                 .put("/comments/{id}", 댓글_ID)
-                .then().log().all()
+                .then()
+                //.log().all()
                 .extract();
     }
 
@@ -93,7 +94,8 @@ public class CommentAcceptanceSteps {
                 .body(new UpdateUnAuthCommentRequest(수정_내용, 암호))
                 .queryParam("unauthenticated", true)
                 .put("/comments/{id}", 댓글_ID)
-                .then().log().all()
+                .then()
+                //.log().all()
                 .extract();
     }
 
@@ -105,7 +107,8 @@ public class CommentAcceptanceSteps {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 포스트_비밀번호)
                 .delete("/comments/{id}", 댓글_ID)
-                .then().log().all()
+                .then()
+                //.log().all()
                 .extract();
     }
 
@@ -119,7 +122,8 @@ public class CommentAcceptanceSteps {
                 .queryParam("unauthenticated", true)
                 .body(new DeleteUnAuthCommentRequest(암호))
                 .delete("/comments/{id}", 댓글_ID)
-                .then().log().all()
+                .then()
+                //.log().all()
                 .extract();
     }
 
@@ -133,7 +137,8 @@ public class CommentAcceptanceSteps {
                 .queryParam("unauthenticated", true)
                 .body(new DeleteUnAuthCommentRequest(null))
                 .delete("/comments/{id}", 댓글_ID)
-                .then().log().all()
+                .then()
+                //.log().all()
                 .extract();
     }
 
@@ -156,7 +161,8 @@ public class CommentAcceptanceSteps {
                 .queryParam("postId", 포스트_ID)
                 .queryParam("blogName", 블로그_이름)
                 .get("/comments")
-                .then().log().all()
+                .then()
+                //.log().all()
                 .extract();
     }
 

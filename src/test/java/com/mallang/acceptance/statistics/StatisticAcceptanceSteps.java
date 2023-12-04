@@ -15,7 +15,7 @@ public class StatisticAcceptanceSteps {
         return given()
                 .param("today", 오늘)
                 .get("/statistics/blogs/{blogName}", 블로그_이름)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -25,7 +25,7 @@ public class StatisticAcceptanceSteps {
     ) {
         return given()
                 .get("/statistics/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 }

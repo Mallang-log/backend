@@ -24,7 +24,7 @@ public class BlogAcceptanceSteps {
         return given(세션_ID)
                 .body(new OpenBlogRequest(블로그_이름))
                 .post("/blogs")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -32,7 +32,7 @@ public class BlogAcceptanceSteps {
         return given()
                 .queryParam("blogName", 블로그_이름)
                 .get("/blogs")
-                .then().log().all()
+                .then()
                 .extract();
     }
 }
