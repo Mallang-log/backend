@@ -49,14 +49,16 @@ class PostTest {
                 .writer(mallang)
                 .title("1234")
                 .intro("intro")
-                .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
+                .visibility(PUBLIC)
+                .password(null)
                 .build();
         Post post2 = Post.builder()
                 .blog(blog)
                 .writer(mallang)
                 .title("5678")
                 .intro("intro")
-                .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
+                .visibility(PUBLIC)
+                .password(null)
                 .build();
         ReflectionTestUtils.setField(post1, "id", new PostId(1L, 2L));
         ReflectionTestUtils.setField(post2, "id", new PostId(1L, 2L));
@@ -231,13 +233,15 @@ class PostTest {
                     .bodyText("내용")
                     .intro("intro")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
+                    .visibility(PROTECTED)
+                    .password("123")
                     .tags(List.of("태그1"))
                     .build();
 
             // when
             post.update(
-                    new PostVisibilityPolicy(PRIVATE),
+                    PRIVATE,
+                    null,
                     "수정제목",
                     "수정인트로", "수정내용",
                     "postThumbnailImageName",
@@ -262,14 +266,16 @@ class PostTest {
                     .bodyText("내용")
                     .intro("intro")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "123"))
+                    .visibility(PROTECTED)
+                    .password("123")
                     .tags(List.of("태그1"))
                     .build();
 
             // when & then
             assertThatThrownBy(() -> {
                 post.update(
-                        new PostVisibilityPolicy(PRIVATE),
+                        PRIVATE,
+                        null,
                         "수정제목",
                         "수정인트로", "수정내용",
                         "postThumbnailImageName",
@@ -321,11 +327,12 @@ class PostTest {
                 // given
                 Post post = Post.builder()
                         .blog(blog)
+                        .visibility(PUBLIC)
+                        .password(null)
                         .title("제목")
                         .bodyText("내용")
                         .intro("intro")
                         .writer(mallang)
-                        .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
                         .category(springCategory)
                         .build();
 
@@ -347,11 +354,12 @@ class PostTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .title("제목")
                     .bodyText("내용")
                     .intro("intro")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .category(springCategory)
                     .build();
 
@@ -385,11 +393,12 @@ class PostTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PRIVATE)
+                    .password(null)
                     .title("제목")
                     .bodyText("내용")
                     .intro("intro")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .category(springCategory)
                     .build();
 
@@ -416,11 +425,12 @@ class PostTest {
         // given
         Post post = Post.builder()
                 .blog(blog)
+                .visibility(PRIVATE)
+                .password(null)
                 .title("제목")
                 .bodyText("내용")
                 .intro("intro")
                 .writer(mallang)
-                .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                 .category(springCategory)
                 .build();
 
