@@ -5,7 +5,6 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.post.exception.InvalidPostIntroLengthException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,21 +29,5 @@ public class PostIntro {
         if (length < 1 || 250 < length) {
             throw new InvalidPostIntroLengthException();
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof PostIntro postIntro)) {
-            return false;
-        }
-        return Objects.equals(getIntro(), postIntro.getIntro());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIntro());
     }
 }
