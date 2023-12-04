@@ -30,7 +30,7 @@ public class PostAcceptanceSteps {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
                 .get("/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -78,7 +78,7 @@ public class PostAcceptanceSteps {
                 .queryParam("bodyText", 내용)
                 .queryParam("titleOrBodyText", 제목_또는_내용)
                 .get("/posts")
-                .then().log().all()
+                .then()
                 .extract();
     }
 

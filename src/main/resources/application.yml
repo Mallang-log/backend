@@ -1,14 +1,13 @@
 spring:
   jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-        highlight_sql: true
-
     hibernate:
       ddl-auto: create
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        use_sql_comments: true
+#        highlight_sql: true
 
 auth:
   oauth:
@@ -21,7 +20,7 @@ auth:
   session:
     ttl: 3600
 
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: TRACE
+#logging:
+#  level:
+#    org.hibernate.orm.jdbc.bind: TRACE
 

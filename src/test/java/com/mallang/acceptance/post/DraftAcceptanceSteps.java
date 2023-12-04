@@ -18,7 +18,7 @@ class DraftAcceptanceSteps {
                 .body(요청)
                 .when()
                 .post("/drafts")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -30,7 +30,7 @@ class DraftAcceptanceSteps {
         return given(세션_ID)
                 .body(request)
                 .put("/drafts/{id}", 임시_글_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -38,7 +38,6 @@ class DraftAcceptanceSteps {
         return given(말랑_세션_ID)
                 .delete("/drafts/{id}", 임시_글_ID)
                 .then()
-                .log().all()
                 .extract();
     }
 
@@ -47,7 +46,6 @@ class DraftAcceptanceSteps {
                 .queryParam("blogName", 블로그_이름)
                 .get("/drafts")
                 .then()
-                .log().all()
                 .extract();
     }
 
@@ -55,7 +53,6 @@ class DraftAcceptanceSteps {
         return given(말랑_세션_ID)
                 .get("/drafts/{id}", 임시_글_ID)
                 .then()
-                .log().all()
                 .extract();
     }
 }

@@ -21,7 +21,7 @@ public class StatisticManageAcceptanceSteps {
                 .param("lastDay", 조회_마지막_일)
                 .param("count", 조회_개수)
                 .get("/manage/statistics/blogs/{blogName}", 블로그_이름)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -38,7 +38,7 @@ public class StatisticManageAcceptanceSteps {
                 .param("lastDay", 조회_마지막_일)
                 .param("count", 조회_개수)
                 .get("/manage/statistics/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 }

@@ -40,7 +40,7 @@ public class CategoryAcceptanceSteps {
         return given(세션_ID)
                 .body(new CreateCategoryRequest(블로그_이름, 카테고리_이름, 부모_카테고리_ID))
                 .post("/categories")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -51,7 +51,7 @@ public class CategoryAcceptanceSteps {
         return given(세션_ID)
                 .body(request)
                 .post("/categories")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -64,7 +64,7 @@ public class CategoryAcceptanceSteps {
         return given(세션_ID)
                 .body(new UpdateCategoryRequest(변경할_이름, 변경할_상위_카테고리_ID))
                 .put("/categories/{id}", 카테고리_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -74,7 +74,7 @@ public class CategoryAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .delete("/categories/{id}", 카테고리_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -82,7 +82,7 @@ public class CategoryAcceptanceSteps {
         return given()
                 .param("blogName", 블로그_이름)
                 .get("/categories")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
