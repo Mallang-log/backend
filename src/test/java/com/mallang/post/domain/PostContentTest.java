@@ -12,7 +12,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -45,10 +44,14 @@ class PostContentTest {
                 .build();
 
         // when
-        postContent.removeCategory();
+        PostContent removeCategory = postContent.removeCategory();
 
         // then
-        assertThat(postContent.getCategory()).isNull();
+        assertThat(removeCategory.getCategory()).isNull();
+        assertThat(removeCategory)
+                .usingRecursiveComparison()
+                .ignoringFields("category")
+                .isEqualTo(postContent);
     }
 
     @Nested
@@ -152,60 +155,6 @@ class PostContentTest {
 
             // when & then
             assertThat(postContent.getPostThumbnailImageName()).isNull();
-        }
-    }
-
-    @Nested
-    class 수정_시 {
-
-        @Test
-        void 수정에_성공한다() {
-            // given
-            PostContent postContent = PostContent.builder()
-                    .title("제목")
-                    .postIntro("intro")
-                    .bodyText("내용")
-                    .writer(mallang)
-                    .tags(List.of("태그1"))
-                    .build();
-
-            // when
-            postContent.update(
-                    "수정제목",
-                    "수정인트로", "수정내용",
-                    "postThumbnailImageName",
-                    null,
-                    List.of("태그2")
-            );
-
-            // then
-            assertThat(postContent.getTitle()).isEqualTo("수정제목");
-            assertThat(postContent.getBodyText()).isEqualTo("수정내용");
-            assertThat(postContent.getTags())
-                    .containsExactly("태그2");
-        }
-
-        @Test
-        void 다른_사람의_카테고리로_수정_시_예외() {
-            // given
-            PostContent postContent = PostContent.builder()
-                    .title("제목")
-                    .postIntro("intro")
-                    .bodyText("내용")
-                    .writer(mallang)
-                    .tags(List.of("태그1"))
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> {
-                postContent.update(
-                        "수정제목",
-                        "수정인트로", "수정내용",
-                        "postThumbnailImageName",
-                        otherCategory,
-                        Collections.emptyList()
-                );
-            }).isInstanceOf(NoAuthorityCategoryException.class);
         }
     }
 

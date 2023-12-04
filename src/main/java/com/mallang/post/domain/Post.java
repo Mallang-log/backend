@@ -82,7 +82,7 @@ public class Post extends CommonRootEntity<PostId> {
             List<String> tags
     ) {
         this.visibilityPolish = new PostVisibilityPolicy(visibility, password);
-        this.content.update(title, intro, bodyText, postThumbnailImageName, category, tags);
+        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, getWriter());
     }
 
     public void delete() {
@@ -90,7 +90,7 @@ public class Post extends CommonRootEntity<PostId> {
     }
 
     public void removeCategory() {
-        this.content.removeCategory();
+        this.content = content.removeCategory();
     }
 
     public void clickLike() {
