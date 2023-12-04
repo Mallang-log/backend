@@ -15,7 +15,6 @@ import static org.mockito.Mockito.mock;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.AlreadyLikedPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.DisplayName;
@@ -35,11 +34,12 @@ class PostLikeTest {
     private final Blog blog = new Blog("mallang", mallang);
     private final Post post = Post.builder()
             .blog(blog)
+            .visibility(PUBLIC)
+            .password(null)
             .title("제목")
             .intro("intro")
             .bodyText("내용")
             .writer(mallang)
-            .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .build();
 
     @Nested
@@ -95,11 +95,12 @@ class PostLikeTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .title("제목")
                     .intro("intro")
                     .bodyText("내용")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
             @Test
@@ -148,7 +149,8 @@ class PostLikeTest {
                     .intro("intro")
                     .bodyText("내용")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
+                    .visibility(PRIVATE)
+                    .password(null)
                     .build();
 
             @Test
@@ -215,11 +217,12 @@ class PostLikeTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .title("제목")
                     .intro("intro")
                     .bodyText("내용")
                     .writer(mallang)
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
                     .build();
 
             @Test
@@ -270,11 +273,12 @@ class PostLikeTest {
                 // given
                 Post post = Post.builder()
                         .blog(blog)
+                        .visibility(PRIVATE)
+                        .password(null)
                         .title("제목")
                         .intro("intro")
                         .bodyText("내용")
                         .writer(mallang)
-                        .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                         .build();
                 PostLike postLike = new PostLike(post, mallang);
                 postLike.like(postLikeValidator, null);
@@ -295,12 +299,13 @@ class PostLikeTest {
                         .intro("intro")
                         .bodyText("내용")
                         .writer(mallang)
-                        .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
+                        .visibility(PUBLIC)
+                        .password(null)
                         .build();
                 PostLike postLike = new PostLike(post, other);
                 postLike.like(postLikeValidator, null);
                 post.update(
-                        new PostVisibilityPolicy(PRIVATE, null),
+                        PRIVATE, null,
                         "up",
                         "update", "up",
                         null,

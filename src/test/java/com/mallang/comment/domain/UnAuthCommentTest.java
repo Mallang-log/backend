@@ -12,7 +12,6 @@ import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.exception.NoAuthorityPostException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -29,8 +28,9 @@ class UnAuthCommentTest {
     private final Blog blog = new Blog("blog", postWriter);
     private final Post post = Post.builder()
             .blog(blog)
+            .visibility(PUBLIC)
+            .password(null)
             .intro("intro")
-            .visibilityPolish(new PostVisibilityPolicy(PUBLIC, null))
             .writer(postWriter)
             .build();
 
@@ -78,9 +78,10 @@ class UnAuthCommentTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
-                    .writer(postWriter)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .intro("intro")
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
+                    .writer(postWriter)
                     .build();
 
             @Test
@@ -122,9 +123,10 @@ class UnAuthCommentTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PRIVATE)
+                    .password(null)
                     .writer(postWriter)
                     .intro("intro")
-                    .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
             @Test
@@ -191,9 +193,10 @@ class UnAuthCommentTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
-                    .writer(postWriter)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .intro("intro")
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
+                    .writer(postWriter)
                     .build();
 
             @Test
@@ -234,9 +237,10 @@ class UnAuthCommentTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PRIVATE)
+                    .password(null)
                     .writer(postWriter)
                     .intro("intro")
-                    .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
             @Test
@@ -313,9 +317,10 @@ class UnAuthCommentTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
-                    .writer(postWriter)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .intro("intro")
-                    .visibilityPolish(new PostVisibilityPolicy(PROTECTED, "1234"))
+                    .writer(postWriter)
                     .build();
 
             @Test
@@ -372,9 +377,10 @@ class UnAuthCommentTest {
 
             private final Post post = Post.builder()
                     .blog(blog)
+                    .visibility(PROTECTED)
+                    .password("1234")
                     .writer(postWriter)
                     .intro("intro")
-                    .visibilityPolish(new PostVisibilityPolicy(PRIVATE, null))
                     .build();
 
             @Test

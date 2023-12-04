@@ -23,7 +23,7 @@ public class PostVisibilityPolicy {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Visibility visibility;
+    private Visibility visibility = PUBLIC;
 
     @Column(nullable = true)
     private String password;
