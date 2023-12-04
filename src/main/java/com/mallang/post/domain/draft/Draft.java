@@ -73,11 +73,11 @@ public class Draft extends CommonRootEntity<Long> {
             @Nullable Category category,
             List<String> tags
     ) {
-        this.content.update(title, intro, bodyText, postThumbnailImageName, category, tags);
+        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, getWriter());
     }
 
     public void removeCategory() {
-        this.content.removeCategory();
+        this.content = content.removeCategory();
     }
 
     public void validateWriter(Member member) {

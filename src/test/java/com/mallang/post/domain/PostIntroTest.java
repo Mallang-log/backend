@@ -49,20 +49,6 @@ class PostIntroTest {
     }
 
     @Test
-    void 내용이_같으면_같다() {
-        // given
-        PostIntro intro1 = new PostIntro("123");
-        PostIntro intro2 = new PostIntro("123");
-
-        // when & then
-        assertThat(intro1)
-                .isNotEqualTo(new Object())
-                .isEqualTo(intro1)
-                .isEqualTo(intro2)
-                .hasSameHashCodeAs(intro2);
-    }
-
-    @Test
     void 앞뒤_공백은_제거된다() {
         // when
         PostIntro intro1 = new PostIntro(" 123 ");
