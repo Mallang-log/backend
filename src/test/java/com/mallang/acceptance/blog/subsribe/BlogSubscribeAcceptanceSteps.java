@@ -22,7 +22,7 @@ public class BlogSubscribeAcceptanceSteps {
         return given(세션_ID)
                 .body(new BlogSubscribeRequest(블로그_이름))
                 .post("/blog-subscribes")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -33,7 +33,7 @@ public class BlogSubscribeAcceptanceSteps {
         return given(세션_ID)
                 .body(new BlogUnsubscribeRequest(블로그_이름))
                 .delete("/blog-subscribes")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -41,7 +41,7 @@ public class BlogSubscribeAcceptanceSteps {
         return given()
                 .param("memberId", 구독자_ID)
                 .get("/blog-subscribes/subscribing-blogs")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -60,7 +60,7 @@ public class BlogSubscribeAcceptanceSteps {
         return given()
                 .param("blogName", 블로그_이름)
                 .get("/blog-subscribes/subscribers")
-                .then().log().all()
+                .then()
                 .extract();
     }
 

@@ -77,7 +77,7 @@ public class PostManageAcceptanceSteps {
                 .body(요청)
                 .when()
                 .post("/manage/posts")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -89,7 +89,7 @@ public class PostManageAcceptanceSteps {
                 .body(요청)
                 .when()
                 .post("/manage/posts/from-draft")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -101,7 +101,7 @@ public class PostManageAcceptanceSteps {
         return given(세션_ID)
                 .body(request)
                 .put("/manage/posts/{id}", 포스트_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -110,7 +110,6 @@ public class PostManageAcceptanceSteps {
                 .body(new DeletePostRequest(Arrays.asList(포스트_ID), 블로그_이름))
                 .delete("/manage/posts")
                 .then()
-                .log().all()
                 .extract();
     }
 
@@ -128,7 +127,7 @@ public class PostManageAcceptanceSteps {
                 .queryParam("bodyText", 내용)
                 .queryParam("visibility", 공개여부)
                 .get("/manage/posts/{blogName}", 블로그_이름)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -145,7 +144,6 @@ public class PostManageAcceptanceSteps {
         return given(세션_ID)
                 .get("/manage/posts/{blogName}/{id}", 블로그_이름, 포스트_ID)
                 .then()
-                .log().all()
                 .extract();
     }
 

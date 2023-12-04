@@ -17,7 +17,6 @@ public class MemberAcceptanceSteps {
                 .body(request)
                 .post("/members")
                 .then()
-                .log().all()
                 .extract();
     }
 
@@ -28,7 +27,7 @@ public class MemberAcceptanceSteps {
         return given()
                 .body(new BasicLoginRequest(아이디, 비밀번호))
                 .post("/members/login")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -37,7 +36,7 @@ public class MemberAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .get("/members/my")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -46,7 +45,7 @@ public class MemberAcceptanceSteps {
     ) {
         return given()
                 .get("/members/{id}", 회원_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 

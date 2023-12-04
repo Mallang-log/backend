@@ -17,7 +17,7 @@ public class AboutAcceptanceSteps {
         return given(세션_ID)
                 .body(소개_작성_요청)
                 .post("/abouts")
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -29,7 +29,7 @@ public class AboutAcceptanceSteps {
         return given(세션_ID)
                 .body(소개_수정_요청)
                 .put("/abouts/{id}", 블로그_소개_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 
@@ -39,7 +39,7 @@ public class AboutAcceptanceSteps {
     ) {
         return given(세션_ID)
                 .delete("/abouts/{id}", 블로그_소개_ID)
-                .then().log().all()
+                .then()
                 .extract();
     }
 }
