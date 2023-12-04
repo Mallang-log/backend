@@ -59,26 +59,10 @@ public class PostContent {
             Member writer
     ) {
         this.title = title;
+        this.postIntro = new PostIntro(postIntro);
         this.bodyText = bodyText;
         this.postThumbnailImageName = postThumbnailImageName;
-        this.postIntro = new PostIntro(postIntro);
         this.writer = writer;
-        setCategory(category);
-        setTags(tags);
-    }
-
-    public void update(
-            String title,
-            String postIntro,
-            String bodyText,
-            @Nullable String postThumbnailImageName,
-            @Nullable Category category,
-            List<String> tags
-    ) {
-        this.title = title;
-        this.bodyText = bodyText;
-        this.postThumbnailImageName = postThumbnailImageName;
-        this.postIntro = new PostIntro(postIntro);
         setCategory(category);
         setTags(tags);
     }
@@ -114,8 +98,16 @@ public class PostContent {
         return writer.equals(member);
     }
 
-    public void removeCategory() {
-        this.category = null;
+    public PostContent removeCategory() {
+        return new PostContent(
+                getTitle(),
+                getPostIntro(),
+                getBodyText(),
+                getPostThumbnailImageName(),
+                null,
+                getTags(),
+                getWriter()
+        );
     }
 
     public String getPostIntro() {
