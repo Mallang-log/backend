@@ -7,9 +7,7 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
-import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
-import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.common.domain.CommonRootEntity;
 import jakarta.annotation.Nullable;
@@ -21,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -50,60 +49,19 @@ public class Category extends CommonRootEntity<Long> {
     @OneToMany(fetch = LAZY, mappedBy = "parent")
     private List<Category> children = new ArrayList<>();
 
-    private Category(String name, Member owner, Blog blog) {
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "previous_sibling_id")
+    private Category previousSibling;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "next_sibling_id")
+    private Category nextSibling;
+
+    public Category(String name, Member owner, Blog blog) {
         this.name = name;
         this.owner = owner;
         this.blog = blog;
         blog.validateOwner(owner);
-    }
-
-    public static Category create(
-            String name,
-            Member member,
-            Blog blog,
-            @Nullable Category parent,
-            CategoryValidator validator
-    ) {
-        Category category = new Category(name, member, blog);
-        category.setParent(parent, validator);
-        return category;
-    }
-
-    public void update(String name, Category parent, CategoryValidator validator) {
-        this.name = name;
-        setParent(parent, validator);
-    }
-
-    public void delete() {
-        validateNoChildren();
-        unlinkFromParent();
-        registerEvent(new CategoryDeletedEvent(getId()));
-    }
-
-    private void setParent(@Nullable Category parent, CategoryValidator validator) {
-        if (parent == null) {
-            beRoot(validator);
-            return;
-        }
-        beChild(parent);
-    }
-
-    private void beRoot(CategoryValidator validator) {
-        validator.validateDuplicateRootName(owner.getId(), name);
-        unlinkFromParent();
-    }
-
-    private void unlinkFromParent() {
-        if (getParent() != null) {
-            getParent().getChildren().remove(this);
-            parent = null;
-        }
-    }
-
-    private void beChild(Category parent) {
-        parent.validateOwner(owner);
-        validateHierarchy(parent);
-        link(parent);
     }
 
     public void validateOwner(Member member) {
@@ -112,29 +70,67 @@ public class Category extends CommonRootEntity<Long> {
         }
     }
 
-    private void validateHierarchy(Category parent) {
-        if (this.equals(parent)) {
-            throw new CategoryHierarchyViolationException();
-        }
-        if (getDescendants().contains(parent)) {
-            throw new CategoryHierarchyViolationException();
-        }
+    public void updateHierarchy(
+            @Nullable Category parent,
+            @Nullable Category prevSibling,
+            @Nullable Category nextSibling,
+            CategoryValidator validator
+    ) {
+        validator.validateUpdateHierarchy(this, parent, prevSibling, nextSibling);
+        withdrawCurrentHierarchy();
+        participateHierarchy(parent, prevSibling, nextSibling);
     }
 
-    private void link(Category parent) {
-        unlinkFromParent();
-        validateDuplicatedNameInSameHierarchy(parent);
+    private void withdrawCurrentHierarchy() {
+        if (previousSibling != null) {
+            previousSibling.setNextSibling(nextSibling);
+        }
+        if (nextSibling != null) {
+            nextSibling.setPreviousSibling(previousSibling);
+        }
+        if (parent != null) {
+            parent.getChildren().remove(this);
+        }
+        previousSibling = null;
+        nextSibling = null;
+        parent = null;
+    }
+
+    private void participateHierarchy(
+            @Nullable Category parent,
+            @Nullable Category prevSibling,
+            @Nullable Category nextSibling
+    ) {
+        if (prevSibling != null) {
+            prevSibling.setNextSibling(this);
+        }
+        if (nextSibling != null) {
+            nextSibling.setPreviousSibling(this);
+        }
+        if (parent != null) {
+            parent.getChildren().add(this);
+        }
+        this.previousSibling = prevSibling;
+        this.nextSibling = nextSibling;
         this.parent = parent;
-        getParent().getChildren().add(this);
     }
 
-    private void validateDuplicatedNameInSameHierarchy(Category parent) {
-        parent.getChildren().stream()
-                .filter(it -> it.getName().equals(name))
-                .findAny()
-                .ifPresent(it -> {
-                    throw new DuplicateCategoryNameException();
-                });
+    public void updateName(String name, CategoryValidator validator) {
+        validator.validateDuplicateNameInSibling(this, name);
+        this.name = name;
+    }
+
+    public void delete() {
+        validateNoChildren();
+        unlinkFromParent();
+        registerEvent(new CategoryDeletedEvent(getId()));
+    }
+
+    private void unlinkFromParent() {
+        if (parent != null) {
+            parent.children.remove(this);
+            parent = null;
+        }
     }
 
     private void validateNoChildren() {
@@ -153,5 +149,35 @@ public class Category extends CommonRootEntity<Long> {
             children.addAll(child.getDescendants());
         }
         return children;
+    }
+
+    public List<Category> getSortedChildren() {
+        Optional<Category> first = getChildren()
+                .stream()
+                .filter(it -> it.getPreviousSibling() == null)
+                .findAny();
+        if (first.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Category> categories = new ArrayList<>();
+        Category current = first.get();
+        categories.add(current);
+        while (current.getNextSibling() != null) {
+            current = current.getNextSibling();
+            categories.add(current);
+        }
+        return categories;
+    }
+
+    // For lazy loading issue
+    // parent, prev, next 가 지연로딩되어 프록시로 조회되므로, 그냥 사용 시 update 가 동작하지 않음
+    // 이를 해결하기 위해 메서드를 통해 접근해야 하는데, private 혹은 package-private 인 경우 여전히 동작하지 않음
+    // 따라서 protected 로 설정한
+    protected void setPreviousSibling(Category previousSibling) {
+        this.previousSibling = previousSibling;
+    }
+
+    protected void setNextSibling(Category nextSibling) {
+        this.nextSibling = nextSibling;
     }
 }

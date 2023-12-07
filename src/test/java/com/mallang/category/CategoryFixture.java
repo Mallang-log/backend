@@ -1,5 +1,6 @@
 package com.mallang.category;
 
+
 import static com.mallang.category.domain.AlwaysPassCategoryValidator.alwaysPassCategoryValidator;
 
 import com.mallang.auth.domain.Member;
@@ -17,7 +18,7 @@ public class CategoryFixture {
     }
 
     public static Category 루트_카테고리(Long id, String name, Member member, Blog blog) {
-        Category category = Category.create(name, member, blog, null, alwaysPassCategoryValidator);
+        Category category = new Category(name, member, blog);
         ReflectionTestUtils.setField(category, "id", id);
         return category;
     }
@@ -26,8 +27,32 @@ public class CategoryFixture {
         return 하위_카테고리(parent.getId() + childId++, name, member, blog, parent);
     }
 
+    public static Category 하위_카테고리(
+            String name,
+            Member member,
+            Blog blog,
+            Category parent,
+            Category prev,
+            Category next
+    ) {
+        return 하위_카테고리(parent.getId() + childId++, name, member, blog, parent, prev, next);
+    }
+
     public static Category 하위_카테고리(Long id, String name, Member member, Blog blog, Category parent) {
-        Category category = Category.create(name, member, blog, parent, alwaysPassCategoryValidator);
+        return 하위_카테고리(id, name, member, blog, parent, null, null);
+    }
+
+    public static Category 하위_카테고리(
+            Long id,
+            String name,
+            Member member,
+            Blog blog,
+            Category parent,
+            Category prev,
+            Category next
+    ) {
+        Category category = new Category(name, member, blog);
+        category.updateHierarchy(parent, prev, next, alwaysPassCategoryValidator);
         ReflectionTestUtils.setField(category, "id", id);
         return category;
     }
