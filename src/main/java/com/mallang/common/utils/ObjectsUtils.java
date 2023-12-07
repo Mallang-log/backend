@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class ObjectsUtils {
+public final class ObjectsUtils {
+
+    private ObjectsUtils() {
+    }
 
     public static <T> void validateWhenNonNullWithFailCond(
             T object,
