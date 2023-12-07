@@ -140,7 +140,7 @@ class PostManageQueryServiceTest extends ServiceTest {
         @BeforeEach
         void setUp() {
             스프링_카테고리_ID = categoryService.create(
-                    new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null)
+                    new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null, null, null)
             );
             말랑_public_포스트_작성_요청 = new CreatePostCommand(
                     mallangId,

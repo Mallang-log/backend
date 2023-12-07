@@ -4,7 +4,8 @@ import com.mallang.auth.presentation.support.Auth;
 import com.mallang.category.application.CategoryService;
 import com.mallang.category.application.command.DeleteCategoryCommand;
 import com.mallang.category.presentation.request.CreateCategoryRequest;
-import com.mallang.category.presentation.request.UpdateCategoryRequest;
+import com.mallang.category.presentation.request.UpdateCategoryHierarchyRequest;
+import com.mallang.category.presentation.request.UpdateCategoryNameRequest;
 import com.mallang.category.query.CategoryQueryService;
 import com.mallang.category.query.response.CategoryResponse;
 import java.net.URI;
@@ -38,13 +39,23 @@ public class CategoryController {
         return ResponseEntity.created(URI.create("/categories/" + categoryId)).build();
     }
 
-    @PutMapping("/{categoryId}")
-    public ResponseEntity<Void> update(
+    @PutMapping("/{categoryId}/hierarchy")
+    public ResponseEntity<Void> updateHierarchy(
             @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId,
-            @RequestBody UpdateCategoryRequest request
+            @RequestBody UpdateCategoryHierarchyRequest request
     ) {
-        categoryService.update(request.toCommand(categoryId, memberId));
+        categoryService.updateHierarchy(request.toCommand(categoryId, memberId));
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{categoryId}/name")
+    public ResponseEntity<Void> updateName(
+            @PathVariable(name = "categoryId") Long categoryId,
+            @Auth Long memberId,
+            @RequestBody UpdateCategoryNameRequest request
+    ) {
+        categoryService.updateName(request.toCommand(categoryId, memberId));
         return ResponseEntity.ok().build();
     }
 

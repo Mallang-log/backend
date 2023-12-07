@@ -6,14 +6,19 @@ import jakarta.annotation.Nullable;
 public record CreateCategoryRequest(
         String blogName,
         String name,
-        @Nullable Long parentCategoryId
+        @Nullable Long parentCategoryId,
+        @Nullable Long prevCategoryId,
+        @Nullable Long nextCategoryId
+
 ) {
     public CreateCategoryCommand toCommand(Long memberId) {
         return CreateCategoryCommand.builder()
                 .name(name)
                 .blogName(blogName)
                 .memberId(memberId)
-                .parentCategoryId(parentCategoryId)
+                .parentId(parentCategoryId)
+                .nextId(nextCategoryId)
+                .prevId(prevCategoryId)
                 .build();
     }
 }

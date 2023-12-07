@@ -11,7 +11,7 @@ public record CategoryResponse(
         List<CategoryResponse> children
 ) {
     public static CategoryResponse from(Category category) {
-        List<CategoryResponse> children = category.getChildren()
+        List<CategoryResponse> children = category.getSortedChildren()
                 .stream()
                 .map(CategoryResponse::from)
                 .toList();

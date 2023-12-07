@@ -53,7 +53,7 @@ class DraftAcceptanceTest extends AcceptanceTest {
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
         말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
-        Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
+        Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음(), 없음(), 없음());
         임시_글_생성_요청 = new CreateDraftRequest(
                 말랑_블로그_이름,
                 "첫 임시_글",
