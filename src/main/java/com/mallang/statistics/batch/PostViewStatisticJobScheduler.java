@@ -22,6 +22,9 @@ public class PostViewStatisticJobScheduler {
         LocalDateTime now = LocalDateTime.now();
         log.info("포스트 조회수 통계 작업 실행 [실행시간: {}]", now);
         JobExecution history = new JobExecution("postViewStatisticJob", now);
-        jobHistoryRecorder.record(history, postViewStatisticJob::postViewsAggregationJob);
+        LocalDateTime startInclude = now.minusHours(2);
+        LocalDateTime endExclude = now.minusHours(1);
+        jobHistoryRecorder.record(history,
+                () -> postViewStatisticJob.postViewsAggregationJob(startInclude, endExclude));
     }
 }

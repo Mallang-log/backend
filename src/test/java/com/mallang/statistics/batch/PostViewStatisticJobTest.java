@@ -41,7 +41,83 @@ class PostViewStatisticJobTest {
     private final PostId postId2 = new PostId(2L, 1L);
 
     @Test
-    void 집계되지_않은_모든_조회_이력을_가져와_포스트별로_그리고_일자별로_개수를_집계한다() {
+    void 특정_시간대에_포함되지_않으면_집계하지_않는다() {
+        // given
+        LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
+        LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
+        LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
+        postViewHistoryRepository.save(new PostViewHistory(
+                randomUUID(),
+                postId1,
+                시간_2000년_10월_4일_10시_0분
+        ));
+        postViewHistoryRepository.save(new PostViewHistory(
+                randomUUID(),
+                postId1,
+                시간_2000년_10월_4일_10시_59분
+        ));
+        PostViewHistory exclude = postViewHistoryRepository.save(new PostViewHistory(
+                randomUUID(),
+                postId1,
+                시간_2000년_10월_4일_11시_0분
+        ));
+
+        // when
+        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
+
+        // then
+        assertThat(postViewHistoryRepository.findAll().get(0).getId())
+                .isEqualTo(exclude.getId());
+        List<PostViewStatistic> all = postViewStatisticRepository.findAll();
+        assertThat(all).hasSize(1);
+        assertThat(all.get(0).getCount()).isEqualTo(2);
+    }
+
+    @Test
+    void 시작시간은_포함되며_끝시간은_포함되지_않는다() {
+        // given
+        LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
+        LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
+        LocalDateTime 시간_2000년_10월_4일_12시_0분 = LocalDateTime.of(2000, 10, 4, 12, 0);
+        PostViewHistory 시간_2000년_10월_4일_10시_0분_이력 = postViewHistoryRepository.save(
+                new PostViewHistory(
+                        randomUUID(),
+                        postId1,
+                        시간_2000년_10월_4일_10시_0분
+                ));
+        PostViewHistory 시간_2000년_10월_4일_11시_0분_이력 = postViewHistoryRepository.save(
+                new PostViewHistory(
+                        randomUUID(),
+                        postId1,
+                        시간_2000년_10월_4일_11시_0분
+                ));
+
+        // when
+        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
+
+        // then
+        assertThat(postViewHistoryRepository.findById(시간_2000년_10월_4일_11시_0분_이력.getId())).isPresent();
+        assertThat(postViewHistoryRepository.findById(시간_2000년_10월_4일_10시_0분_이력.getId())).isEmpty();
+        assertThat(postViewStatisticRepository.findAll())
+                .hasSize(1)
+                .element(0)
+                .extracting(PostViewStatistic::getCount)
+                .isEqualTo(1);
+
+        // when
+        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_11시_0분, 시간_2000년_10월_4일_12시_0분);
+
+        // then
+        assertThat(postViewHistoryRepository.findById(시간_2000년_10월_4일_11시_0분_이력.getId())).isEmpty();
+        assertThat(postViewStatisticRepository.findAll())
+                .hasSize(1)
+                .element(0)
+                .extracting(PostViewStatistic::getCount)
+                .isEqualTo(2);
+    }
+
+    @Test
+    void 특정_시간대의_집계되지_않은_모든_조회_이력을_가져와_블로그별로_그리고_일자별로_개수를_집계한다() {
         // given
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
@@ -49,6 +125,7 @@ class PostViewStatisticJobTest {
         LocalDateTime 시간_2000년_10월_5일_0시_30분 = LocalDateTime.of(2000, 10, 5, 0, 30);
         LocalDateTime 시간_2000년_10월_5일_1시_22분 = LocalDateTime.of(2000, 10, 5, 1, 22);
         LocalDateTime 시간_2001년_10월_19일_20시_2분 = LocalDateTime.of(2001, 10, 19, 20, 2);
+        LocalDateTime 시간_2001년_10월_19일_20시_2분_0초_1나노초 = LocalDateTime.of(2001, 10, 19, 20, 2, 0, 1);
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_0분));
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_59분));
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_11시_0분));
@@ -61,7 +138,7 @@ class PostViewStatisticJobTest {
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId2, 시간_2000년_10월_4일_10시_0분));
 
         // when
-        postViewStatisticJob.postViewsAggregationJob();
+        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2001년_10월_19일_20시_2분_0초_1나노초);
 
         // then
         assertThat(postViewHistoryRepository.findAll()).isEmpty();
@@ -98,9 +175,10 @@ class PostViewStatisticJobTest {
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
         LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
+        LocalDateTime 시간_2000년_10월_4일_12시 = LocalDateTime.of(2000, 10, 4, 12, 0);
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_0분));
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_59분));
-        postViewStatisticJob.postViewsAggregationJob();
+        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_12시);
         LocalDate 시간_2000년_10월_4일 = LocalDate.of(2000, 10, 4);
         Optional<PostViewStatistic> statistic = postViewStatisticRepository
                 .findByPostIdAndStatisticDate(postId1, 시간_2000년_10월_4일);
@@ -112,7 +190,7 @@ class PostViewStatisticJobTest {
 
         // when
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_11시_0분));
-        postViewStatisticJob.postViewsAggregationJob();
+        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_12시);
 
         // then
         assertThat(postViewHistoryRepository.findAll()).isEmpty();
