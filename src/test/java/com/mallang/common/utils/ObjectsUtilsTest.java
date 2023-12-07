@@ -52,7 +52,7 @@ class ObjectsUtilsTest {
                         obj -> true,
                         new RuntimeException()
                 );
-            });
+            }).isInstanceOf(RuntimeException.class);
         }
     }
 
