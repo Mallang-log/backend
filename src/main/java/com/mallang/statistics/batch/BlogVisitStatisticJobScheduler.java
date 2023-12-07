@@ -22,6 +22,10 @@ public class BlogVisitStatisticJobScheduler {
         LocalDateTime now = LocalDateTime.now();
         log.info("블로그 방문수 통계 작업 실행 [실행시간: {}]", now);
         JobExecution history = new JobExecution("blogVisitsAggregationJob", now);
-        jobHistoryRecorder.record(history, blogVisitStatisticJob::blogVisitsAggregationJob);
+        LocalDateTime startInclude = now.minusHours(2);
+        LocalDateTime endExclude = now.minusHours(1);
+        jobHistoryRecorder.record(history, () ->
+                blogVisitStatisticJob.blogVisitsAggregationJob(startInclude, endExclude)
+        );
     }
 }
