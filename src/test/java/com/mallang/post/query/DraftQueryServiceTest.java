@@ -39,6 +39,8 @@ class DraftQueryServiceTest extends ServiceTest {
                 memberId,
                 blogName,
                 "Spring",
+                null,
+                null,
                 null
         ));
         CreateDraftCommand 임시_글_1_요청 = CreateDraftCommand.builder()

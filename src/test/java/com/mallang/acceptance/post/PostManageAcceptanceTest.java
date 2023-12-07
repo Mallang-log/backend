@@ -66,9 +66,9 @@ class PostManageAcceptanceTest extends AcceptanceTest {
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
         말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
         동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
-        Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음());
-        JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID);
-        Front_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Front", 없음());
+        Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", 없음(), 없음(), 없음());
+        JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "JPA", Spring_카테고리_ID, 없음(), 없음());
+        Front_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Front", 없음(), Spring_카테고리_ID, 없음());
     }
 
     @Nested

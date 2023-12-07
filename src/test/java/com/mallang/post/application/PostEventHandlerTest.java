@@ -25,9 +25,21 @@ class PostEventHandlerTest extends ServiceTest {
             Long 말랑_ID = 회원을_저장한다("말랑");
             String blogName = 블로그_개설(말랑_ID, "mallang-log");
             Long categoryId1 = categoryService.create(new CreateCategoryCommand(
-                    말랑_ID, blogName, "최상위1", null));
+                    말랑_ID,
+                    blogName,
+                    "최상위1",
+                    null,
+                    null,
+                    null
+            ));
             Long categoryId2 = categoryService.create(new CreateCategoryCommand(
-                    말랑_ID, blogName, "최상위2", null));
+                    말랑_ID,
+                    blogName,
+                    "최상위2",
+                    null,
+                    categoryId1,
+                    null
+            ));
             Long postId1 = 포스트를_저장한다(말랑_ID, blogName, "제목1", "내용", categoryId1).getPostId();
             Long postId2 = 포스트를_저장한다(말랑_ID, blogName, "제목2", "내용", categoryId1).getPostId();
             Long postId3 = 포스트를_저장한다(말랑_ID, blogName, "안삭제", "내용", categoryId2).getPostId();

@@ -7,7 +7,11 @@ import com.mallang.common.execption.MallangLogException;
 
 public class DuplicateCategoryNameException extends MallangLogException {
 
+    public DuplicateCategoryNameException(String message) {
+        super(new ErrorCode(CONFLICT, message));
+    }
+
     public DuplicateCategoryNameException() {
-        super(new ErrorCode(CONFLICT, "이미 사용중인 카테고리 이름입니다."));
+        super(new ErrorCode(CONFLICT, "형제 카테고리 간 중복되는 이름이 있습니다."));
     }
 }

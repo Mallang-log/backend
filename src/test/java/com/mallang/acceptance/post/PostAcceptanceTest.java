@@ -55,8 +55,8 @@ class PostAcceptanceTest extends AcceptanceTest {
         동훈_세션_ID = 회원가입과_로그인_후_세션_ID_반환("동훈");
         말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
         동훈_블로그_이름 = 블로그_개설(동훈_세션_ID, "donghun-log");
-        말랑_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", null);
-        동훈_카테고리_ID = 카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Spring", null);
+        말랑_카테고리_ID = 카테고리_생성(말랑_세션_ID, 말랑_블로그_이름, "Spring", null, null, null);
+        동훈_카테고리_ID = 카테고리_생성(동훈_세션_ID, 동훈_블로그_이름, "Spring", null, null, null);
     }
 
     @Nested

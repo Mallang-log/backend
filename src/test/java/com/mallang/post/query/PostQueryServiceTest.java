@@ -285,8 +285,20 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_카테고리의_포스트만_조회한다() {
             // given
-            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
-            Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "노드", null));
+            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId,
+                    mallangBlogName,
+                    "스프링",
+                    null,
+                    null,
+                    null
+            ));
+            Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId,
+                    mallangBlogName,
+                    "노드",
+                    null,
+                    스프링,
+                    null
+            ));
             Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링).getPostId();
             포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", 노드);
             PostSearchCond cond = PostSearchCond.builder()
@@ -316,8 +328,22 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 최상위_카테고리로_조회_시_하위_카테고리도_포함되면_조회한다() {
             // given
-            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null));
-            Long JPA = categoryService.create(new CreateCategoryCommand(mallangId, mallangBlogName, "JPA", 스프링));
+            Long 스프링 = categoryService.create(new CreateCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "스프링",
+                    null,
+                    null,
+                    null
+            ));
+            Long JPA = categoryService.create(new CreateCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "JPA",
+                    스프링,
+                    null,
+                    null
+            ));
             Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링).getPostId();
             Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA).getPostId();
             PostSearchCond cond = PostSearchCond.builder()
