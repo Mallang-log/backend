@@ -20,10 +20,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@ExtendWith(DataClearExtension.class)
 @DisplayName("블로그 방문자수 통계 작업 (BlogVisitStatisticJob) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith(DataClearExtension.class)
 @SpringBootTest
 class BlogVisitStatisticJobTest {
 
@@ -40,7 +40,93 @@ class BlogVisitStatisticJobTest {
     private final String blog2Name = "blog2name";
 
     @Test
-    void 집계되지_않은_모든_조회_이력을_가져와_블로그별로_그리고_일자별로_개수를_집계한다() {
+    void 특정_시간대에_포함되지_않으면_집계하지_않는다() {
+        // given
+        LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
+        LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
+        LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
+        blogVisitHistoryRepository.save(new BlogVisitHistory(
+                randomUUID(),
+                blog1Name,
+                "",
+                "",
+                시간_2000년_10월_4일_10시_0분
+        ));
+        blogVisitHistoryRepository.save(new BlogVisitHistory(
+                randomUUID(),
+                blog1Name,
+                "",
+                "",
+                시간_2000년_10월_4일_10시_59분
+        ));
+        BlogVisitHistory exclude = blogVisitHistoryRepository.save(new BlogVisitHistory(
+                randomUUID(),
+                blog1Name,
+                "",
+                "",
+                시간_2000년_10월_4일_11시_0분
+        ));
+
+        // when
+        blogVisitStatisticJob.blogVisitsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
+
+        // then
+        assertThat(blogVisitHistoryRepository.findAll().get(0).getId())
+                .isEqualTo(exclude.getId());
+        List<BlogVisitStatistic> all = blogVisitStatisticRepository.findAll();
+        assertThat(all).hasSize(1);
+        assertThat(all.get(0).getCount()).isEqualTo(2);
+    }
+
+    @Test
+    void 시작시간은_포함되며_끝시간은_포함되지_않는다() {
+        // given
+        LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
+        LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
+        LocalDateTime 시간_2000년_10월_4일_12시_0분 = LocalDateTime.of(2000, 10, 4, 12, 0);
+        BlogVisitHistory 시간_2000년_10월_4일_10시_0분_이력 = blogVisitHistoryRepository.save(
+                new BlogVisitHistory(
+                        randomUUID(),
+                        blog1Name,
+                        "",
+                        "",
+                        시간_2000년_10월_4일_10시_0분
+                ));
+        BlogVisitHistory 시간_2000년_10월_4일_11시_0분_이력 = blogVisitHistoryRepository.save(
+                new BlogVisitHistory(
+                        randomUUID(),
+                        blog1Name,
+                        "",
+                        "",
+                        시간_2000년_10월_4일_11시_0분
+                ));
+
+        // when
+        blogVisitStatisticJob.blogVisitsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
+
+        // then
+        assertThat(blogVisitHistoryRepository.findById(시간_2000년_10월_4일_11시_0분_이력.getId())).isPresent();
+        assertThat(blogVisitHistoryRepository.findById(시간_2000년_10월_4일_10시_0분_이력.getId())).isEmpty();
+        assertThat(blogVisitStatisticRepository.findAll())
+                .hasSize(1)
+                .element(0)
+                .extracting(BlogVisitStatistic::getCount)
+                .isEqualTo(1);
+
+        // when
+        blogVisitStatisticJob.blogVisitsAggregationJob(시간_2000년_10월_4일_11시_0분, 시간_2000년_10월_4일_12시_0분);
+
+        // then
+        assertThat(blogVisitHistoryRepository.findById(시간_2000년_10월_4일_11시_0분_이력.getId())).isEmpty();
+        assertThat(blogVisitStatisticRepository.findAll())
+                .hasSize(1)
+                .element(0)
+                .extracting(BlogVisitStatistic::getCount)
+                .isEqualTo(2);
+    }
+
+    @Test
+    void 특정_시간대의_집계되지_않은_모든_조회_이력을_가져와_블로그별로_그리고_일자별로_개수를_집계한다() {
         // given
         LocalDateTime 시간_2000년_10월_4일_10시_0분 = LocalDateTime.of(2000, 10, 4, 10, 0);
         LocalDateTime 시간_2000년_10월_4일_10시_59분 = LocalDateTime.of(2000, 10, 4, 10, 59);
@@ -48,6 +134,7 @@ class BlogVisitStatisticJobTest {
         LocalDateTime 시간_2000년_10월_5일_0시_30분 = LocalDateTime.of(2000, 10, 5, 0, 30);
         LocalDateTime 시간_2000년_10월_5일_1시_22분 = LocalDateTime.of(2000, 10, 5, 1, 22);
         LocalDateTime 시간_2001년_10월_19일_20시_2분 = LocalDateTime.of(2001, 10, 19, 20, 2);
+        LocalDateTime 시간_2001년_10월_20일 = LocalDateTime.of(2001, 10, 20, 0, 0, 0);
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_10시_0분));
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_10시_59분));
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_11시_0분));
@@ -61,7 +148,7 @@ class BlogVisitStatisticJobTest {
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog2Name, "", "", 시간_2000년_10월_4일_10시_0분));
 
         // when
-        blogVisitStatisticJob.blogVisitsAggregationJob();
+        blogVisitStatisticJob.blogVisitsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2001년_10월_20일);
 
         // then
         assertThat(blogVisitHistoryRepository.findAll()).isEmpty();
@@ -100,7 +187,7 @@ class BlogVisitStatisticJobTest {
         LocalDateTime 시간_2000년_10월_4일_11시_0분 = LocalDateTime.of(2000, 10, 4, 11, 0);
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_10시_0분));
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_10시_59분));
-        blogVisitStatisticJob.blogVisitsAggregationJob();
+        blogVisitStatisticJob.blogVisitsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
 
         LocalDate 시간_2000년_10월_4일 = LocalDate.of(2000, 10, 4);
         Optional<BlogVisitStatistic> statistic = blogVisitStatisticRepository
@@ -110,10 +197,11 @@ class BlogVisitStatisticJobTest {
         assertThat(postViewStatistic.getBlogName()).isEqualTo(blog1Name);
         assertThat(postViewStatistic.getStatisticDate()).isEqualTo(시간_2000년_10월_4일);
         assertThat(postViewStatistic.getCount()).isEqualTo(2);
+        LocalDateTime 시간_2000년_10월_5일 = LocalDateTime.of(2000, 10, 5, 0, 0, 0);
 
         // when
         blogVisitHistoryRepository.save(new BlogVisitHistory(randomUUID(), blog1Name, "", "", 시간_2000년_10월_4일_11시_0분));
-        blogVisitStatisticJob.blogVisitsAggregationJob();
+        blogVisitStatisticJob.blogVisitsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_5일);
 
         // then
         assertThat(blogVisitHistoryRepository.findAll()).isEmpty();

@@ -7,6 +7,7 @@ import com.mallang.statistics.statistic.BlogVisitStatisticRepository;
 import com.mallang.statistics.statistic.source.BlogVisitHistory;
 import com.mallang.statistics.statistic.source.BlogVisitHistoryRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,16 +24,20 @@ public class BlogVisitStatisticJob {
     private final BlogVisitStatisticRepository blogVisitStatisticRepository;
     private final TransactionTemplate transactionTemplate;
 
-    public void blogVisitsAggregationJob() {
-        Map<String, List<BlogVisitHistory>> unprocessedHistories = getUnAggregatedVisitsStep();
+    public void blogVisitsAggregationJob(LocalDateTime startInclude, LocalDateTime endExclude) {
+        Map<String, List<BlogVisitHistory>> unprocessedHistories = getUnAggregatedVisitsStep(startInclude, endExclude);
         Map<String, Map<LocalDate, List<BlogVisitHistory>>> historiesGroupedByDateByPostId =
                 groupingViewByDateStep(unprocessedHistories);
         aggregateVisitsStep(historiesGroupedByDateByPostId);
     }
 
-    private Map<String, List<BlogVisitHistory>> getUnAggregatedVisitsStep() {
-        return blogVisitHistoryRepository.findAll()
-                .stream()
+    private Map<String, List<BlogVisitHistory>> getUnAggregatedVisitsStep(
+            LocalDateTime startInclude,
+            LocalDateTime endExclude
+    ) {
+        return blogVisitHistoryRepository.findWithCreatedDateBetweenIncludeStartAndExcludeEnd(
+                        startInclude, endExclude
+                ).stream()
                 .collect(groupingBy(BlogVisitHistory::getBlogName));
     }
 

@@ -8,6 +8,7 @@ import com.mallang.statistics.statistic.PostViewStatisticRepository;
 import com.mallang.statistics.statistic.source.PostViewHistory;
 import com.mallang.statistics.statistic.source.PostViewHistoryRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,15 +25,18 @@ public class PostViewStatisticJob {
     private final PostViewStatisticRepository postViewStatisticRepository;
     private final TransactionTemplate transactionTemplate;
 
-    public void postViewsAggregationJob() {
-        Map<PostId, List<PostViewHistory>> unprocessedHistories = getUnAggregatedViewsStep();
+    public void postViewsAggregationJob(LocalDateTime startInclude, LocalDateTime endExclude) {
+        Map<PostId, List<PostViewHistory>> unprocessedHistories = getUnAggregatedViewsStep(startInclude, endExclude);
         Map<PostId, Map<LocalDate, List<PostViewHistory>>> historiesGroupedByDateByPostId =
                 groupingViewByDateStep(unprocessedHistories);
         aggregateViewsStep(historiesGroupedByDateByPostId);
     }
 
-    private Map<PostId, List<PostViewHistory>> getUnAggregatedViewsStep() {
-        return postViewHistoryRepository.findAll()
+    private Map<PostId, List<PostViewHistory>> getUnAggregatedViewsStep(
+            LocalDateTime startInclude,
+            LocalDateTime endExclude
+    ) {
+        return postViewHistoryRepository.findWithCreatedDateBetweenIncludeStartAndExcludeEnd(startInclude, endExclude)
                 .stream()
                 .collect(groupingBy(PostViewHistory::getPostId));
     }
