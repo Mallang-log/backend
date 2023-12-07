@@ -6,6 +6,8 @@ import static com.mallang.category.CategoryFixture.루트_카테고리;
 import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
@@ -18,7 +20,6 @@ import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -40,168 +41,146 @@ class CategoryTest {
     class 생성_시 {
 
         @Test
-        void 하위_카테고리로_만든다() {
-            // given
-            Category 최상위 = Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
-
-            // when
-            Category 하위 = Category.create("하위", mallang, mallangBlog, 최상위, categoryValidator);
-
-            // then
-            assertThat(하위.getParent()).isEqualTo(최상위);
-        }
-
-        @Test
-        void 무한_Depth_가_가능하다() {
-            // given
-            Category 최상위 = Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
-            Category 하위 = Category.create("하위", mallang, mallangBlog, 최상위, categoryValidator);
-
-            // when
-            Category 더하위 = Category.create("더하위", mallang, mallangBlog, 하위, categoryValidator);
-
-            // then
-            assertThat(하위.getParent()).isEqualTo(최상위);
-            assertThat(더하위.getParent()).isEqualTo(하위);
-        }
-
-        @Test
-        void 같은_부모를_가진_직계_자식끼리는_이름이_겹쳐서는_안된다() {
-            // given
-            Category 최상위 = Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
-            Category.create("하위", mallang, mallangBlog, 최상위, categoryValidator);
-
+        void 생성한다() {
             // when & then
-            assertThatThrownBy(() ->
-                    Category.create("하위", mallang, mallangBlog, 최상위, categoryValidator)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
-        }
-
-        @Test
-        void 루트끼리는_이름이_겹쳐서는_안된다() {
-            // given
-            Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
-            willThrow(new DuplicateCategoryNameException())
-                    .given(categoryValidator)
-                    .validateDuplicateRootName(mallang.getId(), "최상위");
-
-            // when & then
-            assertThatThrownBy(() ->
-                    Category.create("최상위", mallang, mallangBlog, null, categoryValidator)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
-        }
-
-        @Test
-        void 자신의_카테고리가_아닌_카테고리를_부모로_지정하면_예외() {
-            // given
-            Category 다른회원_최상위 = Category.create("다른회원 최상위", otherMember, otherBlog, null, categoryValidator);
-
-            // when & then
-            assertThatThrownBy(() ->
-                    Category.create("최상위", mallang, mallangBlog, 다른회원_최상위, categoryValidator)
-            ).isInstanceOf(NoAuthorityCategoryException.class);
+            assertDoesNotThrow(() -> {
+                new Category("최상위", mallang, mallangBlog);
+            });
         }
 
         @Test
         void 다른_사람의_블로그에_카테고리_생성_시도_시_예외() {
             // when & then
-            assertThatThrownBy(() ->
-                    Category.create("카테고리", mallang, otherBlog, null, categoryValidator)
-            ).isInstanceOf(NoAuthorityBlogException.class);
+            assertThatThrownBy(() -> {
+                new Category("카테고리", mallang, otherBlog);
+            }).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 
     @Nested
-    class 수정_시 {
+    class 이름_수정_시 {
 
         private final Category rootCategory = 루트_카테고리("루트", mallang, mallangBlog);
-        private final Category childCategory = 하위_카테고리("하위", mallang, mallangBlog, rootCategory);
 
         @Test
         void 이름을_변경할_수_있다() {
             // when
-            rootCategory.update("말랑", null, categoryValidator);
+            rootCategory.updateName("말랑", categoryValidator);
 
             // then
             assertThat(rootCategory.getName()).isEqualTo("말랑");
         }
 
         @Test
-        void 자식을_루트로_만들_수_있다() {
+        void 형제_중_이름이_같은게_있다면_예외() {
             // given
-            Category childChildCategory = 하위_카테고리("하위의 하위", mallang, mallangBlog, childCategory);
-
-            // when
-            childCategory.update("자식 to Root", null, categoryValidator);
-
-            // then
-            assertThat(childCategory.getParent()).isNull();
-            assertThat(childChildCategory.getParent()).isEqualTo(childCategory);
-        }
-
-        @Test
-        void 다른_카테고리의_하위_카테고리로_수정되는_경우_기존_자식들_역시_따라간다() {
-            // given
-            Category otherRootCategory = 루트_카테고리("다른 루트", mallang, mallangBlog);
-            Category childChildCategory = 하위_카테고리("하위의 하위", mallang, mallangBlog, childCategory);
-
-            // when
-            childCategory.update("자식 to otherRoot", otherRootCategory, categoryValidator);
-
-            // then
-            assertThat(childCategory.getParent()).isEqualTo(otherRootCategory);
-            assertThat(childChildCategory.getParent()).isEqualTo(childCategory);
-        }
-
-        @Test
-        void 자기_자신이_부모여서는_안된다() {
-            // when & then
-            assertThatThrownBy(() ->
-                    rootCategory.update("name", rootCategory, categoryValidator)
-            ).isInstanceOf(CategoryHierarchyViolationException.class);
-        }
-
-        @Test
-        void 자신보다_낮은_카테고리를_부모로_둘_수_없다() {
-            // when & then
-            assertThatThrownBy(() ->
-                    rootCategory.update("name", childCategory, categoryValidator)
-            ).isInstanceOf(CategoryHierarchyViolationException.class);
-        }
-
-        @Test
-        void 같은_부모를_가진_직계_자식끼리는_이름이_겹쳐서는_안된다() {
-            // given
-            Category child2 = 하위_카테고리("child 2", mallang, mallangBlog, rootCategory);
-
-            // when & then
-            assertThatThrownBy(() ->
-                    child2.update(childCategory.getName(), rootCategory, categoryValidator)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
-        }
-
-        @Test
-        void 루트끼리는_이름이_겹쳐서는_안된다() {
-            // given
-            willThrow(new DuplicateCategoryNameException())
+            willThrow(DuplicateCategoryNameException.class)
                     .given(categoryValidator)
-                    .validateDuplicateRootName(mallang.getId(), "최상위");
+                    .validateDuplicateNameInSibling(any(), any());
 
             // when & then
-            assertThatThrownBy(() ->
-                    childCategory.update("최상위", null, categoryValidator)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
+            assertThatThrownBy(() -> {
+                rootCategory.updateName("말랑", categoryValidator);
+            }).isInstanceOf(DuplicateCategoryNameException.class);
+        }
+    }
+
+    @Nested
+    class 카테고리_게층_구조_변경_시 {
+
+        @Test
+        void 계층구조를_변경한다() {
+            // given
+            Category root1 = new Category("root1", mallang, mallangBlog);
+            Category root2 = new Category("root2", mallang, mallangBlog);
+            Category root1First = new Category("first", mallang, mallangBlog);
+            Category root1Second = new Category("second", mallang, mallangBlog);
+            Category root1Third = new Category("third", mallang, mallangBlog);
+            Category root1Forth = new Category("forth", mallang, mallangBlog);
+            root2.updateHierarchy(null, root1, null, categoryValidator);
+            root1First.updateHierarchy(root1, null, null, categoryValidator);
+            root1Second.updateHierarchy(root1, root1First, null, categoryValidator);
+            root1Third.updateHierarchy(root1, root1Second, null, categoryValidator);
+            root1Forth.updateHierarchy(root1, root1Third, null, categoryValidator);
+
+            // when
+            root2.updateHierarchy(root1, root1Second, root1Third, categoryValidator);
+
+            // then
+            assertThat(root1.getChildren()).containsExactlyInAnyOrder(
+                    root1First, root1Second, root2, root1Third, root1Forth
+            );
+            assertThat(root1First.getPreviousSibling()).isNull();
+            assertThat(root1First.getNextSibling()).isEqualTo(root1Second);
+
+            assertThat(root1Second.getPreviousSibling()).isEqualTo(root1First);
+            assertThat(root1Second.getNextSibling()).isEqualTo(root2);
+
+            assertThat(root2.getPreviousSibling()).isEqualTo(root1Second);
+            assertThat(root2.getNextSibling()).isEqualTo(root1Third);
+
+            assertThat(root1Third.getPreviousSibling()).isEqualTo(root2);
+            assertThat(root1Third.getNextSibling()).isEqualTo(root1Forth);
+
+            assertThat(root1Forth.getPreviousSibling()).isEqualTo(root1Third);
+            assertThat(root1Forth.getNextSibling()).isNull();
         }
 
         @Test
-        void 자신의_카테고리가_아닌_카테고리를_부모로_지정하면_예외() {
+        void 무한_Depth_가_가능하다() {
             // given
-            Category 다른회원_최상위 = Category.create("다른회원 최상위", otherMember, otherBlog, null, categoryValidator);
+            Category root = new Category("rootCategory", mallang, mallangBlog);
+            Category child = new Category("child", mallang, mallangBlog);
+            Category childChild = new Category("childChild", mallang, mallangBlog);
+            Category childChildChild = new Category("childChildChild", mallang, mallangBlog);
+
+            // when
+            child.updateHierarchy(root, null, null, categoryValidator);
+            childChild.updateHierarchy(child, null, null, categoryValidator);
+            childChildChild.updateHierarchy(childChild, null, null, categoryValidator);
+
+            // then
+            assertThat(child.getDescendants()).containsExactly(childChild, childChildChild);
+            assertThat(childChild.getDescendants()).containsExactly(childChildChild);
+        }
+
+        @Test
+        void 변경_이후에도_카테고리의_자식들은_동일하다() {
+            // given
+            Category root = new Category("Spring", mallang, mallangBlog);
+
+            Category firstChild = new Category("First", mallang, mallangBlog);
+            firstChild.updateHierarchy(root, null, null, categoryValidator);
+
+            Category firstFirstChild = new Category("FirstFirst", mallang, mallangBlog);
+            firstFirstChild.updateHierarchy(firstChild, null, null, categoryValidator);
+
+            Category secondChild = new Category("Second", mallang, mallangBlog);
+            secondChild.updateHierarchy(root, firstChild, null, categoryValidator);
+
+            firstChild.updateHierarchy(null, root, null, categoryValidator);
+
+            // then
+            assertThat(root.getDescendants()).containsExactly(secondChild);
+            assertThat(firstChild.getParent()).isNull();
+            assertThat(firstChild.getDescendants()).containsExactly(firstFirstChild);
+        }
+
+        @Test
+        void 검증_시_문제가_있다면_예외() {
+            // given
+            Category root = new Category("root", mallang, mallangBlog);
+            Category first = new Category("first", mallang, mallangBlog);
+            first.updateHierarchy(root, null, null, categoryValidator);
+
+            willThrow(CategoryHierarchyViolationException.class)
+                    .given(categoryValidator)
+                    .validateUpdateHierarchy(first, null, null, null);
 
             // when & then
-            assertThatThrownBy(() ->
-                    childCategory.update("하위", 다른회원_최상위, categoryValidator)
-            ).isInstanceOf(NoAuthorityCategoryException.class);
+            assertThatThrownBy(() -> {
+                first.updateHierarchy(null, null, null, categoryValidator);
+            }).isInstanceOf(CategoryHierarchyViolationException.class);
         }
     }
 
@@ -225,7 +204,7 @@ class CategoryTest {
             childCategory.delete();
 
             // then
-            assertThat(rootCategory.getChildren()).isEmpty();
+            assertThat(rootCategory.getSortedChildren()).isEmpty();
         }
 
         @Test
@@ -242,10 +221,10 @@ class CategoryTest {
     @Test
     void 주인을_검증한다() {
         // given
-        Category 최상위 = Category.create("최상위", mallang, mallangBlog, null, categoryValidator);
+        Category 최상위 = new Category("최상위", mallang, mallangBlog);
 
         // when & then
-        Assertions.assertDoesNotThrow(() -> {
+        assertDoesNotThrow(() -> {
             최상위.validateOwner(mallang);
 
         });
@@ -260,7 +239,7 @@ class CategoryTest {
         Category 최상위 = 루트_카테고리("최상위", mallang, mallangBlog);
         Category 하위 = 하위_카테고리("하위", mallang, mallangBlog, 최상위);
         Category 더하위1 = 하위_카테고리("더하위1", mallang, mallangBlog, 하위);
-        Category 더하위2 = 하위_카테고리("더하위2", mallang, mallangBlog, 하위);
+        Category 더하위2 = 하위_카테고리("더하위2", mallang, mallangBlog, 하위, 더하위1, null);
         Category 더더하위1 = 하위_카테고리("더더하위1", mallang, mallangBlog, 더하위1);
 
         // when

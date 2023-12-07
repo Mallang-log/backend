@@ -40,6 +40,8 @@ class DraftServiceTest extends ServiceTest {
                 memberId,
                 blogName,
                 "Spring",
+                null,
+                null,
                 null
         ));
     }
@@ -138,7 +140,12 @@ class DraftServiceTest extends ServiceTest {
             Long otherMemberId = 회원을_저장한다("other");
             String otherBlogName = 블로그_개설(otherMemberId, "other-log");
             Long categoryId = categoryService.create(new CreateCategoryCommand(
-                    otherMemberId, otherBlogName, "Spring", null
+                    otherMemberId,
+                    otherBlogName,
+                    "Spring",
+                    null,
+                    null,
+                    null
             ));
             CreateDraftCommand command = CreateDraftCommand.builder()
                     .memberId(memberId)

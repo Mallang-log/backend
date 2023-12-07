@@ -1,5 +1,6 @@
 package com.mallang.category.domain;
 
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.exception.NotFoundCategoryException;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -14,14 +15,16 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         return findById(id).orElseThrow(NotFoundCategoryException::new);
     }
 
-    @Query("SELECT c FROM Category c WHERE c.owner.id = :memberId AND c.parent IS NULL")
-    List<Category> findAllRootByMemberId(@Param("memberId") Long memberId);
+    boolean existsByBlog(Blog blog);
+
+    @Query("SELECT c FROM Category c WHERE c.blog = :blog AND c.parent IS NULL")
+    List<Category> findAllRootByBlog(@Param("blog") Blog blog);
 
     @Nullable
-    default Category getParentById(@Nullable Long parentCategoryId) {
-        if (parentCategoryId == null) {
+    default Category getByNullableId(@Nullable Long categoryId) {
+        if (categoryId == null) {
             return null;
         }
-        return getById(parentCategoryId);
+        return getById(categoryId);
     }
 }

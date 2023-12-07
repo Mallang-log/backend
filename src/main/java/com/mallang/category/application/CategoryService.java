@@ -6,7 +6,8 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.category.application.command.DeleteCategoryCommand;
-import com.mallang.category.application.command.UpdateCategoryCommand;
+import com.mallang.category.application.command.UpdateCategoryHierarchyCommand;
+import com.mallang.category.application.command.UpdateCategoryNameCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
 import com.mallang.category.domain.CategoryValidator;
@@ -27,17 +28,30 @@ public class CategoryService {
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
-        Category parentCategory = categoryRepository.getParentById(command.parentCategoryId());
-        Category category = Category.create(command.name(), member, blog, parentCategory, categoryValidator);
+        Category category = new Category(command.name(), member, blog);
+        updateHierarchy(category, command.parentId(), command.prevId(), command.nextId());
         return categoryRepository.save(category).getId();
     }
 
-    public void update(UpdateCategoryCommand command) {
+    public void updateHierarchy(UpdateCategoryHierarchyCommand command) {
+        Member member = memberRepository.getById(command.memberId());
+        Category target = categoryRepository.getById(command.categoryId());
+        target.validateOwner(member);
+        updateHierarchy(target, command.parentId(), command.prevId(), command.nextId());
+    }
+
+    private void updateHierarchy(Category target, Long parentId, Long prevId, Long nextId) {
+        Category parent = categoryRepository.getByNullableId(parentId);
+        Category prev = categoryRepository.getByNullableId(prevId);
+        Category next = categoryRepository.getByNullableId(nextId);
+        target.updateHierarchy(parent, prev, next, categoryValidator);
+    }
+
+    public void updateName(UpdateCategoryNameCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Category category = categoryRepository.getById(command.categoryId());
         category.validateOwner(member);
-        Category parentCategory = categoryRepository.getParentById(command.parentCategoryId());
-        category.update(command.name(), parentCategory, categoryValidator);
+        category.updateName(command.name(), categoryValidator);
     }
 
     public void delete(DeleteCategoryCommand command) {
