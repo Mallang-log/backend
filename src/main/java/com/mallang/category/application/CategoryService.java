@@ -51,7 +51,7 @@ public class CategoryService {
         Member member = memberRepository.getById(command.memberId());
         Category category = categoryRepository.getById(command.categoryId());
         category.validateOwner(member);
-        category.updateName(command.name(), categoryValidator);
+        category.updateName(command.name());
     }
 
     public void delete(DeleteCategoryCommand command) {

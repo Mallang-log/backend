@@ -11,10 +11,6 @@ public class AlwaysPassCategoryValidator extends CategoryValidator {
     }
 
     @Override
-    public void validateDuplicateNameInSibling(Category category, String name) {
-    }
-
-    @Override
     public void validateUpdateHierarchy(
             Category target,
             @Nullable Category parent,

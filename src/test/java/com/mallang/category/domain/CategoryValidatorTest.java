@@ -12,7 +12,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityCategoryException;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -32,114 +31,6 @@ class CategoryValidatorTest {
     private final Blog otherBlog = new Blog("other-log", otherMember);
     private final CategoryRepository categoryRepository = mock(CategoryRepository.class);
     private final CategoryValidator categoryValidator = new CategoryValidator(categoryRepository);
-
-    @Nested
-    class 형제들_중_중복되는_이름이_있는지_검증_시 {
-
-        @Nested
-        class 루트_카테고리인_경우 {
-
-            @Test
-            void 다른_루트_카테고리들_중_주어진_이름을_가진_카테고리가_있으면_예외() {
-                // given
-                Category root = new Category("root", member, memberBlog);
-                Category otherRoot1 = new Category("otherRoot1", member, memberBlog);
-                Category otherRoot2 = new Category("otherRoot2", member, memberBlog);
-                given(categoryRepository.findAllRootByBlog(memberBlog))
-                        .willReturn(List.of(root, otherRoot1, otherRoot2));
-
-                // when & then
-                assertThatThrownBy(() -> {
-                    categoryValidator.validateDuplicateNameInSibling(root, "otherRoot2");
-                }).isInstanceOf(DuplicateCategoryNameException.class);
-            }
-
-            @Test
-            void 다른_루트_카테고리들_중_주어진_이름을_가진_카테고리가_없으면_문제없다() {
-                // given
-                Category root = new Category("root", member, memberBlog);
-                Category otherRoot1 = new Category("otherRoot1", member, memberBlog);
-                Category otherRoot2 = new Category("otherRoot2", member, memberBlog);
-                given(categoryRepository.findAllRootByBlog(memberBlog))
-                        .willReturn(List.of(root, otherRoot1, otherRoot2));
-
-                // when & then
-                assertDoesNotThrow(() -> {
-                    categoryValidator.validateDuplicateNameInSibling(root, "root3");
-                });
-            }
-
-            @Test
-            void 자신의_이름은_중복되어도_된다() {
-                // given
-                Category root = new Category("root", member, memberBlog);
-                Category otherRoot1 = new Category("otherRoot1", member, memberBlog);
-                Category otherRoot2 = new Category("otherRoot2", member, memberBlog);
-                given(categoryRepository.findAllRootByBlog(memberBlog))
-                        .willReturn(List.of(root, otherRoot1, otherRoot2));
-
-                // when & then
-                assertDoesNotThrow(() -> {
-                    categoryValidator.validateDuplicateNameInSibling(root, "root");
-                });
-            }
-        }
-
-        @Nested
-        class 루트가_아닌_경우 {
-
-            @Test
-            void 해당_카테고리의_부모의_자식등_중_주어진_이름을_가진_카테고리가_있으면_예외() {
-                // given
-                Category root = new Category("root", member, memberBlog);
-                Category child1 = new Category("child1", member, memberBlog);
-                Category child2 = new Category("child2", member, memberBlog);
-                Category child3 = new Category("child3", member, memberBlog);
-                child1.updateHierarchy(root, null, null, categoryValidator);
-                child2.updateHierarchy(root, child1, null, categoryValidator);
-                child3.updateHierarchy(root, child2, null, categoryValidator);
-
-                // when & then
-                assertThatThrownBy(() -> {
-                    categoryValidator.validateDuplicateNameInSibling(child1, "child3");
-                }).isInstanceOf(DuplicateCategoryNameException.class);
-            }
-
-            @Test
-            void 해당_카테고리의_부모의_자식등_중_주어진_이름을_가진_카테고리가_없으면_문제없다() {
-                // given
-                Category root = new Category("root", member, memberBlog);
-                Category child1 = new Category("child1", member, memberBlog);
-                Category child2 = new Category("child2", member, memberBlog);
-                Category child3 = new Category("child3", member, memberBlog);
-                child1.updateHierarchy(root, null, null, categoryValidator);
-                child2.updateHierarchy(root, child1, null, categoryValidator);
-                child3.updateHierarchy(root, child2, null, categoryValidator);
-
-                // when & then
-                assertDoesNotThrow(() -> {
-                    categoryValidator.validateDuplicateNameInSibling(child1, "child4");
-                });
-            }
-
-            @Test
-            void 자신의_이름은_중복되어도_된다() {
-                // given
-                Category root = new Category("root", member, memberBlog);
-                Category child1 = new Category("child1", member, memberBlog);
-                Category child2 = new Category("child2", member, memberBlog);
-                Category child3 = new Category("child3", member, memberBlog);
-                child1.updateHierarchy(root, null, null, categoryValidator);
-                child2.updateHierarchy(root, child1, null, categoryValidator);
-                child3.updateHierarchy(root, child2, null, categoryValidator);
-
-                // when & then
-                assertDoesNotThrow(() -> {
-                    categoryValidator.validateDuplicateNameInSibling(child1, "child1");
-                });
-            }
-        }
-    }
 
     @Nested
     class 계층구조_변경_검증_시 {

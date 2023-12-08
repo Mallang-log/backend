@@ -8,6 +8,7 @@ import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.category.exception.ChildCategoryExistException;
+import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.common.domain.CommonRootEntity;
 import jakarta.annotation.Nullable;
@@ -115,8 +116,14 @@ public class Category extends CommonRootEntity<Long> {
         this.parent = parent;
     }
 
-    public void updateName(String name, CategoryValidator validator) {
-        validator.validateDuplicateNameInSibling(this, name);
+    public void updateName(String name) {
+        List<Category> siblings = getSiblings();
+        while (!siblings.isEmpty()) {
+            Category sibling = siblings.removeLast();
+            if (sibling.getName().equals(name)) {
+                throw new DuplicateCategoryNameException();
+            }
+        }
         this.name = name;
     }
 
@@ -161,12 +168,26 @@ public class Category extends CommonRootEntity<Long> {
         }
         List<Category> categories = new ArrayList<>();
         Category current = first.get();
-        categories.add(current);
-        while (current.getNextSibling() != null) {
-            current = current.getNextSibling();
+        while (current != null) {
             categories.add(current);
+            current = current.getNextSibling();
         }
         return categories;
+    }
+
+    public List<Category> getSiblings() {
+        List<Category> siblings = new ArrayList<>();
+        Category currentPrev = this.previousSibling;
+        while (currentPrev != null) {
+            siblings.addFirst(currentPrev);
+            currentPrev = currentPrev.previousSibling;
+        }
+        Category currentNext = this.nextSibling;
+        while (currentNext != null) {
+            siblings.addLast(currentNext);
+            currentNext = currentNext.nextSibling;
+        }
+        return siblings;
     }
 
     // lazy loading issue 해결을 위한 메서드

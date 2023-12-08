@@ -7,7 +7,6 @@ import static com.mallang.category.CategoryFixture.하위_카테고리;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
@@ -63,24 +62,36 @@ class CategoryTest {
         private final Category rootCategory = 루트_카테고리("루트", mallang, mallangBlog);
 
         @Test
-        void 이름을_변경할_수_있다() {
+        void 형제가_없다면_이름을_변경할_수_있다() {
             // when
-            rootCategory.updateName("말랑", categoryValidator);
+            rootCategory.updateName("말랑");
 
             // then
             assertThat(rootCategory.getName()).isEqualTo("말랑");
         }
 
         @Test
+        void 형제_중_이름이_같은게_없다면_이름을_변경할_수_있다() {
+            // given
+            Category category = new Category("형제", mallang, mallangBlog);
+            category.updateHierarchy(null, rootCategory, null, categoryValidator);
+
+            // when
+            rootCategory.updateName("이름 다름");
+
+            // then
+            assertThat(rootCategory.getName()).isEqualTo("이름 다름");
+        }
+
+        @Test
         void 형제_중_이름이_같은게_있다면_예외() {
             // given
-            willThrow(DuplicateCategoryNameException.class)
-                    .given(categoryValidator)
-                    .validateDuplicateNameInSibling(any(), any());
+            Category category = new Category("형제", mallang, mallangBlog);
+            category.updateHierarchy(null, rootCategory, null, categoryValidator);
 
             // when & then
             assertThatThrownBy(() -> {
-                rootCategory.updateName("말랑", categoryValidator);
+                rootCategory.updateName("형제");
             }).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }

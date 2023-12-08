@@ -8,7 +8,6 @@ import com.mallang.blog.domain.Blog;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
 import jakarta.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -19,26 +18,6 @@ import org.springframework.stereotype.Component;
 public class CategoryValidator {
 
     private final CategoryRepository categoryRepository;
-
-    public void validateDuplicateNameInSibling(Category category, String name) {
-        List<Category> siblings = new ArrayList<>();
-        if (category.getParent() == null) {
-            siblings.addAll(categoryRepository.findAllRootByBlog(category.getBlog()));
-        } else {
-            siblings.addAll(category.getParent().getChildren());
-        }
-        siblings.remove(category);
-        validateDuplicateName(siblings, name);
-    }
-
-    private void validateDuplicateName(List<Category> siblings, String name) {
-        siblings.stream()
-                .filter(it -> it.getName().equals(name))
-                .findAny()
-                .ifPresent(it -> {
-                    throw new DuplicateCategoryNameException();
-                });
-    }
 
     public void validateUpdateHierarchy(
             Category target,
