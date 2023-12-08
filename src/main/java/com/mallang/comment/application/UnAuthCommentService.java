@@ -41,8 +41,7 @@ public class UnAuthCommentService {
 
     public void delete(DeleteUnAuthCommentCommand command) {
         UnAuthComment comment = commentRepository.getUnAuthCommentById(command.commentId());
-        Member member = (command.memberId() == null) ? null
-                : memberRepository.getById(command.memberId());
+        Member member = memberRepository.getByIdIfIdNotNull(command.memberId());
         comment.validateDelete(member, command.password(), command.postPassword());
         comment.delete(commentDeleteService);
     }

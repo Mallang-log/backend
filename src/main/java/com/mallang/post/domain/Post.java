@@ -12,7 +12,6 @@ import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.AssociationOverride;
-import jakarta.persistence.AssociationOverrides;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -43,9 +42,7 @@ public class Post extends CommonRootEntity<PostId> {
     private PostVisibilityPolicy visibilityPolish;
 
     @Embedded
-    @AssociationOverrides(
-            @AssociationOverride(name = "tags", joinTable = @JoinTable(name = "post_tags"))
-    )
+    @AssociationOverride(name = "tags", joinTable = @JoinTable(name = "post_tags"))
     private PostContent content;
 
     private int likeCount = 0;
@@ -114,8 +111,10 @@ public class Post extends CommonRootEntity<PostId> {
         }
     }
 
-    public void validateAccess(@Nullable Member member,
-                               @Nullable String postPassword) {
+    public void validateAccess(
+            @Nullable Member member,
+            @Nullable String postPassword
+    ) {
         if (isWriter(member)) {
             return;
         }
