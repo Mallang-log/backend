@@ -20,8 +20,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT c FROM Category c WHERE c.blog = :blog AND c.parent IS NULL")
     List<Category> findAllRootByBlog(@Param("blog") Blog blog);
 
-    @Nullable
-    default Category getByNullableId(@Nullable Long categoryId) {
+    default Category getByIdIfIdNotNull(@Nullable Long categoryId) {
         if (categoryId == null) {
             return null;
         }

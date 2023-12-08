@@ -11,7 +11,6 @@ import com.mallang.post.application.command.DeleteDraftCommand;
 import com.mallang.post.application.command.UpdateDraftCommand;
 import com.mallang.post.domain.draft.Draft;
 import com.mallang.post.domain.draft.DraftRepository;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ public class DraftService {
     public Long create(CreateDraftCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
-        Category category = getCategoryByIdIfPresent(command.categoryId());
+        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
         Draft draft = command.toDraft(member, blog, category);
         return draftRepository.save(draft).getId();
     }
@@ -37,7 +36,7 @@ public class DraftService {
     public void update(UpdateDraftCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Draft draft = draftRepository.getById(command.draftId());
-        Category category = getCategoryByIdIfPresent(command.categoryId());
+        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
         draft.validateWriter(member);
         draft.update(
                 command.title(),
@@ -53,12 +52,5 @@ public class DraftService {
         Draft draft = draftRepository.getById(command.draftId());
         draft.validateWriter(member);
         draftRepository.delete(draft);
-    }
-
-    private Category getCategoryByIdIfPresent(@Nullable Long id) {
-        if (id == null) {
-            return null;
-        }
-        return categoryRepository.getById(id);
     }
 }
