@@ -169,10 +169,10 @@ public class Category extends CommonRootEntity<Long> {
         return categories;
     }
 
-    // For lazy loading issue
-    // parent, prev, next 가 지연로딩되어 프록시로 조회되므로, 그냥 사용 시 update 가 동작하지 않음
-    // 이를 해결하기 위해 메서드를 통해 접근해야 하는데, private 혹은 package-private 인 경우 여전히 동작하지 않음
-    // 따라서 protected 로 설정한
+    // lazy loading issue 해결을 위한 메서드
+    // 카테고리 조회 시 parent, prev, next 가 지연로딩되어 프록시로 조회되므로, prev.next = this 등으로 사용 시 update 가 동작하지 않음
+    // 이를 해결하기 위해 메서드를 통해 접근해야 하는데 private 혹은 package-private 메서드의 경우 여전히 동작하지 않음
+    // 따라서 protected 로 설정함
     protected void setPreviousSibling(Category previousSibling) {
         this.previousSibling = previousSibling;
     }

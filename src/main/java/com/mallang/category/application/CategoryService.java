@@ -41,9 +41,9 @@ public class CategoryService {
     }
 
     private void updateHierarchy(Category target, Long parentId, Long prevId, Long nextId) {
-        Category parent = categoryRepository.getByNullableId(parentId);
-        Category prev = categoryRepository.getByNullableId(prevId);
-        Category next = categoryRepository.getByNullableId(nextId);
+        Category parent = categoryRepository.getByIdIfIdNotNull(parentId);
+        Category prev = categoryRepository.getByIdIfIdNotNull(prevId);
+        Category next = categoryRepository.getByIdIfIdNotNull(nextId);
         target.updateHierarchy(parent, prev, next, categoryValidator);
     }
 

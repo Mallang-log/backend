@@ -48,7 +48,7 @@ public class CategoryValidator {
     ) {
         validateOwners(target, parent, prevSibling, nextSibling);
         validateSelfReference(target, parent, prevSibling, nextSibling);
-        validateDependentReference(target, parent, prevSibling, nextSibling);
+        validateDescendantReference(target, parent, prevSibling, nextSibling);
         validateContinuous(prevSibling, nextSibling);
         validateParentAndChildRelation(target, parent, prevSibling, nextSibling);
         validateDuplicatedNameWhenParticipated(target, prevSibling, nextSibling);
@@ -68,7 +68,7 @@ public class CategoryValidator {
         }
     }
 
-    private void validateDependentReference(
+    private void validateDescendantReference(
             Category target,
             Category parent,
             Category prevSibling,

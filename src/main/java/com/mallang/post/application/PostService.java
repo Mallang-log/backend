@@ -15,7 +15,6 @@ import com.mallang.post.domain.PostIdGenerator;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.draft.Draft;
 import com.mallang.post.domain.draft.DraftRepository;
-import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +44,7 @@ public class PostService {
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
-        Category category = getCategoryByIdIfPresent(command.categoryId());
+        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
         PostId postId = postIdGenerator.generate(blog.getId());
         Post post = command.toPost(member, postId, blog, category);
         return postRepository.save(post).getId();
@@ -54,7 +53,7 @@ public class PostService {
     public void update(UpdatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Post post = postRepository.getById(command.postId(), command.blogName());
-        Category category = getCategoryByIdIfPresent(command.categoryId());
+        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
         post.validateWriter(member);
         post.update(
                 command.visibility(),
@@ -75,12 +74,5 @@ public class PostService {
             post.delete();
             postRepository.delete(post);
         }
-    }
-
-    private Category getCategoryByIdIfPresent(@Nullable Long id) {
-        if (id == null) {
-            return null;
-        }
-        return categoryRepository.getById(id);
     }
 }
