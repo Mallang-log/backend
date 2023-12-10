@@ -48,12 +48,6 @@ public class PostCategory extends TieredCategory<PostCategory> {
     }
 
     @Override
-    public void delete() {
-        super.delete();
-        registerEvent(new PostCategoryDeletedEvent(getId()));
-    }
-
-    @Override
     protected PostCategory self() {
         return this;
     }

@@ -8,8 +8,10 @@ import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.DeletePostCategoryCommand;
 import com.mallang.post.application.command.UpdatePostCategoryHierarchyCommand;
 import com.mallang.post.application.command.UpdatePostCategoryNameCommand;
+import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.PostCategoryRepository;
+import com.mallang.post.domain.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostCategoryService {
 
     private final BlogRepository blogRepository;
+    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final PostCategoryRepository postCategoryRepository;
 
@@ -57,6 +60,8 @@ public class PostCategoryService {
         PostCategory postCategory = postCategoryRepository.getById(command.categoryId());
         postCategory.validateOwner(member);
         postCategory.delete();
+        postRepository.findAllByCategory(postCategory)
+                .forEach(Post::removeCategory);
         postCategoryRepository.delete(postCategory);
     }
 }

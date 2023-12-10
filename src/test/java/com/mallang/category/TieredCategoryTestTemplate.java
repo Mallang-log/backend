@@ -29,7 +29,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     protected abstract Class<?> 권한_없음_예외();
 
     @Nested
-    protected class 생성_시 {
+    class 생성_시 {
 
         @Test
         void 생성한다() {
@@ -49,7 +49,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     }
 
     @Nested
-    protected class 이름_수정_시 {
+    class 이름_수정_시 {
 
         private final T root = createRoot("루트", member, memberBlog);
 
@@ -89,7 +89,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     }
 
     @Nested
-    protected class 카테고리_게층_구조_변경_시 {
+    class 카테고리_게층_구조_변경_시 {
 
         @Test
         void 계층구조를_변경한다() {
@@ -170,7 +170,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 주인_일치여부를_검증하는데 {
+        class 주인_일치여부를_검증하는데 {
 
             @Test
             void 부모의_주인이_다른_경우_예외() {
@@ -210,7 +210,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 나_혹은_내_자손들_중_하나를_부모나_형제로_설정하는_경우 {
+        class 나_혹은_내_자손들_중_하나를_부모나_형제로_설정하는_경우 {
 
             @Test
             void 나를_부모로_설정하는_경우_예외() {
@@ -340,7 +340,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 직전_형제와_다음_형제가_주어졌을_때 {
+        class 직전_형제와_다음_형제가_주어졌을_때 {
 
             @Test
             void 직전_형제와_다음_형제_사이_다른_형제가_있는_경우_예외() {
@@ -429,7 +429,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 형제들이_주어지지_않았을_때 {
+        class 형제들이_주어지지_않았을_때 {
 
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_하나라도_존재한다면_예외() {
@@ -521,7 +521,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 이전_형제가_주어진_경우 {
+        class 이전_형제가_주어진_경우 {
 
             @Test
             void 부모는_주어지지_않았는데_이전_형제의_부모가_존재하는_경우_예외() {
@@ -558,7 +558,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 다음_형제가_주어진_경우 {
+        class 다음_형제가_주어진_경우 {
 
             @Test
             void 부모는_주어지지_않았는데_다음_형제의_부모가_존재하는_경우_예외() {
@@ -593,7 +593,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         }
 
         @Nested
-        protected class 계층_참여_시_중복_이름이_존재하게_되는_경우 {
+        class 계층_참여_시_중복_이름이_존재하게_되는_경우 {
 
             @Test
             void 이전_형제와_이름이_같으면_예외() {
@@ -650,7 +650,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     }
 
     @Nested
-    protected class 제거_시 {
+    class 제거_시 {
 
         protected final T root = createRoot("루트", member, memberBlog);
         protected final T prev = createChild("하위 이전", member, memberBlog, root, null, null);

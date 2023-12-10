@@ -6,14 +6,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.mallang.category.CategoryHierarchyViolationException;
 import com.mallang.category.ChildCategoryExistException;
 import com.mallang.category.DuplicateCategoryNameException;
-import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.DeletePostCategoryCommand;
 import com.mallang.post.application.command.UpdatePostCategoryHierarchyCommand;
 import com.mallang.post.application.command.UpdatePostCategoryNameCommand;
 import com.mallang.post.domain.PostCategory;
-import com.mallang.post.domain.PostCategoryDeletedEvent;
 import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NotFoundPostCategoryException;
 import org.junit.jupiter.api.BeforeEach;
@@ -906,27 +904,43 @@ class PostCategoryServiceTest extends ServiceTest {
         }
 
         @Test
-        void 카테고리_제거_이벤트가_발행된다() {
+        void 해당_카테고리에_속한_포스트들을_카테고리_없음으로_만든다() {
             // given
-            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
+            Long categoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
-                    "최상위",
+                    "최상위1",
                     null,
                     null,
                     null
             ));
+            Long categoryId2 = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "최상위2",
+                    null,
+                    categoryId1,
+                    null
+            ));
+            Long postId1 = 포스트를_저장한다(mallangId, mallangBlogName, "제목1", "내용", categoryId1)
+                    .getPostId();
+            Long postId2 = 포스트를_저장한다(mallangId, mallangBlogName, "제목2", "내용", categoryId1)
+                    .getPostId();
+            Long postId3 = 포스트를_저장한다(mallangId, mallangBlogName, "안삭제", "내용", categoryId2)
+                    .getPostId();
+
             DeletePostCategoryCommand command = DeletePostCategoryCommand.builder()
                     .memberId(mallangId)
-                    .categoryId(categoryId)
+                    .categoryId(categoryId1)
                     .build();
 
             // when
             postCategoryService.delete(command);
 
             // then
-            int count = EventsTestUtils.count(events, PostCategoryDeletedEvent.class);
-            assertThat(count).isEqualTo(1);
+            assertThat(postRepository.getById(postId1, mallangBlogName).getCategory()).isNull();
+            assertThat(postRepository.getById(postId2, mallangBlogName).getCategory()).isNull();
+            assertThat(postRepository.getById(postId3, mallangBlogName).getCategory()).isNotNull();
         }
     }
 }

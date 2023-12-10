@@ -1,7 +1,7 @@
 package com.mallang.post.query.repository;
 
 import static com.mallang.post.domain.QPost.post;
-import static com.mallang.post.domain.category.QPostCategory.postCategory;
+import static com.mallang.post.domain.QPostCategory.postCategory;
 import static com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
 import com.mallang.blog.domain.Blog;
