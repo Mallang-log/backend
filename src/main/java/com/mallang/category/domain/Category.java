@@ -1,5 +1,8 @@
 package com.mallang.category.domain;
 
+import static com.mallang.common.utils.ObjectsUtils.isNulls;
+import static com.mallang.common.utils.ObjectsUtils.notEquals;
+import static com.mallang.common.utils.ObjectsUtils.validateWhenNonNullWithFailCond;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -7,7 +10,9 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.event.CategoryDeletedEvent;
+import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
+import com.mallang.category.exception.DuplicateCategoryNameException;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.common.domain.CommonRootEntity;
 import jakarta.annotation.Nullable;
@@ -19,6 +24,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -73,12 +79,110 @@ public class Category extends CommonRootEntity<Long> {
     public void updateHierarchy(
             @Nullable Category parent,
             @Nullable Category prevSibling,
-            @Nullable Category nextSibling,
-            CategoryValidator validator
+            @Nullable Category nextSibling
     ) {
-        validator.validateUpdateHierarchy(this, parent, prevSibling, nextSibling);
+        validateOwners(parent, prevSibling, nextSibling);
+        validateSelfOrDescendantReference(parent, prevSibling, nextSibling);
+        validateContinuous(prevSibling, nextSibling);
+        validateParentAndChildRelation(parent, prevSibling, nextSibling);
+        validateDuplicatedNameWhenParticipated(prevSibling, nextSibling);
         withdrawCurrentHierarchy();
         participateHierarchy(parent, prevSibling, nextSibling);
+    }
+
+    private void validateOwners(Category... categories) {
+        for (Category category : categories) {
+            if (category != null) {
+                validateOwner(category.getOwner());
+            }
+        }
+    }
+
+    private void validateSelfOrDescendantReference(
+            @Nullable Category parent,
+            @Nullable Category prevSibling,
+            @Nullable Category nextSibling
+    ) {
+        if (equals(parent) || equals(prevSibling) || equals(nextSibling)) {
+            throw new CategoryHierarchyViolationException("자기 자신 혹은 자손들을 부모, 혹은 형제로 지정할 수 없습니다.");
+        }
+        List<Category> descendants = getDescendants();
+        if (descendants.contains(parent) || descendants.contains(prevSibling) || descendants.contains(nextSibling)) {
+            throw new CategoryHierarchyViolationException("자기 자신 혹은 자손들을 부모, 혹은 형제로 지정할 수 없습니다.");
+        }
+    }
+
+    private void validateContinuous(@Nullable Category prevSibling, @Nullable Category nextSibling) {
+        validateWhenNonNullWithFailCond(
+                prevSibling,
+                prev -> notEquals(prev.getNextSibling(), nextSibling),
+                new CategoryHierarchyViolationException("이전 카테고리과 다음 카테고리가 연속적이지 않습니다.")
+        );
+        validateWhenNonNullWithFailCond(
+                nextSibling,
+                next -> notEquals(next.getPreviousSibling(), prevSibling),
+                new CategoryHierarchyViolationException("이전 카테고리과 다음 카테고리가 연속적이지 않습니다.")
+        );
+    }
+
+    private void validateParentAndChildRelation(
+            @Nullable Category parent,
+            @Nullable Category prevSibling,
+            @Nullable Category nextSibling
+    ) {
+        if (isNulls(prevSibling, nextSibling)) {
+            validateNoChildrenInParent(parent);
+        }
+        validateWhenNonNullWithFailCond(
+                prevSibling,
+                prev -> notEquals(prev.getParent(), parent),
+                new CategoryHierarchyViolationException("주어진 형제와 부모의 관계가 올바르지 않습니다.")
+        );
+        validateWhenNonNullWithFailCond(
+                nextSibling,
+                next -> notEquals(next.getParent(), parent),
+                new CategoryHierarchyViolationException("주어진 형제와 부모의 관계가 올바르지 않습니다.")
+        );
+    }
+
+    private void validateNoChildrenInParent(Category parent) {
+        if (parent == null) {
+            Category root = getRoot();
+            if (root.getPreviousSibling() == null && root.getNextSibling() == null) {
+                if (equals(root)) {
+                    return;
+                }
+            }
+            throw new CategoryHierarchyViolationException("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+        } else {
+            if (!parent.getChildren().isEmpty()) {
+                throw new CategoryHierarchyViolationException("주어진 부모의 자식 카테고리와의 관계가 명시되지 않았습니다.");
+            }
+        }
+    }
+
+    private Category getRoot() {
+        Category root = this;
+        while (root.getParent() != null) {
+            root = root.getParent();
+        }
+        return root;
+    }
+
+    private void validateDuplicatedNameWhenParticipated(
+            @Nullable Category prevSibling,
+            @Nullable Category nextSibling
+    ) {
+        validateWhenNonNullWithFailCond(
+                prevSibling,
+                prev -> Objects.equals(getName(), prev.getName()),
+                new DuplicateCategoryNameException("직전 형제 카테고리와 이름이 겹칩니다.")
+        );
+        validateWhenNonNullWithFailCond(
+                nextSibling,
+                next -> Objects.equals(getName(), next.getName()),
+                new DuplicateCategoryNameException("다음 형제 카테고리와 이름이 겹칩니다.")
+        );
     }
 
     private void withdrawCurrentHierarchy() {
@@ -115,8 +219,14 @@ public class Category extends CommonRootEntity<Long> {
         this.parent = parent;
     }
 
-    public void updateName(String name, CategoryValidator validator) {
-        validator.validateDuplicateNameInSibling(this, name);
+    public void updateName(String name) {
+        List<Category> siblings = getSiblings();
+        while (!siblings.isEmpty()) {
+            Category sibling = siblings.removeLast();
+            if (sibling.getName().equals(name)) {
+                throw new DuplicateCategoryNameException();
+            }
+        }
         this.name = name;
     }
 
@@ -161,12 +271,26 @@ public class Category extends CommonRootEntity<Long> {
         }
         List<Category> categories = new ArrayList<>();
         Category current = first.get();
-        categories.add(current);
-        while (current.getNextSibling() != null) {
-            current = current.getNextSibling();
+        while (current != null) {
             categories.add(current);
+            current = current.getNextSibling();
         }
         return categories;
+    }
+
+    public List<Category> getSiblings() {
+        List<Category> siblings = new ArrayList<>();
+        Category currentPrev = this.previousSibling;
+        while (currentPrev != null) {
+            siblings.addFirst(currentPrev);
+            currentPrev = currentPrev.previousSibling;
+        }
+        Category currentNext = this.nextSibling;
+        while (currentNext != null) {
+            siblings.addLast(currentNext);
+            currentNext = currentNext.nextSibling;
+        }
+        return siblings;
     }
 
     // lazy loading issue 해결을 위한 메서드

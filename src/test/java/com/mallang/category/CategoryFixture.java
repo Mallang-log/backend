@@ -1,8 +1,6 @@
 package com.mallang.category;
 
 
-import static com.mallang.category.domain.AlwaysPassCategoryValidator.alwaysPassCategoryValidator;
-
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.category.domain.Category;
@@ -52,7 +50,7 @@ public class CategoryFixture {
             Category next
     ) {
         Category category = new Category(name, member, blog);
-        category.updateHierarchy(parent, prev, next, alwaysPassCategoryValidator);
+        category.updateHierarchy(parent, prev, next);
         ReflectionTestUtils.setField(category, "id", id);
         return category;
     }

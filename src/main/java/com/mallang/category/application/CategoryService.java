@@ -10,7 +10,6 @@ import com.mallang.category.application.command.UpdateCategoryHierarchyCommand;
 import com.mallang.category.application.command.UpdateCategoryNameCommand;
 import com.mallang.category.domain.Category;
 import com.mallang.category.domain.CategoryRepository;
-import com.mallang.category.domain.CategoryValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +22,6 @@ public class CategoryService {
     private final BlogRepository blogRepository;
     private final MemberRepository memberRepository;
     private final CategoryRepository categoryRepository;
-    private final CategoryValidator categoryValidator;
 
     public Long create(CreateCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
@@ -44,14 +42,14 @@ public class CategoryService {
         Category parent = categoryRepository.getByIdIfIdNotNull(parentId);
         Category prev = categoryRepository.getByIdIfIdNotNull(prevId);
         Category next = categoryRepository.getByIdIfIdNotNull(nextId);
-        target.updateHierarchy(parent, prev, next, categoryValidator);
+        target.updateHierarchy(parent, prev, next);
     }
 
     public void updateName(UpdateCategoryNameCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Category category = categoryRepository.getById(command.categoryId());
         category.validateOwner(member);
-        category.updateName(command.name(), categoryValidator);
+        category.updateName(command.name());
     }
 
     public void delete(DeleteCategoryCommand command) {
