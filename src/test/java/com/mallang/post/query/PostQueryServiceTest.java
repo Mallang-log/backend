@@ -6,7 +6,7 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.category.application.command.CreateCategoryCommand;
+import com.mallang.category.application.command.CreatePostCategoryCommand;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.ClickPostLikeCommand;
 import com.mallang.post.application.command.CreatePostCommand;
@@ -285,14 +285,14 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 특정_카테고리의_포스트만_조회한다() {
             // given
-            Long 스프링 = categoryService.create(new CreateCategoryCommand(mallangId,
+            Long 스프링 = postCategoryService.create(new CreatePostCategoryCommand(mallangId,
                     mallangBlogName,
                     "스프링",
                     null,
                     null,
                     null
             ));
-            Long 노드 = categoryService.create(new CreateCategoryCommand(mallangId,
+            Long 노드 = postCategoryService.create(new CreatePostCategoryCommand(mallangId,
                     mallangBlogName,
                     "노드",
                     null,
@@ -328,7 +328,7 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 최상위_카테고리로_조회_시_하위_카테고리도_포함되면_조회한다() {
             // given
-            Long 스프링 = categoryService.create(new CreateCategoryCommand(
+            Long 스프링 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "스프링",
@@ -336,7 +336,7 @@ class PostQueryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long JPA = categoryService.create(new CreateCategoryCommand(
+            Long JPA = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "JPA",

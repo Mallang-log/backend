@@ -4,9 +4,10 @@ import jakarta.annotation.Nullable;
 import lombok.Builder;
 
 @Builder
-public record UpdateCategoryHierarchyCommand(
-        Long categoryId,
+public record CreatePostCategoryCommand(
         Long memberId,
+        String blogName,
+        String name,
         @Nullable Long parentId,
         @Nullable Long prevId,
         @Nullable Long nextId

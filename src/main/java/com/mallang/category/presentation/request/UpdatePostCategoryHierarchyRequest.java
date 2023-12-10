@@ -1,15 +1,15 @@
 package com.mallang.category.presentation.request;
 
-import com.mallang.category.application.command.UpdateCategoryHierarchyCommand;
+import com.mallang.category.application.command.UpdatePostCategoryHierarchyCommand;
 import jakarta.annotation.Nullable;
 
-public record UpdateCategoryHierarchyRequest(
+public record UpdatePostCategoryHierarchyRequest(
         @Nullable Long parentCategoryId,
         @Nullable Long prevCategoryId,
         @Nullable Long nextCategoryId
 ) {
-    public UpdateCategoryHierarchyCommand toCommand(Long categoryId, Long memberId) {
-        return new UpdateCategoryHierarchyCommand(
+    public UpdatePostCategoryHierarchyCommand toCommand(Long categoryId, Long memberId) {
+        return new UpdatePostCategoryHierarchyCommand(
                 categoryId,
                 memberId,
                 parentCategoryId,

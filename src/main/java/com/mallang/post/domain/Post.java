@@ -5,7 +5,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.category.domain.Category;
+import com.mallang.category.domain.PostCategory;
 import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.exception.NoAuthorityPostException;
@@ -57,7 +57,7 @@ public class Post extends CommonRootEntity<PostId> {
             String intro,
             String bodyText,
             @Nullable String postThumbnailImageName,
-            @Nullable Category category,
+            @Nullable PostCategory category,
             List<String> tags,
             Member writer
     ) {
@@ -75,7 +75,7 @@ public class Post extends CommonRootEntity<PostId> {
             String intro,
             String bodyText,
             @Nullable String postThumbnailImageName,
-            @Nullable Category category,
+            @Nullable PostCategory category,
             List<String> tags
     ) {
         this.visibilityPolish = new PostVisibilityPolicy(visibility, password);
@@ -136,7 +136,7 @@ public class Post extends CommonRootEntity<PostId> {
         return content.getPostThumbnailImageName();
     }
 
-    public Category getCategory() {
+    public PostCategory getCategory() {
         return content.getCategory();
     }
 

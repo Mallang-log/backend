@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.domain.event.CategoryDeletedEvent;
+import com.mallang.category.domain.event.PostCategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
@@ -23,10 +23,10 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("카테고리 (Category) 은(는)")
+@DisplayName("카테고리 (PostCategory) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class CategoryTest {
+class PostCategoryTest {
 
     private final Member member = 깃허브_말랑(1L);
     private final Member otherMember = 깃허브_동훈(2L);
@@ -40,7 +40,7 @@ class CategoryTest {
         void 생성한다() {
             // when & then
             assertDoesNotThrow(() -> {
-                new Category("최상위", member, memberBlog);
+                new PostCategory("최상위", member, memberBlog);
             });
         }
 
@@ -48,7 +48,7 @@ class CategoryTest {
         void 다른_사람의_블로그에_카테고리_생성_시도_시_예외() {
             // when & then
             assertThatThrownBy(() -> {
-                new Category("카테고리", member, otherBlog);
+                new PostCategory("카테고리", member, otherBlog);
             }).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
@@ -56,39 +56,39 @@ class CategoryTest {
     @Nested
     class 이름_수정_시 {
 
-        private final Category rootCategory = 루트_카테고리("루트", member, memberBlog);
+        private final PostCategory rootPostCategory = 루트_카테고리("루트", member, memberBlog);
 
         @Test
         void 형제가_없다면_이름을_변경할_수_있다() {
             // when
-            rootCategory.updateName("말랑");
+            rootPostCategory.updateName("말랑");
 
             // then
-            assertThat(rootCategory.getName()).isEqualTo("말랑");
+            assertThat(rootPostCategory.getName()).isEqualTo("말랑");
         }
 
         @Test
         void 형제_중_이름이_같은게_없다면_이름을_변경할_수_있다() {
             // given
-            Category category = new Category("형제", member, memberBlog);
-            category.updateHierarchy(null, rootCategory, null);
+            PostCategory postCategory = new PostCategory("형제", member, memberBlog);
+            postCategory.updateHierarchy(null, rootPostCategory, null);
 
             // when
-            rootCategory.updateName("이름 다름");
+            rootPostCategory.updateName("이름 다름");
 
             // then
-            assertThat(rootCategory.getName()).isEqualTo("이름 다름");
+            assertThat(rootPostCategory.getName()).isEqualTo("이름 다름");
         }
 
         @Test
         void 형제_중_이름이_같은게_있다면_예외() {
             // given
-            Category category = new Category("형제", member, memberBlog);
-            category.updateHierarchy(null, rootCategory, null);
+            PostCategory postCategory = new PostCategory("형제", member, memberBlog);
+            postCategory.updateHierarchy(null, rootPostCategory, null);
 
             // when & then
             assertThatThrownBy(() -> {
-                rootCategory.updateName("형제");
+                rootPostCategory.updateName("형제");
             }).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
@@ -99,12 +99,12 @@ class CategoryTest {
         @Test
         void 계층구조를_변경한다() {
             // given
-            Category root1 = new Category("root1", member, memberBlog);
-            Category root2 = new Category("root2", member, memberBlog);
-            Category root1First = new Category("first", member, memberBlog);
-            Category root1Second = new Category("second", member, memberBlog);
-            Category root1Third = new Category("third", member, memberBlog);
-            Category root1Forth = new Category("forth", member, memberBlog);
+            PostCategory root1 = new PostCategory("root1", member, memberBlog);
+            PostCategory root2 = new PostCategory("root2", member, memberBlog);
+            PostCategory root1First = new PostCategory("first", member, memberBlog);
+            PostCategory root1Second = new PostCategory("second", member, memberBlog);
+            PostCategory root1Third = new PostCategory("third", member, memberBlog);
+            PostCategory root1Forth = new PostCategory("forth", member, memberBlog);
             root2.updateHierarchy(null, root1, null);
             root1First.updateHierarchy(root1, null, null);
             root1Second.updateHierarchy(root1, root1First, null);
@@ -137,10 +137,10 @@ class CategoryTest {
         @Test
         void 무한_Depth_가_가능하다() {
             // given
-            Category root = new Category("rootCategory", member, memberBlog);
-            Category child = new Category("child", member, memberBlog);
-            Category childChild = new Category("childChild", member, memberBlog);
-            Category childChildChild = new Category("childChildChild", member, memberBlog);
+            PostCategory root = new PostCategory("rootPostCategory", member, memberBlog);
+            PostCategory child = new PostCategory("child", member, memberBlog);
+            PostCategory childChild = new PostCategory("childChild", member, memberBlog);
+            PostCategory childChildChild = new PostCategory("childChildChild", member, memberBlog);
 
             // when
             child.updateHierarchy(root, null, null);
@@ -155,15 +155,15 @@ class CategoryTest {
         @Test
         void 변경_이후에도_카테고리의_자식들은_동일하다() {
             // given
-            Category root = new Category("Spring", member, memberBlog);
+            PostCategory root = new PostCategory("Spring", member, memberBlog);
 
-            Category firstChild = new Category("First", member, memberBlog);
+            PostCategory firstChild = new PostCategory("First", member, memberBlog);
             firstChild.updateHierarchy(root, null, null);
 
-            Category firstFirstChild = new Category("FirstFirst", member, memberBlog);
+            PostCategory firstFirstChild = new PostCategory("FirstFirst", member, memberBlog);
             firstFirstChild.updateHierarchy(firstChild, null, null);
 
-            Category secondChild = new Category("Second", member, memberBlog);
+            PostCategory secondChild = new PostCategory("Second", member, memberBlog);
             secondChild.updateHierarchy(root, firstChild, null);
 
             firstChild.updateHierarchy(null, root, null);
@@ -180,8 +180,8 @@ class CategoryTest {
             @Test
             void 부모의_주인이_다른_경우_예외() {
                 // given
-                Category parent = new Category("root", otherMember, otherBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory parent = new PostCategory("root", otherMember, otherBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -192,8 +192,8 @@ class CategoryTest {
             @Test
             void 이전_형제의_주인이_다른_경우_예외() {
                 // given
-                Category prev = new Category("prev", otherMember, otherBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", otherMember, otherBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -204,8 +204,8 @@ class CategoryTest {
             @Test
             void 이후_형제의_주인이_다른_경우_예외() {
                 // given
-                Category next = new Category("next", otherMember, otherBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory next = new PostCategory("next", otherMember, otherBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -220,7 +220,7 @@ class CategoryTest {
             @Test
             void 나를_부모로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -232,8 +232,8 @@ class CategoryTest {
             @Test
             void 내_자식을_부모로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -246,9 +246,9 @@ class CategoryTest {
             @Test
             void 내_자손을_부모로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
-                Category descendant = new Category("descendant", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
+                PostCategory descendant = new PostCategory("descendant", member, memberBlog);
                 child.updateHierarchy(root, null, null);
                 descendant.updateHierarchy(child, null, null);
 
@@ -262,7 +262,7 @@ class CategoryTest {
             @Test
             void 나를_이전_형제로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -274,8 +274,8 @@ class CategoryTest {
             @Test
             void 내_자식을_이전_형제로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -288,9 +288,9 @@ class CategoryTest {
             @Test
             void 내_자손을_이전_형제로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
-                Category descendant = new Category("descendant", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
+                PostCategory descendant = new PostCategory("descendant", member, memberBlog);
                 child.updateHierarchy(root, null, null);
                 descendant.updateHierarchy(child, null, null);
 
@@ -304,7 +304,7 @@ class CategoryTest {
             @Test
             void 나를_다음_형제로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -316,8 +316,8 @@ class CategoryTest {
             @Test
             void 내_자식을_다음_형제로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -330,9 +330,9 @@ class CategoryTest {
             @Test
             void 내_자손을_다음_형제로_설정하는_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
-                Category descendant = new Category("descendant", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
+                PostCategory descendant = new PostCategory("descendant", member, memberBlog);
                 child.updateHierarchy(root, null, null);
                 descendant.updateHierarchy(child, null, null);
 
@@ -350,10 +350,10 @@ class CategoryTest {
             @Test
             void 직전_형제와_다음_형제_사이_다른_형제가_있는_경우_예외() {
                 // given
-                Category first = new Category("first", member, memberBlog);
-                Category second = new Category("second", member, memberBlog);
-                Category third = new Category("third", member, memberBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory first = new PostCategory("first", member, memberBlog);
+                PostCategory second = new PostCategory("second", member, memberBlog);
+                PostCategory third = new PostCategory("third", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 second.updateHierarchy(null, first, null);
                 third.updateHierarchy(null, second, null);
@@ -368,9 +368,9 @@ class CategoryTest {
             @Test
             void 직전_형제와_다음_형제의_순서가_바뀐_경우_예외() {
                 // given
-                Category first = new Category("first", member, memberBlog);
-                Category second = new Category("second", member, memberBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory first = new PostCategory("first", member, memberBlog);
+                PostCategory second = new PostCategory("second", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 second.updateHierarchy(null, first, null);
 
@@ -384,9 +384,9 @@ class CategoryTest {
             @Test
             void 직전_형제의_직후_형제가_존재하나_명시되지_않은_경우_예외() {
                 // given
-                Category first = new Category("first", member, memberBlog);
-                Category second = new Category("second", member, memberBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory first = new PostCategory("first", member, memberBlog);
+                PostCategory second = new PostCategory("second", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 second.updateHierarchy(null, first, null);
 
@@ -400,9 +400,9 @@ class CategoryTest {
             @Test
             void 직후_형제의_직전_형제가_존재하나_명시되지_않은_경우_예외() {
                 // given
-                Category first = new Category("first", member, memberBlog);
-                Category second = new Category("second", member, memberBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory first = new PostCategory("first", member, memberBlog);
+                PostCategory second = new PostCategory("second", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 second.updateHierarchy(null, first, null);
 
@@ -416,11 +416,11 @@ class CategoryTest {
             @Test
             void 주어진_부모와_형제들의_부모가_다른_경우_예외() {
                 // given
-                Category otherParent = new Category("otherParent", member, memberBlog);
-                Category parent = new Category("parent", member, memberBlog);
-                Category first = new Category("first", member, memberBlog);
-                Category second = new Category("second", member, memberBlog);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory otherParent = new PostCategory("otherParent", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory first = new PostCategory("first", member, memberBlog);
+                PostCategory second = new PostCategory("second", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 first.updateHierarchy(parent, null, null);
                 second.updateHierarchy(parent, first, null);
@@ -439,8 +439,8 @@ class CategoryTest {
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_하나라도_존재한다면_예외() {
                 // given
-                Category target = new Category("target", member, memberBlog);
-                Category prev = new Category("prev", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
                 prev.updateHierarchy(null, null, target);
 
                 // when & then
@@ -457,7 +457,7 @@ class CategoryTest {
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_존재하지_않을_때_내가_루트라면_업데이트() {
                 // given
-                Category target = new Category("target", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -468,8 +468,8 @@ class CategoryTest {
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_존재하지_않을_때_내가_루트가_아니라면_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -482,10 +482,10 @@ class CategoryTest {
             @Test
             void 부모가_주어지지_않았으며_내가_루트가_아닌_경우_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category child = new Category("target", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory child = new PostCategory("target", member, memberBlog);
                 child.updateHierarchy(root, null, null);
-                Category descendant = new Category("descendant", member, memberBlog);
+                PostCategory descendant = new PostCategory("descendant", member, memberBlog);
                 descendant.updateHierarchy(child, null, null);
 
                 // when
@@ -498,8 +498,8 @@ class CategoryTest {
             @Test
             void 부모가_주어지지_않았으며_내가_루트이나_내_형제가_존재하면_예외() {
                 // given
-                Category root = new Category("root", member, memberBlog);
-                Category next = new Category("next", member, memberBlog);
+                PostCategory root = new PostCategory("root", member, memberBlog);
+                PostCategory next = new PostCategory("next", member, memberBlog);
                 next.updateHierarchy(null, root, null);
 
                 // when
@@ -512,10 +512,10 @@ class CategoryTest {
             @Test
             void 부모가_주어지고_해당_부모의_자식이_존재하는_경우_예외() {
                 // given
-                Category parent = new Category("parent", member, memberBlog);
-                Category child = new Category("child", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory child = new PostCategory("child", member, memberBlog);
                 child.updateHierarchy(parent, null, null);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -531,10 +531,10 @@ class CategoryTest {
             @Test
             void 부모는_주어지지_않았는데_이전_형제의_부모가_존재하는_경우_예외() {
                 // given
-                Category parent = new Category("parent", member, memberBlog);
-                Category prev = new Category("prev", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
                 prev.updateHierarchy(parent, null, null);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -546,13 +546,13 @@ class CategoryTest {
             @Test
             void 부모가_주어졌을_때_이전_형제의_부모와_주어진_부모와_다른_경우_예외() {
                 // given
-                Category otherParent = new Category("otherParent", member, memberBlog);
+                PostCategory otherParent = new PostCategory("otherParent", member, memberBlog);
 
-                Category parent = new Category("parent", member, memberBlog);
-                Category prev = new Category("prev", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
                 prev.updateHierarchy(parent, null, null);
 
-                Category target = new Category("target", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -568,10 +568,10 @@ class CategoryTest {
             @Test
             void 부모는_주어지지_않았는데_다음_형제의_부모가_존재하는_경우_예외() {
                 // given
-                Category parent = new Category("parent", member, memberBlog);
-                Category prev = new Category("prev", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
                 prev.updateHierarchy(parent, null, null);
-                Category target = new Category("target", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -583,11 +583,11 @@ class CategoryTest {
             @Test
             void 부모가_주어졌을_때_다음_형제의_부모와_주어진_부모와_다른_경우_예외() {
                 // given
-                Category parent = new Category("parent", member, memberBlog);
-                Category next = new Category("next", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory next = new PostCategory("next", member, memberBlog);
                 next.updateHierarchy(parent, null, null);
 
-                Category target = new Category("target", member, memberBlog);
+                PostCategory target = new PostCategory("target", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -603,13 +603,13 @@ class CategoryTest {
             @Test
             void 이전_형제와_이름이_같으면_예외() {
                 // given
-                Category parent = new Category("parent", member, memberBlog);
-                Category prev = new Category("prev", member, memberBlog);
-                Category next = new Category("next", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
+                PostCategory next = new PostCategory("next", member, memberBlog);
                 prev.updateHierarchy(parent, null, null);
                 next.updateHierarchy(parent, prev, null);
 
-                Category target = new Category("prev", member, memberBlog);
+                PostCategory target = new PostCategory("prev", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -621,12 +621,12 @@ class CategoryTest {
             @Test
             void 다음_형제와_이름이_같으면_예외() {
                 // given
-                Category prev = new Category("prev", member, memberBlog);
-                Category next = new Category("next", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
+                PostCategory next = new PostCategory("next", member, memberBlog);
                 prev.updateHierarchy(null, null, null);
                 next.updateHierarchy(null, prev, null);
 
-                Category target = new Category("next", member, memberBlog);
+                PostCategory target = new PostCategory("next", member, memberBlog);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -638,13 +638,13 @@ class CategoryTest {
             @Test
             void 부모와는_이름이_같아도_된다() {
                 // given
-                Category parent = new Category("parent", member, memberBlog);
-                Category prev = new Category("prev", member, memberBlog);
-                Category next = new Category("next", member, memberBlog);
+                PostCategory parent = new PostCategory("parent", member, memberBlog);
+                PostCategory prev = new PostCategory("prev", member, memberBlog);
+                PostCategory next = new PostCategory("next", member, memberBlog);
                 prev.updateHierarchy(parent, null, null);
                 next.updateHierarchy(parent, prev, null);
 
-                Category target = new Category("parent", member, memberBlog);
+                PostCategory target = new PostCategory("parent", member, memberBlog);
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -657,41 +657,41 @@ class CategoryTest {
     @Nested
     class 제거_시 {
 
-        private final Category rootCategory = 루트_카테고리("루트", member, memberBlog);
-        private final Category childCategory = 하위_카테고리("하위", member, memberBlog, rootCategory);
+        private final PostCategory rootPostCategory = 루트_카테고리("루트", member, memberBlog);
+        private final PostCategory childPostCategory = 하위_카테고리("하위", member, memberBlog, rootPostCategory);
 
         @Test
         void 하위_카테고리가_존재하면_제거할_수_없다() {
             // when & then
             assertThatThrownBy(() ->
-                    rootCategory.delete()
+                    rootPostCategory.delete()
             ).isInstanceOf(ChildCategoryExistException.class);
         }
 
         @Test
         void 부모_카테고리의_하위_카테고리에서도_제거된다() {
             // when
-            childCategory.delete();
+            childPostCategory.delete();
 
             // then
-            assertThat(rootCategory.getSortedChildren()).isEmpty();
+            assertThat(rootPostCategory.getSortedChildren()).isEmpty();
         }
 
         @Test
         void 제거_이벤트가_발핼된다() {
             // when
-            childCategory.delete();
+            childPostCategory.delete();
 
             // then
-            assertThat(childCategory.domainEvents().get(0))
-                    .isInstanceOf(CategoryDeletedEvent.class);
+            assertThat(childPostCategory.domainEvents().get(0))
+                    .isInstanceOf(PostCategoryDeletedEvent.class);
         }
     }
 
     @Test
     void 주인을_검증한다() {
         // given
-        Category 최상위 = new Category("최상위", member, memberBlog);
+        PostCategory 최상위 = new PostCategory("최상위", member, memberBlog);
 
         // when & then
         assertDoesNotThrow(() -> {
@@ -706,15 +706,15 @@ class CategoryTest {
     @Test
     void 모든_자손을_반환한다() {
         // given
-        Category 최상위 = 루트_카테고리("최상위", member, memberBlog);
-        Category 하위 = 하위_카테고리("하위", member, memberBlog, 최상위);
-        Category 더하위1 = 하위_카테고리("더하위1", member, memberBlog, 하위);
-        Category 더하위2 = 하위_카테고리("더하위2", member, memberBlog, 하위, 더하위1, null);
-        Category 더더하위1 = 하위_카테고리("더더하위1", member, memberBlog, 더하위1);
+        PostCategory 최상위 = 루트_카테고리("최상위", member, memberBlog);
+        PostCategory 하위 = 하위_카테고리("하위", member, memberBlog, 최상위);
+        PostCategory 더하위1 = 하위_카테고리("더하위1", member, memberBlog, 하위);
+        PostCategory 더하위2 = 하위_카테고리("더하위2", member, memberBlog, 하위, 더하위1, null);
+        PostCategory 더더하위1 = 하위_카테고리("더더하위1", member, memberBlog, 더하위1);
 
         // when
-        List<Category> 최상위_descendants = 최상위.getDescendants();
-        List<Category> 하위_descendants = 하위.getDescendants();
+        List<PostCategory> 최상위_descendants = 최상위.getDescendants();
+        List<PostCategory> 하위_descendants = 하위.getDescendants();
 
         // then
         assertThat(최상위_descendants)

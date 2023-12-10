@@ -4,8 +4,8 @@ import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
-import com.mallang.category.domain.Category;
-import com.mallang.category.domain.CategoryRepository;
+import com.mallang.category.domain.PostCategoryRepository;
+import com.mallang.category.domain.PostCategory;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -29,7 +29,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final DraftRepository draftRepository;
     private final MemberRepository memberRepository;
-    private final CategoryRepository categoryRepository;
+    private final PostCategoryRepository postCategoryRepository;
     private final PostIdGenerator postIdGenerator;
 
     public PostId createFromDraft(CreatePostCommand command, Long draftId) {
@@ -44,16 +44,16 @@ public class PostService {
     public PostId create(CreatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
-        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
+        PostCategory postCategory = postCategoryRepository.getByIdIfIdNotNull(command.categoryId());
         PostId postId = postIdGenerator.generate(blog.getId());
-        Post post = command.toPost(member, postId, blog, category);
+        Post post = command.toPost(member, postId, blog, postCategory);
         return postRepository.save(post).getId();
     }
 
     public void update(UpdatePostCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Post post = postRepository.getById(command.postId(), command.blogName());
-        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
+        PostCategory postCategory = postCategoryRepository.getByIdIfIdNotNull(command.categoryId());
         post.validateWriter(member);
         post.update(
                 command.visibility(),
@@ -61,7 +61,7 @@ public class PostService {
                 command.title(),
                 command.intro(), command.bodyText(),
                 command.postThumbnailImageName(),
-                category,
+                postCategory,
                 command.tags()
         );
     }

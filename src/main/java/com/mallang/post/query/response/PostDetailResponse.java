@@ -2,7 +2,7 @@ package com.mallang.post.query.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mallang.auth.domain.Member;
-import com.mallang.category.domain.Category;
+import com.mallang.category.domain.PostCategory;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
@@ -91,11 +91,11 @@ public record PostDetailResponse(
             String categoryName
     ) {
         private static CategoryResponse from(Post post) {
-            Category category = post.getCategory();
-            if (category == null) {
+            PostCategory postCategory = post.getCategory();
+            if (postCategory == null) {
                 return new CategoryResponse(null, null);
             }
-            return new CategoryResponse(category.getId(), category.getName());
+            return new CategoryResponse(postCategory.getId(), postCategory.getName());
         }
     }
 

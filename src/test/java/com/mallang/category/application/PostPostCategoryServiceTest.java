@@ -3,12 +3,12 @@ package com.mallang.category.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.category.application.command.CreateCategoryCommand;
-import com.mallang.category.application.command.DeleteCategoryCommand;
-import com.mallang.category.application.command.UpdateCategoryHierarchyCommand;
-import com.mallang.category.application.command.UpdateCategoryNameCommand;
-import com.mallang.category.domain.Category;
-import com.mallang.category.domain.event.CategoryDeletedEvent;
+import com.mallang.category.application.command.CreatePostCategoryCommand;
+import com.mallang.category.application.command.DeletePostCategoryCommand;
+import com.mallang.category.application.command.UpdatePostCategoryHierarchyCommand;
+import com.mallang.category.application.command.UpdatePostCategoryNameCommand;
+import com.mallang.category.domain.PostCategory;
+import com.mallang.category.domain.event.PostCategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
@@ -23,10 +23,10 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("카테고리 서비스 (CategoryService) 은(는)")
+@DisplayName("카테고리 서비스 (PostCategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class CategoryServiceTest extends ServiceTest {
+class PostPostCategoryServiceTest extends ServiceTest {
 
     private Long mallangId;
     private String mallangBlogName;
@@ -47,7 +47,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 최상위_카테고리로_저장할_수_있다() {
             // given
-            CreateCategoryCommand command = CreateCategoryCommand.builder()
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .blogName(mallangBlogName)
                     .name("최상위 카테고리")
@@ -55,18 +55,18 @@ class CategoryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            Long 최상위_카테고리 = categoryService.create(command);
+            Long 최상위_카테고리 = postCategoryService.create(command);
 
             // then
-            Category category = categoryRepository.getById(최상위_카테고리);
-            assertThat(category.getParent()).isNull();
-            assertThat(category.getName()).isEqualTo("최상위 카테고리");
+            PostCategory postCategory = postCategoryRepository.getById(최상위_카테고리);
+            assertThat(postCategory.getParent()).isNull();
+            assertThat(postCategory.getName()).isEqualTo("최상위 카테고리");
         }
 
         @Test
         void 계층형으로_저장할_수_있다() {
             // given
-            Long 최상위 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -74,7 +74,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            CreateCategoryCommand command = CreateCategoryCommand.builder()
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .blogName(mallangBlogName)
                     .name("하위 카테고리")
@@ -82,18 +82,18 @@ class CategoryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            Long id = categoryService.create(command);
+            Long id = postCategoryService.create(command);
 
             // then
-            Category category = categoryRepository.getById(id);
-            assertThat(category.getParent().getId()).isEqualTo(최상위);
-            assertThat(category.getName()).isEqualTo("하위 카테고리");
+            PostCategory postCategory = postCategoryRepository.getById(id);
+            assertThat(postCategory.getParent().getId()).isEqualTo(최상위);
+            assertThat(postCategory.getName()).isEqualTo("하위 카테고리");
         }
 
         @Test
         void 없는_부모_카테고리_ID를_설정한_경우_예외() {
             // given
-            CreateCategoryCommand command = CreateCategoryCommand.builder()
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .blogName(mallangBlogName)
                     .name("하위 카테고리")
@@ -102,14 +102,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.create(command)
+                    postCategoryService.create(command)
             ).isInstanceOf(NotFoundCategoryException.class);
         }
 
         @Test
         void 하위_카테고리를_생성하려는_회원가_상위_카테고리를_생성한_회원이_동일하지_않으면_예외() {
             // given
-            Long 최상위 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -117,7 +117,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            CreateCategoryCommand command = CreateCategoryCommand.builder()
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
                     .memberId(otherMemberId)
                     .blogName(otherBlogName)
                     .name("하위 카테고리")
@@ -126,14 +126,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.create(command)
+                    postCategoryService.create(command)
             ).isInstanceOf(NoAuthorityCategoryException.class);
         }
 
         @Test
         void 루트끼리는_이름이_같을_수_없다() {
             // given
-            Long rootId = categoryService.create(new CreateCategoryCommand(
+            Long rootId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -141,7 +141,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            CreateCategoryCommand command = CreateCategoryCommand.builder()
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .blogName(mallangBlogName)
                     .name("최상위")
@@ -151,14 +151,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.create(command)
+                    postCategoryService.create(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
 
         @Test
         void 형제끼리는_이름이_같을_수_없다() {
             // given
-            Long rootId = categoryService.create(new CreateCategoryCommand(
+            Long rootId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -166,7 +166,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childI1 = categoryService.create(new CreateCategoryCommand(
+            Long childI1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "자식",
@@ -174,7 +174,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            CreateCategoryCommand command = CreateCategoryCommand.builder()
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .blogName(mallangBlogName)
                     .name("자식")
@@ -184,7 +184,7 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.create(command)
+                    postCategoryService.create(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
@@ -195,7 +195,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 자신의_카테고리라면_수정_가능() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -203,24 +203,24 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryNameCommand command = UpdateCategoryNameCommand.builder()
+            UpdatePostCategoryNameCommand command = UpdatePostCategoryNameCommand.builder()
                     .categoryId(categoryId)
                     .memberId(mallangId)
                     .name("수정")
                     .build();
 
             // when
-            categoryService.updateName(command);
+            postCategoryService.updateName(command);
 
             // then
-            Category category = categoryRepository.getById(categoryId);
-            assertThat(category.getName()).isEqualTo("수정");
+            PostCategory postCategory = postCategoryRepository.getById(categoryId);
+            assertThat(postCategory.getName()).isEqualTo("수정");
         }
 
         @Test
         void 같은_부모를_가진_직계_자식끼리는_이름이_겹쳐서는_안된다() {
             // given
-            Long 최상위 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -228,7 +228,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long 자식1 = categoryService.create(new CreateCategoryCommand(
+            Long 자식1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위1",
@@ -236,7 +236,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long 자식2 = categoryService.create(new CreateCategoryCommand(
+            Long 자식2 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위2",
@@ -244,7 +244,7 @@ class CategoryServiceTest extends ServiceTest {
                     자식1,
                     null
             ));
-            UpdateCategoryNameCommand command = UpdateCategoryNameCommand.builder()
+            UpdatePostCategoryNameCommand command = UpdatePostCategoryNameCommand.builder()
                     .categoryId(자식2)
                     .memberId(mallangId)
                     .name("하위1")
@@ -252,14 +252,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateName(command)
+                    postCategoryService.updateName(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
 
         @Test
         void 루트끼리는_이름이_같을_수_없다() {
             // given
-            Long 최상위 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -267,7 +267,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long 최상위2 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위2 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위2",
@@ -275,7 +275,7 @@ class CategoryServiceTest extends ServiceTest {
                     최상위,
                     null
             ));
-            UpdateCategoryNameCommand command = UpdateCategoryNameCommand.builder()
+            UpdatePostCategoryNameCommand command = UpdatePostCategoryNameCommand.builder()
                     .categoryId(최상위2)
                     .memberId(mallangId)
                     .name("최상위")
@@ -283,7 +283,7 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateName(command)
+                    postCategoryService.updateName(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
@@ -294,7 +294,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 자신의_카테고리라면_수정_가능() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -302,7 +302,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -310,7 +310,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(childCategoryId)
                     .memberId(mallangId)
                     .parentId(null)
@@ -318,18 +318,18 @@ class CategoryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            categoryService.updateHierarchy(command);
+            postCategoryService.updateHierarchy(command);
 
             // then
-            Category category = categoryRepository.getById(childCategoryId);
-            assertThat(category.getNextSibling().getId()).isEqualTo(categoryId);
-            assertThat(category.getPreviousSibling()).isNull();
+            PostCategory postCategory = postCategoryRepository.getById(childCategoryId);
+            assertThat(postCategory.getNextSibling().getId()).isEqualTo(categoryId);
+            assertThat(postCategory.getPreviousSibling()).isNull();
         }
 
         @Test
         void 부모_카테고리를_제거함으로써_최상위_카테고리로_만들_수_있다() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -337,7 +337,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -345,7 +345,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(childCategoryId)
                     .memberId(mallangId)
                     .parentId(null)
@@ -353,19 +353,19 @@ class CategoryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            categoryService.updateHierarchy(command);
+            postCategoryService.updateHierarchy(command);
 
             // then
-            Category category = categoryRepository.getById(childCategoryId);
-            assertThat(category.getName()).isEqualTo("하위");
-            assertThat(category.getParent()).isNull();
+            PostCategory postCategory = postCategoryRepository.getById(childCategoryId);
+            assertThat(postCategory.getName()).isEqualTo("하위");
+            assertThat(postCategory.getParent()).isNull();
         }
 
         // Lazy Loading 으로 인해 오동작하는 문제가 있어서 체크를 위해 필요
         @Test
         void 부모_카테고리를_변경할_수_있다() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -373,7 +373,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -381,7 +381,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childChildCategoryId1 = categoryService.create(new CreateCategoryCommand(
+            Long childChildCategoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "더하위",
@@ -389,7 +389,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(childChildCategoryId1)
                     .memberId(mallangId)
                     .parentId(categoryId)
@@ -397,13 +397,13 @@ class CategoryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            categoryService.updateHierarchy(command);
+            postCategoryService.updateHierarchy(command);
 
             // then
             transactionHelper.doAssert(() -> {
-                Category category = categoryRepository.getById(categoryId);
-                assertThat(category.getSortedChildren())
-                        .extracting(Category::getName)
+                PostCategory postCategory = postCategoryRepository.getById(categoryId);
+                assertThat(postCategory.getSortedChildren())
+                        .extracting(PostCategory::getName)
                         .containsExactly("더하위", "하위");
             });
         }
@@ -412,7 +412,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 부모_카테고리를_변경할_수_있다2() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -420,7 +420,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -428,7 +428,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childChildCategoryId1 = categoryService.create(new CreateCategoryCommand(
+            Long childChildCategoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "더하위",
@@ -436,7 +436,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childChildChildCategoryId1 = categoryService.create(new CreateCategoryCommand(
+            Long childChildChildCategoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "더더하위",
@@ -444,7 +444,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(childChildChildCategoryId1)
                     .memberId(mallangId)
                     .parentId(categoryId)
@@ -452,13 +452,13 @@ class CategoryServiceTest extends ServiceTest {
                     .build();
 
             // when
-            categoryService.updateHierarchy(command);
+            postCategoryService.updateHierarchy(command);
 
             // then
             transactionHelper.doAssert(() -> {
-                Category category = categoryRepository.getById(categoryId);
-                assertThat(category.getSortedChildren())
-                        .extracting(Category::getName)
+                PostCategory postCategory = postCategoryRepository.getById(categoryId);
+                assertThat(postCategory.getSortedChildren())
+                        .extracting(PostCategory::getName)
                         .containsExactly("더더하위", "하위");
             });
         }
@@ -467,7 +467,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 부모_카테고리를_변경할_수_있다3() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -475,7 +475,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -483,7 +483,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childNextCategoryId1 = categoryService.create(new CreateCategoryCommand(
+            Long childNextCategoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위 옆",
@@ -491,26 +491,26 @@ class CategoryServiceTest extends ServiceTest {
                     childCategoryId,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(childNextCategoryId1)
                     .memberId(mallangId)
                     .parentId(childCategoryId)
                     .build();
 
             // when
-            categoryService.updateHierarchy(command);
+            postCategoryService.updateHierarchy(command);
 
             // then
             transactionHelper.doAssert(() -> {
-                Category category = categoryRepository.getById(categoryId);
-                assertThat(category.getSortedChildren())
-                        .extracting(Category::getName)
+                PostCategory postCategory = postCategoryRepository.getById(categoryId);
+                assertThat(postCategory.getSortedChildren())
+                        .extracting(PostCategory::getName)
                         .containsExactly("하위");
             });
             transactionHelper.doAssert(() -> {
-                Category category = categoryRepository.getById(childCategoryId);
-                assertThat(category.getSortedChildren())
-                        .extracting(Category::getName)
+                PostCategory postCategory = postCategoryRepository.getById(childCategoryId);
+                assertThat(postCategory.getSortedChildren())
+                        .extracting(PostCategory::getName)
                         .containsExactly("하위 옆");
             });
         }
@@ -519,7 +519,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 부모_카테고리를_변경할_수_있다4() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -527,7 +527,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -535,7 +535,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childNextCategoryId1 = categoryService.create(new CreateCategoryCommand(
+            Long childNextCategoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위 옆",
@@ -543,26 +543,26 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     childCategoryId
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(childNextCategoryId1)
                     .memberId(mallangId)
                     .parentId(childCategoryId)
                     .build();
 
             // when
-            categoryService.updateHierarchy(command);
+            postCategoryService.updateHierarchy(command);
 
             // then
             transactionHelper.doAssert(() -> {
-                Category category = categoryRepository.getById(categoryId);
-                assertThat(category.getSortedChildren())
-                        .extracting(Category::getName)
+                PostCategory postCategory = postCategoryRepository.getById(categoryId);
+                assertThat(postCategory.getSortedChildren())
+                        .extracting(PostCategory::getName)
                         .containsExactly("하위");
             });
             transactionHelper.doAssert(() -> {
-                Category category = categoryRepository.getById(childCategoryId);
-                assertThat(category.getSortedChildren())
-                        .extracting(Category::getName)
+                PostCategory postCategory = postCategoryRepository.getById(childCategoryId);
+                assertThat(postCategory.getSortedChildren())
+                        .extracting(PostCategory::getName)
                         .containsExactly("하위 옆");
             });
         }
@@ -570,7 +570,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 자신_혹은_자신의_하위_카테고리를_자신의_부모로_만드려는_경우_예외() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -578,7 +578,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -586,7 +586,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childChildCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childChildCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "더하위1",
@@ -594,17 +594,17 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand selfParent = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand selfParent = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
                     .memberId(mallangId)
                     .parentId(categoryId)
                     .build();
-            UpdateCategoryHierarchyCommand childToParent = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand childToParent = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
                     .memberId(mallangId)
                     .parentId(childChildCategoryId)
                     .build();
-            UpdateCategoryHierarchyCommand descendantToParent = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand descendantToParent = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
                     .memberId(mallangId)
                     .parentId(childChildCategoryId)
@@ -612,20 +612,20 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(selfParent)
+                    postCategoryService.updateHierarchy(selfParent)
             ).isInstanceOf(CategoryHierarchyViolationException.class);
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(childToParent)
+                    postCategoryService.updateHierarchy(childToParent)
             ).isInstanceOf(CategoryHierarchyViolationException.class);
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(descendantToParent)
+                    postCategoryService.updateHierarchy(descendantToParent)
             ).isInstanceOf(CategoryHierarchyViolationException.class);
         }
 
         @Test
         void 자신의_카테고리가_아니면_예외() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -633,7 +633,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
                     .memberId(otherMemberId)
                     .parentId(null)
@@ -641,14 +641,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(command)
+                    postCategoryService.updateHierarchy(command)
             ).isInstanceOf(NoAuthorityCategoryException.class);
         }
 
         @Test
         void 다른_사람의_카테고리의_하위_카테고리로_변경하려는_경우_예외() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -656,7 +656,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long otherCategory = categoryService.create(new CreateCategoryCommand(
+            Long otherCategory = postCategoryService.create(new CreatePostCategoryCommand(
                     otherMemberId,
                     otherBlogName,
                     "최상위",
@@ -664,7 +664,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
                     .memberId(mallangId)
                     .parentId(otherCategory)
@@ -672,14 +672,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(command)
+                    postCategoryService.updateHierarchy(command)
             ).isInstanceOf(NoAuthorityCategoryException.class);
         }
 
         @Test
         void 같은_부모를_가진_형제끼리_이름이_겹치면_예외() {
             // given
-            Long 최상위 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -687,7 +687,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long 최상위2 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위2 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "자식1",
@@ -695,7 +695,7 @@ class CategoryServiceTest extends ServiceTest {
                     최상위,
                     null
             ));
-            Long 자식1 = categoryService.create(new CreateCategoryCommand(
+            Long 자식1 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "자식1",
@@ -703,7 +703,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(최상위2)
                     .memberId(mallangId)
                     .parentId(최상위)
@@ -712,14 +712,14 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(command)
+                    postCategoryService.updateHierarchy(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
 
         @Test
         void 루트끼리_이름이_같으면_예외() {
             // given
-            Long 최상위 = categoryService.create(new CreateCategoryCommand(
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -727,7 +727,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long 자식 = categoryService.create(new CreateCategoryCommand(
+            Long 자식 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -735,7 +735,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            UpdateCategoryHierarchyCommand command = UpdateCategoryHierarchyCommand.builder()
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(자식)
                     .memberId(mallangId)
                     .parentId(null)
@@ -744,7 +744,7 @@ class CategoryServiceTest extends ServiceTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    categoryService.updateHierarchy(command)
+                    postCategoryService.updateHierarchy(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
@@ -755,7 +755,7 @@ class CategoryServiceTest extends ServiceTest {
         @Test
         void 하위_카테고리가_있다면_오류() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -763,7 +763,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            categoryService.create(new CreateCategoryCommand(
+            postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -771,24 +771,24 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            DeleteCategoryCommand command = DeleteCategoryCommand.builder()
+            DeletePostCategoryCommand command = DeletePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .categoryId(categoryId)
                     .build();
 
             // when
             assertThatThrownBy(() ->
-                    categoryService.delete(command)
+                    postCategoryService.delete(command)
             ).isInstanceOf(ChildCategoryExistException.class);
 
             // then
-            assertThat(categoryRepository.getById(categoryId)).isNotNull();
+            assertThat(postCategoryRepository.getById(categoryId)).isNotNull();
         }
 
         @Test
         void 자신의_카테고리가_아니라면_예외() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -796,7 +796,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            categoryService.create(new CreateCategoryCommand(
+            postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -804,23 +804,23 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            DeleteCategoryCommand command = DeleteCategoryCommand.builder()
+            DeletePostCategoryCommand command = DeletePostCategoryCommand.builder()
                     .memberId(otherMemberId)
                     .categoryId(categoryId)
                     .build();
             // when
             assertThatThrownBy(() ->
-                    categoryService.delete(command)
+                    postCategoryService.delete(command)
             ).isInstanceOf(NoAuthorityCategoryException.class);
 
             // then
-            assertThat(categoryRepository.getById(categoryId)).isNotNull();
+            assertThat(postCategoryRepository.getById(categoryId)).isNotNull();
         }
 
         @Test
         void 부모_카테고리의_자식에서_제거된다() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -828,7 +828,7 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long childCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long childCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "하위",
@@ -836,26 +836,26 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            DeleteCategoryCommand command = DeleteCategoryCommand.builder()
+            DeletePostCategoryCommand command = DeletePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .categoryId(childCategoryId)
                     .build();
             // when
-            categoryService.delete(command);
+            postCategoryService.delete(command);
 
             // then
             assertThatThrownBy(() ->
-                    categoryRepository.getById(childCategoryId)
+                    postCategoryRepository.getById(childCategoryId)
             ).isInstanceOf(NotFoundCategoryException.class);
             transactionHelper.doAssert(() ->
-                    assertThat(categoryRepository.getById(categoryId).getSortedChildren()).isEmpty()
+                    assertThat(postCategoryRepository.getById(categoryId).getSortedChildren()).isEmpty()
             );
         }
 
         @Test
         void 카테고리_제거_이벤트가_발행된다() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -863,16 +863,16 @@ class CategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            DeleteCategoryCommand command = DeleteCategoryCommand.builder()
+            DeletePostCategoryCommand command = DeletePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .categoryId(categoryId)
                     .build();
 
             // when
-            categoryService.delete(command);
+            postCategoryService.delete(command);
 
             // then
-            int count = EventsTestUtils.count(events, CategoryDeletedEvent.class);
+            int count = EventsTestUtils.count(events, PostCategoryDeletedEvent.class);
             assertThat(count).isEqualTo(1);
         }
     }

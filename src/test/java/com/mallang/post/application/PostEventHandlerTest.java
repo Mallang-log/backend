@@ -2,8 +2,8 @@ package com.mallang.post.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.application.command.CreateCategoryCommand;
-import com.mallang.category.domain.event.CategoryDeletedEvent;
+import com.mallang.category.application.command.CreatePostCategoryCommand;
+import com.mallang.category.domain.event.PostCategoryDeletedEvent;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -24,7 +24,7 @@ class PostEventHandlerTest extends ServiceTest {
             // given
             Long 말랑_ID = 회원을_저장한다("말랑");
             String blogName = 블로그_개설(말랑_ID, "mallang-log");
-            Long categoryId1 = categoryService.create(new CreateCategoryCommand(
+            Long categoryId1 = postCategoryService.create(new CreatePostCategoryCommand(
                     말랑_ID,
                     blogName,
                     "최상위1",
@@ -32,7 +32,7 @@ class PostEventHandlerTest extends ServiceTest {
                     null,
                     null
             ));
-            Long categoryId2 = categoryService.create(new CreateCategoryCommand(
+            Long categoryId2 = postCategoryService.create(new CreatePostCategoryCommand(
                     말랑_ID,
                     blogName,
                     "최상위2",
@@ -45,7 +45,7 @@ class PostEventHandlerTest extends ServiceTest {
             Long postId3 = 포스트를_저장한다(말랑_ID, blogName, "안삭제", "내용", categoryId2).getPostId();
 
             // when
-            publisher.publishEvent(new CategoryDeletedEvent(categoryId1));
+            publisher.publishEvent(new PostCategoryDeletedEvent(categoryId1));
 
             // then
             assertThat(postRepository.getById(postId1, blogName).getCategory()).isNull();

@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.category.domain.Category;
+import com.mallang.category.domain.PostCategory;
 import com.mallang.category.exception.NoAuthorityCategoryException;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import java.util.List;
@@ -28,9 +28,9 @@ class PostContentTest {
     private final Member otherMember = 깃허브_동훈(3L);
     private final Blog blog = new Blog("mallang", mallang);
     private final Blog otherBlog = new Blog("ohter", otherMember);
-    private final Category springCategory = 루트_카테고리("Spring", mallang, blog);
-    private final Category jpaCategory = 하위_카테고리("JPA", mallang, blog, springCategory);
-    private final Category otherCategory = 루트_카테고리("Spring", otherMember, otherBlog);
+    private final PostCategory springPostCategory = 루트_카테고리("Spring", mallang, blog);
+    private final PostCategory jpaPostCategory = 하위_카테고리("JPA", mallang, blog, springPostCategory);
+    private final PostCategory otherPostCategory = 루트_카테고리("Spring", otherMember, otherBlog);
 
     @Test
     void 카테고리를_없앨_수_있다() {
@@ -40,7 +40,7 @@ class PostContentTest {
                 .bodyText("내용")
                 .writer(mallang)
                 .postIntro("intro")
-                .category(springCategory)
+                .category(springPostCategory)
                 .build();
 
         // when
@@ -63,7 +63,7 @@ class PostContentTest {
             assertThatThrownBy(() -> {
                 PostContent.builder()
                         .writer(mallang)
-                        .category(otherCategory)
+                        .category(otherPostCategory)
                         .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityCategoryException.class);
@@ -121,7 +121,7 @@ class PostContentTest {
                     .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
-                    .category(jpaCategory)
+                    .category(jpaPostCategory)
                     .build();
 
             // then

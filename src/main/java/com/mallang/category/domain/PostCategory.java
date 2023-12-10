@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.category.domain.event.CategoryDeletedEvent;
+import com.mallang.category.domain.event.PostCategoryDeletedEvent;
 import com.mallang.category.exception.CategoryHierarchyViolationException;
 import com.mallang.category.exception.ChildCategoryExistException;
 import com.mallang.category.exception.DuplicateCategoryNameException;
@@ -32,7 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @Getter
 @Entity
-public class Category extends CommonRootEntity<Long> {
+public class PostCategory extends CommonRootEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -50,20 +50,20 @@ public class Category extends CommonRootEntity<Long> {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
-    private Category parent;
+    private PostCategory parent;
 
     @OneToMany(fetch = LAZY, mappedBy = "parent")
-    private List<Category> children = new ArrayList<>();
+    private List<PostCategory> children = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "previous_sibling_id")
-    private Category previousSibling;
+    private PostCategory previousSibling;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "next_sibling_id")
-    private Category nextSibling;
+    private PostCategory nextSibling;
 
-    public Category(String name, Member owner, Blog blog) {
+    public PostCategory(String name, Member owner, Blog blog) {
         this.name = name;
         this.owner = owner;
         this.blog = blog;
@@ -77,9 +77,9 @@ public class Category extends CommonRootEntity<Long> {
     }
 
     public void updateHierarchy(
-            @Nullable Category parent,
-            @Nullable Category prevSibling,
-            @Nullable Category nextSibling
+            @Nullable PostCategory parent,
+            @Nullable PostCategory prevSibling,
+            @Nullable PostCategory nextSibling
     ) {
         validateOwners(parent, prevSibling, nextSibling);
         validateSelfOrDescendantReference(parent, prevSibling, nextSibling);
@@ -90,29 +90,29 @@ public class Category extends CommonRootEntity<Long> {
         participateHierarchy(parent, prevSibling, nextSibling);
     }
 
-    private void validateOwners(Category... categories) {
-        for (Category category : categories) {
-            if (category != null) {
-                validateOwner(category.getOwner());
+    private void validateOwners(PostCategory... categories) {
+        for (PostCategory postCategory : categories) {
+            if (postCategory != null) {
+                validateOwner(postCategory.getOwner());
             }
         }
     }
 
     private void validateSelfOrDescendantReference(
-            @Nullable Category parent,
-            @Nullable Category prevSibling,
-            @Nullable Category nextSibling
+            @Nullable PostCategory parent,
+            @Nullable PostCategory prevSibling,
+            @Nullable PostCategory nextSibling
     ) {
         if (equals(parent) || equals(prevSibling) || equals(nextSibling)) {
             throw new CategoryHierarchyViolationException("자기 자신 혹은 자손들을 부모, 혹은 형제로 지정할 수 없습니다.");
         }
-        List<Category> descendants = getDescendants();
+        List<PostCategory> descendants = getDescendants();
         if (descendants.contains(parent) || descendants.contains(prevSibling) || descendants.contains(nextSibling)) {
             throw new CategoryHierarchyViolationException("자기 자신 혹은 자손들을 부모, 혹은 형제로 지정할 수 없습니다.");
         }
     }
 
-    private void validateContinuous(@Nullable Category prevSibling, @Nullable Category nextSibling) {
+    private void validateContinuous(@Nullable PostCategory prevSibling, @Nullable PostCategory nextSibling) {
         validateWhenNonNullWithFailCond(
                 prevSibling,
                 prev -> notEquals(prev.getNextSibling(), nextSibling),
@@ -126,9 +126,9 @@ public class Category extends CommonRootEntity<Long> {
     }
 
     private void validateParentAndChildRelation(
-            @Nullable Category parent,
-            @Nullable Category prevSibling,
-            @Nullable Category nextSibling
+            @Nullable PostCategory parent,
+            @Nullable PostCategory prevSibling,
+            @Nullable PostCategory nextSibling
     ) {
         if (isNulls(prevSibling, nextSibling)) {
             validateNoChildrenInParent(parent);
@@ -145,9 +145,9 @@ public class Category extends CommonRootEntity<Long> {
         );
     }
 
-    private void validateNoChildrenInParent(Category parent) {
+    private void validateNoChildrenInParent(PostCategory parent) {
         if (parent == null) {
-            Category root = getRoot();
+            PostCategory root = getRoot();
             if (root.getPreviousSibling() == null && root.getNextSibling() == null) {
                 if (equals(root)) {
                     return;
@@ -161,8 +161,8 @@ public class Category extends CommonRootEntity<Long> {
         }
     }
 
-    private Category getRoot() {
-        Category root = this;
+    private PostCategory getRoot() {
+        PostCategory root = this;
         while (root.getParent() != null) {
             root = root.getParent();
         }
@@ -170,8 +170,8 @@ public class Category extends CommonRootEntity<Long> {
     }
 
     private void validateDuplicatedNameWhenParticipated(
-            @Nullable Category prevSibling,
-            @Nullable Category nextSibling
+            @Nullable PostCategory prevSibling,
+            @Nullable PostCategory nextSibling
     ) {
         validateWhenNonNullWithFailCond(
                 prevSibling,
@@ -201,9 +201,9 @@ public class Category extends CommonRootEntity<Long> {
     }
 
     private void participateHierarchy(
-            @Nullable Category parent,
-            @Nullable Category prevSibling,
-            @Nullable Category nextSibling
+            @Nullable PostCategory parent,
+            @Nullable PostCategory prevSibling,
+            @Nullable PostCategory nextSibling
     ) {
         if (prevSibling != null) {
             prevSibling.setNextSibling(this);
@@ -220,9 +220,9 @@ public class Category extends CommonRootEntity<Long> {
     }
 
     public void updateName(String name) {
-        List<Category> siblings = getSiblings();
+        List<PostCategory> siblings = getSiblings();
         while (!siblings.isEmpty()) {
-            Category sibling = siblings.removeLast();
+            PostCategory sibling = siblings.removeLast();
             if (sibling.getName().equals(name)) {
                 throw new DuplicateCategoryNameException();
             }
@@ -233,7 +233,7 @@ public class Category extends CommonRootEntity<Long> {
     public void delete() {
         validateNoChildren();
         unlinkFromParent();
-        registerEvent(new CategoryDeletedEvent(getId()));
+        registerEvent(new PostCategoryDeletedEvent(getId()));
     }
 
     private void unlinkFromParent() {
@@ -249,28 +249,28 @@ public class Category extends CommonRootEntity<Long> {
         }
     }
 
-    public List<Category> getDescendants() {
-        List<Category> children = new ArrayList<>();
+    public List<PostCategory> getDescendants() {
+        List<PostCategory> children = new ArrayList<>();
         if (getChildren().isEmpty()) {
             return children;
         }
-        for (Category child : getChildren()) {
+        for (PostCategory child : getChildren()) {
             children.add(child);
             children.addAll(child.getDescendants());
         }
         return children;
     }
 
-    public List<Category> getSortedChildren() {
-        Optional<Category> first = getChildren()
+    public List<PostCategory> getSortedChildren() {
+        Optional<PostCategory> first = getChildren()
                 .stream()
                 .filter(it -> it.getPreviousSibling() == null)
                 .findAny();
         if (first.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Category> categories = new ArrayList<>();
-        Category current = first.get();
+        List<PostCategory> categories = new ArrayList<>();
+        PostCategory current = first.get();
         while (current != null) {
             categories.add(current);
             current = current.getNextSibling();
@@ -278,14 +278,14 @@ public class Category extends CommonRootEntity<Long> {
         return categories;
     }
 
-    public List<Category> getSiblings() {
-        List<Category> siblings = new ArrayList<>();
-        Category currentPrev = this.previousSibling;
+    public List<PostCategory> getSiblings() {
+        List<PostCategory> siblings = new ArrayList<>();
+        PostCategory currentPrev = this.previousSibling;
         while (currentPrev != null) {
             siblings.addFirst(currentPrev);
             currentPrev = currentPrev.previousSibling;
         }
-        Category currentNext = this.nextSibling;
+        PostCategory currentNext = this.nextSibling;
         while (currentNext != null) {
             siblings.addLast(currentNext);
             currentNext = currentNext.nextSibling;
@@ -297,11 +297,11 @@ public class Category extends CommonRootEntity<Long> {
     // 카테고리 조회 시 parent, prev, next 가 지연로딩되어 프록시로 조회되므로, prev.next = this 등으로 사용 시 update 가 동작하지 않음
     // 이를 해결하기 위해 메서드를 통해 접근해야 하는데 private 혹은 package-private 메서드의 경우 여전히 동작하지 않음
     // 따라서 protected 로 설정함
-    protected void setPreviousSibling(Category previousSibling) {
+    protected void setPreviousSibling(PostCategory previousSibling) {
         this.previousSibling = previousSibling;
     }
 
-    protected void setNextSibling(Category nextSibling) {
+    protected void setNextSibling(PostCategory nextSibling) {
         this.nextSibling = nextSibling;
     }
 }

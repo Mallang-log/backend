@@ -1,11 +1,11 @@
 package com.mallang.post.query.repository;
 
-import static com.mallang.category.domain.QCategory.category;
+import static com.mallang.category.domain.QPostCategory.postCategory;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
 import com.mallang.blog.domain.Blog;
-import com.mallang.category.query.repository.CategoryQueryRepository;
+import com.mallang.category.query.repository.PostCategoryQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -40,7 +40,7 @@ public interface PostManageSearchDao {
     class PostManageSearchDaoImpl implements PostManageSearchDao {
 
         private final JPAQueryFactory query;
-        private final CategoryQueryRepository categoryQueryRepository;
+        private final PostCategoryQueryRepository postCategoryQueryRepository;
 
         @Override
         public Page<Post> searchForManage(Blog blog, PostManageSearchCond cond, Pageable pageable) {
@@ -55,7 +55,7 @@ public interface PostManageSearchDao {
                     );
             List<Post> result = query.selectFrom(post)
                     .distinct()
-                    .leftJoin(post.content.category, category).fetchJoin()
+                    .leftJoin(post.content.category, postCategory).fetchJoin()
                     .where(
                             blogEq(blog),
                             hasCategory(cond.categoryId()),
@@ -81,7 +81,7 @@ public interface PostManageSearchDao {
             if (categoryId == NO_CATEGORY_CONDITION) {
                 return post.content.category.isNull();
             }
-            List<Long> categoryIds = categoryQueryRepository.getCategoryAndDescendants(categoryId);
+            List<Long> categoryIds = postCategoryQueryRepository.getCategoryAndDescendants(categoryId);
             return post.content.category.id.in(categoryIds);
         }
 

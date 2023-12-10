@@ -1,9 +1,9 @@
 package com.mallang.category.presentation.request;
 
-import com.mallang.category.application.command.CreateCategoryCommand;
+import com.mallang.category.application.command.CreatePostCategoryCommand;
 import jakarta.annotation.Nullable;
 
-public record CreateCategoryRequest(
+public record CreatePostCategoryRequest(
         String blogName,
         String name,
         @Nullable Long parentCategoryId,
@@ -11,8 +11,8 @@ public record CreateCategoryRequest(
         @Nullable Long nextCategoryId
 
 ) {
-    public CreateCategoryCommand toCommand(Long memberId) {
-        return CreateCategoryCommand.builder()
+    public CreatePostCategoryCommand toCommand(Long memberId) {
+        return CreatePostCategoryCommand.builder()
                 .name(name)
                 .blogName(blogName)
                 .memberId(memberId)

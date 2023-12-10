@@ -4,10 +4,10 @@ import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.presentation.request.CreateCategoryRequest;
-import com.mallang.category.presentation.request.UpdateCategoryHierarchyRequest;
-import com.mallang.category.presentation.request.UpdateCategoryNameRequest;
-import com.mallang.category.query.response.CategoryResponse;
+import com.mallang.category.presentation.request.CreatePostCategoryRequest;
+import com.mallang.category.presentation.request.UpdatePostCategoryHierarchyRequest;
+import com.mallang.category.presentation.request.UpdatePostCategoryNameRequest;
+import com.mallang.category.query.response.PostCategoryResponse;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -29,7 +29,7 @@ public class CategoryAcceptanceSteps {
 
     public static Long 카테고리_생성(
             String 세션_ID,
-            CreateCategoryRequest request
+            CreatePostCategoryRequest request
     ) {
         return ID를_추출한다(카테고리_생성_요청(세션_ID, request));
     }
@@ -43,7 +43,7 @@ public class CategoryAcceptanceSteps {
             Long 다음_형제_ID
     ) {
         return given(세션_ID)
-                .body(new CreateCategoryRequest(
+                .body(new CreatePostCategoryRequest(
                         블로그_이름,
                         카테고리_이름,
                         부모_카테고리_ID,
@@ -57,7 +57,7 @@ public class CategoryAcceptanceSteps {
 
     public static ExtractableResponse<Response> 카테고리_생성_요청(
             String 세션_ID,
-            CreateCategoryRequest request
+            CreatePostCategoryRequest request
     ) {
         return given(세션_ID)
                 .body(request)
@@ -74,7 +74,7 @@ public class CategoryAcceptanceSteps {
             Long 다음_형제_카테고리_ID
     ) {
         return given(세션_ID)
-                .body(new UpdateCategoryHierarchyRequest(
+                .body(new UpdatePostCategoryHierarchyRequest(
                         변경할_상위_카테고리_ID,
                         이전_형제_카테고리_ID,
                         다음_형제_카테고리_ID
@@ -90,7 +90,7 @@ public class CategoryAcceptanceSteps {
             String 변경할_이름
     ) {
         return given(세션_ID)
-                .body(new UpdateCategoryNameRequest(변경할_이름))
+                .body(new UpdatePostCategoryNameRequest(변경할_이름))
                 .put("/categories/{id}/name", 카테고리_ID)
                 .then()
                 .extract();
@@ -114,8 +114,8 @@ public class CategoryAcceptanceSteps {
                 .extract();
     }
 
-    public static void 카테고리_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<CategoryResponse> 예상_응답) {
-        List<CategoryResponse> actual = 응답.as(new TypeRef<>() {
+    public static void 카테고리_조회_응답을_검증한다(ExtractableResponse<Response> 응답, List<PostCategoryResponse> 예상_응답) {
+        List<PostCategoryResponse> actual = 응답.as(new TypeRef<>() {
         });
         assertThat(actual).usingRecursiveComparison()
                 .isEqualTo(예상_응답);

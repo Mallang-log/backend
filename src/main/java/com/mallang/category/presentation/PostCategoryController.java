@@ -1,13 +1,13 @@
 package com.mallang.category.presentation;
 
 import com.mallang.auth.presentation.support.Auth;
-import com.mallang.category.application.CategoryService;
-import com.mallang.category.application.command.DeleteCategoryCommand;
-import com.mallang.category.presentation.request.CreateCategoryRequest;
-import com.mallang.category.presentation.request.UpdateCategoryHierarchyRequest;
-import com.mallang.category.presentation.request.UpdateCategoryNameRequest;
-import com.mallang.category.query.CategoryQueryService;
-import com.mallang.category.query.response.CategoryResponse;
+import com.mallang.category.application.PostCategoryService;
+import com.mallang.category.application.command.DeletePostCategoryCommand;
+import com.mallang.category.presentation.request.CreatePostCategoryRequest;
+import com.mallang.category.presentation.request.UpdatePostCategoryHierarchyRequest;
+import com.mallang.category.presentation.request.UpdatePostCategoryNameRequest;
+import com.mallang.category.query.PostCategoryQueryService;
+import com.mallang.category.query.response.PostCategoryResponse;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,17 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/categories")
 @RestController
-public class CategoryController {
+public class PostCategoryController {
 
-    private final CategoryService categoryService;
-    private final CategoryQueryService categoryQueryService;
+    private final PostCategoryService postCategoryService;
+    private final PostCategoryQueryService postCategoryQueryService;
 
     @PostMapping
     public ResponseEntity<Void> create(
             @Auth Long memberId,
-            @RequestBody CreateCategoryRequest request
+            @RequestBody CreatePostCategoryRequest request
     ) {
-        Long categoryId = categoryService.create(request.toCommand(memberId));
+        Long categoryId = postCategoryService.create(request.toCommand(memberId));
         return ResponseEntity.created(URI.create("/categories/" + categoryId)).build();
     }
 
@@ -43,9 +43,9 @@ public class CategoryController {
     public ResponseEntity<Void> updateHierarchy(
             @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId,
-            @RequestBody UpdateCategoryHierarchyRequest request
+            @RequestBody UpdatePostCategoryHierarchyRequest request
     ) {
-        categoryService.updateHierarchy(request.toCommand(categoryId, memberId));
+        postCategoryService.updateHierarchy(request.toCommand(categoryId, memberId));
         return ResponseEntity.ok().build();
     }
 
@@ -53,9 +53,9 @@ public class CategoryController {
     public ResponseEntity<Void> updateName(
             @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId,
-            @RequestBody UpdateCategoryNameRequest request
+            @RequestBody UpdatePostCategoryNameRequest request
     ) {
-        categoryService.updateName(request.toCommand(categoryId, memberId));
+        postCategoryService.updateName(request.toCommand(categoryId, memberId));
         return ResponseEntity.ok().build();
     }
 
@@ -64,15 +64,15 @@ public class CategoryController {
             @PathVariable(name = "categoryId") Long categoryId,
             @Auth Long memberId
     ) {
-        categoryService.delete(new DeleteCategoryCommand(memberId, categoryId));
+        postCategoryService.delete(new DeletePostCategoryCommand(memberId, categoryId));
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> findAllByBlog(
+    public ResponseEntity<List<PostCategoryResponse>> findAllByBlog(
             @RequestParam(name = "blogName", required = true) String blogName
     ) {
-        List<CategoryResponse> result = categoryQueryService.findAllByBlogName(blogName);
+        List<PostCategoryResponse> result = postCategoryQueryService.findAllByBlogName(blogName);
         return ResponseEntity.ok(result);
     }
 }

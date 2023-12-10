@@ -2,13 +2,13 @@ package com.mallang.post.query.repository;
 
 import static com.mallang.auth.domain.QMember.member;
 import static com.mallang.blog.domain.QBlog.blog;
-import static com.mallang.category.domain.QCategory.category;
+import static com.mallang.category.domain.QPostCategory.postCategory;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
 import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
-import com.mallang.category.query.repository.CategoryQueryRepository;
+import com.mallang.category.query.repository.PostCategoryQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -44,7 +44,7 @@ public interface PostSearchDao {
     class PostSearchDaoImpl implements PostSearchDao {
 
         private final JPAQueryFactory query;
-        private final CategoryQueryRepository categoryQueryRepository;
+        private final PostCategoryQueryRepository postCategoryQueryRepository;
 
         @Override
         public Page<Post> search(@Nullable Long memberId, PostSearchCond cond, Pageable pageable) {
@@ -63,7 +63,7 @@ public interface PostSearchDao {
                     .leftJoin(post.blog, blog).fetchJoin()
                     .leftJoin(post.content.tags, tag)
                     .join(post.content.writer, member).fetchJoin()
-                    .leftJoin(post.content.category, category).fetchJoin()
+                    .leftJoin(post.content.category, postCategory).fetchJoin()
                     .where(
                             filterPrivatePost(memberId),
                             blogEq(cond.blogName()),
@@ -99,7 +99,7 @@ public interface PostSearchDao {
             if (categoryId == null) {
                 return null;
             }
-            List<Long> categoryIds = categoryQueryRepository.getCategoryAndDescendants(categoryId);
+            List<Long> categoryIds = postCategoryQueryRepository.getCategoryAndDescendants(categoryId);
             return post.content.category.id.in(categoryIds);
         }
 

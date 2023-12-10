@@ -17,9 +17,9 @@ import com.mallang.blog.domain.AboutRepository;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.domain.subscribe.BlogSubscribeRepository;
 import com.mallang.blog.query.BlogSubscribeQueryService;
-import com.mallang.category.application.CategoryService;
-import com.mallang.category.domain.CategoryRepository;
-import com.mallang.category.query.CategoryQueryService;
+import com.mallang.category.application.PostCategoryService;
+import com.mallang.category.domain.PostCategoryRepository;
+import com.mallang.category.query.PostCategoryQueryService;
 import com.mallang.comment.application.AuthCommentService;
 import com.mallang.comment.application.UnAuthCommentService;
 import com.mallang.comment.application.command.WriteAuthCommentCommand;
@@ -120,13 +120,13 @@ public abstract class ServiceTest {
     protected DraftQueryService draftQueryService;
 
     @Autowired
-    protected CategoryRepository categoryRepository;
+    protected PostCategoryRepository postCategoryRepository;
 
     @Autowired
-    protected CategoryService categoryService;
+    protected PostCategoryService postCategoryService;
 
     @Autowired
-    protected CategoryQueryService categoryQueryService;
+    protected PostCategoryQueryService postCategoryQueryService;
 
     @Autowired
     protected PostStarRepository postStarRepository;

@@ -2,8 +2,8 @@ package com.mallang.category.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.application.command.CreateCategoryCommand;
-import com.mallang.category.query.response.CategoryResponse;
+import com.mallang.category.application.command.CreatePostCategoryCommand;
+import com.mallang.category.query.response.PostCategoryResponse;
 import com.mallang.common.ServiceTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -11,17 +11,17 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("카테고리 조회 서비스 (CategoryQueryService) 은(는)")
+@DisplayName("카테고리 조회 서비스 (PostCategoryQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class CategoryQueryServiceTest extends ServiceTest {
+class PostPostCategoryQueryServiceTest extends ServiceTest {
 
     @Test
     void 특정_블로그의_카테고리를_순서대로_전체_조회한다() {
         // given
         Long 동훈_ID = 회원을_저장한다("동훈");
         String 동훈_블로그_이름 = 블로그_개설(동훈_ID, "donghun");
-        categoryService.create(new CreateCategoryCommand(
+        postCategoryService.create(new CreatePostCategoryCommand(
                 동훈_ID,
                 동훈_블로그_이름,
                 "Node",
@@ -32,7 +32,7 @@ class CategoryQueryServiceTest extends ServiceTest {
 
         Long 말랑_ID = 회원을_저장한다("말랑");
         String 말랑_블로그_이름 = 블로그_개설(말랑_ID, "mallang");
-        Long springId = categoryService.create(new CreateCategoryCommand(
+        Long springId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "Spring",
@@ -40,7 +40,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 null,
                 null
         ));
-        Long jpaId = categoryService.create(new CreateCategoryCommand(
+        Long jpaId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "JPA",
@@ -48,7 +48,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 null,
                 null
         ));
-        Long n1Id = categoryService.create(new CreateCategoryCommand(
+        Long n1Id = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "N + 1",
@@ -56,7 +56,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 null,
                 null
         ));
-        Long securityId = categoryService.create(new CreateCategoryCommand(
+        Long securityId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "Security",
@@ -64,7 +64,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 jpaId,
                 null
         ));
-        Long oAuthId = categoryService.create(new CreateCategoryCommand(
+        Long oAuthId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "OAuth",
@@ -72,7 +72,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 null,
                 null
         ));
-        Long csrfId = categoryService.create(new CreateCategoryCommand(
+        Long csrfId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "CSRF",
@@ -80,7 +80,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 null,
                 oAuthId
         ));
-        Long algorithmId = categoryService.create(new CreateCategoryCommand(
+        Long algorithmId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "Algorithm",
@@ -88,7 +88,7 @@ class CategoryQueryServiceTest extends ServiceTest {
                 springId,
                 null
         ));
-        Long dfsId = categoryService.create(new CreateCategoryCommand(
+        Long dfsId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
                 말랑_블로그_이름,
                 "DFS",
@@ -96,23 +96,23 @@ class CategoryQueryServiceTest extends ServiceTest {
                 null,
                 null
         ));
-        List<CategoryResponse> expected = List.of(
-                new CategoryResponse(springId, "Spring", List.of(
-                        new CategoryResponse(jpaId, "JPA", List.of(
-                                new CategoryResponse(n1Id, "N + 1", List.of())
+        List<PostCategoryResponse> expected = List.of(
+                new PostCategoryResponse(springId, "Spring", List.of(
+                        new PostCategoryResponse(jpaId, "JPA", List.of(
+                                new PostCategoryResponse(n1Id, "N + 1", List.of())
                         )),
-                        new CategoryResponse(securityId, "Security", List.of(
-                                new CategoryResponse(csrfId, "CSRF", List.of()),
-                                new CategoryResponse(oAuthId, "OAuth", List.of())
+                        new PostCategoryResponse(securityId, "Security", List.of(
+                                new PostCategoryResponse(csrfId, "CSRF", List.of()),
+                                new PostCategoryResponse(oAuthId, "OAuth", List.of())
                         ))
                 )),
-                new CategoryResponse(algorithmId, "Algorithm", List.of(
-                        new CategoryResponse(dfsId, "DFS", List.of())
+                new PostCategoryResponse(algorithmId, "Algorithm", List.of(
+                        new PostCategoryResponse(dfsId, "DFS", List.of())
                 ))
         );
 
         // when
-        List<CategoryResponse> allByMemberId = categoryQueryService.findAllByBlogName(말랑_블로그_이름);
+        List<PostCategoryResponse> allByMemberId = postCategoryQueryService.findAllByBlogName(말랑_블로그_이름);
 
         // then
         assertThat(allByMemberId).usingRecursiveComparison()
