@@ -214,14 +214,7 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
 
     public void delete() {
         validateNoChildren();
-        unlinkFromParent();
-    }
-
-    private void unlinkFromParent() {
-        if (getParent() != null) {
-            getParent().getChildren().remove(self());
-            setParent(null);
-        }
+        withdrawCurrentHierarchy();
     }
 
     private void validateNoChildren() {

@@ -853,6 +853,59 @@ class PostCategoryServiceTest extends ServiceTest {
         }
 
         @Test
+        void 이전_카테고리와_다음_카테고리는_이어진다() {
+            // given
+            Long firstId = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "1",
+                    null,
+                    null,
+                    null
+            ));
+            Long secondId = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "2",
+                    null,
+                    firstId,
+                    null
+            ));
+            Long thirdId = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "3",
+                    null,
+                    secondId,
+                    null
+            ));
+            Long forthId = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "4",
+                    null,
+                    thirdId,
+                    null
+            ));
+            DeletePostCategoryCommand command = DeletePostCategoryCommand.builder()
+                    .memberId(mallangId)
+                    .categoryId(thirdId)
+                    .build();
+
+            // when
+            postCategoryService.delete(command);
+
+            // then
+            transactionHelper.doAssert(() -> {
+                PostCategory second = postCategoryRepository.getById(secondId);
+                PostCategory forth = postCategoryRepository.getById(forthId);
+                assertThat(second.getNextSibling()).isEqualTo(forth);
+                assertThat(forth.getPreviousSibling()).isEqualTo(second);
+
+            });
+        }
+
+        @Test
         void 카테고리_제거_이벤트가_발행된다() {
             // given
             Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
