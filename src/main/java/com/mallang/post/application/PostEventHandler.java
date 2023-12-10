@@ -1,8 +1,8 @@
 package com.mallang.post.application;
 
-import com.mallang.category.domain.event.CategoryDeletedEvent;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.category.PostCategoryDeletedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -16,8 +16,8 @@ public class PostEventHandler {
 
     private final PostRepository postRepository;
 
-    @EventListener(CategoryDeletedEvent.class)
-    void deletePostCategory(CategoryDeletedEvent event) {
+    @EventListener(PostCategoryDeletedEvent.class)
+    void deletePostCategory(PostCategoryDeletedEvent event) {
         List<Post> posts = postRepository.findAllByCategoryId(event.categoryId());
         for (Post post : posts) {
             post.removeCategory();

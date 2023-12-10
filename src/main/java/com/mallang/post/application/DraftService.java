@@ -4,11 +4,11 @@ import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
-import com.mallang.category.domain.Category;
-import com.mallang.category.domain.CategoryRepository;
 import com.mallang.post.application.command.CreateDraftCommand;
 import com.mallang.post.application.command.DeleteDraftCommand;
 import com.mallang.post.application.command.UpdateDraftCommand;
+import com.mallang.post.domain.category.PostCategory;
+import com.mallang.post.domain.category.PostCategoryRepository;
 import com.mallang.post.domain.draft.Draft;
 import com.mallang.post.domain.draft.DraftRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,27 +22,27 @@ public class DraftService {
 
     private final BlogRepository blogRepository;
     private final MemberRepository memberRepository;
-    private final CategoryRepository categoryRepository;
+    private final PostCategoryRepository postCategoryRepository;
     private final DraftRepository draftRepository;
 
     public Long create(CreateDraftCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
-        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
-        Draft draft = command.toDraft(member, blog, category);
+        PostCategory postCategory = postCategoryRepository.getByIdIfIdNotNull(command.categoryId());
+        Draft draft = command.toDraft(member, blog, postCategory);
         return draftRepository.save(draft).getId();
     }
 
     public void update(UpdateDraftCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Draft draft = draftRepository.getById(command.draftId());
-        Category category = categoryRepository.getByIdIfIdNotNull(command.categoryId());
+        PostCategory postCategory = postCategoryRepository.getByIdIfIdNotNull(command.categoryId());
         draft.validateWriter(member);
         draft.update(
                 command.title(),
                 command.intro(), command.bodyText(),
                 command.postThumbnailImageName(),
-                category,
+                postCategory,
                 command.tags()
         );
     }

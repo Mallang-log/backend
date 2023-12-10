@@ -6,12 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreateCategoryCommand;
-import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -19,7 +17,9 @@ import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NoAuthorityDraftException;
+import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.exception.NotFoundPostCategoryException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -99,7 +99,7 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 카테고리를_설정할_수_있다() {
             // given
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     memberId,
                     blogName,
                     "Spring",
@@ -143,7 +143,7 @@ class PostServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postService.create(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NotFoundPostCategoryException.class);
         }
 
         @Test
@@ -151,7 +151,7 @@ class PostServiceTest extends ServiceTest {
             // given
             Long otherMemberId = 회원을_저장한다("other");
             String otherBlogName = 블로그_개설(otherMemberId, "other-log");
-            Long categoryId = categoryService.create(new CreateCategoryCommand(
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     otherMemberId,
                     otherBlogName,
                     "Spring",
@@ -172,7 +172,7 @@ class PostServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postService.create(command)
-            ).isInstanceOf(NoAuthorityCategoryException.class);
+            ).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
 
         @Test
@@ -344,7 +344,7 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 포스트_수정_시_있던_카테고리릴_없앨_수_있다() {
             // given
-            Long springCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long springCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     memberId,
                     blogName,
                     "Spring",
@@ -373,7 +373,7 @@ class PostServiceTest extends ServiceTest {
         void 포스트_수정_시_없던_카테고리를_설정할_수_있다() {
             // given
             Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용").getPostId();
-            Long springCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long springCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     memberId,
                     blogName,
                     "Spring",
@@ -403,7 +403,7 @@ class PostServiceTest extends ServiceTest {
         @Test
         void 기존_카테고리를_다른_카테고리로_변경할_수_있다() {
             // given
-            Long springCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long springCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     memberId,
                     blogName,
                     "Spring",
@@ -412,7 +412,7 @@ class PostServiceTest extends ServiceTest {
                     null
             ));
             Long 포스트_ID = 포스트를_저장한다(memberId, blogName, "포스트", "내용", springCategoryId).getPostId();
-            Long nodeCategoryId = categoryService.create(new CreateCategoryCommand(
+            Long nodeCategoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     memberId,
                     blogName,
                     "Node",

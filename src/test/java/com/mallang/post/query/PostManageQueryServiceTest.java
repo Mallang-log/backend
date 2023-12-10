@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.common.ServiceTest;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NoAuthorityPostException;
@@ -139,8 +139,8 @@ class PostManageQueryServiceTest extends ServiceTest {
 
         @BeforeEach
         void setUp() {
-            스프링_카테고리_ID = categoryService.create(
-                    new CreateCategoryCommand(mallangId, mallangBlogName, "스프링", null, null, null)
+            스프링_카테고리_ID = postCategoryService.create(
+                    new CreatePostCategoryCommand(mallangId, mallangBlogName, "스프링", null, null, null)
             );
             말랑_public_포스트_작성_요청 = new CreatePostCommand(
                     mallangId,

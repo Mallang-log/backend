@@ -1,8 +1,8 @@
 package com.mallang.post.query.response;
 
-import com.mallang.category.domain.Category;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.category.PostCategory;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
@@ -31,11 +31,11 @@ public record PostManageSearchResponse(
             String categoryName
     ) {
         private static CategoryResponse from(Post post) {
-            Category category = post.getCategory();
-            if (category == null) {
+            PostCategory postCategory = post.getCategory();
+            if (postCategory == null) {
                 return new CategoryResponse(null, null);
             }
-            return new CategoryResponse(category.getId(), category.getName());
+            return new CategoryResponse(postCategory.getId(), postCategory.getName());
         }
     }
 }

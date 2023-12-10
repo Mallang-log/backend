@@ -1,7 +1,7 @@
 package com.mallang.post.query.response;
 
-import com.mallang.category.domain.Category;
 import com.mallang.post.domain.PostContent;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.domain.draft.Draft;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -30,11 +30,11 @@ public record DraftDetailResponse(
             String categoryName
     ) {
         private static CategoryResponse from(PostContent postContent) {
-            Category category = postContent.getCategory();
-            if (category == null) {
+            PostCategory postCategory = postContent.getCategory();
+            if (postCategory == null) {
                 return new CategoryResponse(null, null);
             }
-            return new CategoryResponse(category.getId(), category.getName());
+            return new CategoryResponse(postCategory.getId(), postCategory.getName());
         }
     }
 

@@ -5,12 +5,12 @@ import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한�
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
-import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.보호됨;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_응답을_검증한다;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_요청;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_전체_조회_응답을_검증한다;
+import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_생성;
 import static com.mallang.acceptance.post.PostLikeAcceptanceSteps.포스트_좋아요_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;

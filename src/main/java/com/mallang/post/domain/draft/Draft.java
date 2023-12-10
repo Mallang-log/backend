@@ -5,9 +5,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.category.domain.Category;
 import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.PostContent;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.exception.NoAuthorityDraftException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.AssociationOverride;
@@ -56,7 +56,7 @@ public class Draft extends CommonRootEntity<Long> {
             String intro,
             String bodyText,
             @Nullable String postThumbnailImageName,
-            @Nullable Category category,
+            @Nullable PostCategory category,
             List<String> tags,
             Member writer
     ) {
@@ -70,7 +70,7 @@ public class Draft extends CommonRootEntity<Long> {
             String intro,
             String bodyText,
             @Nullable String postThumbnailImageName,
-            @Nullable Category category,
+            @Nullable PostCategory category,
             List<String> tags
     ) {
         this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, getWriter());
@@ -98,7 +98,7 @@ public class Draft extends CommonRootEntity<Long> {
         return content.getPostThumbnailImageName();
     }
 
-    public Category getCategory() {
+    public PostCategory getCategory() {
         return content.getCategory();
     }
 

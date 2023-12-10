@@ -4,7 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.category.domain.Category;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
@@ -39,7 +39,7 @@ public class PostContent {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
-    private Category category;
+    private PostCategory category;
 
     @ElementCollection
     private List<Tag> tags = new ArrayList<>();
@@ -54,7 +54,7 @@ public class PostContent {
             String postIntro,
             String bodyText,
             @Nullable String postThumbnailImageName,
-            @Nullable Category category,
+            @Nullable PostCategory category,
             List<String> tags,
             Member writer
     ) {
@@ -63,11 +63,11 @@ public class PostContent {
         this.bodyText = bodyText;
         this.postThumbnailImageName = postThumbnailImageName;
         this.writer = writer;
-        setCategory(category);
+        setPostCategory(category);
         setTags(tags);
     }
 
-    private void setCategory(@Nullable Category category) {
+    private void setPostCategory(@Nullable PostCategory category) {
         if (category == null) {
             this.category = null;
             return;

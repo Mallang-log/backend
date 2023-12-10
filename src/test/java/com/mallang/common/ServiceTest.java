@@ -17,9 +17,6 @@ import com.mallang.blog.domain.AboutRepository;
 import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.domain.subscribe.BlogSubscribeRepository;
 import com.mallang.blog.query.BlogSubscribeQueryService;
-import com.mallang.category.application.CategoryService;
-import com.mallang.category.domain.CategoryRepository;
-import com.mallang.category.query.CategoryQueryService;
 import com.mallang.comment.application.AuthCommentService;
 import com.mallang.comment.application.UnAuthCommentService;
 import com.mallang.comment.application.command.WriteAuthCommentCommand;
@@ -29,6 +26,7 @@ import com.mallang.comment.domain.CommentRepository;
 import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.query.CommentQueryService;
 import com.mallang.post.application.DraftService;
+import com.mallang.post.application.PostCategoryService;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.application.PostService;
 import com.mallang.post.application.PostStarService;
@@ -41,10 +39,12 @@ import com.mallang.post.domain.PostIdGenerator;
 import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.category.PostCategoryRepository;
 import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.query.DraftQueryService;
+import com.mallang.post.query.PostCategoryQueryService;
 import com.mallang.post.query.PostManageQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
@@ -120,13 +120,13 @@ public abstract class ServiceTest {
     protected DraftQueryService draftQueryService;
 
     @Autowired
-    protected CategoryRepository categoryRepository;
+    protected PostCategoryRepository postCategoryRepository;
 
     @Autowired
-    protected CategoryService categoryService;
+    protected PostCategoryService postCategoryService;
 
     @Autowired
-    protected CategoryQueryService categoryQueryService;
+    protected PostCategoryQueryService postCategoryQueryService;
 
     @Autowired
     protected PostStarRepository postStarRepository;

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreateCategoryCommand;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.exception.NoAuthorityDraftException;
 import com.mallang.post.query.response.DraftDetailResponse;
 import com.mallang.post.query.response.DraftListResponse;
@@ -35,7 +35,7 @@ class DraftQueryServiceTest extends ServiceTest {
         memberId = 회원을_저장한다("말랑");
         otherMemberId = 회원을_저장한다("other");
         blogName = 블로그_개설(memberId, "mallang-log");
-        categoryId = categoryService.create(new CreateCategoryCommand(
+        categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                 memberId,
                 blogName,
                 "Spring",
