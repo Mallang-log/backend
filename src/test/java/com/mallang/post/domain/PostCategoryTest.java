@@ -1,4 +1,4 @@
-package com.mallang.post.domain.category;
+package com.mallang.post.domain;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;

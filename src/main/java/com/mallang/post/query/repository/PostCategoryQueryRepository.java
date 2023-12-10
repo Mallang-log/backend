@@ -1,7 +1,7 @@
 package com.mallang.post.query.repository;
 
 import com.mallang.common.domain.CommonRootEntity;
-import com.mallang.post.domain.category.PostCategory;
+import com.mallang.post.domain.PostCategory;
 import com.mallang.post.exception.NotFoundPostCategoryException;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

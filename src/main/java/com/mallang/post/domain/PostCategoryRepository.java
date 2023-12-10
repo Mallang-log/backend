@@ -1,4 +1,4 @@
-package com.mallang.post.domain.category;
+package com.mallang.post.domain;
 
 import com.mallang.blog.domain.Blog;
 import com.mallang.post.exception.NotFoundPostCategoryException;

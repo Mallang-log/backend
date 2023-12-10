@@ -3,7 +3,7 @@ package com.mallang.post;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.post.domain.category.PostCategory;
+import com.mallang.post.domain.PostCategory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class PostCategoryFixture {

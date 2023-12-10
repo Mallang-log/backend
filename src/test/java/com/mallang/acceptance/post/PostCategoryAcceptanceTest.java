@@ -10,6 +10,7 @@ import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.블로그의_카테고리_조회_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_계층구조_수정_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_생성;
@@ -17,7 +18,6 @@ import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고�
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_이름_수정_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_제거_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;

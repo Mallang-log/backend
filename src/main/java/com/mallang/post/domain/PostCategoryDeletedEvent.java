@@ -1,4 +1,4 @@
-package com.mallang.post.domain.category;
+package com.mallang.post.domain;
 
 import com.mallang.common.domain.DomainEvent;
 

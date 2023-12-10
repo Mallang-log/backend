@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NoAuthorityPostException;

@@ -1,4 +1,4 @@
-package com.mallang.post.domain.category;
+package com.mallang.post.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
