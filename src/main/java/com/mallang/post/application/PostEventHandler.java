@@ -1,8 +1,8 @@
 package com.mallang.post.application;
 
-import com.mallang.category.domain.event.PostCategoryDeletedEvent;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostRepository;
+import com.mallang.post.domain.category.PostCategoryDeletedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;

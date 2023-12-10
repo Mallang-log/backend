@@ -6,9 +6,9 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.category.application.command.CreatePostCategoryCommand;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.ClickPostLikeCommand;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.mallang.post.exception.NoAuthorityPostException;

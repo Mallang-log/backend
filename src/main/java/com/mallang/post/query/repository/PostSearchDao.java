@@ -2,13 +2,12 @@ package com.mallang.post.query.repository;
 
 import static com.mallang.auth.domain.QMember.member;
 import static com.mallang.blog.domain.QBlog.blog;
-import static com.mallang.category.domain.QPostCategory.postCategory;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.QPost.post;
 import static com.mallang.post.domain.QTag.tag;
+import static com.mallang.post.domain.category.QPostCategory.postCategory;
 import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
-import com.mallang.category.query.repository.PostCategoryQueryRepository;
 import com.mallang.post.domain.Post;
 import com.mallang.post.exception.BadPostSearchCondException;
 import com.querydsl.core.types.dsl.BooleanExpression;

@@ -2,9 +2,9 @@ package com.mallang.post.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.mallang.category.application.command.CreatePostCategoryCommand;
-import com.mallang.category.domain.event.PostCategoryDeletedEvent;
 import com.mallang.common.ServiceTest;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
+import com.mallang.post.domain.category.PostCategoryDeletedEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

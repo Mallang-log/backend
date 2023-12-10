@@ -4,7 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.category.domain.PostCategory;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;

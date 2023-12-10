@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreatePostCategoryCommand;
 import com.mallang.common.ServiceTest;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NoAuthorityPostException;

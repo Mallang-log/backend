@@ -5,16 +5,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreatePostCategoryCommand;
-import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.DeleteDraftCommand;
 import com.mallang.post.application.command.UpdateDraftCommand;
 import com.mallang.post.domain.draft.Draft;
 import com.mallang.post.exception.NoAuthorityDraftException;
+import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NotFoundDraftException;
+import com.mallang.post.exception.NotFoundPostCategoryException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -131,7 +131,7 @@ class DraftServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     draftService.create(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NotFoundPostCategoryException.class);
         }
 
         @Test
@@ -159,7 +159,7 @@ class DraftServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     draftService.create(command)
-            ).isInstanceOf(NoAuthorityCategoryException.class);
+            ).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
     }
 

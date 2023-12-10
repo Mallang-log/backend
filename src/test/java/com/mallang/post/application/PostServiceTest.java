@@ -6,12 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreatePostCategoryCommand;
-import com.mallang.category.exception.NoAuthorityCategoryException;
-import com.mallang.category.exception.NotFoundCategoryException;
 import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -19,7 +17,9 @@ import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.exception.NoAuthorityDraftException;
+import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.exception.NotFoundPostCategoryException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -143,7 +143,7 @@ class PostServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postService.create(command)
-            ).isInstanceOf(NotFoundCategoryException.class);
+            ).isInstanceOf(NotFoundPostCategoryException.class);
         }
 
         @Test
@@ -172,7 +172,7 @@ class PostServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postService.create(command)
-            ).isInstanceOf(NoAuthorityCategoryException.class);
+            ).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
 
         @Test

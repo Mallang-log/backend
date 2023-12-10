@@ -2,9 +2,9 @@ package com.mallang.post.query.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mallang.auth.domain.Member;
-import com.mallang.category.domain.PostCategory;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.category.PostCategory;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;

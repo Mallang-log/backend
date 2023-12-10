@@ -1,7 +1,7 @@
 package com.mallang.post.query.response;
 
-import com.mallang.category.domain.PostCategory;
 import com.mallang.post.domain.PostContent;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.domain.draft.Draft;
 import jakarta.annotation.Nullable;
 import java.util.List;

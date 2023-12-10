@@ -10,12 +10,12 @@ import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
-import static com.mallang.acceptance.category.CategoryAcceptanceSteps.카테고리_생성;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_단일_조회_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_목록_조회_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_삭제_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_생성_요청;
 import static com.mallang.acceptance.post.DraftAcceptanceSteps.임시_글_수정_요청;
+import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.application.command.CreatePostCategoryCommand;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
+import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.exception.NoAuthorityDraftException;
 import com.mallang.post.query.response.DraftDetailResponse;
 import com.mallang.post.query.response.DraftListResponse;

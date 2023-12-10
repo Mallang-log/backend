@@ -5,9 +5,9 @@ import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.category.domain.PostCategory;
 import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;

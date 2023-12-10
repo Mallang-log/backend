@@ -2,8 +2,8 @@ package com.mallang.post.domain;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
-import static com.mallang.category.CategoryFixture.루트_카테고리;
-import static com.mallang.category.CategoryFixture.하위_카테고리;
+import static com.mallang.post.PostCategoryFixture.루트_카테고리;
+import static com.mallang.post.PostCategoryFixture.하위_카테고리;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.category.domain.PostCategory;
-import com.mallang.category.exception.NoAuthorityCategoryException;
+import com.mallang.post.domain.category.PostCategory;
 import com.mallang.post.exception.DuplicatedTagsInPostException;
+import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import java.util.Collections;
@@ -123,7 +123,7 @@ class PostTest {
                         .intro("intro")
                         .category(otherPostCategory)
                         .build();
-            }).isInstanceOf(NoAuthorityCategoryException.class);
+            }).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
 
         @Test
@@ -282,7 +282,7 @@ class PostTest {
                         otherPostCategory,
                         Collections.emptyList()
                 );
-            }).isInstanceOf(NoAuthorityCategoryException.class);
+            }).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
     }
 
