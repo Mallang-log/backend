@@ -89,23 +89,41 @@ class PostCategoryServiceTest extends ServiceTest {
         }
 
         @Test
-        void 없는_부모_카테고리_ID를_설정한_경우_예외() {
+        void 없는_부모나_형제_카테고리_ID를_설정한_경우_예외() {
             // given
-            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
+            CreatePostCategoryCommand command1 = CreatePostCategoryCommand.builder()
                     .memberId(mallangId)
                     .blogName(mallangBlogName)
                     .name("하위 카테고리")
                     .parentId(100L)
                     .build();
+            CreatePostCategoryCommand command2 = CreatePostCategoryCommand.builder()
+                    .memberId(mallangId)
+                    .blogName(mallangBlogName)
+                    .name("하위 카테고리")
+                    .nextId(100L)
+                    .build();
+            CreatePostCategoryCommand command3 = CreatePostCategoryCommand.builder()
+                    .memberId(mallangId)
+                    .blogName(mallangBlogName)
+                    .name("하위 카테고리")
+                    .prevId(100L)
+                    .build();
 
             // when & then
             assertThatThrownBy(() ->
-                    postCategoryService.create(command)
+                    postCategoryService.create(command1)
+            ).isInstanceOf(NotFoundPostCategoryException.class);
+            assertThatThrownBy(() ->
+                    postCategoryService.create(command2)
+            ).isInstanceOf(NotFoundPostCategoryException.class);
+            assertThatThrownBy(() ->
+                    postCategoryService.create(command3)
             ).isInstanceOf(NotFoundPostCategoryException.class);
         }
 
         @Test
-        void 하위_카테고리를_생성하려는_회원가_상위_카테고리를_생성한_회원이_동일하지_않으면_예외() {
+        void 다른_사람의_하위_카테고리로_생성되려는_경우_예외() {
             // given
             Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
@@ -120,6 +138,30 @@ class PostCategoryServiceTest extends ServiceTest {
                     .blogName(otherBlogName)
                     .name("하위 카테고리")
                     .parentId(최상위)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postCategoryService.create(command)
+            ).isInstanceOf(NoAuthorityPostCategoryException.class);
+        }
+
+        @Test
+        void 다른_사람의_형제_카테고리로_생성되려는_경우_예외() {
+            // given
+            Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "최상위",
+                    null,
+                    null,
+                    null
+            ));
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
+                    .memberId(otherMemberId)
+                    .blogName(otherBlogName)
+                    .name("형제 카테고리")
+                    .prevId(최상위)
                     .build();
 
             // when & then
@@ -600,7 +642,7 @@ class PostCategoryServiceTest extends ServiceTest {
             UpdatePostCategoryHierarchyCommand childToParent = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
                     .memberId(mallangId)
-                    .parentId(childChildCategoryId)
+                    .parentId(childCategoryId)
                     .build();
             UpdatePostCategoryHierarchyCommand descendantToParent = UpdatePostCategoryHierarchyCommand.builder()
                     .categoryId(categoryId)
@@ -675,6 +717,37 @@ class PostCategoryServiceTest extends ServiceTest {
         }
 
         @Test
+        void 다른_사람의_카테고리의_형제_카테고리로_변경하려는_경우_예외() {
+            // given
+            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
+                    mallangId,
+                    mallangBlogName,
+                    "최상위",
+                    null,
+                    null,
+                    null
+            ));
+            Long otherCategory = postCategoryService.create(new CreatePostCategoryCommand(
+                    otherMemberId,
+                    otherBlogName,
+                    "최상위",
+                    null,
+                    null,
+                    null
+            ));
+            UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
+                    .categoryId(categoryId)
+                    .memberId(mallangId)
+                    .prevId(otherCategory)
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postCategoryService.updateHierarchy(command)
+            ).isInstanceOf(NoAuthorityPostCategoryException.class);
+        }
+
+        @Test
         void 같은_부모를_가진_형제끼리_이름이_겹치면_예외() {
             // given
             Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(
@@ -725,7 +798,7 @@ class PostCategoryServiceTest extends ServiceTest {
                     null,
                     null
             ));
-            Long 자식 = postCategoryService.create(new CreatePostCategoryCommand(
+            Long 형제 = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
                     mallangBlogName,
                     "최상위",
@@ -734,7 +807,7 @@ class PostCategoryServiceTest extends ServiceTest {
                     null
             ));
             UpdatePostCategoryHierarchyCommand command = UpdatePostCategoryHierarchyCommand.builder()
-                    .categoryId(자식)
+                    .categoryId(형제)
                     .memberId(mallangId)
                     .parentId(null)
                     .prevId(최상위)
@@ -751,7 +824,7 @@ class PostCategoryServiceTest extends ServiceTest {
     class 제거_시 {
 
         @Test
-        void 하위_카테고리가_있다면_오류() {
+        void 하위_카테고리가_있다면_예외() {
             // given
             Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
                     mallangId,
