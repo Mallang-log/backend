@@ -50,6 +50,7 @@ import com.mallang.post.query.PostCategoryQueryService;
 import com.mallang.post.query.PostManageQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
+import com.mallang.post.query.StarGroupQueryService;
 import com.mallang.reference.application.ReferenceLinkService;
 import com.mallang.reference.domain.ReferenceLinkRepository;
 import com.mallang.reference.query.ReferenceLinkQueryService;
@@ -146,10 +147,13 @@ public abstract class ServiceTest {
     protected PostLikeService postLikeService;
 
     @Autowired
+    protected StarGroupRepository starGroupRepository;
+
+    @Autowired
     protected StarGroupService starGroupService;
 
     @Autowired
-    protected StarGroupRepository starGroupRepository;
+    protected StarGroupQueryService starGroupQueryService;
 
     @Autowired
     protected BlogSubscribeRepository blogSubscribeRepository;
