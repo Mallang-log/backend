@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("카테고리 서비스 (PostCategoryService) 은(는)")
+@DisplayName("포스트 카테고리 서비스 (PostCategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostCategoryServiceTest extends ServiceTest {

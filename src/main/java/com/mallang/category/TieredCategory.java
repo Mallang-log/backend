@@ -8,7 +8,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.blog.domain.Blog;
 import com.mallang.common.domain.CommonRootEntity;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.GeneratedValue;
@@ -38,15 +37,9 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
     @JoinColumn(name = "owner_id", nullable = false)
     protected Member owner;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "blog_id", nullable = false)
-    protected Blog blog;
-
-    protected TieredCategory(String name, Member owner, Blog blog) {
+    protected TieredCategory(String name, Member owner) {
         this.name = name;
         this.owner = owner;
-        this.blog = blog;
-        blog.validateOwner(owner);
     }
 
     public abstract void validateOwner(Member member);

@@ -7,8 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.blog.domain.Blog;
-import com.mallang.blog.exception.NoAuthorityBlogException;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,41 +15,31 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
 
     protected final Member member = 깃허브_말랑(1L);
     protected final Member otherMember = 깃허브_동훈(2L);
-    protected final Blog memberBlog = new Blog("mallang-log", member);
-    protected final Blog otherBlog = new Blog("other-log", otherMember);
 
-    protected abstract T createRoot(String name, Member owner, Blog blog);
+    protected abstract T createRoot(String name, Member owner);
 
-    protected abstract T createChild(String name, Member owner, Blog blog, T parent);
+    protected abstract T createChild(String name, Member owner, T parent);
 
-    protected abstract T createChild(String name, Member owner, Blog blog, T parent, T prev, T next);
+    protected abstract T createChild(String name, Member owner, T parent, T prev, T next);
 
     protected abstract Class<?> 권한_없음_예외();
 
     @Nested
-    class 생성_시 {
+    protected class 생성_시 {
 
         @Test
         void 생성한다() {
             // when & then
             assertDoesNotThrow(() -> {
-                createRoot("최상위", member, memberBlog);
+                createRoot("최상위", member);
             });
-        }
-
-        @Test
-        void 다른_사람의_블로그에_카테고리_생성_시도_시_예외() {
-            // when & then
-            assertThatThrownBy(() -> {
-                createRoot("카테고리", member, otherBlog);
-            }).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 
     @Nested
     class 이름_수정_시 {
 
-        private final T root = createRoot("루트", member, memberBlog);
+        private final T root = createRoot("루트", member);
 
         @Test
         void 형제가_없다면_이름을_변경할_수_있다() {
@@ -65,7 +53,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 형제_중_이름이_같은게_없다면_이름을_변경할_수_있다() {
             // given
-            T postCategory = createRoot("형제", member, memberBlog);
+            T postCategory = createRoot("형제", member);
             postCategory.updateHierarchy(null, root, null);
 
             // when
@@ -78,7 +66,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 형제_중_이름이_같은게_있다면_예외() {
             // given
-            T postCategory = createRoot("형제", member, memberBlog);
+            T postCategory = createRoot("형제", member);
             postCategory.updateHierarchy(null, root, null);
 
             // when & then
@@ -94,12 +82,12 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 계층구조를_변경한다() {
             // given
-            T root1 = createRoot("root1", member, memberBlog);
-            T root2 = createRoot("root2", member, memberBlog);
-            T root1First = createRoot("first", member, memberBlog);
-            T root1Second = createRoot("second", member, memberBlog);
-            T root1Third = createRoot("third", member, memberBlog);
-            T root1Forth = createRoot("forth", member, memberBlog);
+            T root1 = createRoot("root1", member);
+            T root2 = createRoot("root2", member);
+            T root1First = createRoot("first", member);
+            T root1Second = createRoot("second", member);
+            T root1Third = createRoot("third", member);
+            T root1Forth = createRoot("forth", member);
             root2.updateHierarchy(null, root1, null);
             root1First.updateHierarchy(root1, null, null);
             root1Second.updateHierarchy(root1, root1First, null);
@@ -132,10 +120,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 무한_Depth_가_가능하다() {
             // given
-            T root = createRoot("root", member, memberBlog);
-            T child = createRoot("child", member, memberBlog);
-            T childChild = createRoot("childChild", member, memberBlog);
-            T childChildChild = createRoot("childChildChild", member, memberBlog);
+            T root = createRoot("root", member);
+            T child = createRoot("child", member);
+            T childChild = createRoot("childChild", member);
+            T childChildChild = createRoot("childChildChild", member);
 
             // when
             child.updateHierarchy(root, null, null);
@@ -150,15 +138,15 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 변경_이후에도_카테고리의_자식들은_동일하다() {
             // given
-            T root = createRoot("Spring", member, memberBlog);
+            T root = createRoot("Spring", member);
 
-            T firstChild = createRoot("First", member, memberBlog);
+            T firstChild = createRoot("First", member);
             firstChild.updateHierarchy(root, null, null);
 
-            T firstFirstChild = createRoot("FirstFirst", member, memberBlog);
+            T firstFirstChild = createRoot("FirstFirst", member);
             firstFirstChild.updateHierarchy(firstChild, null, null);
 
-            T secondChild = createRoot("Second", member, memberBlog);
+            T secondChild = createRoot("Second", member);
             secondChild.updateHierarchy(root, firstChild, null);
 
             firstChild.updateHierarchy(null, root, null);
@@ -175,8 +163,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모의_주인이_다른_경우_예외() {
                 // given
-                T parent = createRoot("root", otherMember, otherBlog);
-                T target = createRoot("target", member, memberBlog);
+                T parent = createRoot("root", otherMember);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -187,8 +175,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 이전_형제의_주인이_다른_경우_예외() {
                 // given
-                T prev = createRoot("prev", otherMember, otherBlog);
-                T target = createRoot("target", member, memberBlog);
+                T prev = createRoot("prev", otherMember);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -199,8 +187,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 이후_형제의_주인이_다른_경우_예외() {
                 // given
-                T next = createRoot("next", otherMember, otherBlog);
-                T target = createRoot("target", member, memberBlog);
+                T next = createRoot("next", otherMember);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -215,7 +203,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 나를_부모로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
+                T root = createRoot("root", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -227,8 +215,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 내_자식을_부모로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -241,9 +229,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 내_자손을_부모로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
-                T descendant = createRoot("descendant", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
+                T descendant = createRoot("descendant", member);
                 child.updateHierarchy(root, null, null);
                 descendant.updateHierarchy(child, null, null);
 
@@ -257,7 +245,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 나를_이전_형제로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
+                T root = createRoot("root", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -269,8 +257,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 내_자식을_이전_형제로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -283,9 +271,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 내_자손을_이전_형제로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
-                T descendant = createRoot("descendant", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
+                T descendant = createRoot("descendant", member);
                 child.updateHierarchy(root, null, null);
                 descendant.updateHierarchy(child, null, null);
 
@@ -299,7 +287,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 나를_다음_형제로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
+                T root = createRoot("root", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -311,8 +299,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 내_자식을_다음_형제로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -325,9 +313,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 내_자손을_다음_형제로_설정하는_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
-                T descendant = createRoot("descendant", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
+                T descendant = createRoot("descendant", member);
                 child.updateHierarchy(root, null, null);
                 descendant.updateHierarchy(child, null, null);
 
@@ -345,10 +333,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 직전_형제와_다음_형제_사이_다른_형제가_있는_경우_예외() {
                 // given
-                T first = createRoot("first", member, memberBlog);
-                T second = createRoot("second", member, memberBlog);
-                T third = createRoot("third", member, memberBlog);
-                T target = createRoot("target", member, memberBlog);
+                T first = createRoot("first", member);
+                T second = createRoot("second", member);
+                T third = createRoot("third", member);
+                T target = createRoot("target", member);
 
                 second.updateHierarchy(null, first, null);
                 third.updateHierarchy(null, second, null);
@@ -363,9 +351,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 직전_형제와_다음_형제의_순서가_바뀐_경우_예외() {
                 // given
-                T first = createRoot("first", member, memberBlog);
-                T second = createRoot("second", member, memberBlog);
-                T target = createRoot("target", member, memberBlog);
+                T first = createRoot("first", member);
+                T second = createRoot("second", member);
+                T target = createRoot("target", member);
 
                 second.updateHierarchy(null, first, null);
 
@@ -379,9 +367,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 직전_형제의_직후_형제가_존재하나_명시되지_않은_경우_예외() {
                 // given
-                T first = createRoot("first", member, memberBlog);
-                T second = createRoot("second", member, memberBlog);
-                T target = createRoot("target", member, memberBlog);
+                T first = createRoot("first", member);
+                T second = createRoot("second", member);
+                T target = createRoot("target", member);
 
                 second.updateHierarchy(null, first, null);
 
@@ -395,9 +383,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 직후_형제의_직전_형제가_존재하나_명시되지_않은_경우_예외() {
                 // given
-                T first = createRoot("first", member, memberBlog);
-                T second = createRoot("second", member, memberBlog);
-                T target = createRoot("target", member, memberBlog);
+                T first = createRoot("first", member);
+                T second = createRoot("second", member);
+                T target = createRoot("target", member);
 
                 second.updateHierarchy(null, first, null);
 
@@ -411,11 +399,11 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 주어진_부모와_형제들의_부모가_다른_경우_예외() {
                 // given
-                T otherParent = createRoot("otherParent", member, memberBlog);
-                T parent = createRoot("parent", member, memberBlog);
-                T first = createRoot("first", member, memberBlog);
-                T second = createRoot("second", member, memberBlog);
-                T target = createRoot("target", member, memberBlog);
+                T otherParent = createRoot("otherParent", member);
+                T parent = createRoot("parent", member);
+                T first = createRoot("first", member);
+                T second = createRoot("second", member);
+                T target = createRoot("target", member);
 
                 first.updateHierarchy(parent, null, null);
                 second.updateHierarchy(parent, first, null);
@@ -434,8 +422,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_하나라도_존재한다면_예외() {
                 // given
-                T target = createRoot("target", member, memberBlog);
-                T prev = createRoot("prev", member, memberBlog);
+                T target = createRoot("target", member);
+                T prev = createRoot("prev", member);
                 prev.updateHierarchy(null, null, target);
 
                 // when & then
@@ -452,7 +440,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_존재하지_않을_때_내가_루트라면_업데이트() {
                 // given
-                T target = createRoot("target", member, memberBlog);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -463,8 +451,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어지지_않았으며_루트의_형제가_존재하지_않을_때_내가_루트가_아니라면_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("child", member);
                 child.updateHierarchy(root, null, null);
 
                 // when & then
@@ -477,10 +465,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어지지_않았으며_내가_루트가_아닌_경우_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T child = createRoot("target", member, memberBlog);
+                T root = createRoot("root", member);
+                T child = createRoot("target", member);
                 child.updateHierarchy(root, null, null);
-                T descendant = createRoot("descendant", member, memberBlog);
+                T descendant = createRoot("descendant", member);
                 descendant.updateHierarchy(child, null, null);
 
                 // when
@@ -493,8 +481,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어지지_않았으며_내가_루트이나_내_형제가_존재하면_예외() {
                 // given
-                T root = createRoot("root", member, memberBlog);
-                T next = createRoot("next", member, memberBlog);
+                T root = createRoot("root", member);
+                T next = createRoot("next", member);
                 next.updateHierarchy(null, root, null);
 
                 // when
@@ -507,10 +495,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어지고_해당_부모의_자식이_존재하는_경우_예외() {
                 // given
-                T parent = createRoot("parent", member, memberBlog);
-                T child = createRoot("child", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T child = createRoot("child", member);
                 child.updateHierarchy(parent, null, null);
-                T target = createRoot("target", member, memberBlog);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -526,10 +514,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모는_주어지지_않았는데_이전_형제의_부모가_존재하는_경우_예외() {
                 // given
-                T parent = createRoot("parent", member, memberBlog);
-                T prev = createRoot("prev", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T prev = createRoot("prev", member);
                 prev.updateHierarchy(parent, null, null);
-                T target = createRoot("target", member, memberBlog);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -541,13 +529,13 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어졌을_때_이전_형제의_부모와_주어진_부모와_다른_경우_예외() {
                 // given
-                T otherParent = createRoot("otherParent", member, memberBlog);
+                T otherParent = createRoot("otherParent", member);
 
-                T parent = createRoot("parent", member, memberBlog);
-                T prev = createRoot("prev", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T prev = createRoot("prev", member);
                 prev.updateHierarchy(parent, null, null);
 
-                T target = createRoot("target", member, memberBlog);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -563,10 +551,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모는_주어지지_않았는데_다음_형제의_부모가_존재하는_경우_예외() {
                 // given
-                T parent = createRoot("parent", member, memberBlog);
-                T prev = createRoot("prev", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T prev = createRoot("prev", member);
                 prev.updateHierarchy(parent, null, null);
-                T target = createRoot("target", member, memberBlog);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -578,11 +566,11 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모가_주어졌을_때_다음_형제의_부모와_주어진_부모와_다른_경우_예외() {
                 // given
-                T parent = createRoot("parent", member, memberBlog);
-                T next = createRoot("next", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T next = createRoot("next", member);
                 next.updateHierarchy(parent, null, null);
 
-                T target = createRoot("target", member, memberBlog);
+                T target = createRoot("target", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -598,13 +586,13 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 이전_형제와_이름이_같으면_예외() {
                 // given
-                T parent = createRoot("parent", member, memberBlog);
-                T prev = createRoot("prev", member, memberBlog);
-                T next = createRoot("next", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T prev = createRoot("prev", member);
+                T next = createRoot("next", member);
                 prev.updateHierarchy(parent, null, null);
                 next.updateHierarchy(parent, prev, null);
 
-                T target = createRoot("prev", member, memberBlog);
+                T target = createRoot("prev", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -616,12 +604,12 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 다음_형제와_이름이_같으면_예외() {
                 // given
-                T prev = createRoot("prev", member, memberBlog);
-                T next = createRoot("next", member, memberBlog);
+                T prev = createRoot("prev", member);
+                T next = createRoot("next", member);
                 prev.updateHierarchy(null, null, null);
                 next.updateHierarchy(null, prev, null);
 
-                T target = createRoot("next", member, memberBlog);
+                T target = createRoot("next", member);
 
                 // when & then
                 assertThatThrownBy(() -> {
@@ -633,13 +621,13 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             @Test
             void 부모와는_이름이_같아도_된다() {
                 // given
-                T parent = createRoot("parent", member, memberBlog);
-                T prev = createRoot("prev", member, memberBlog);
-                T next = createRoot("next", member, memberBlog);
+                T parent = createRoot("parent", member);
+                T prev = createRoot("prev", member);
+                T next = createRoot("next", member);
                 prev.updateHierarchy(parent, null, null);
                 next.updateHierarchy(parent, prev, null);
 
-                T target = createRoot("parent", member, memberBlog);
+                T target = createRoot("parent", member);
 
                 // when & then
                 assertDoesNotThrow(() -> {
@@ -652,10 +640,10 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     @Nested
     class 제거_시 {
 
-        protected final T root = createRoot("루트", member, memberBlog);
-        protected final T prev = createChild("하위 이전", member, memberBlog, root, null, null);
-        protected final T child = createChild("하위", member, memberBlog, root, prev, null);
-        protected final T next = createChild("하위 이후", member, memberBlog, root, child, null);
+        protected final T root = createRoot("루트", member);
+        protected final T prev = createChild("하위 이전", member, root, null, null);
+        protected final T child = createChild("하위", member, root, prev, null);
+        protected final T next = createChild("하위 이후", member, root, child, null);
 
         @Test
         void 하위_카테고리가_존재하면_제거할_수_없다() {
@@ -690,7 +678,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     @Test
     void 주인을_검증한다() {
         // given
-        T 최상위 = createRoot("최상위", member, memberBlog);
+        T 최상위 = createRoot("최상위", member);
 
         // when & then
         assertDoesNotThrow(() -> {
@@ -705,11 +693,11 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     @Test
     void 모든_자손을_반환한다() {
         // given
-        T 최상위 = createRoot("최상위", member, memberBlog);
-        T 하위 = createChild("하위", member, memberBlog, 최상위);
-        T 더하위1 = createChild("더하위1", member, memberBlog, 하위);
-        T 더하위2 = createChild("더하위2", member, memberBlog, 하위, 더하위1, null);
-        T 더더하위1 = createChild("더더하위1", member, memberBlog, 더하위1);
+        T 최상위 = createRoot("최상위", member);
+        T 하위 = createChild("하위", member, 최상위);
+        T 더하위1 = createChild("더하위1", member, 하위);
+        T 더하위2 = createChild("더하위2", member, 하위, 더하위1, null);
+        T 더더하위1 = createChild("더더하위1", member, 더하위1);
 
         // when
         List<T> 최상위_descendants = 최상위.getDescendants();

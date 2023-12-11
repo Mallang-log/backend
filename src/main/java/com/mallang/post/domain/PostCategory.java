@@ -36,8 +36,14 @@ public class PostCategory extends TieredCategory<PostCategory> {
     @JoinColumn(name = "next_sibling_id")
     private PostCategory nextSibling;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "blog_id", nullable = false)
+    protected Blog blog;
+
     public PostCategory(String name, Member owner, Blog blog) {
-        super(name, owner, blog);
+        super(name, owner);
+        this.blog = blog;
+        blog.validateOwner(owner);
     }
 
     @Override
