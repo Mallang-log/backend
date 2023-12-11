@@ -117,7 +117,7 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 타인의_카테고리_하위_카테고리로_지정하는_경우_예외() {
+        void 타인의_카테고리_계층에_참여하려는_경우_예외() {
             // given
             var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
             var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
@@ -223,7 +223,7 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
     class 카테고리_이름_수정_API {
 
         @Test
-        void 카테고리를_업데이트한다() {
+        void 카테고리_이름을_업데이트한다() {
             // given
             var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
 
