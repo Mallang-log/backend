@@ -80,7 +80,7 @@ public interface PostManageSearchDao {
             if (categoryId == NO_CATEGORY_CONDITION) {
                 return post.content.category.isNull();
             }
-            List<Long> categoryIds = postCategoryQueryRepository.getCategoryAndDescendants(categoryId);
+            List<Long> categoryIds = postCategoryQueryRepository.getIdsWithDescendants(categoryId);
             return post.content.category.id.in(categoryIds);
         }
 

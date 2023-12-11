@@ -98,7 +98,7 @@ public interface PostSearchDao {
             if (categoryId == null) {
                 return null;
             }
-            List<Long> categoryIds = postCategoryQueryRepository.getCategoryAndDescendants(categoryId);
+            List<Long> categoryIds = postCategoryQueryRepository.getIdsWithDescendants(categoryId);
             return post.content.category.id.in(categoryIds);
         }
 

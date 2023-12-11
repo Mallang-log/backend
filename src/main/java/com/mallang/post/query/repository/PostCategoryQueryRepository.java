@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostCategoryQueryRepository extends JpaRepository<PostCategory, Long> {
 
-    default List<Long> getCategoryAndDescendants(Long id) {
+    default List<Long> getIdsWithDescendants(Long id) {
         PostCategory postCategory = getById(id);
         List<PostCategory> descendants = postCategory.getDescendants();
         descendants.add(postCategory);
