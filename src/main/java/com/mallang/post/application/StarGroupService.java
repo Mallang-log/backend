@@ -50,7 +50,7 @@ public class StarGroupService {
 
     public void delete(DeleteStarGroupCommand command) {
         Member member = memberRepository.getById(command.memberId());
-        StarGroup group = starGroupRepository.getById(command.categoryId());
+        StarGroup group = starGroupRepository.getById(command.groupId());
         group.validateOwner(member);
         group.delete();
         starGroupRepository.delete(group);
