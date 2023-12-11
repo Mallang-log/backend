@@ -22,7 +22,7 @@ public class StarGroupQueryService {
             return Collections.emptyList();
         }
         StarGroup firstRoot = getFirstRoot(groups);
-        List<StarGroup> roots = firstRoot.getSiblings();
+        List<StarGroup> roots = firstRoot.getSiblingsExceptSelf();
         roots.addFirst(firstRoot);
         return roots.stream()
                 .map(StarGroupListResponse::from)

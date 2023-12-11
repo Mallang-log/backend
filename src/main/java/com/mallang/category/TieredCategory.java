@@ -82,7 +82,7 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
         if (equals(parent) || equals(prevSibling) || equals(nextSibling)) {
             throw new CategoryHierarchyViolationException("자기 자신 혹은 자손들을 부모, 혹은 형제로 지정할 수 없습니다.");
         }
-        List<T> descendants = getDescendants();
+        List<T> descendants = getDescendantsExceptSelf();
         if (descendants.contains(parent) || descendants.contains(prevSibling) || descendants.contains(nextSibling)) {
             throw new CategoryHierarchyViolationException("자기 자신 혹은 자손들을 부모, 혹은 형제로 지정할 수 없습니다.");
         }
@@ -195,7 +195,7 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
     }
 
     public void updateName(String name) {
-        List<T> siblings = getSiblings();
+        List<T> siblings = getSiblingsExceptSelf();
         while (!siblings.isEmpty()) {
             T sibling = siblings.removeLast();
             if (sibling.getName().equals(name)) {
@@ -216,14 +216,14 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
         }
     }
 
-    public List<T> getDescendants() {
+    public List<T> getDescendantsExceptSelf() {
         List<T> children = new ArrayList<>();
         if (getChildren().isEmpty()) {
             return children;
         }
         for (T child : getChildren()) {
             children.add(child);
-            children.addAll(child.getDescendants());
+            children.addAll(child.getDescendantsExceptSelf());
         }
         return children;
     }
@@ -245,7 +245,7 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
         return categories;
     }
 
-    public List<T> getSiblings() {
+    public List<T> getSiblingsExceptSelf() {
         List<T> siblings = new ArrayList<>();
         T currentPrev = getPreviousSibling();
         while (currentPrev != null) {
