@@ -1,7 +1,7 @@
 package com.mallang.post.query.repository;
 
 import static com.mallang.post.domain.QPost.post;
-import static com.mallang.post.domain.category.QPostCategory.postCategory;
+import static com.mallang.post.domain.QPostCategory.postCategory;
 import static com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond.NO_CATEGORY_CONDITION;
 
 import com.mallang.blog.domain.Blog;
@@ -80,7 +80,7 @@ public interface PostManageSearchDao {
             if (categoryId == NO_CATEGORY_CONDITION) {
                 return post.content.category.isNull();
             }
-            List<Long> categoryIds = postCategoryQueryRepository.getCategoryAndDescendants(categoryId);
+            List<Long> categoryIds = postCategoryQueryRepository.getIdsWithDescendants(categoryId);
             return post.content.category.id.in(categoryIds);
         }
 

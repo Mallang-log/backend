@@ -1,6 +1,6 @@
 package com.mallang.post.query.response;
 
-import com.mallang.post.domain.category.PostCategory;
+import com.mallang.post.domain.PostCategory;
 import java.util.List;
 import lombok.Builder;
 

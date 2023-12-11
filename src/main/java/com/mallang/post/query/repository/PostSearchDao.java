@@ -4,8 +4,8 @@ import static com.mallang.auth.domain.QMember.member;
 import static com.mallang.blog.domain.QBlog.blog;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.QPost.post;
+import static com.mallang.post.domain.QPostCategory.postCategory;
 import static com.mallang.post.domain.QTag.tag;
-import static com.mallang.post.domain.category.QPostCategory.postCategory;
 import static org.springframework.data.support.PageableExecutionUtils.getPage;
 
 import com.mallang.post.domain.Post;
@@ -98,7 +98,7 @@ public interface PostSearchDao {
             if (categoryId == null) {
                 return null;
             }
-            List<Long> categoryIds = postCategoryQueryRepository.getCategoryAndDescendants(categoryId);
+            List<Long> categoryIds = postCategoryQueryRepository.getIdsWithDescendants(categoryId);
             return post.content.category.id.in(categoryIds);
         }
 

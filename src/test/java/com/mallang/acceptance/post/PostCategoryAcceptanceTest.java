@@ -10,6 +10,7 @@ import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
+import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.블로그의_카테고리_조회_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_계층구조_수정_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_생성;
@@ -17,7 +18,6 @@ import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고�
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_이름_수정_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_제거_요청;
 import static com.mallang.acceptance.post.PostCategoryAcceptanceSteps.카테고리_조회_응답을_검증한다;
-import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
 import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static java.util.Collections.emptyList;
@@ -117,7 +117,7 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 타인의_카테고리_하위_카테고리로_지정하는_경우_예외() {
+        void 타인의_카테고리_계층에_참여하려는_경우_예외() {
             // given
             var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
             var 상위_카테고리_ID = ID를_추출한다(상위_카테고리_생성_응답);
@@ -223,7 +223,7 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
     class 카테고리_이름_수정_API {
 
         @Test
-        void 카테고리를_업데이트한다() {
+        void 카테고리_이름을_업데이트한다() {
             // given
             var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
 

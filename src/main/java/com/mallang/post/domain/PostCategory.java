@@ -1,4 +1,4 @@
-package com.mallang.post.domain.category;
+package com.mallang.post.domain;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -45,12 +45,6 @@ public class PostCategory extends TieredCategory<PostCategory> {
         if (!owner.equals(member)) {
             throw new NoAuthorityPostCategoryException();
         }
-    }
-
-    @Override
-    public void delete() {
-        super.delete();
-        registerEvent(new PostCategoryDeletedEvent(getId()));
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.mallang.post.application.command;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
-import com.mallang.post.domain.category.PostCategory;
+import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.draft.Draft;
 import jakarta.annotation.Nullable;
 import java.util.List;

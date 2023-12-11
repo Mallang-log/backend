@@ -1,8 +1,8 @@
 package com.mallang.post.query.response;
 
 import com.mallang.post.domain.Post;
+import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
-import com.mallang.post.domain.category.PostCategory;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
