@@ -17,6 +17,19 @@ import org.junit.jupiter.api.Test;
 class PostCategoryQueryServiceTest extends ServiceTest {
 
     @Test
+    void 카테고리_목록이_없는_경우_빈_리스트_반환() {
+        // given
+        var memberId = 회원을_저장한다("동훈");
+        var 동훈_블로그_이름 = 블로그_개설(memberId, "donghun");
+
+        // when
+        List<PostCategoryResponse> result = postCategoryQueryService.findAllByBlogName(동훈_블로그_이름);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void 특정_블로그의_카테고리를_순서대로_전체_조회한다() {
         // given
         Long 동훈_ID = 회원을_저장한다("동훈");
@@ -85,8 +98,8 @@ class PostCategoryQueryServiceTest extends ServiceTest {
                 말랑_블로그_이름,
                 "Algorithm",
                 null,
-                springId,
-                null
+                null,
+                springId
         ));
         Long dfsId = postCategoryService.create(new CreatePostCategoryCommand(
                 말랑_ID,
@@ -97,6 +110,9 @@ class PostCategoryQueryServiceTest extends ServiceTest {
                 null
         ));
         List<PostCategoryResponse> expected = List.of(
+                new PostCategoryResponse(algorithmId, "Algorithm", List.of(
+                        new PostCategoryResponse(dfsId, "DFS", List.of())
+                )),
                 new PostCategoryResponse(springId, "Spring", List.of(
                         new PostCategoryResponse(jpaId, "JPA", List.of(
                                 new PostCategoryResponse(n1Id, "N + 1", List.of())
@@ -105,9 +121,6 @@ class PostCategoryQueryServiceTest extends ServiceTest {
                                 new PostCategoryResponse(csrfId, "CSRF", List.of()),
                                 new PostCategoryResponse(oAuthId, "OAuth", List.of())
                         ))
-                )),
-                new PostCategoryResponse(algorithmId, "Algorithm", List.of(
-                        new PostCategoryResponse(dfsId, "DFS", List.of())
                 ))
         );
 
