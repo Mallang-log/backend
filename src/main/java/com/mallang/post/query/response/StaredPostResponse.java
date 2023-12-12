@@ -5,6 +5,7 @@ import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.domain.star.PostStar;
+import com.mallang.post.domain.star.StarGroup;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ import lombok.Builder;
 public record StaredPostResponse(
         Long starId,
         LocalDateTime staredData,
+        StarGroupResponse starGroup,
         Long postId,
         String blogName,
         String title,
@@ -31,6 +33,7 @@ public record StaredPostResponse(
         return StaredPostResponse.builder()
                 .starId(postStar.getId())
                 .staredData(postStar.getCreatedDate())
+                .starGroup(StarGroupResponse.from(postStar))
                 .postId(post.getId().getPostId())
                 .blogName(post.getBlog().getName())
                 .title(post.getTitle())
@@ -50,6 +53,7 @@ public record StaredPostResponse(
         return new StaredPostResponse(
                 postStar.getId(),
                 postStar.getCreatedDate(),
+                StarGroupResponse.from(postStar),
                 post.getId().getPostId(),
                 post.getBlog().getName(),
                 post.getTitle(),
@@ -61,6 +65,19 @@ public record StaredPostResponse(
                 CategoryResponse.from(post),
                 null
         );
+    }
+
+    public record StarGroupResponse(
+            Long starGroupId,
+            String name
+    ) {
+        public static StarGroupResponse from(PostStar postStar) {
+            StarGroup starGroup = postStar.getStarGroup();
+            if (starGroup == null) {
+                return new StarGroupResponse(null, null);
+            }
+            return new StarGroupResponse(starGroup.getId(), starGroup.getName());
+        }
     }
 
     public record WriterResponse(
