@@ -38,10 +38,13 @@ public class PostStar extends CommonRootEntity<Long> {
     @JoinColumn(name = "star_group_id")
     private StarGroup starGroup;
 
-    public PostStar(Post post, Member member, @Nullable StarGroup starGroup) {
+    public PostStar(Post post, Member member) {
         this.post = post;
         this.member = member;
-        updateGroup(starGroup);
+    }
+
+    public void star(@Nullable String postPassword) {
+        post.validateAccess(member, postPassword);
     }
 
     public void updateGroup(@Nullable StarGroup starGroup) {
@@ -51,10 +54,5 @@ public class PostStar extends CommonRootEntity<Long> {
         }
         starGroup.validateOwner(member);
         this.starGroup = starGroup;
-    }
-
-    public void star(PostStarValidator validator, @Nullable String postPassword) {
-        post.validateAccess(member, postPassword);
-        validator.validateClickStar(post, member);
     }
 }

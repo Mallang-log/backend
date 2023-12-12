@@ -3,11 +3,10 @@ package com.mallang.acceptance.post;
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
 import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
-import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.인증되지_않음;
-import static com.mallang.acceptance.AcceptanceSteps.중복됨;
+import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
@@ -106,7 +105,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null, null);
 
             // then
-            응답_상태를_검증한다(응답, 생성됨);
+            응답_상태를_검증한다(응답, 정상_처리);
         }
 
         @Test
@@ -118,7 +117,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, 동훈_즐겨찾기_그룹_ID, null);
 
             // then
-            응답_상태를_검증한다(응답, 생성됨);
+            응답_상태를_검증한다(응답, 정상_처리);
         }
 
         @Test
@@ -134,16 +133,17 @@ class PostStarAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 이미_즐겨찾기를_누른_포스트에는_중복해서_즐겨찾기를_누를_수_없다() {
+        void 이미_즐겨찾기를_누른_포스트는_그룹만_업데이트된다() {
             // given
             var 포스트_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(블로그_이름));
             포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null, null);
+            var 동훈_즐겨찾기_그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, "Spring", null, null, null));
 
             // when
-            var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null, null);
+            var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, 동훈_즐겨찾기_그룹_ID, null);
 
             // then
-            응답_상태를_검증한다(응답, 중복됨);
+            응답_상태를_검증한다(응답, 정상_처리);
         }
 
         @Nested
@@ -161,7 +161,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                     var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null, null);
 
                     // then
-                    응답_상태를_검증한다(응답, 생성됨);
+                    응답_상태를_검증한다(응답, 정상_처리);
                 }
             }
 
@@ -189,7 +189,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                     var 응답 = 포스트_즐겨찾기_요청(동훈_세션_ID, 포스트_ID, 블로그_이름, null, "1234");
 
                     // then
-                    응답_상태를_검증한다(응답, 생성됨);
+                    응답_상태를_검증한다(응답, 정상_처리);
                 }
             }
         }
@@ -206,7 +206,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
                 var 응답 = 포스트_즐겨찾기_요청(말랑_세션_ID, 포스트_ID, 블로그_이름, null, null);
 
                 // then
-                응답_상태를_검증한다(응답, 생성됨);
+                응답_상태를_검증한다(응답, 정상_처리);
             }
 
             @Test

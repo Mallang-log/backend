@@ -9,17 +9,12 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostId;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
-import com.mallang.post.exception.AlreadyStarPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.NoAuthorityStarGroupException;
 import java.util.Collections;
@@ -36,7 +31,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostStarTest {
 
-    private final PostStarValidator postStarValidator = mock(PostStarValidator.class);
     private final Member mallang = 깃허브_말랑(1L);
     private final Blog mallangBlog = mallangBlog(1L, mallang);
     private final Member donghun = 깃허브_동훈(2L);
@@ -108,92 +102,45 @@ class PostStarTest {
                     Collections.emptyList(),
                     mallang
             );
-            PostStar postStar = new PostStar(post, mallang, null);
-            willDoNothing().given(postStarValidator)
-                    .validateClickStar(any(), any());
+            PostStar postStar = new PostStar(post, mallang);
 
             // when & then
             assertDoesNotThrow(() -> {
-                postStar.star(postStarValidator, null);
+                postStar.star(null);
             });
-        }
-
-        @Test
-        void 이미_즐겨찾기_한_경우_예외() {
-            // given
-            PostStar postStar = new PostStar(mallangPublicPost, mallang, null);
-            willThrow(AlreadyStarPostException.class)
-                    .given(postStarValidator)
-                    .validateClickStar(any(), any());
-
-            // when & then
-            assertThatThrownBy(() -> {
-                postStar.star(postStarValidator, null);
-            }).isInstanceOf(AlreadyStarPostException.class);
         }
 
         @Test
         void 타인의_보호_글_즐겨찾기_시_비밀번호가_일치하면_할_수_있다() {
             // given
-            PostStar postStar = new PostStar(mallangProtectedPost, donghun, null);
-            willDoNothing().given(postStarValidator)
-                    .validateClickStar(any(), any());
+            PostStar postStar = new PostStar(mallangProtectedPost, donghun);
 
             // when & then
             assertDoesNotThrow(() -> {
-                postStar.star(postStarValidator, "1234");
+                postStar.star("1234");
             });
         }
 
         @Test
         void 타인의_보호_글_즐겨찾기_시_글의_비밀번호가_일치하지_않으면_예외() {
             // given
-            PostStar postStar = new PostStar(mallangProtectedPost, donghun, null);
-            willDoNothing().given(postStarValidator)
-                    .validateClickStar(any(), any());
+            PostStar postStar = new PostStar(mallangProtectedPost, donghun);
 
             // when & then
             assertThatThrownBy(() -> {
-                postStar.star(postStarValidator, "wrong");
+                postStar.star("wrong");
             }).isInstanceOf(NoAuthorityPostException.class);
         }
 
         @Test
         void 타인의_비밀_글은_즐겨찾기_할_수_없다() {
             // given
-            PostStar postStar = new PostStar(mallangPrivatePost, donghun, null);
-            willDoNothing().given(postStarValidator)
-                    .validateClickStar(any(), any());
+            PostStar postStar = new PostStar(mallangPrivatePost, donghun);
 
             // when & then
             assertThatThrownBy(() -> {
-                postStar.star(postStarValidator, null);
+                postStar.star(null);
             }).isInstanceOf(NoAuthorityPostException.class);
-        }
-
-        @Test
-        void 그룹을_지정할_수_있다() {
-            // given
-            StarGroup dongHunStarGroup = new StarGroup("Spring", donghun);
-            PostStar postStar = new PostStar(mallangPublicPost, donghun, dongHunStarGroup);
-            willDoNothing().given(postStarValidator)
-                    .validateClickStar(any(), any());
-
-            // when & then
-            assertDoesNotThrow(() -> {
-                postStar.star(postStarValidator, null);
-            });
-        }
-
-        @Test
-        void 타인의_그룹_지정_시_예외() {
-            // given
-            StarGroup mallangStarGroup = new StarGroup("Spring", mallang);
-
-            // when & then
-            assertThatThrownBy(() -> {
-                new PostStar(mallangPublicPost, donghun, mallangStarGroup);
-            }).isInstanceOf(NoAuthorityStarGroupException.class);
         }
     }
 
@@ -203,23 +150,22 @@ class PostStarTest {
         @Test
         void 그룹을_변경한다() {
             // given
-            StarGroup mallangStarGroup1 = new StarGroup("Spring", mallang);
-            StarGroup mallangStarGroup2 = new StarGroup("Jpa", mallang);
-            mallangStarGroup2.updateHierarchy(mallangStarGroup1, null, null);
-            PostStar postStar = new PostStar(mallangPublicPost, mallang, mallangStarGroup1);
+            StarGroup mallangStarGroup = new StarGroup("Spring", mallang);
+            PostStar postStar = new PostStar(mallangPublicPost, mallang);
 
             // when
-            postStar.updateGroup(mallangStarGroup2);
+            postStar.updateGroup(mallangStarGroup);
 
             // then
-            assertThat(postStar.getStarGroup()).isEqualTo(mallangStarGroup2);
+            assertThat(postStar.getStarGroup()).isEqualTo(mallangStarGroup);
         }
 
         @Test
         void 그룹을_지정하지_않으면_그룹_없음_상태가_된다() {
             // given
             StarGroup mallangStarGroup = new StarGroup("Spring", mallang);
-            PostStar postStar = new PostStar(mallangPublicPost, mallang, mallangStarGroup);
+            PostStar postStar = new PostStar(mallangPublicPost, mallang);
+            postStar.updateGroup(mallangStarGroup);
 
             // when
             postStar.updateGroup(null);
@@ -232,7 +178,7 @@ class PostStarTest {
         void 타인의_그룹_지정_시_예외() {
             // given
             StarGroup donghunStarGroup = new StarGroup("Spring", donghun);
-            PostStar postStar = new PostStar(mallangPublicPost, mallang, null);
+            PostStar postStar = new PostStar(mallangPublicPost, mallang);
 
             // when & then
             assertThatThrownBy(() -> {

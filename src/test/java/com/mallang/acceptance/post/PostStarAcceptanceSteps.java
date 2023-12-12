@@ -22,7 +22,7 @@ public class PostStarAcceptanceSteps {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
                 .body(new StarPostRequest(포스트_ID, 블로그_이름, 즐겨찾기_그룹_ID))
-                .post("/post-stars")
+                .put("/post-stars")
                 .then()
                 .extract();
     }

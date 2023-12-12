@@ -1,7 +1,7 @@
 package com.mallang.post.presentation;
 
 import static com.mallang.post.presentation.support.PostPresentationConstant.POST_PASSWORD_COOKIE;
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 import com.mallang.auth.presentation.support.Auth;
 import com.mallang.auth.presentation.support.OptionalAuth;
@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,14 +33,14 @@ public class PostStarController {
     private final PostStarService postStarService;
     private final PostStarQueryService postStarQueryService;
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity<Void> click(
             @Auth Long memberId,
             @CookieValue(name = POST_PASSWORD_COOKIE, required = false) String postPassword,
             @RequestBody StarPostRequest request
     ) {
         postStarService.star(request.toCommand(memberId, postPassword));
-        return ResponseEntity.status(CREATED).build();
+        return ResponseEntity.status(OK).build();
     }
 
     @DeleteMapping

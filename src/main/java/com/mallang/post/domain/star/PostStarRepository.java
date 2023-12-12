@@ -16,7 +16,7 @@ public interface PostStarRepository extends JpaRepository<PostStar, Long> {
         return findById(id).orElseThrow(NotFoundPostStarException::new);
     }
 
-    boolean existsByPostAndMember(Post post, Member member);
+    Optional<PostStar> findByPostAndMember(Post post, Member member);
 
     default PostStar getByPostAndMember(Long postId, String blogName, Long memberId) {
         return findByPostAndMember(postId, blogName, memberId)
