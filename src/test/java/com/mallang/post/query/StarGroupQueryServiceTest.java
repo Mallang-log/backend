@@ -18,6 +18,18 @@ import org.junit.jupiter.api.Test;
 class StarGroupQueryServiceTest extends ServiceTest {
 
     @Test
+    void 즐겨찾기_목록이_없는_경우_빈_리스트_반환() {
+        // given
+        var memberId = 회원을_저장한다("동훈");
+
+        // when
+        List<StarGroupListResponse> result = starGroupQueryService.findAllByMember(memberId);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void 회원의_즐겨찾기_그룹_목록을_계층에_맞게_정렬하여_보여준다() {
         // given
         var memberId = 회원을_저장한다("동훈");
