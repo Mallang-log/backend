@@ -430,11 +430,11 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
                 assertThatThrownBy(() -> {
                     target.updateHierarchy(null, null, null);
                 }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
                 assertThatThrownBy(() -> {
                     prev.updateHierarchy(null, null, null);
                 }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
             }
 
             @Test
@@ -459,7 +459,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
                 assertThatThrownBy(() -> {
                     child.updateHierarchy(null, null, null);
                 }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
             }
 
             @Test
@@ -475,7 +475,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
                 assertThatThrownBy(() -> {
                     child.updateHierarchy(null, null, null);
                 }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
             }
 
             @Test
@@ -489,7 +489,7 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
                 assertThatThrownBy(() -> {
                     root.updateHierarchy(null, null, null);
                 }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
             }
 
             @Test

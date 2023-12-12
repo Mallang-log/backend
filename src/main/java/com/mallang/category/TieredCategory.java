@@ -128,7 +128,7 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
             if (equals(root) && root.getPreviousSibling() == null && root.getNextSibling() == null) {
                 return;
             }
-            throw new CategoryHierarchyViolationException("블로드에 존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+            throw new CategoryHierarchyViolationException("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
         } else {
             if (!parent.getChildren().isEmpty()) {
                 throw new CategoryHierarchyViolationException("주어진 부모의 자식 카테고리와의 관계가 명시되지 않았습니다.");
