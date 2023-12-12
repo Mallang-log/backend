@@ -62,6 +62,27 @@ class PostCategoryServiceTest extends ServiceTest {
         }
 
         @Test
+        void 이미_카테고리가_존재하는데_이와의_관계를_명시하지_않으면_예외() {
+            // given
+            CreatePostCategoryCommand command = CreatePostCategoryCommand.builder()
+                    .memberId(mallangId)
+                    .blogName(mallangBlogName)
+                    .name("최상위 카테고리")
+                    .build();
+            Long 최상위_카테고리 = postCategoryService.create(command);
+            CreatePostCategoryCommand command2 = CreatePostCategoryCommand.builder()
+                    .memberId(mallangId)
+                    .blogName(mallangBlogName)
+                    .name("최상위 카테고리2")
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() -> {
+                postCategoryService.create(command2);
+            }).isInstanceOf(CategoryHierarchyViolationException.class);
+        }
+
+        @Test
         void 계층형으로_저장할_수_있다() {
             // given
             Long 최상위 = postCategoryService.create(new CreatePostCategoryCommand(

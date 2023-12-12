@@ -1,5 +1,6 @@
 package com.mallang.post.domain.star;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.post.exception.NotFoundStarGroupException;
 import jakarta.annotation.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface StarGroupRepository extends JpaRepository<StarGroup, Long> {
         }
         return getById(id);
     }
+
+    boolean existsByOwner(Member member);
 }

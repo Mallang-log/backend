@@ -9,6 +9,7 @@ import com.mallang.post.application.command.UpdateStarGroupNameCommand;
 import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.domain.star.StarGroup;
 import com.mallang.post.domain.star.StarGroupRepository;
+import com.mallang.post.domain.star.StarGroupValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +22,15 @@ public class StarGroupService {
     private final MemberRepository memberRepository;
     private final PostStarRepository postStarRepository;
     private final StarGroupRepository starGroupRepository;
+    private final StarGroupValidator starGroupValidator;
 
     public Long create(CreateStarGroupCommand command) {
         Member member = memberRepository.getById(command.memberId());
         StarGroup group = new StarGroup(command.name(), member);
-        updateHierarchy(group, command.parentId(), command.prevId(), command.nextId());
+        StarGroup parent = starGroupRepository.getByIdIfIdNotNull(command.parentId());
+        StarGroup prev = starGroupRepository.getByIdIfIdNotNull(command.prevId());
+        StarGroup next = starGroupRepository.getByIdIfIdNotNull(command.nextId());
+        group.create(parent, prev, next, starGroupValidator);
         return starGroupRepository.save(group).getId();
     }
 
@@ -33,13 +38,9 @@ public class StarGroupService {
         Member member = memberRepository.getById(command.memberId());
         StarGroup target = starGroupRepository.getById(command.groupId());
         target.validateOwner(member);
-        updateHierarchy(target, command.parentId(), command.prevId(), command.nextId());
-    }
-
-    private void updateHierarchy(StarGroup target, Long parentId, Long prevId, Long nextId) {
-        StarGroup parent = starGroupRepository.getByIdIfIdNotNull(parentId);
-        StarGroup prev = starGroupRepository.getByIdIfIdNotNull(prevId);
-        StarGroup next = starGroupRepository.getByIdIfIdNotNull(nextId);
+        StarGroup parent = starGroupRepository.getByIdIfIdNotNull(command.parentId());
+        StarGroup prev = starGroupRepository.getByIdIfIdNotNull(command.prevId());
+        StarGroup next = starGroupRepository.getByIdIfIdNotNull(command.nextId());
         target.updateHierarchy(parent, prev, next);
     }
 

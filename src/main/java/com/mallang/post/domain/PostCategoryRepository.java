@@ -1,5 +1,6 @@
 package com.mallang.post.domain;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.post.exception.NotFoundPostCategoryException;
 import jakarta.annotation.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface PostCategoryRepository extends JpaRepository<PostCategory, Long
         }
         return getById(categoryId);
     }
+
+    boolean existsByOwner(Member member);
 }
