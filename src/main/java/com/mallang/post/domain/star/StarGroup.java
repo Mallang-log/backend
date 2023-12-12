@@ -1,12 +1,11 @@
-package com.mallang.post.domain;
+package com.mallang.post.domain.star;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
-import com.mallang.blog.domain.Blog;
 import com.mallang.category.TieredCategory;
-import com.mallang.post.exception.NoAuthorityPostCategoryException;
+import com.mallang.post.exception.NoAuthorityStarGroupException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -19,57 +18,51 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @Getter
 @Entity
-public class PostCategory extends TieredCategory<PostCategory> {
+public class StarGroup extends TieredCategory<StarGroup> {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
-    private PostCategory parent;
+    private StarGroup parent;
 
     @OneToMany(fetch = LAZY, mappedBy = "parent")
-    private List<PostCategory> children = new ArrayList<>();
+    private List<StarGroup> children = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "prev_sibling_id")
-    private PostCategory previousSibling;
+    private StarGroup previousSibling;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "next_sibling_id")
-    private PostCategory nextSibling;
+    private StarGroup nextSibling;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "blog_id", nullable = false)
-    protected Blog blog;
-
-    public PostCategory(String name, Member owner, Blog blog) {
+    public StarGroup(String name, Member owner) {
         super(name, owner);
-        this.blog = blog;
-        blog.validateOwner(owner);
     }
 
     @Override
     public void validateOwner(Member member) {
         if (!owner.equals(member)) {
-            throw new NoAuthorityPostCategoryException();
+            throw new NoAuthorityStarGroupException();
         }
     }
 
     @Override
-    protected PostCategory self() {
+    protected StarGroup self() {
         return this;
     }
 
     @Override
-    protected void setParent(PostCategory category) {
+    protected void setParent(StarGroup category) {
         this.parent = category;
     }
 
     @Override
-    protected void setPreviousSibling(PostCategory previousSibling) {
+    protected void setPreviousSibling(StarGroup previousSibling) {
         this.previousSibling = previousSibling;
     }
 
     @Override
-    protected void setNextSibling(PostCategory nextSibling) {
+    protected void setNextSibling(StarGroup nextSibling) {
         this.nextSibling = nextSibling;
     }
 }

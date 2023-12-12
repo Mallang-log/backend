@@ -12,7 +12,7 @@ public interface PostCategoryQueryRepository extends JpaRepository<PostCategory,
 
     default List<Long> getIdsWithDescendants(Long id) {
         PostCategory postCategory = getById(id);
-        List<PostCategory> descendants = postCategory.getDescendants();
+        List<PostCategory> descendants = postCategory.getDescendantsExceptSelf();
         descendants.add(postCategory);
         return descendants.stream()
                 .map(CommonRootEntity::getId)

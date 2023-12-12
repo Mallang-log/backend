@@ -5,9 +5,10 @@ import jakarta.annotation.Nullable;
 
 public record StarPostRequest(
         Long postId,
-        String blogName
+        String blogName,
+        @Nullable Long starGroupId
 ) {
     public StarPostCommand toCommand(Long memberId, @Nullable String postPassword) {
-        return new StarPostCommand(postId, blogName, memberId, postPassword);
+        return new StarPostCommand(postId, blogName, starGroupId, memberId, postPassword);
     }
 }

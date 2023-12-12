@@ -65,7 +65,7 @@ public class PostCategoryController {
             @Auth Long memberId
     ) {
         postCategoryService.delete(new DeletePostCategoryCommand(memberId, categoryId));
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping

@@ -131,8 +131,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             childChildChild.updateHierarchy(childChild, null, null);
 
             // then
-            assertThat(child.getDescendants()).containsExactly(childChild, childChildChild);
-            assertThat(childChild.getDescendants()).containsExactly(childChildChild);
+            assertThat(child.getDescendantsExceptSelf()).containsExactly(childChild, childChildChild);
+            assertThat(childChild.getDescendantsExceptSelf()).containsExactly(childChildChild);
         }
 
         @Test
@@ -152,9 +152,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
             firstChild.updateHierarchy(null, root, null);
 
             // then
-            assertThat(root.getDescendants()).containsExactly(secondChild);
+            assertThat(root.getDescendantsExceptSelf()).containsExactly(secondChild);
             assertThat(firstChild.getParent()).isNull();
-            assertThat(firstChild.getDescendants()).containsExactly(firstFirstChild);
+            assertThat(firstChild.getDescendantsExceptSelf()).containsExactly(firstFirstChild);
         }
 
         @Nested
@@ -700,8 +700,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         T 더더하위1 = createChild("더더하위1", member, 더하위1);
 
         // when
-        List<T> 최상위_descendants = 최상위.getDescendants();
-        List<T> 하위_descendants = 하위.getDescendants();
+        List<T> 최상위_descendants = 최상위.getDescendantsExceptSelf();
+        List<T> 하위_descendants = 하위.getDescendantsExceptSelf();
 
         // then
         assertThat(최상위_descendants)

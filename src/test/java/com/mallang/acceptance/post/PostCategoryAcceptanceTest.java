@@ -3,6 +3,7 @@ package com.mallang.acceptance.post;
 import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
 import static com.mallang.acceptance.AcceptanceSteps.권한_없음;
+import static com.mallang.acceptance.AcceptanceSteps.본문_없음;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
@@ -285,7 +286,7 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
             var 응답 = 카테고리_제거_요청(말랑_세션_ID, JPA_카테고리_ID);
 
             // then
-            응답_상태를_검증한다(응답, 정상_처리);
+            응답_상태를_검증한다(응답, 본문_없음);
             var 포스트_조회_응답 = 포스트_단일_조회_요청(null, 포스트_ID, 말랑_블로그_이름, null)
                     .as(PostDetailResponse.class);
             assertThat(포스트_조회_응답.category().categoryId()).isNull();

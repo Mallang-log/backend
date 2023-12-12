@@ -30,6 +30,7 @@ import com.mallang.post.application.PostCategoryService;
 import com.mallang.post.application.PostLikeService;
 import com.mallang.post.application.PostService;
 import com.mallang.post.application.PostStarService;
+import com.mallang.post.application.StarGroupService;
 import com.mallang.post.application.command.CreatePostCommand;
 import com.mallang.post.application.command.DeletePostCommand;
 import com.mallang.post.application.command.UpdatePostCommand;
@@ -43,11 +44,13 @@ import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.domain.like.PostLikeRepository;
 import com.mallang.post.domain.star.PostStarRepository;
+import com.mallang.post.domain.star.StarGroupRepository;
 import com.mallang.post.query.DraftQueryService;
 import com.mallang.post.query.PostCategoryQueryService;
 import com.mallang.post.query.PostManageQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
+import com.mallang.post.query.StarGroupQueryService;
 import com.mallang.reference.application.ReferenceLinkService;
 import com.mallang.reference.domain.ReferenceLinkRepository;
 import com.mallang.reference.query.ReferenceLinkQueryService;
@@ -142,6 +145,15 @@ public abstract class ServiceTest {
 
     @Autowired
     protected PostLikeService postLikeService;
+
+    @Autowired
+    protected StarGroupRepository starGroupRepository;
+
+    @Autowired
+    protected StarGroupService starGroupService;
+
+    @Autowired
+    protected StarGroupQueryService starGroupQueryService;
 
     @Autowired
     protected BlogSubscribeRepository blogSubscribeRepository;

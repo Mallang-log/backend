@@ -32,7 +32,7 @@ class PostStarEventHandlerTest extends ServiceTest {
 
         @Test
         void 해당_포스트에_눌린_좋아요를_모두_제거한다() {
-            postStarService.star(new StarPostCommand(postId, blogName, memberId, null));
+            postStarService.star(new StarPostCommand(postId, blogName, null, memberId, null));
 
             // when
             포스트를_삭제한다(memberId, postId, blogName);

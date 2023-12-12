@@ -9,6 +9,7 @@ import com.mallang.post.domain.star.PostStar;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 public interface StaredPostDao {
 
-    Page<PostStar> findAllByMemberId(Long memberId, Pageable pageable);
+    Page<PostStar> searchByMember(Long memberId, @Nullable Long starGroupId, Pageable pageable);
 
     @RequiredArgsConstructor
     @Component
@@ -27,20 +28,22 @@ public interface StaredPostDao {
         private final JPAQueryFactory query;
 
         @Override
-        public Page<PostStar> findAllByMemberId(Long memberId, Pageable pageable) {
+        public Page<PostStar> searchByMember(Long memberId, @Nullable Long starGroupId, Pageable pageable) {
             JPAQuery<Long> countQuery = query.select(postStar.countDistinct())
                     .from(postStar)
                     .where(
-                            filterPrivatePost(memberId),
-                            member.id.eq(memberId)
+                            filterPrivatePost(),
+                            member.id.eq(memberId),
+                            starGroupEq(starGroupId)
                     );
             List<PostStar> result = query.selectFrom(postStar)
                     .distinct()
                     .join(postStar.post, post).fetchJoin()
                     .join(postStar.member, member).fetchJoin()
                     .where(
-                            filterPrivatePost(memberId),
-                            member.id.eq(memberId)
+                            filterPrivatePost(),
+                            member.id.eq(memberId),
+                            starGroupEq(starGroupId)
                     )
                     .orderBy(postStar.id.desc())
                     .offset(pageable.getOffset())
@@ -49,11 +52,15 @@ public interface StaredPostDao {
             return PageableExecutionUtils.getPage(result, pageable, countQuery::fetchOne);
         }
 
-        private BooleanExpression filterPrivatePost(Long memberId) {
-            return post.visibilityPolish.visibility.ne(PRIVATE)
-                    .or(post.visibilityPolish.visibility.eq(PRIVATE)
-                            .and(post.content.writer.id.eq(memberId))
-                    );
+        private BooleanExpression filterPrivatePost() {
+            return post.visibilityPolish.visibility.ne(PRIVATE);
+        }
+
+        private BooleanExpression starGroupEq(@Nullable Long starGroupId) {
+            if (starGroupId == null) {
+                return null;
+            }
+            return postStar.starGroup.id.eq(starGroupId);
         }
     }
 }

@@ -34,13 +34,25 @@ public class PostStar extends CommonRootEntity<Long> {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "star_group_id")
+    private StarGroup starGroup;
+
     public PostStar(Post post, Member member) {
         this.post = post;
         this.member = member;
     }
 
-    public void star(PostStarValidator validator, @Nullable String postPassword) {
+    public void star(@Nullable String postPassword) {
         post.validateAccess(member, postPassword);
-        validator.validateClickStar(post, member);
+    }
+
+    public void updateGroup(@Nullable StarGroup starGroup) {
+        if (starGroup == null) {
+            this.starGroup = null;
+            return;
+        }
+        starGroup.validateOwner(member);
+        this.starGroup = starGroup;
     }
 }

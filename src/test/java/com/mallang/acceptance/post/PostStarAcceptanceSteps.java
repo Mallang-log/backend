@@ -16,12 +16,13 @@ public class PostStarAcceptanceSteps {
             String 세션_ID,
             Long 포스트_ID,
             String 블로그_이름,
+            @Nullable Long 즐겨찾기_그룹_ID,
             @Nullable String 비밀번호
     ) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
-                .body(new StarPostRequest(포스트_ID, 블로그_이름))
-                .post("/post-stars")
+                .body(new StarPostRequest(포스트_ID, 블로그_이름, 즐겨찾기_그룹_ID))
+                .put("/post-stars")
                 .then()
                 .extract();
     }
@@ -34,9 +35,14 @@ public class PostStarAcceptanceSteps {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 특정_회원의_즐겨찾기_포스트_목록_조회_요청(String 세션_ID, Long 대상_회원_ID) {
+    public static ExtractableResponse<Response> 특정_회원의_즐겨찾기_포스트_목록_조회_요청(
+            @Nullable String 세션_ID,
+            Long 대상_회원_ID,
+            @Nullable Long 즐겨찾기_그룹_ID
+    ) {
         return given(세션_ID)
                 .queryParam("memberId", 대상_회원_ID)
+                .queryParam("starGroupId", 즐겨찾기_그룹_ID)
                 .get("/post-stars")
                 .then()
                 .extract();
