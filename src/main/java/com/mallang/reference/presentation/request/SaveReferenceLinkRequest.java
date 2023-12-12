@@ -9,7 +9,7 @@ public record SaveReferenceLinkRequest(
         @NotBlank String title,
         @Nullable String memo
 ) {
-    public SaveReferenceLinkCommand toCommand(Long memberId, String blogName) {
-        return new SaveReferenceLinkCommand(memberId, blogName, url, title, memo);
+    public SaveReferenceLinkCommand toCommand(Long memberId) {
+        return new SaveReferenceLinkCommand(memberId, url, title, memo);
     }
 }

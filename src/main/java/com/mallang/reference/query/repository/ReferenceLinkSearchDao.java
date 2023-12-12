@@ -2,7 +2,7 @@ package com.mallang.reference.query.repository;
 
 import static com.mallang.reference.domain.QReferenceLink.referenceLink;
 
-import com.mallang.blog.domain.Blog;
+import com.mallang.auth.domain.Member;
 import com.mallang.reference.domain.ReferenceLink;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 public interface ReferenceLinkSearchDao {
 
-    List<ReferenceLink> search(Blog blog, ReferenceLinkSearchDaoCond cond);
+    List<ReferenceLink> search(Member member, ReferenceLinkSearchDaoCond cond);
 
     record ReferenceLinkSearchDaoCond(
             @Nullable String url,
@@ -30,10 +30,10 @@ public interface ReferenceLinkSearchDao {
         private final JPAQueryFactory query;
 
         @Override
-        public List<ReferenceLink> search(Blog blog, ReferenceLinkSearchDaoCond cond) {
+        public List<ReferenceLink> search(Member member, ReferenceLinkSearchDaoCond cond) {
             return query.selectFrom(referenceLink)
                     .where(
-                            blogEq(blog),
+                            memberEq(member),
                             urlContains(cond.url()),
                             titleContains(cond.title()),
                             memoContains(cond.memo())
@@ -42,8 +42,8 @@ public interface ReferenceLinkSearchDao {
                     .fetch();
         }
 
-        private BooleanExpression blogEq(Blog blog) {
-            return referenceLink.blog.eq(blog);
+        private BooleanExpression memberEq(Member member) {
+            return referenceLink.member.eq(member);
         }
 
         private BooleanExpression urlContains(String url) {
