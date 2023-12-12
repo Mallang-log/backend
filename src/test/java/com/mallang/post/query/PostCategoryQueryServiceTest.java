@@ -17,6 +17,19 @@ import org.junit.jupiter.api.Test;
 class PostCategoryQueryServiceTest extends ServiceTest {
 
     @Test
+    void 카테고리_목록이_없는_경우_빈_리스트_반환() {
+        // given
+        var memberId = 회원을_저장한다("동훈");
+        var 동훈_블로그_이름 = 블로그_개설(memberId, "donghun");
+
+        // when
+        List<PostCategoryResponse> result = postCategoryQueryService.findAllByBlogName(동훈_블로그_이름);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
     void 특정_블로그의_카테고리를_순서대로_전체_조회한다() {
         // given
         Long 동훈_ID = 회원을_저장한다("동훈");
