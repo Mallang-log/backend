@@ -95,6 +95,19 @@ class LabelTest extends FlatCategoryTestTemplate<Label> {
         }
 
         @Test
+        void 형제_중_중복된_이름을_가진_형제가_있다면_예외() {
+            // given
+            Label label = new Label("Spring", member, "#000000");
+            Label prev = new Label("prev", member, "#000000");
+            prev.updateHierarchy(null, label);
+
+            // when & then
+            assertThatThrownBy(() -> {
+                label.update("prev", "#111111");
+            }).isInstanceOf(DuplicateCategoryNameException.class);
+        }
+
+        @Test
         void 색상_코드_형식이_잘못된_경우_예외() {
             // given
             Label label = new Label("Spring", member, "#000000");

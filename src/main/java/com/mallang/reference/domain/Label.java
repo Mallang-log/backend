@@ -35,7 +35,7 @@ public class Label extends FlatCategory<Label> {
     }
 
     public void update(String name, String colorCode) {
-        this.name = name;
+        updateName(name);
         this.color = new LabelColor(colorCode);
     }
 
