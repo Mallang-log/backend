@@ -2,15 +2,12 @@ package com.mallang.reference.domain;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
-import static com.mallang.blog.domain.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.OauthMember;
-import com.mallang.blog.domain.Blog;
-import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.reference.exception.BadReferenceLinkMemoException;
 import com.mallang.reference.exception.BadReferenceLinkTitleException;
 import com.mallang.reference.exception.BadReferenceLinkUrlException;
@@ -30,7 +27,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 class ReferenceLinkTest {
 
     private final Member member = 깃허브_말랑(1L);
-    private final Blog blog = mallangBlog(member);
 
     @Nested
     class 생성_시 {
@@ -40,7 +36,7 @@ class ReferenceLinkTest {
         void 제목_없이_생성이_불가능하다(String nullAndEmptyTitle) {
             // when & then
             assertThatThrownBy(() ->
-                    new ReferenceLink("url", nullAndEmptyTitle, "memo", member, blog)
+                    new ReferenceLink("url", nullAndEmptyTitle, "memo", member)
             ).isInstanceOf(BadReferenceLinkTitleException.class);
         }
 
@@ -53,14 +49,14 @@ class ReferenceLinkTest {
         void 제목은_공백으로만_이루어져_있으면_안된다(String title) {
             // when & then
             assertThatThrownBy(() ->
-                    new ReferenceLink("url", title, "memo", member, blog)
+                    new ReferenceLink("url", title, "memo", member)
             ).isInstanceOf(BadReferenceLinkTitleException.class);
         }
 
         @Test
         void 제목의_앞뒤_공백은_제거된다() {
             // when
-            ReferenceLink link = new ReferenceLink("url", " \n 1 \n ", null, member, blog);
+            ReferenceLink link = new ReferenceLink("url", " \n 1 \n ", null, member);
 
             // then
             assertThat(link.getTitle()).isEqualTo("1");
@@ -85,7 +81,7 @@ class ReferenceLinkTest {
         @NullAndEmptySource
         void 메모는_없어도_된다(String nullAndEmptyMemo) {
             // when
-            ReferenceLink referenceLink = new ReferenceLink("url", "title", nullAndEmptyMemo, member, blog);
+            ReferenceLink referenceLink = new ReferenceLink("url", "title", nullAndEmptyMemo, member);
 
             // then
             assertThat(referenceLink.getMemo()).isEqualTo(nullAndEmptyMemo);
@@ -95,10 +91,10 @@ class ReferenceLinkTest {
         void 메모의_최대_길이는_300글자이다() {
             // when & then
             assertDoesNotThrow(() ->
-                    new ReferenceLink("url", "title", "1".repeat(300), member, blog)
+                    new ReferenceLink("url", "title", "1".repeat(300), member)
             );
             assertThatThrownBy(() ->
-                    new ReferenceLink("url", "title", "1".repeat(301), member, blog)
+                    new ReferenceLink("url", "title", "1".repeat(301), member)
             ).isInstanceOf(BadReferenceLinkMemoException.class);
         }
 
@@ -106,34 +102,23 @@ class ReferenceLinkTest {
         void url에_값이_존재해야_하며_공백으로만_이루어져서는_안된다() {
             // when & then
             assertThatThrownBy(() ->
-                    new ReferenceLink(null, "title1", "", member, blog)
+                    new ReferenceLink(null, "title1", "", member)
             ).isInstanceOf(BadReferenceLinkUrlException.class);
             assertThatThrownBy(() ->
-                    new ReferenceLink("", "title1", "", member, blog)
+                    new ReferenceLink("", "title1", "", member)
             ).isInstanceOf(BadReferenceLinkUrlException.class);
             assertThatThrownBy(() ->
-                    new ReferenceLink("  ", "title1", "", member, blog)
+                    new ReferenceLink("  ", "title1", "", member)
             ).isInstanceOf(BadReferenceLinkUrlException.class);
         }
 
         @Test
         void url의_앞_뒤_공백은_제거된다() {
             // when
-            ReferenceLink referenceLink = new ReferenceLink("   d d   ", "title1", "", member, blog);
+            ReferenceLink referenceLink = new ReferenceLink("   d d   ", "title1", "", member);
 
             // then
             assertThat(referenceLink.getUrl()).isEqualTo("d d");
-        }
-
-        @Test
-        void 블로그의_주인과_생성한_회원이_다르면_예외() {
-            // given
-            OauthMember otherMember = 깃허브_동훈(member.getId() + 1);
-
-            // when & then
-            assertThatThrownBy(() -> {
-                new ReferenceLink("   d d   ", "title1", "", otherMember, blog);
-            }).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 
@@ -141,7 +126,7 @@ class ReferenceLinkTest {
     void 회원에_대한_권한_검증을_한다() {
         // given
         OauthMember otherMember = 깃허브_동훈(member.getId() + 1);
-        ReferenceLink referenceLink = new ReferenceLink("url", "title1", null, member, blog);
+        ReferenceLink referenceLink = new ReferenceLink("url", "title1", null, member);
 
         // when & then
         assertDoesNotThrow(() -> {
@@ -155,7 +140,7 @@ class ReferenceLinkTest {
     @Nested
     class 수정_시 {
 
-        private final ReferenceLink link = new ReferenceLink("url", "title", "memo", member, blog);
+        private final ReferenceLink link = new ReferenceLink("url", "title", "memo", member);
 
         @ParameterizedTest
         @NullAndEmptySource

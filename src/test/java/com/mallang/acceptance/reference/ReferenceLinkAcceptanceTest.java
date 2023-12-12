@@ -10,7 +10,6 @@ import static com.mallang.acceptance.AcceptanceSteps.인증되지_않음;
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
-import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.URL_의_제목_추출_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.주어진_URL_로_이미_등록된_링크_존재여부_확인_요청;
 import static com.mallang.acceptance.reference.ReferenceLinkAcceptanceSteps.참고_링크_검색_요청;
@@ -54,14 +53,12 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
     @Autowired
     private MockUrlTitleMetaInfoFetcher fetcher;
     private String 말랑_세션_ID;
-    private String 말랑_블로그_이름;
 
     @Override
     @BeforeEach
     protected void setUp() {
         super.setUp();
         말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
-        말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
     }
 
     @Nested
@@ -70,22 +67,19 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 참고_링크를_저장한다() {
             // when
-            var 응답 = 참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청);
+            var 응답 = 참고_링크_저장_요청(말랑_세션_ID, 참고_링크_저장_요청);
 
             // then
             응답_상태를_검증한다(응답, 생성됨);
         }
 
         @Test
-        void 자신의_블로그가_아니라면_예외() {
-            // given
-            var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-
+        void 인증정보가_없으면_아니라면_예외() {
             // when
-            var 응답 = 참고_링크_저장_요청(다른회원_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청);
+            var 응답 = 참고_링크_저장_요청(null, 참고_링크_저장_요청);
 
             // then
-            응답_상태를_검증한다(응답, 권한_없음);
+            응답_상태를_검증한다(응답, 인증되지_않음);
         }
     }
 
@@ -101,7 +95,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 참고_링크를_정보를_수정한다() {
             // given
-            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 참고_링크_저장_요청));
 
             // when
             var 응답 = 참고_링크_업데이트_요청(말랑_세션_ID, 참고_링크_ID, 참고_링크_업데이트_요청);
@@ -114,7 +108,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         void 자신이_등록한_링크가_아니라면_예외() {
             // given
             var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 참고_링크_저장_요청));
 
             // when
             var 응답 = 참고_링크_업데이트_요청(다른회원_세션_ID, 참고_링크_ID, 참고_링크_업데이트_요청);
@@ -130,7 +124,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 참고_링크를_저장한다() {
             // given
-            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 참고_링크_저장_요청));
 
             // when
             var 응답 = 참고_링크_삭제_요청(말랑_세션_ID, 참고_링크_ID);
@@ -143,7 +137,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         void 자신이_등록한_링크가_아니라면_예외() {
             // given
             var 다른회원_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 말랑_블로그_이름, 참고_링크_저장_요청));
+            var 참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션_ID, 참고_링크_저장_요청));
 
             // when
             var 응답 = 참고_링크_삭제_요청(다른회원_세션_ID, 참고_링크_ID);
@@ -161,7 +155,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             // given
             참고_링크_저장_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     new SaveReferenceLinkRequest(
                             "https://ttl-blog.tistory.com",
                             "말랑이 블로그",
@@ -172,22 +166,22 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             // when
             var exactlyMatch = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     "https://ttl-blog.tistory.com"
             );
             var exactlyMatch2 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     " https://ttl-blog.tistory.com "  // 앞뒤 공백은 제거됨
             );
             var notMatch1 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     "//ttl-blog.tistory.com"
             );
             var notMatch2 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     "https://ttl-blog.tistory.com/"
             );
 
@@ -199,13 +193,11 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 다른_블로그에_등록된것과는_무관하다() {
+        void 다른_사람이_등록한것과는_무관하다() {
             // given
             var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-            var 다른_사람_블로그_이름 = 블로그_개설(다른_사람_세션_ID, "other-log");
             참고_링크_저장_요청(
                     다른_사람_세션_ID,
-                    다른_사람_블로그_이름,
                     new SaveReferenceLinkRequest(
                             "https://ttl-blog.tistory.com",
                             "말랑이 블로그",
@@ -216,12 +208,11 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             // when
             var notExist = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     "https://ttl-blog.tistory.com"
             );
             var exist = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
                     다른_사람_세션_ID,
-                    다른_사람_블로그_이름,
                     "https://ttl-blog.tistory.com"
             );
 
@@ -231,19 +222,17 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 블로그_주인이_아니라면_예외() {
+        void 인증정보가_없으면_예외() {
             // given
-            var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
 
             // when
             var 응답 = 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
-                    다른_사람_세션_ID,
-                    말랑_블로그_이름,
+                    null,
                     "https://ttl-blog.tistory.com"
             );
 
             // then
-            응답_상태를_검증한다(응답, 권한_없음);
+            응답_상태를_검증한다(응답, 인증되지_않음);
         }
     }
 
@@ -257,7 +246,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         void setUp() {
             말랑이_블로그_링크_ID = ID를_추출한다(참고_링크_저장_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     new SaveReferenceLinkRequest(
                             "https://ttl-blog.tistory.com",
                             "말랑이 블로그",
@@ -266,7 +255,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ));
             Spring_글_참고_링크_ID = ID를_추출한다(참고_링크_저장_요청(
                     말랑_세션_ID,
-                    말랑_블로그_이름,
+
                     new SaveReferenceLinkRequest(
                             "https://ttl-blog.tistory.com/123",
                             "스프링이란?",
@@ -276,12 +265,12 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 조건_없이_검색하면_해당_블로그의_모든_링크가_조회된다() {
+        void 조건_없이_검색하면_나의_모든_링크가_조회된다() {
             // given
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -290,13 +279,11 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 다른_블로그의_링크는_조회되지_않는다() {
+        void 다른_사람의_링크는_조회되지_않는다() {
             // given
             var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
-            var 다른_사람_블로그_이름 = 블로그_개설(다른_사람_세션_ID, "other-log");
             Long 다른사람_링크_ID = ID를_추출한다(참고_링크_저장_요청(
                     다른_사람_세션_ID,
-                    다른_사람_블로그_이름,
                     new SaveReferenceLinkRequest(
                             "https://ttl-blog.tistory.com/13",
                             "자바",
@@ -306,7 +293,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -318,16 +305,15 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 블로그_주인이_아니면_조회할_수_없다() {
+        void 인증정보가_없으면_조회할_수_없다() {
             // given
-            var 다른_사람_세션_ID = 회원가입과_로그인_후_세션_ID_반환("other");
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            var 응답 = 참고_링크_검색_요청(다른_사람_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(null, emptyCond);
 
             // then
-            응답_상태를_검증한다(응답, 권한_없음);
+            응답_상태를_검증한다(응답, 인증되지_않음);
         }
 
         @Test
@@ -336,7 +322,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond("12", null, null);
 
             // when
-            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -352,7 +338,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, "랑이", null);
 
             // when
-            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
@@ -368,7 +354,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에");
 
             // when
-            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, 말랑_블로그_이름, emptyCond);
+            var 응답 = 참고_링크_검색_요청(말랑_세션_ID, emptyCond);
 
             // then
             List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {

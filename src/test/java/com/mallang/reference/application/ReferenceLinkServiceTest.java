@@ -3,7 +3,6 @@ package com.mallang.reference.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.common.ServiceTest;
 import com.mallang.reference.application.command.SaveReferenceLinkCommand;
 import com.mallang.reference.application.command.UpdateReferenceLinkCommand;
@@ -22,17 +21,14 @@ import org.junit.jupiter.api.Test;
 class ReferenceLinkServiceTest extends ServiceTest {
 
     private Long memberId;
-    private String blogName;
     private SaveReferenceLinkCommand command;
 
 
     @BeforeEach
     void setUp() {
         memberId = 회원을_저장한다("말랑");
-        blogName = 블로그_개설(memberId, "mallang-log");
         command = new SaveReferenceLinkCommand(
                 memberId,
-                blogName,
                 "https://ttl-blog.tistory.com/",
                 "말랑이 블로그",
                 "짱 멋있는 말랑이 블로그임"
@@ -61,24 +57,6 @@ class ReferenceLinkServiceTest extends ServiceTest {
 
             // then
             assertThat(id).isNotNull();
-        }
-
-        @Test
-        void 블로그의_주인이_아닌_경우_예외() {
-            // given
-            Long otherMember = 회원을_저장한다("other");
-            SaveReferenceLinkCommand command = new SaveReferenceLinkCommand(
-                    otherMember,
-                    blogName,
-                    "https://ttl-blog.tistory.com/",
-                    "말랑이 블로그",
-                    "짱 멋있는 말랑이 블로그임"
-            );
-
-            // when & then
-            assertThatThrownBy(() ->
-                    referenceLinkService.save(command)
-            ).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 

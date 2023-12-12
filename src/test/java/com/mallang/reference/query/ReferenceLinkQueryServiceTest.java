@@ -1,9 +1,7 @@
 package com.mallang.reference.query;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.common.ServiceTest;
 import com.mallang.reference.application.command.SaveReferenceLinkCommand;
 import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoCond;
@@ -22,13 +20,11 @@ import org.junit.jupiter.api.Test;
 class ReferenceLinkQueryServiceTest extends ServiceTest {
 
     private Long memberId;
-    private String blogName;
 
 
     @BeforeEach
     void setUp() {
         memberId = 회원을_저장한다("말랑");
-        blogName = 블로그_개설(memberId, "mallang-log");
     }
 
     @Nested
@@ -39,7 +35,6 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             // given
             referenceLinkService.save(new SaveReferenceLinkCommand(
                     memberId,
-                    blogName,
                     "https://ttl-blog.tistory.com",
                     "말랑이 블로그",
                     "말랑이 블로그 메인 페이지이다."
@@ -48,17 +43,14 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             // when
             boolean exactlyMatch = referenceLinkQueryService.existsReferenceLinkByUrl(
                     memberId,
-                    blogName,
                     "https://ttl-blog.tistory.com"
             );
             boolean notMatch1 = referenceLinkQueryService.existsReferenceLinkByUrl(
                     memberId,
-                    blogName,
                     "https://ttl-blog.tistory.com/"
             );
             boolean notMatch2 = referenceLinkQueryService.existsReferenceLinkByUrl(
                     memberId,
-                    blogName,
                     "ttl-blog.tistory.com"
             );
 
@@ -69,13 +61,11 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         }
 
         @Test
-        void 다른_블로그에_등록된것과는_무관하다() {
+        void 다른_회원이_등록한것과는_무관하다() {
             // given
             Long otherMemberId = 회원을_저장한다("other");
-            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
             referenceLinkService.save(new SaveReferenceLinkCommand(
                     otherMemberId,
-                    otherBlogName,
                     "https://ttl-blog.tistory.com/123",
                     "스프링이란?",
                     "누군가 쓴 스프링에 대한 내용."
@@ -84,33 +74,16 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             // when
             boolean notExist = referenceLinkQueryService.existsReferenceLinkByUrl(
                     memberId,
-                    blogName,
                     "https://ttl-blog.tistory.com/123"
             );
             boolean exist = referenceLinkQueryService.existsReferenceLinkByUrl(
                     otherMemberId,
-                    otherBlogName,
                     "https://ttl-blog.tistory.com/123"
             );
 
             // then
             assertThat(notExist).isFalse();
             assertThat(exist).isTrue();
-        }
-
-        @Test
-        void 블로그_주인이_아니라면_예외() {
-            // given
-            Long otherMemberId = 회원을_저장한다("other");
-
-            // when & then
-            assertThatThrownBy(() ->
-                    referenceLinkQueryService.existsReferenceLinkByUrl(
-                            otherMemberId,
-                            blogName,
-                            "https://ttl-blog.tistory.com/123"
-                    )
-            ).isInstanceOf(NoAuthorityBlogException.class);
         }
     }
 
@@ -124,14 +97,12 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         void setUp() {
             말랑이_블로그_링크_ID = referenceLinkService.save(new SaveReferenceLinkCommand(
                     memberId,
-                    blogName,
                     "https://ttl-blog.tistory.com",
                     "말랑이 블로그",
                     "말랑이 블로그 메인 페이지이다."
             ));
             Spring_글_참고_링크_ID = referenceLinkService.save(new SaveReferenceLinkCommand(
                     memberId,
-                    blogName,
                     "https://ttl-blog.tistory.com/123",
                     "스프링이란?",
                     "말랑이가 쓴 스프링에 대한 내용."
@@ -139,25 +110,24 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         }
 
         @Test
-        void 아무_조건이_없다면_블로그에_등록된_모든_링크를_조회한다() {
+        void 아무_조건이_없다면_내가_등록한_모든_링크를_조회한다() {
             // given
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, emptyCond);
+            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, emptyCond);
 
             // then
             assertThat(result).hasSize(2);
         }
 
         @Test
-        void 다른_사람_글은_보이지_않는다() {
+        void 다른_사람_링크는_보이지_않는다() {
             // given
             Long otherMemberId = 회원을_저장한다("other");
             String otherBlogName = 블로그_개설(otherMemberId, "other-log");
             Long 타인의_Spring_글_참고_링크_ID = referenceLinkService.save(new SaveReferenceLinkCommand(
                     otherMemberId,
-                    otherBlogName,
                     "https://ttl-blog.tistory.com/123",
                     "스프링이란?",
                     "누군가 쓴 스프링에 대한 내용."
@@ -165,22 +135,10 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 
             // when
-            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, emptyCond);
+            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, emptyCond);
 
             // then
             assertThat(result).hasSize(2);
-        }
-
-        @Test
-        void 블로그의_주인이_아닌_사람이_조회시_예외() {
-            // given
-            Long otherMemberId = 회원을_저장한다("other");
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
-
-            // when & then
-            assertThatThrownBy(() -> {
-                referenceLinkQueryService.search(otherMemberId, blogName, emptyCond);
-            }).isInstanceOf(NoAuthorityBlogException.class);
         }
 
         @Test
@@ -189,7 +147,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             ReferenceLinkSearchDaoCond urlCond = new ReferenceLinkSearchDaoCond("12", null, null);
 
             // when
-            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, urlCond);
+            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, urlCond);
 
             // then
             assertThat(result)
@@ -203,7 +161,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             ReferenceLinkSearchDaoCond titleCond = new ReferenceLinkSearchDaoCond(null, "랑이", null);
 
             // when
-            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, titleCond);
+            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, titleCond);
 
             // then
             assertThat(result)
@@ -217,7 +175,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             ReferenceLinkSearchDaoCond memoCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에");
 
             // when
-            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, memoCond);
+            List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, memoCond);
 
             // then
             assertThat(result)

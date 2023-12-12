@@ -42,13 +42,12 @@ public class ReferenceLinkController {
         return ResponseEntity.ok(fetchReferenceLinkTitleService.fetchTitleMetaInfo(url));
     }
 
-    @PostMapping("/{blogName}")
+    @PostMapping
     public ResponseEntity<Void> save(
             @Auth Long memberId,
-            @PathVariable(name = "blogName") String blogName,
             @Valid @RequestBody SaveReferenceLinkRequest request
     ) {
-        SaveReferenceLinkCommand command = request.toCommand(memberId, blogName);
+        SaveReferenceLinkCommand command = request.toCommand(memberId);
         Long referenceLinkId = referenceLinkService.save(command);
         return ResponseEntity.created(URI.create("/reference-title/" + referenceLinkId)).build();
     }
@@ -73,23 +72,21 @@ public class ReferenceLinkController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{blogName}/exists")
+    @GetMapping("/exists")
     public ResponseEntity<Boolean> checkExistsUrl(
             @Auth Long memberId,
-            @PathVariable("blogName") String blogName,
             @RequestParam("url") String url
     ) {
-        boolean isExists = referenceLinkQueryService.existsReferenceLinkByUrl(memberId, blogName, url.strip());
+        boolean isExists = referenceLinkQueryService.existsReferenceLinkByUrl(memberId, url.strip());
         return ResponseEntity.ok(isExists);
     }
 
-    @GetMapping("/{blogName}")
+    @GetMapping
     public ResponseEntity<List<ReferenceLinkSearchResponse>> search(
             @Auth Long memberId,
-            @PathVariable("blogName") String blogName,
             @ModelAttribute ReferenceLinkSearchDaoCond cond
     ) {
-        List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, blogName, cond);
+        List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, cond);
         return ResponseEntity.ok(result);
     }
 }

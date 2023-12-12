@@ -13,12 +13,11 @@ public class ReferenceLinkAcceptanceSteps {
 
     public static ExtractableResponse<Response> 참고_링크_저장_요청(
             String 세션_ID,
-            String 블로그_이름,
             SaveReferenceLinkRequest 참고_링크_저장_요청
     ) {
         return given(세션_ID)
                 .body(참고_링크_저장_요청)
-                .post("/reference-links/{blogName}", 블로그_이름)
+                .post("/reference-links")
                 .then()
                 .extract();
     }
@@ -47,26 +46,24 @@ public class ReferenceLinkAcceptanceSteps {
 
     public static ExtractableResponse<Response> 주어진_URL_로_이미_등록된_링크_존재여부_확인_요청(
             String 세션_ID,
-            String 블로그_이름,
             String URL
     ) {
         return given(세션_ID)
                 .queryParam("url", URL)
-                .get("/reference-links/{blogName}/exists", 블로그_이름)
+                .get("/reference-links/exists")
                 .then()
                 .extract();
     }
 
     public static ExtractableResponse<Response> 참고_링크_검색_요청(
             String 세션_ID,
-            String 블로그_이름,
             ReferenceLinkSearchDaoCond 검색_조건
     ) {
         return given(세션_ID)
                 .queryParam("url", 검색_조건.url())
                 .queryParam("title", 검색_조건.title())
                 .queryParam("memo", 검색_조건.memo())
-                .get("/reference-links/{blogName}", 블로그_이름)
+                .get("/reference-links")
                 .then()
                 .extract();
     }
