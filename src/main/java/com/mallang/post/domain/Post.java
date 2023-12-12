@@ -19,7 +19,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import java.util.List;
-import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -153,21 +152,5 @@ public class Post extends CommonRootEntity<PostId> {
 
     public Visibility getVisibility() {
         return visibilityPolish.getVisibility();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Post post)) {
-            return false;
-        }
-        return Objects.equals(getId(), post.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }
