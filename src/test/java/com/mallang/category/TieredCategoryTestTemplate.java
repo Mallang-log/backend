@@ -691,6 +691,40 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
     }
 
     @Test
+    void 나를_제외한_내_형제들을_반환한다() {
+        // given
+        T 최상위 = createRoot("최상위", member);
+        T 하위1 = createChild("하위1", member, 최상위);
+        T 하위2 = createChild("하위2", member, 최상위, 하위1, null);
+        T 하위3 = createChild("하위3", member, 최상위, 하위2, null);
+        T 더하위1 = createChild("더하위1", member, 하위1);
+
+        // when
+        List<T> siblingsExceptSelf = 하위2.getSiblingsExceptSelf();
+
+        // then
+        assertThat(siblingsExceptSelf)
+                .containsExactly(하위1, 하위3);
+    }
+
+    @Test
+    void 정렬된_자식들을_반환한다() {
+        // given
+        T 최상위 = createRoot("최상위", member);
+        T 하위1 = createChild("하위1", member, 최상위);
+        T 하위3 = createChild("하위3", member, 최상위, 하위1, null);
+        T 하위2 = createChild("하위2", member, 최상위, 하위1, 하위3);
+        T 더하위1 = createChild("더하위1", member, 하위1);
+
+        // when
+        List<T> 최상위_descendants = 최상위.getSortedChildren();
+
+        // then
+        assertThat(최상위_descendants)
+                .containsExactly(하위1, 하위2, 하위3);
+    }
+
+    @Test
     void 모든_자손을_반환한다() {
         // given
         T 최상위 = createRoot("최상위", member);
