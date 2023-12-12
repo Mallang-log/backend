@@ -77,6 +77,24 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
+        void 이미_즐겨찾기_그룹이_존재하는데_부모와_형제와의_관계가_모두_주어지지_않은_그룹_생성_시_예외() {
+            // given
+            즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_생성_요청);
+            var 다른_루트_그룹_생성_요청 = new CreateStarGroupRequest(
+                    "Other",
+                    null,
+                    null,
+                    null
+            );
+
+            // when
+            var 응답 = 즐겨찾기_그룹_생성_요청(말랑_세션_ID, 다른_루트_그룹_생성_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 잘못된_요청);
+        }
+
+        @Test
         void 하위_즐겨찾기_그룹를_생성한다() {
             // given
             var 상위_즐겨찾기_그룹_생성_응답 = 즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_생성_요청);

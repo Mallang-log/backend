@@ -79,6 +79,25 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
+        void 이미_카테고리가_존재하는데_부모와_형제와의_관계가_모두_주어지지_않은_카테고리_생성_시_예외() {
+            // given
+            카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
+            var 다른_루트_카테고리_생성_요청 = new CreatePostCategoryRequest(
+                    말랑_블로그_이름,
+                    "Other",
+                    null,
+                    null,
+                    null
+            );
+
+            // when
+            var 응답 = 카테고리_생성_요청(말랑_세션_ID, 다른_루트_카테고리_생성_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 잘못된_요청);
+        }
+
+        @Test
         void 하위_카테고리를_생성한다() {
             // given
             var 상위_카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
