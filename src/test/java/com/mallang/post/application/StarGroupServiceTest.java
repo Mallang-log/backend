@@ -9,8 +9,10 @@ import com.mallang.category.DuplicateCategoryNameException;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateStarGroupCommand;
 import com.mallang.post.application.command.DeleteStarGroupCommand;
+import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.application.command.UpdateStarGroupHierarchyCommand;
 import com.mallang.post.application.command.UpdateStarGroupNameCommand;
+import com.mallang.post.domain.star.PostStar;
 import com.mallang.post.domain.star.StarGroup;
 import com.mallang.post.exception.NoAuthorityStarGroupException;
 import com.mallang.post.exception.NotFoundStarGroupException;
@@ -756,10 +758,7 @@ class StarGroupServiceTest extends ServiceTest {
                     thirdId,
                     null
             ));
-            var command = new DeleteStarGroupCommand(
-                    mallangId,
-                    thirdId
-            );
+            var command = new DeleteStarGroupCommand(mallangId, thirdId);
 
             // when
             starGroupService.delete(command);
@@ -776,7 +775,46 @@ class StarGroupServiceTest extends ServiceTest {
 
         @Test
         void 해당_그룹에_속한_즐겨찾기된_포스트들을_그룹_없음으로_만든다() {
-            // TODO
+            // given
+            String blogName = 블로그_개설(mallangId, "blog");
+            Long postId1 = 포스트를_저장한다(mallangId, blogName, "제목1", "내용")
+                    .getPostId();
+            Long postId2 = 포스트를_저장한다(mallangId, blogName, "제목2", "내용")
+                    .getPostId();
+            Long postId3 = 포스트를_저장한다(mallangId, blogName, "안삭제", "내용")
+                    .getPostId();
+            Long group1Id = starGroupService.create(new CreateStarGroupCommand(
+                    mallangId,
+                    "1",
+                    null,
+                    null,
+                    null
+            ));
+            Long group2Id = starGroupService.create(new CreateStarGroupCommand(
+                    mallangId,
+                    "2",
+                    null,
+                    group1Id,
+                    null
+            ));
+            var starPost1Command = new StarPostCommand(postId1, blogName, group1Id, mallangId, null);
+            var starPost2Command = new StarPostCommand(postId2, blogName, group1Id, mallangId, null);
+            var starPost3Command = new StarPostCommand(postId3, blogName, group2Id, mallangId, null);
+            Long star1Id = postStarService.star(starPost1Command);
+            Long star2Id = postStarService.star(starPost2Command);
+            Long star3Id = postStarService.star(starPost3Command);
+            var command = new DeleteStarGroupCommand(mallangId, group1Id);
+
+            // when
+            starGroupService.delete(command);
+
+            // then
+            PostStar star1 = postStarRepository.getById(star1Id);
+            PostStar star2 = postStarRepository.getById(star2Id);
+            PostStar star3 = postStarRepository.getById(star3Id);
+            assertThat(star1.getStarGroup()).isNull();
+            assertThat(star2.getStarGroup()).isNull();
+            assertThat(star3.getStarGroup().getId()).isEqualTo(group2Id);
         }
     }
 }

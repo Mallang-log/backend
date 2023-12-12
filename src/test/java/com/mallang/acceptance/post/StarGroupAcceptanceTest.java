@@ -11,6 +11,11 @@ import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
+import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.공개_포스트_생성_데이터;
+import static com.mallang.acceptance.post.PostManageAcceptanceSteps.포스트_생성;
+import static com.mallang.acceptance.post.PostStarAcceptanceSteps.특정_회원의_즐겨찾기_포스트_목록_조회_요청;
+import static com.mallang.acceptance.post.PostStarAcceptanceSteps.포스트_즐겨찾기_요청;
 import static com.mallang.acceptance.post.StarGroupAcceptanceSteps.즐겨찾기_그룹_계층구조_수정_요청;
 import static com.mallang.acceptance.post.StarGroupAcceptanceSteps.즐겨찾기_그룹_생성_요청;
 import static com.mallang.acceptance.post.StarGroupAcceptanceSteps.즐겨찾기_그룹_이름_수정_요청;
@@ -21,8 +26,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.auth.query.response.MemberResponse;
+import com.mallang.common.presentation.PageResponse;
 import com.mallang.post.presentation.request.CreateStarGroupRequest;
 import com.mallang.post.query.response.StarGroupListResponse;
+import com.mallang.post.query.response.StaredPostResponse;
+import com.mallang.post.query.response.StaredPostResponse.StarGroupResponse;
 import io.restassured.common.mapper.TypeRef;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -260,7 +268,32 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
             응답_상태를_검증한다(응답, 본문_없음);
         }
 
-        // TODO 즐겨찾기 그룹 제거 시, 해당 그룹에 속한 즐겨찾기 글들은 그룹 없음으로 변환
+        @Test
+        void 해당_그룹에_속한_즐겨찾기된_포스트들을_그룹_없음으로_만든다() {
+            // given
+            String 말랑_블로그_이름 = 블로그_개설(말랑_세션_ID, "mallang-log");
+            var 포스트1_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+            var 포스트2_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+            var 포스트3_ID = 포스트_생성(말랑_세션_ID, 공개_포스트_생성_데이터(말랑_블로그_이름));
+            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트1_ID, 말랑_블로그_이름, JPA_즐겨찾기_그룹_ID, null);
+            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트2_ID, 말랑_블로그_이름, JPA_즐겨찾기_그룹_ID, null);
+            포스트_즐겨찾기_요청(말랑_세션_ID, 포스트3_ID, 말랑_블로그_이름, Spring_즐겨찾기_그룹_ID, null);
+
+            // when
+            즐겨찾기_그룹_제거_요청(말랑_세션_ID, JPA_즐겨찾기_그룹_ID);
+
+            // then
+            var 말랑_ID = 내_정보_조회_요청(말랑_세션_ID)
+                    .as(MemberResponse.class)
+                    .id();
+            PageResponse<StaredPostResponse> responses = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 말랑_ID)
+                    .as(new TypeRef<>() {
+                    });
+            assertThat(responses.content())
+                    .extracting(StaredPostResponse::starGroup)
+                    .extracting(StarGroupResponse::starGroupId)
+                    .containsExactly(Spring_즐겨찾기_그룹_ID, null, null);
+        }
     }
 
     @Nested

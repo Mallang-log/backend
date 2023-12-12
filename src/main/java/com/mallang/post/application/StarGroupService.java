@@ -6,6 +6,7 @@ import com.mallang.post.application.command.CreateStarGroupCommand;
 import com.mallang.post.application.command.DeleteStarGroupCommand;
 import com.mallang.post.application.command.UpdateStarGroupHierarchyCommand;
 import com.mallang.post.application.command.UpdateStarGroupNameCommand;
+import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.domain.star.StarGroup;
 import com.mallang.post.domain.star.StarGroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StarGroupService {
 
     private final MemberRepository memberRepository;
+    private final PostStarRepository postStarRepository;
     private final StarGroupRepository starGroupRepository;
 
     public Long create(CreateStarGroupCommand command) {
@@ -53,6 +55,8 @@ public class StarGroupService {
         StarGroup group = starGroupRepository.getById(command.groupId());
         group.validateOwner(member);
         group.delete();
+        postStarRepository.findAllByStarGroup(group)
+                .forEach(it -> it.updateGroup(null));
         starGroupRepository.delete(group);
     }
 }
