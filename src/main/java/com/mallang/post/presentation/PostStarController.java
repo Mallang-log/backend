@@ -56,11 +56,13 @@ public class PostStarController {
     public ResponseEntity<PageResponse<StaredPostResponse>> findAllByMemberId(
             @OptionalAuth Long requesterId,
             @RequestParam("memberId") Long targetMemberId,
+            @RequestParam(value = "starGroupId", required = false) Long starGroupId,
             @PageableDefault(size = 9) Pageable pageable
     ) {
         Page<StaredPostResponse> response = postStarQueryService.findAllByMemberId(
                 targetMemberId,
                 requesterId,
+                starGroupId,
                 pageable
         );
         return ResponseEntity.ok(PageResponse.from(response));

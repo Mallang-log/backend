@@ -286,7 +286,7 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
             var 말랑_ID = 내_정보_조회_요청(말랑_세션_ID)
                     .as(MemberResponse.class)
                     .id();
-            PageResponse<StaredPostResponse> responses = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 말랑_ID)
+            PageResponse<StaredPostResponse> responses = 특정_회원의_즐겨찾기_포스트_목록_조회_요청(말랑_세션_ID, 말랑_ID, null)
                     .as(new TypeRef<>() {
                     });
             assertThat(responses.content())

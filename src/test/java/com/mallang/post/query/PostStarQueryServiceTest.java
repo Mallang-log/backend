@@ -6,6 +6,7 @@ import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.common.ServiceTest;
+import com.mallang.post.application.command.CreateStarGroupCommand;
 import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.PostVisibilityPolicy;
 import com.mallang.post.query.response.StaredPostResponse;
@@ -63,12 +64,35 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 누구나_볼_수_있다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, blogName, null, otherMemberId, null));
+            postStarService.star(new StarPostCommand(
+                    post1Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post2Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post3Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
 
             // when
-            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, null, pageable);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(
+                    otherMemberId,
+                    null,
+                    null,
+                    pageable
+            );
 
             // then
             assertThat(result)
@@ -79,15 +103,37 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 보호_글은_보호되어_조회된다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, blogName, null, otherMemberId, null));
+            postStarService.star(new StarPostCommand(
+                    post1Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post2Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post3Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
 
             포스트_공개여부를_업데이트한다(memberId, post1Id, blogName, PROTECTED, "1234");
 
             // when
-            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, otherMemberId,
-                    pageable);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(
+                    otherMemberId,
+                    otherMemberId,
+                    null,
+                    pageable
+            );
 
             // then
             assertThat(result.getContent())
@@ -98,14 +144,37 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 글_작성자가_다른_회원의_즐겨찾기_목록_조회_시_글_작성자의_보호글이_즐겨찾이_되어있다면_볼_수_있다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, blogName, null, otherMemberId, null));
+            postStarService.star(new StarPostCommand(
+                    post1Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post2Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post3Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
 
             포스트_공개여부를_업데이트한다(memberId, post1Id, blogName, PROTECTED, "1234");
 
             // when
-            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId, pageable);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(
+                    otherMemberId,
+                    memberId,
+                    null,
+                    pageable
+            );
 
             // then
             assertThat(result.getContent())
@@ -116,19 +185,85 @@ class PostStarQueryServiceTest extends ServiceTest {
         @Test
         void 비공개_글은_누가_조회하든_조회되지_않는다() {
             // given
-            postStarService.star(new StarPostCommand(post1Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post2Id, blogName, null, otherMemberId, null));
-            postStarService.star(new StarPostCommand(post3Id, blogName, null, otherMemberId, null));
+            postStarService.star(new StarPostCommand(
+                    post1Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post2Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post3Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
 
             포스트_공개여부를_업데이트한다(memberId, post1Id, blogName, PRIVATE, null);
 
             // when
-            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(otherMemberId, memberId, pageable);
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(
+                    otherMemberId,
+                    memberId,
+                    null,
+                    pageable
+            );
 
             // then
             assertThat(result.getContent())
                     .extracting(StaredPostResponse::title)
                     .containsExactly("포스트3", "포스트2");
+        }
+
+        @Test
+        void 특정_즐겨찾기_그룹에_포함된_포스트들만_조회할_수_있다() {
+            // given
+            var createGroup1Command = new CreateStarGroupCommand(otherMemberId, "group1", null, null, null);
+            Long group1Id = starGroupService.create(createGroup1Command);
+            var createGroup2Command = new CreateStarGroupCommand(otherMemberId, "group2", null, group1Id, null);
+            Long group2Id = starGroupService.create(createGroup2Command);
+            postStarService.star(new StarPostCommand(
+                    post1Id,
+                    blogName,
+                    group1Id,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post2Id,
+                    blogName,
+                    null,
+                    otherMemberId,
+                    null
+            ));
+            postStarService.star(new StarPostCommand(
+                    post3Id,
+                    blogName,
+                    group2Id,
+                    otherMemberId,
+                    null
+            ));
+
+            // when
+            Page<StaredPostResponse> result = postStarQueryService.findAllByMemberId(
+                    otherMemberId,
+                    null,
+                    group1Id,
+                    pageable
+            );
+
+            // then
+            assertThat(result)
+                    .extracting(StaredPostResponse::title)
+                    .containsExactly("포스트1");
         }
     }
 }

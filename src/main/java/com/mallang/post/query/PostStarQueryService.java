@@ -24,10 +24,11 @@ public class PostStarQueryService {
     public Page<StaredPostResponse> findAllByMemberId(
             Long targetMemberId,
             @Nullable Long requesterId,
+            @Nullable Long starGroupId,
             Pageable pageable
     ) {
         Member member = memberQueryRepository.getMemberIfIdNotNull(requesterId);
-        return postStarQueryRepository.findAllByMemberId(targetMemberId, pageable)
+        return postStarQueryRepository.searchByMember(targetMemberId, starGroupId, pageable)
                 .map(postStar -> {
                     try {
                         Post post = postStar.getPost();
