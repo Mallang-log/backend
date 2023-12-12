@@ -12,6 +12,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostStarRepository extends JpaRepository<PostStar, Long> {
 
+    default PostStar getById(Long id) {
+        return findById(id).orElseThrow(NotFoundPostStarException::new);
+    }
+
     boolean existsByPostAndMember(Post post, Member member);
 
     default PostStar getByPostAndMember(Long postId, String blogName, Long memberId) {

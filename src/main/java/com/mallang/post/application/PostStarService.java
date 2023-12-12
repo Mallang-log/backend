@@ -11,6 +11,7 @@ import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.domain.star.PostStarValidator;
 import com.mallang.post.domain.star.StarGroup;
 import com.mallang.post.domain.star.StarGroupRepository;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,12 @@ public class PostStarService {
         PostStar postStar = new PostStar(post, member, group);
         postStar.star(postStarValidator, command.postPassword());
         return postStarRepository.save(postStar).getId();
+    }
+
+    public void updateGroup(Long starId, @Nullable Long myGroupId) {
+        PostStar postStar = postStarRepository.getById(starId);
+        StarGroup group = starGroupRepository.getByIdIfIdNotNull(myGroupId);
+        postStar.updateGroup(group);
     }
 
     public void cancel(CancelPostStarCommand command) {

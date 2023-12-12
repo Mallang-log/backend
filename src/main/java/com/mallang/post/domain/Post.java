@@ -51,7 +51,7 @@ public class Post extends CommonRootEntity<PostId> {
             PostId id,
             Blog blog,
             Visibility visibility,
-            String password,
+            @Nullable String password,
             String title,
             String intro,
             String bodyText,

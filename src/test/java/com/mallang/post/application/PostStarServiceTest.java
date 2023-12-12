@@ -17,7 +17,6 @@ import com.mallang.post.domain.star.PostStar;
 import com.mallang.post.exception.AlreadyStarPostException;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.NoAuthorityStarGroupException;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -91,9 +90,8 @@ class PostStarServiceTest extends ServiceTest {
             Long starId = postStarService.star(command);
 
             // then
-            Optional<PostStar> find = postStarRepository.findById(starId);
-            assertThat(find).isPresent();
-            assertThat(find.get().getStarGroup().getId())
+            PostStar find = postStarRepository.getById(starId);
+            assertThat(find.getStarGroup().getId())
                     .isEqualTo(springStarGroupId);
         }
 
@@ -144,7 +142,8 @@ class PostStarServiceTest extends ServiceTest {
         void 보호된_글의_비밀번호와_입력한_비밀번호가_일치하면_즐겨찾기를_누를_수_있다() {
             // when
             Long starId = postStarService.star(
-                    new StarPostCommand(protectedPostId, blogName, null, otherMemberId, "1234"));
+                    new StarPostCommand(protectedPostId, blogName, null, otherMemberId, "1234")
+            );
 
             // then
             assertThat(starId).isNotNull();
@@ -174,6 +173,59 @@ class PostStarServiceTest extends ServiceTest {
             assertThatThrownBy(() -> {
                 postStarService.star(command2);
             }).isInstanceOf(NoAuthorityPostException.class);
+        }
+    }
+
+    @Nested
+    class 즐겨찾기_그룹_변경_시 {
+
+        @Test
+        void 타인의_그룹이면_예외() {
+            // given
+            var myStarGroupCommand = new CreateStarGroupCommand(memberId, "Spring", null, null, null);
+            var otherStarGroupCommand = new CreateStarGroupCommand(otherMemberId, "Node", null, null, null);
+            var myGroupId = starGroupService.create(myStarGroupCommand);
+            var otherGroupId = starGroupService.create(otherStarGroupCommand);
+            var command = new StarPostCommand(publicPostId, blogName, myGroupId, memberId, null);
+            Long starId = postStarService.star(command);
+
+            // when & then
+            assertThatThrownBy(() -> {
+                postStarService.updateGroup(starId, otherGroupId);
+            }).isInstanceOf(NoAuthorityStarGroupException.class);
+        }
+
+        @Test
+        void 그룹을_변경한다() {
+            // given
+            var myStarGroupCommand = new CreateStarGroupCommand(memberId, "Spring", null, null, null);
+            var myGroupId = starGroupService.create(myStarGroupCommand);
+            var command = new StarPostCommand(publicPostId, blogName, null, memberId, null);
+            Long starId = postStarService.star(command);
+
+            // when
+            postStarService.updateGroup(starId, myGroupId);
+
+            // then
+            PostStar find = postStarRepository.getById(starId);
+            assertThat(find.getStarGroup().getId())
+                    .isEqualTo(myGroupId);
+        }
+
+        @Test
+        void 그룹을_지정하지_않은_경우_그룹_없음_상태로_만든다() {
+            // given
+            var myStarGroupCommand = new CreateStarGroupCommand(memberId, "Spring", null, null, null);
+            var myGroupId = starGroupService.create(myStarGroupCommand);
+            var command = new StarPostCommand(publicPostId, blogName, myGroupId, memberId, null);
+            Long starId = postStarService.star(command);
+
+            // when
+            postStarService.updateGroup(starId, null);
+
+            // then
+            PostStar find = postStarRepository.getById(starId);
+            assertThat(find.getStarGroup()).isNull();
         }
     }
 

@@ -41,10 +41,10 @@ public class PostStar extends CommonRootEntity<Long> {
     public PostStar(Post post, Member member, @Nullable StarGroup starGroup) {
         this.post = post;
         this.member = member;
-        setStarGroup(starGroup);
+        updateGroup(starGroup);
     }
 
-    private void setStarGroup(@Nullable StarGroup starGroup) {
+    public void updateGroup(@Nullable StarGroup starGroup) {
         if (starGroup == null) {
             this.starGroup = null;
             return;
