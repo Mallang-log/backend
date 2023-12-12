@@ -442,7 +442,7 @@ class PostStarAcceptanceTest extends AcceptanceTest {
             var 포스트2_ID = 포스트_생성(말랑_세션_ID, 포스트2_데이터);
             var 포스트3_ID = 포스트_생성(말랑_세션_ID, 포스트3_데이터);
             Long group1 = ID를_추출한다(즐겨찾기_그룹_생성_요청(동훈_세션_ID, "group1", null, null, null));
-            Long group2 = ID를_추출한다(즐겨찾기_그룹_생성_요청(동훈_세션_ID, "group2", null, null, null));
+            Long group2 = ID를_추출한다(즐겨찾기_그룹_생성_요청(동훈_세션_ID, "group2", null, group1, null));
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트1_ID, 블로그_이름, group1, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트2_ID, 블로그_이름, group2, null);
             포스트_즐겨찾기_요청(동훈_세션_ID, 포스트3_ID, 블로그_이름, null, null);

@@ -11,6 +11,7 @@ import com.mallang.post.application.command.UpdatePostCategoryNameCommand;
 import com.mallang.post.domain.Post;
 import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.PostCategoryRepository;
+import com.mallang.post.domain.PostCategoryValidator;
 import com.mallang.post.domain.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,16 @@ public class PostCategoryService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final PostCategoryRepository postCategoryRepository;
+    private final PostCategoryValidator postCategoryValidator;
 
     public Long create(CreatePostCategoryCommand command) {
         Member member = memberRepository.getById(command.memberId());
         Blog blog = blogRepository.getByName(command.blogName());
         PostCategory postCategory = new PostCategory(command.name(), member, blog);
-        updateHierarchy(postCategory, command.parentId(), command.prevId(), command.nextId());
+        PostCategory parent = postCategoryRepository.getByIdIfIdNotNull(command.parentId());
+        PostCategory prev = postCategoryRepository.getByIdIfIdNotNull(command.prevId());
+        PostCategory next = postCategoryRepository.getByIdIfIdNotNull(command.nextId());
+        postCategory.create(parent, prev, next, postCategoryValidator);
         return postCategoryRepository.save(postCategory).getId();
     }
 
@@ -38,13 +43,9 @@ public class PostCategoryService {
         Member member = memberRepository.getById(command.memberId());
         PostCategory target = postCategoryRepository.getById(command.categoryId());
         target.validateOwner(member);
-        updateHierarchy(target, command.parentId(), command.prevId(), command.nextId());
-    }
-
-    private void updateHierarchy(PostCategory target, Long parentId, Long prevId, Long nextId) {
-        PostCategory parent = postCategoryRepository.getByIdIfIdNotNull(parentId);
-        PostCategory prev = postCategoryRepository.getByIdIfIdNotNull(prevId);
-        PostCategory next = postCategoryRepository.getByIdIfIdNotNull(nextId);
+        PostCategory parent = postCategoryRepository.getByIdIfIdNotNull(command.parentId());
+        PostCategory prev = postCategoryRepository.getByIdIfIdNotNull(command.prevId());
+        PostCategory next = postCategoryRepository.getByIdIfIdNotNull(command.nextId());
         target.updateHierarchy(parent, prev, next);
     }
 

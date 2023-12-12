@@ -5,8 +5,14 @@ import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.mallang.auth.domain.Member;
+import com.mallang.common.execption.MallangLogException;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +21,9 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
 
     protected final Member member = 깃허브_말랑(1L);
     protected final Member otherMember = 깃허브_동훈(2L);
+    protected final TieredCategoryValidator validator = mock(TieredCategoryValidator.class);
+
+    protected abstract T spyCategory(String name, Member owner);
 
     protected abstract T createRoot(String name, Member owner);
 
@@ -24,15 +33,54 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
 
     protected abstract Class<?> 권한_없음_예외();
 
+    protected abstract Class<? extends MallangLogException> 회원의_카테고리_없음_검증_실패_시_발생할_예외();
+
     @Nested
     protected class 생성_시 {
 
         @Test
-        void 생성한다() {
+        void 최초의_루트_카테고리_생성() {
+            // given
+            T mock = spyCategory("root", member);
+
             // when & then
             assertDoesNotThrow(() -> {
-                createRoot("최상위", member);
+                mock.create(null, null, null, validator);
             });
+            verify(mock, times(0))
+                    .updateHierarchy(any(), any(), any());
+        }
+
+        @Test
+        void 이미_다른_카테고리가_존재하는_상황에서_부모와_형제가_모두_null_이면_예외() {
+            // given
+            T root = createRoot("root", member);
+            willThrow(회원의_카테고리_없음_검증_실패_시_발생할_예외())
+                    .given(validator)
+                    .validateNoCategories(any());
+
+            // when & then
+            assertThatThrownBy(() -> {
+                root.create(null, null, null, validator);
+            }).isInstanceOf(회원의_카테고리_없음_검증_실패_시_발생할_예외());
+        }
+
+        @Test
+        void 부모와_형제가_모두_null_이_아니면_계층_업데이트_메서드를_호출하여_계층구조를_설정한다() {
+            // given
+            T child = spyCategory("child", member);
+            T root = createRoot("root", member);
+
+            // when & then
+            child.create(root, null, null, validator);
+            verify(child, times(1))
+                    .updateHierarchy(any(), any(), any());
+            child.create(null, root, null, validator);
+            verify(child, times(2))
+                    .updateHierarchy(any(), any(), any());
+            child.create(null, null, root, validator);
+            verify(child, times(3))
+                    .updateHierarchy(any(), any(), any());
         }
     }
 
@@ -420,76 +468,15 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         class 형제들이_주어지지_않았을_때 {
 
             @Test
-            void 부모가_주어지지_않았으며_루트의_형제가_하나라도_존재한다면_예외() {
+            void 부모가_주어지지_않으면_예외() {
                 // given
                 T target = createRoot("target", member);
-                T prev = createRoot("prev", member);
-                prev.updateHierarchy(null, null, target);
 
                 // when & then
                 assertThatThrownBy(() -> {
                     target.updateHierarchy(null, null, null);
                 }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
-                assertThatThrownBy(() -> {
-                    prev.updateHierarchy(null, null, null);
-                }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
-            }
-
-            @Test
-            void 부모가_주어지지_않았으며_루트의_형제가_존재하지_않을_때_내가_루트라면_업데이트() {
-                // given
-                T target = createRoot("target", member);
-
-                // when & then
-                assertDoesNotThrow(() -> {
-                    target.updateHierarchy(null, null, null);
-                });
-            }
-
-            @Test
-            void 부모가_주어지지_않았으며_루트의_형제가_존재하지_않을_때_내가_루트가_아니라면_예외() {
-                // given
-                T root = createRoot("root", member);
-                T child = createRoot("child", member);
-                child.updateHierarchy(root, null, null);
-
-                // when & then
-                assertThatThrownBy(() -> {
-                    child.updateHierarchy(null, null, null);
-                }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
-            }
-
-            @Test
-            void 부모가_주어지지_않았으며_내가_루트가_아닌_경우_예외() {
-                // given
-                T root = createRoot("root", member);
-                T child = createRoot("target", member);
-                child.updateHierarchy(root, null, null);
-                T descendant = createRoot("descendant", member);
-                descendant.updateHierarchy(child, null, null);
-
-                // when
-                assertThatThrownBy(() -> {
-                    child.updateHierarchy(null, null, null);
-                }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
-            }
-
-            @Test
-            void 부모가_주어지지_않았으며_내가_루트이나_내_형제가_존재하면_예외() {
-                // given
-                T root = createRoot("root", member);
-                T next = createRoot("next", member);
-                next.updateHierarchy(null, root, null);
-
-                // when
-                assertThatThrownBy(() -> {
-                    root.updateHierarchy(null, null, null);
-                }).isInstanceOf(CategoryHierarchyViolationException.class)
-                        .hasMessage("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
+                        .hasMessage("카테고리 계층구조 변경 시 부모나 형제들 중 최소 하나와의 관계가 주어져야 합니다.");
             }
 
             @Test
@@ -606,7 +593,6 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
                 // given
                 T prev = createRoot("prev", member);
                 T next = createRoot("next", member);
-                prev.updateHierarchy(null, null, null);
                 next.updateHierarchy(null, prev, null);
 
                 T target = createRoot("next", member);

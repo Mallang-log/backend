@@ -42,6 +42,19 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
         this.owner = owner;
     }
 
+    public void create(
+            @Nullable T parent,
+            @Nullable T prevSibling,
+            @Nullable T nextSibling,
+            TieredCategoryValidator validator
+    ) {
+        if (isNulls(parent, prevSibling, nextSibling)) {
+            validator.validateNoCategories(owner);
+            return;
+        }
+        updateHierarchy(parent, prevSibling, nextSibling);
+    }
+
     public abstract void validateOwner(Member member);
 
     public void updateHierarchy(
@@ -107,6 +120,9 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
             @Nullable T nextSibling
     ) {
         if (isNulls(prevSibling, nextSibling)) {
+            if (parent == null) {
+                throw new CategoryHierarchyViolationException("카테고리 계층구조 변경 시 부모나 형제들 중 최소 하나와의 관계가 주어져야 합니다.");
+            }
             validateNoChildrenInParent(parent);
         }
         validateWhenNonNullWithFailCond(
@@ -123,25 +139,9 @@ public abstract class TieredCategory<T extends TieredCategory<T>> extends Common
 
 
     private void validateNoChildrenInParent(T parent) {
-        if (parent == null) {
-            T root = getRoot();
-            if (equals(root) && root.getPreviousSibling() == null && root.getNextSibling() == null) {
-                return;
-            }
-            throw new CategoryHierarchyViolationException("존재하는 다른 최상위 카테고리와의 관계가 명시되지 않았습니다.");
-        } else {
-            if (!parent.getChildren().isEmpty()) {
-                throw new CategoryHierarchyViolationException("주어진 부모의 자식 카테고리와의 관계가 명시되지 않았습니다.");
-            }
+        if (!parent.getChildren().isEmpty()) {
+            throw new CategoryHierarchyViolationException("주어진 부모의 자식 카테고리와의 관계가 명시되지 않았습니다.");
         }
-    }
-
-    private T getRoot() {
-        T root = self();
-        while (root.getParent() != null) {
-            root = root.getParent();
-        }
-        return root;
     }
 
     private void validateDuplicatedNameWhenParticipated(
