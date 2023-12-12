@@ -29,7 +29,7 @@ public class PostCategory extends TieredCategory<PostCategory> {
     private List<PostCategory> children = new ArrayList<>();
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "previous_sibling_id")
+    @JoinColumn(name = "prev_sibling_id")
     private PostCategory previousSibling;
 
     @ManyToOne(fetch = LAZY)
