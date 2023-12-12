@@ -16,11 +16,12 @@ public class PostStarAcceptanceSteps {
             String 세션_ID,
             Long 포스트_ID,
             String 블로그_이름,
+            @Nullable Long 즐겨찾기_그룹_ID,
             @Nullable String 비밀번호
     ) {
         return given(세션_ID)
                 .cookie(POST_PASSWORD_COOKIE, 비밀번호)
-                .body(new StarPostRequest(포스트_ID, 블로그_이름))
+                .body(new StarPostRequest(포스트_ID, 블로그_이름, 즐겨찾기_그룹_ID))
                 .post("/post-stars")
                 .then()
                 .extract();
