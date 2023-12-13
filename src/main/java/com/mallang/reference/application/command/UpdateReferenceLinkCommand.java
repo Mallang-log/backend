@@ -7,6 +7,7 @@ public record UpdateReferenceLinkCommand(
         Long memberId,
         String url,
         String title,
-        @Nullable String memo
+        @Nullable String memo,
+        @Nullable Long labelId
 ) {
 }

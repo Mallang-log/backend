@@ -101,8 +101,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 형제_중_이름이_같은게_없다면_이름을_변경할_수_있다() {
             // given
-            T postCategory = createRoot("형제", member);
-            postCategory.updateHierarchy(null, root, null);
+            T sibling = createRoot("형제", member);
+            sibling.updateHierarchy(null, root, null);
 
             // when
             root.updateName("이름 다름");
@@ -114,8 +114,8 @@ public abstract class TieredCategoryTestTemplate<T extends TieredCategory<T>> {
         @Test
         void 형제_중_이름이_같은게_있다면_예외() {
             // given
-            T postCategory = createRoot("형제", member);
-            postCategory.updateHierarchy(null, root, null);
+            T sibling = createRoot("형제", member);
+            sibling.updateHierarchy(null, root, null);
 
             // when & then
             assertThatThrownBy(() -> {

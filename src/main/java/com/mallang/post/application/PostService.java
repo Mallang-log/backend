@@ -59,7 +59,8 @@ public class PostService {
                 command.visibility(),
                 command.password(),
                 command.title(),
-                command.intro(), command.bodyText(),
+                command.intro(),
+                command.bodyText(),
                 command.postThumbnailImageName(),
                 postCategory,
                 command.tags()

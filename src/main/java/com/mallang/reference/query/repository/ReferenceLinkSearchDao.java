@@ -19,7 +19,8 @@ public interface ReferenceLinkSearchDao {
     record ReferenceLinkSearchDaoCond(
             @Nullable String url,
             @Nullable String title,
-            @Nullable String memo
+            @Nullable String memo,
+            @Nullable Long labelId
     ) {
     }
 
@@ -36,7 +37,8 @@ public interface ReferenceLinkSearchDao {
                             memberEq(member),
                             urlContains(cond.url()),
                             titleContains(cond.title()),
-                            memoContains(cond.memo())
+                            memoContains(cond.memo()),
+                            labelEq(cond.labelId())
                     )
                     .orderBy(referenceLink.createdDate.desc())
                     .fetch();
@@ -63,6 +65,13 @@ public interface ReferenceLinkSearchDao {
         private BooleanExpression memoContains(String memo) {
             if (StringUtils.hasText(memo)) {
                 return referenceLink.memo.memo.containsIgnoreCase(memo);
+            }
+            return null;
+        }
+
+        private BooleanExpression labelEq(Long labelId) {
+            if (labelId != null) {
+                return referenceLink.label.id.eq(labelId);
             }
             return null;
         }

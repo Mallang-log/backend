@@ -7,6 +7,7 @@ import static lombok.AccessLevel.PROTECTED;
 import com.mallang.auth.domain.Member;
 import com.mallang.common.domain.CommonRootEntity;
 import com.mallang.reference.exception.NoAuthorityReferenceLinkException;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,17 +39,36 @@ public class ReferenceLink extends CommonRootEntity<Long> {
     @JoinColumn(name = "owner_id", nullable = false)
     private Member member;
 
-    public ReferenceLink(String url, String title, String memo, Member member) {
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "label_id", nullable = true)
+    private Label label;
+
+    public ReferenceLink(String url, String title, String memo, Member member, @Nullable Label label) {
         this.url = new ReferenceLinkUrl(url);
         this.title = new ReferenceLinkTitle(title);
         this.memo = new ReferenceLinkMemo(memo);
         this.member = member;
+        setLabel(label);
     }
 
-    public void update(String url, String title, String memo) {
+    public void update(String url, String title, String memo, @Nullable Label label) {
         this.url = new ReferenceLinkUrl(url);
         this.title = new ReferenceLinkTitle(title);
         this.memo = new ReferenceLinkMemo(memo);
+        setLabel(label);
+    }
+
+    private void setLabel(Label label) {
+        if (label != null) {
+            label.validateOwner(member);
+        }
+        this.label = label;
+    }
+
+    public void validateMember(Member member) {
+        if (!this.member.equals(member)) {
+            throw new NoAuthorityReferenceLinkException();
+        }
     }
 
     public String getUrl() {
@@ -61,11 +81,5 @@ public class ReferenceLink extends CommonRootEntity<Long> {
 
     public String getMemo() {
         return memo.getMemo();
-    }
-
-    public void validateMember(Member member) {
-        if (!this.member.equals(member)) {
-            throw new NoAuthorityReferenceLinkException();
-        }
     }
 }
