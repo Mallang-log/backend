@@ -7,7 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 public record UpdateReferenceLinkRequest(
         @NotBlank String url,
         @NotBlank String title,
-        @Nullable String memo
+        @Nullable String memo,
+        @Nullable Long labelId
 ) {
     public UpdateReferenceLinkCommand toCommand(Long referenceLinkId, Long memberId) {
         return new UpdateReferenceLinkCommand(
@@ -15,7 +16,8 @@ public record UpdateReferenceLinkRequest(
                 memberId,
                 url,
                 title,
-                memo
+                memo,
+                labelId
         );
     }
 }

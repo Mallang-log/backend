@@ -7,9 +7,10 @@ import jakarta.validation.constraints.NotBlank;
 public record SaveReferenceLinkRequest(
         @NotBlank String url,
         @NotBlank String title,
-        @Nullable String memo
+        @Nullable String memo,
+        @Nullable Long labelId
 ) {
     public SaveReferenceLinkCommand toCommand(Long memberId) {
-        return new SaveReferenceLinkCommand(memberId, url, title, memo);
+        return new SaveReferenceLinkCommand(memberId, url, title, memo, labelId);
     }
 }

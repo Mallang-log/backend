@@ -21,7 +21,6 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
 
     private Long memberId;
 
-
     @BeforeEach
     void setUp() {
         memberId = 회원을_저장한다("말랑");
@@ -37,7 +36,8 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
                     memberId,
                     "https://ttl-blog.tistory.com",
                     "말랑이 블로그",
-                    "말랑이 블로그 메인 페이지이다."
+                    "말랑이 블로그 메인 페이지이다.",
+                    null
             ));
 
             // when
@@ -68,7 +68,8 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
                     otherMemberId,
                     "https://ttl-blog.tistory.com/123",
                     "스프링이란?",
-                    "누군가 쓴 스프링에 대한 내용."
+                    "누군가 쓴 스프링에 대한 내용.",
+                    null
             ));
 
             // when
@@ -99,13 +100,15 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
                     memberId,
                     "https://ttl-blog.tistory.com",
                     "말랑이 블로그",
-                    "말랑이 블로그 메인 페이지이다."
+                    "말랑이 블로그 메인 페이지이다.",
+                    null
             ));
             Spring_글_참고_링크_ID = referenceLinkService.save(new SaveReferenceLinkCommand(
                     memberId,
                     "https://ttl-blog.tistory.com/123",
                     "스프링이란?",
-                    "말랑이가 쓴 스프링에 대한 내용."
+                    "말랑이가 쓴 스프링에 대한 내용.",
+                    null
             ));
         }
 
@@ -125,12 +128,12 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         void 다른_사람_링크는_보이지_않는다() {
             // given
             Long otherMemberId = 회원을_저장한다("other");
-            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
             Long 타인의_Spring_글_참고_링크_ID = referenceLinkService.save(new SaveReferenceLinkCommand(
                     otherMemberId,
                     "https://ttl-blog.tistory.com/123",
                     "스프링이란?",
-                    "누군가 쓴 스프링에 대한 내용."
+                    "누군가 쓴 스프링에 대한 내용.",
+                    null
             ));
             ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
 

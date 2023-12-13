@@ -51,6 +51,7 @@ import com.mallang.post.query.PostManageQueryService;
 import com.mallang.post.query.PostQueryService;
 import com.mallang.post.query.PostStarQueryService;
 import com.mallang.post.query.StarGroupQueryService;
+import com.mallang.reference.application.LabelService;
 import com.mallang.reference.application.ReferenceLinkService;
 import com.mallang.reference.domain.ReferenceLinkRepository;
 import com.mallang.reference.query.ReferenceLinkQueryService;
@@ -184,6 +185,9 @@ public abstract class ServiceTest {
 
     @Autowired
     protected ReferenceLinkQueryService referenceLinkQueryService;
+
+    @Autowired
+    protected LabelService labelService;
 
     @Autowired
     protected ApplicationEvents events;
