@@ -63,6 +63,7 @@ public class ReferenceLinkAcceptanceSteps {
                 .queryParam("url", 검색_조건.url())
                 .queryParam("title", 검색_조건.title())
                 .queryParam("memo", 검색_조건.memo())
+                .queryParam("labelId", 검색_조건.labelId())
                 .get("/reference-links")
                 .then()
                 .extract();

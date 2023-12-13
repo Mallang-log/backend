@@ -321,7 +321,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 조건_없이_검색하면_나의_모든_링크가_조회된다() {
             // given
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+            var emptyCond = new ReferenceLinkSearchDaoCond(null, null, null, null);
 
             // when
             var 응답 = 참고_링크_검색_요청(말랑_세션, emptyCond);
@@ -345,7 +345,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
                             null
                     )
             ));
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+            var emptyCond = new ReferenceLinkSearchDaoCond(null, null, null, null);
 
             // when
             var 응답 = 참고_링크_검색_요청(말랑_세션, emptyCond);
@@ -362,7 +362,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 인증정보가_없으면_조회할_수_없다() {
             // given
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+            var emptyCond = new ReferenceLinkSearchDaoCond(null, null, null, null);
 
             // when
             var 응답 = 참고_링크_검색_요청(null, emptyCond);
@@ -374,7 +374,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void Url_포함조건으로_검색한다() {
             // given
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond("12", null, null);
+            var emptyCond = new ReferenceLinkSearchDaoCond("12", null, null, null);
 
             // when
             var 응답 = 참고_링크_검색_요청(말랑_세션, emptyCond);
@@ -390,7 +390,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 제목_포함조건으로_검색한다() {
             // given
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, "랑이", null);
+            var emptyCond = new ReferenceLinkSearchDaoCond(null, "랑이", null, null);
 
             // when
             var 응답 = 참고_링크_검색_요청(말랑_세션, emptyCond);
@@ -406,7 +406,7 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
         @Test
         void 메모_검색조건으로_검색한다() {
             // given
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에");
+            var emptyCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에", null);
 
             // when
             var 응답 = 참고_링크_검색_요청(말랑_세션, emptyCond);
@@ -417,6 +417,29 @@ public class ReferenceLinkAcceptanceTest extends AcceptanceTest {
             assertThat(responses)
                     .extracting(ReferenceLinkSearchResponse::referenceLinkId)
                     .containsExactly(Spring_글_참고_링크_ID);
+        }
+
+        @Test
+        void 라벨_검색조건으로_검색한다() {
+            // given
+            var 말랑_라벨_붙은_링크 = new SaveReferenceLinkRequest(
+                    "https://ttl-blog.tistory.com",
+                    "말랑이 블로그",
+                    "말랑이 블로그 메인 페이지이다.",
+                    말랑_라벨_ID
+            );
+            var 라벨1_붙은_링크_ID = ID를_추출한다(참고_링크_저장_요청(말랑_세션, 말랑_라벨_붙은_링크));
+            var 라벨1_조건 = new ReferenceLinkSearchDaoCond(null, null, null, 말랑_라벨_ID);
+
+            // when
+            var 응답 = 참고_링크_검색_요청(말랑_세션, 라벨1_조건);
+
+            // then
+            List<ReferenceLinkSearchResponse> responses = 응답.as(new TypeRef<>() {
+            });
+            assertThat(responses)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .containsExactly(라벨1_붙은_링크_ID);
         }
     }
 

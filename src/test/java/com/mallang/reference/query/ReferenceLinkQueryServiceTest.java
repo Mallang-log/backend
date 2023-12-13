@@ -3,6 +3,7 @@ package com.mallang.reference.query;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.common.ServiceTest;
+import com.mallang.reference.application.command.CreateLabelCommand;
 import com.mallang.reference.application.command.SaveReferenceLinkCommand;
 import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoCond;
 import com.mallang.reference.query.response.ReferenceLinkSearchResponse;
@@ -115,7 +116,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         @Test
         void 아무_조건이_없다면_내가_등록한_모든_링크를_조회한다() {
             // given
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null, null);
 
             // when
             List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, emptyCond);
@@ -135,7 +136,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
                     "누군가 쓴 스프링에 대한 내용.",
                     null
             ));
-            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null);
+            ReferenceLinkSearchDaoCond emptyCond = new ReferenceLinkSearchDaoCond(null, null, null, null);
 
             // when
             List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, emptyCond);
@@ -147,7 +148,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         @Test
         void url_포함조건으로_검색할_수_있다() {
             // given
-            ReferenceLinkSearchDaoCond urlCond = new ReferenceLinkSearchDaoCond("12", null, null);
+            ReferenceLinkSearchDaoCond urlCond = new ReferenceLinkSearchDaoCond("12", null, null, null);
 
             // when
             List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, urlCond);
@@ -161,7 +162,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         @Test
         void 제목_포함조건으로_검색할_수_있다() {
             // given
-            ReferenceLinkSearchDaoCond titleCond = new ReferenceLinkSearchDaoCond(null, "랑이", null);
+            ReferenceLinkSearchDaoCond titleCond = new ReferenceLinkSearchDaoCond(null, "랑이", null, null);
 
             // when
             List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, titleCond);
@@ -175,7 +176,7 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
         @Test
         void 메모_포함조건으로_검색할_수_있다() {
             // given
-            ReferenceLinkSearchDaoCond memoCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에");
+            ReferenceLinkSearchDaoCond memoCond = new ReferenceLinkSearchDaoCond(null, null, "스프링에", null);
 
             // when
             List<ReferenceLinkSearchResponse> result = referenceLinkQueryService.search(memberId, memoCond);
@@ -184,6 +185,42 @@ class ReferenceLinkQueryServiceTest extends ServiceTest {
             assertThat(result)
                     .extracting(ReferenceLinkSearchResponse::referenceLinkId)
                     .containsExactly(Spring_글_참고_링크_ID);
+        }
+
+        @Test
+        void 특정_라벨에_속한_링크들을_검색할_수_있다() {
+            // given
+            var 라벨1_ID = labelService.create(new CreateLabelCommand(memberId, "label", "#000000", null, null));
+            var 라벨2_ID = labelService.create(new CreateLabelCommand(memberId, "label2", "#000000", 라벨1_ID, null));
+            var 라벨1_붙은_링크 = referenceLinkService.save(new SaveReferenceLinkCommand(
+                    memberId,
+                    "https://ttl-blog.tistory.com",
+                    "말랑이 블로그",
+                    "말랑이 블로그 메인 페이지이다.",
+                    라벨1_ID
+            ));
+            var 라벨2_붙은_링크 = referenceLinkService.save(new SaveReferenceLinkCommand(
+                    memberId,
+                    "https://ttl-blog.tistory.com",
+                    "말랑이 블로그",
+                    "말랑이 블로그 메인 페이지이다.",
+                    라벨2_ID
+            ));
+            ReferenceLinkSearchDaoCond 라벨1_조회 = new ReferenceLinkSearchDaoCond(null, null, null, 라벨1_ID);
+            ReferenceLinkSearchDaoCond 라벨2_조회 = new ReferenceLinkSearchDaoCond(null, null, null, 라벨2_ID);
+
+            // when
+            List<ReferenceLinkSearchResponse> result1 = referenceLinkQueryService.search(memberId, 라벨1_조회);
+            List<ReferenceLinkSearchResponse> result2 = referenceLinkQueryService.search(memberId, 라벨2_조회);
+
+            // then
+            assertThat(result1)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .containsExactly(라벨1_붙은_링크);
+            assertThat(result2)
+                    .extracting(ReferenceLinkSearchResponse::referenceLinkId)
+                    .containsExactly(라벨2_붙은_링크);
+
         }
     }
 }
