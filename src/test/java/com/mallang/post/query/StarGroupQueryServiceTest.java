@@ -111,18 +111,78 @@ class StarGroupQueryServiceTest extends ServiceTest {
                 root2_child1_child2_Id
         ));
         var expected = List.of(
-                new StarGroupListResponse(root1Id, "루트1", emptyList()),
-                new StarGroupListResponse(root2Id, "루트2", List.of(
-                        new StarGroupListResponse(root2_child1_Id, "루트2 자식1", List.of(
-                                new StarGroupListResponse(root2_child1_child1_Id, "루트2 자식1 자식1", emptyList()),
-                                new StarGroupListResponse(root2_child1_child2_Id, "루트2 자식1 자식2", emptyList())
+                new StarGroupListResponse(
+                        root1Id,
+                        "루트1",
+                        null,
+                        null,
+                        root2Id,
+                        emptyList()
+                ),
+                new StarGroupListResponse(
+                        root2Id,
+                        "루트2",
+                        null,
+                        root1Id,
+                        root3Id,
+                        List.of(
+                                new StarGroupListResponse(
+                                        root2_child1_Id,
+                                        "루트2 자식1",
+                                        root2Id,
+                                        null,
+                                        root2_child2_Id,
+                                        List.of(
+                                                new StarGroupListResponse(
+                                                        root2_child1_child1_Id,
+                                                        "루트2 자식1 자식1",
+                                                        root2_child1_Id,
+                                                        null,
+                                                        root2_child1_child2_Id,
+                                                        emptyList()
+                                                ),
+                                                new StarGroupListResponse(
+                                                        root2_child1_child2_Id,
+                                                        "루트2 자식1 자식2",
+                                                        root2_child1_Id,
+                                                        root2_child1_child1_Id,
+                                                        null,
+                                                        emptyList()
+                                                )
+                                        )),
+                                new StarGroupListResponse(
+                                        root2_child2_Id,
+                                        "루트2 자식2",
+                                        root2Id,
+                                        root2_child1_Id,
+                                        null,
+                                        List.of(
+                                                new StarGroupListResponse(
+                                                        root2_child2_child1_Id,
+                                                        "루트2 자식2 자식1",
+                                                        root2_child2_Id,
+                                                        null,
+                                                        root2_child2_child2_Id,
+                                                        emptyList()
+                                                ),
+                                                new StarGroupListResponse(
+                                                        root2_child2_child2_Id,
+                                                        "루트2 자식2 자식2",
+                                                        root2_child2_Id,
+                                                        root2_child2_child1_Id,
+                                                        null,
+                                                        emptyList()
+                                                )
+                                        ))
                         )),
-                        new StarGroupListResponse(root2_child2_Id, "루트2 자식2", List.of(
-                                new StarGroupListResponse(root2_child2_child1_Id, "루트2 자식2 자식1", emptyList()),
-                                new StarGroupListResponse(root2_child2_child2_Id, "루트2 자식2 자식2", emptyList())
-                        ))
-                )),
-                new StarGroupListResponse(root3Id, "루트3", emptyList())
+                new StarGroupListResponse(
+                        root3Id,
+                        "루트3",
+                        null,
+                        root2Id,
+                        null,
+                        emptyList()
+                )
         );
 
         // when
