@@ -110,18 +110,70 @@ class PostCategoryQueryServiceTest extends ServiceTest {
                 null
         ));
         List<PostCategoryResponse> expected = List.of(
-                new PostCategoryResponse(algorithmId, "Algorithm", List.of(
-                        new PostCategoryResponse(dfsId, "DFS", List.of())
-                )),
-                new PostCategoryResponse(springId, "Spring", List.of(
-                        new PostCategoryResponse(jpaId, "JPA", List.of(
-                                new PostCategoryResponse(n1Id, "N + 1", List.of())
+                new PostCategoryResponse(
+                        algorithmId,
+                        "Algorithm",
+                        null,
+                        null,
+                        springId,
+                        List.of(
+                                new PostCategoryResponse(
+                                        dfsId,
+                                        "DFS",
+                                        algorithmId,
+                                        null,
+                                        null,
+                                        List.of()
+                                )
                         )),
-                        new PostCategoryResponse(securityId, "Security", List.of(
-                                new PostCategoryResponse(csrfId, "CSRF", List.of()),
-                                new PostCategoryResponse(oAuthId, "OAuth", List.of())
+                new PostCategoryResponse(
+                        springId,
+                        "Spring",
+                        null,
+                        algorithmId,
+                        null,
+                        List.of(
+                                new PostCategoryResponse(
+                                        jpaId,
+                                        "JPA",
+                                        springId,
+                                        null,
+                                        securityId,
+                                        List.of(
+                                                new PostCategoryResponse(
+                                                        n1Id,
+                                                        "N + 1",
+                                                        jpaId,
+                                                        null,
+                                                        null,
+                                                        List.of()
+                                                )
+                                        )),
+                                new PostCategoryResponse(
+                                        securityId,
+                                        "Security",
+                                        springId,
+                                        jpaId,
+                                        null,
+                                        List.of(
+                                                new PostCategoryResponse(
+                                                        csrfId,
+                                                        "CSRF",
+                                                        securityId,
+                                                        null,
+                                                        oAuthId,
+                                                        List.of()
+                                                ),
+                                                new PostCategoryResponse(
+                                                        oAuthId,
+                                                        "OAuth",
+                                                        securityId,
+                                                        csrfId,
+                                                        null,
+                                                        List.of()
+                                                )
+                                        ))
                         ))
-                ))
         );
 
         // when

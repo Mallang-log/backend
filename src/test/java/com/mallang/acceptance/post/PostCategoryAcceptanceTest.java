@@ -396,18 +396,70 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
                     null
             ));
             var 예상_응답 = List.of(
-                    new PostCategoryResponse(Spring_카테고리_ID, "Spring", List.of(
-                            new PostCategoryResponse(Security_카테고리_ID, "Security", List.of(
-                                    new PostCategoryResponse(CSRF_카테고리_ID, "CSRF", emptyList()),
-                                    new PostCategoryResponse(OAuth_카테고리_ID, "OAuth", emptyList())
+                    new PostCategoryResponse(
+                            Spring_카테고리_ID,
+                            "Spring",
+                            null,
+                            null,
+                            Algorithm_카테고리_ID,
+                            List.of(
+                                    new PostCategoryResponse(
+                                            Security_카테고리_ID,
+                                            "Security",
+                                            Spring_카테고리_ID,
+                                            null,
+                                            JPA_카테고리_ID,
+                                            List.of(
+                                                    new PostCategoryResponse(
+                                                            CSRF_카테고리_ID,
+                                                            "CSRF",
+                                                            Security_카테고리_ID,
+                                                            null,
+                                                            OAuth_카테고리_ID,
+                                                            emptyList()
+                                                    ),
+                                                    new PostCategoryResponse(
+                                                            OAuth_카테고리_ID,
+                                                            "OAuth",
+                                                            Security_카테고리_ID,
+                                                            CSRF_카테고리_ID,
+                                                            null,
+                                                            emptyList()
+                                                    )
+                                            )),
+                                    new PostCategoryResponse(
+                                            JPA_카테고리_ID,
+                                            "JPA",
+                                            Spring_카테고리_ID,
+                                            Security_카테고리_ID,
+                                            null,
+                                            List.of(
+                                                    new PostCategoryResponse(
+                                                            N1_카테고리_ID,
+                                                            "N + 1",
+                                                            JPA_카테고리_ID,
+                                                            null,
+                                                            null,
+                                                            emptyList()
+                                                    )
+                                            ))
                             )),
-                            new PostCategoryResponse(JPA_카테고리_ID, "JPA", List.of(
-                                    new PostCategoryResponse(N1_카테고리_ID, "N + 1", emptyList())
+                    new PostCategoryResponse(
+                            Algorithm_카테고리_ID,
+                            "Algorithm",
+                            null,
+                            Spring_카테고리_ID,
+                            null,
+                            List.of(
+                                    new PostCategoryResponse(
+                                            DFS_카테고리_ID,
+                                            "DFS",
+                                            Algorithm_카테고리_ID,
+                                            null,
+                                            null,
+                                            emptyList()
+                                    )
                             ))
-                    )),
-                    new PostCategoryResponse(Algorithm_카테고리_ID, "Algorithm", List.of(
-                            new PostCategoryResponse(DFS_카테고리_ID, "DFS", emptyList())
-                    ))
             );
 
             // when

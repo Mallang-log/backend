@@ -374,18 +374,70 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
                     null
             )));
             var 예상_응답 = List.of(
-                    new StarGroupListResponse(Algorithm_즐겨찾기_그룹_ID, "Algorithm", List.of(
-                            new StarGroupListResponse(DFS_즐겨찾기_그룹_ID, "DFS", emptyList())
-                    )),
-                    new StarGroupListResponse(Spring_즐겨찾기_그룹_ID, "Spring", List.of(
-                            new StarGroupListResponse(Security_즐겨찾기_그룹_ID, "Security", List.of(
-                                    new StarGroupListResponse(CSRF_즐겨찾기_그룹_ID, "CSRF", emptyList()),
-                                    new StarGroupListResponse(OAuth_즐겨찾기_그룹_ID, "OAuth", emptyList())
+                    new StarGroupListResponse(
+                            Algorithm_즐겨찾기_그룹_ID,
+                            "Algorithm",
+                            null,
+                            null,
+                            Spring_즐겨찾기_그룹_ID,
+                            List.of(
+                                    new StarGroupListResponse(
+                                            DFS_즐겨찾기_그룹_ID,
+                                            "DFS",
+                                            Algorithm_즐겨찾기_그룹_ID,
+                                            null,
+                                            null,
+                                            emptyList()
+                                    )
                             )),
-                            new StarGroupListResponse(JPA_즐겨찾기_그룹_ID, "JPA", List.of(
-                                    new StarGroupListResponse(N1_즐겨찾기_그룹_ID, "N + 1", emptyList())
+                    new StarGroupListResponse(
+                            Spring_즐겨찾기_그룹_ID,
+                            "Spring",
+                            null,
+                            Algorithm_즐겨찾기_그룹_ID,
+                            null,
+                            List.of(
+                                    new StarGroupListResponse(
+                                            Security_즐겨찾기_그룹_ID,
+                                            "Security",
+                                            Spring_즐겨찾기_그룹_ID,
+                                            null,
+                                            JPA_즐겨찾기_그룹_ID,
+                                            List.of(
+                                                    new StarGroupListResponse(
+                                                            CSRF_즐겨찾기_그룹_ID,
+                                                            "CSRF",
+                                                            Security_즐겨찾기_그룹_ID,
+                                                            null,
+                                                            OAuth_즐겨찾기_그룹_ID,
+                                                            emptyList()
+                                                    ),
+                                                    new StarGroupListResponse(
+                                                            OAuth_즐겨찾기_그룹_ID,
+                                                            "OAuth",
+                                                            Security_즐겨찾기_그룹_ID,
+                                                            CSRF_즐겨찾기_그룹_ID,
+                                                            null,
+                                                            emptyList()
+                                                    )
+                                            )),
+                                    new StarGroupListResponse(
+                                            JPA_즐겨찾기_그룹_ID,
+                                            "JPA",
+                                            Spring_즐겨찾기_그룹_ID,
+                                            Security_즐겨찾기_그룹_ID,
+                                            null,
+                                            List.of(
+                                                    new StarGroupListResponse(
+                                                            N1_즐겨찾기_그룹_ID,
+                                                            "N + 1",
+                                                            JPA_즐겨찾기_그룹_ID,
+                                                            null,
+                                                            null,
+                                                            emptyList()
+                                                    )
+                                            ))
                             ))
-                    ))
             );
 
             // when
