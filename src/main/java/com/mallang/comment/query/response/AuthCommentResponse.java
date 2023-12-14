@@ -1,9 +1,10 @@
 package com.mallang.comment.query.response;
 
+import static com.mallang.comment.query.response.AuthCommentResponse.WriterResponse.ANONYMOUS;
+
 import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.AuthComment;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,10 +22,9 @@ public final class AuthCommentResponse extends CommentResponse {
             LocalDateTime createdDate,
             boolean deleted,
             WriterResponse writer,
-            boolean secret,
-            List<CommentResponse> children
+            boolean secret
     ) {
-        super(id, content, createdDate, deleted, children);
+        super(id, content, createdDate, deleted);
         this.writer = writer;
         this.secret = secret;
     }
@@ -35,11 +35,19 @@ public final class AuthCommentResponse extends CommentResponse {
                 .content(comment.getContent())
                 .createdDate(comment.getCreatedDate())
                 .deleted(comment.isDeleted())
-                .children(comment.getChildren().stream()
-                        .map(CommentResponse::from)
-                        .toList())
                 .writer(WriterResponse.from(comment.getWriter()))
                 .secret(comment.isSecret())
+                .build();
+    }
+
+    public static AuthCommentResponse protectFrom(AuthComment comment) {
+        return AuthCommentResponse.builder()
+                .id(comment.getId())
+                .content("비밀 댓글입니다.")
+                .createdDate(comment.getCreatedDate())
+                .deleted(comment.isDeleted())
+                .writer(ANONYMOUS)
+                .secret(true)
                 .build();
     }
 

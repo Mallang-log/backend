@@ -562,4 +562,69 @@ class AuthCommentTest {
             }
         }
     }
+
+    @Nested
+    class 인증된_댓글의_내용을_볼_수_있는_경우는 {
+
+        @Test
+        void 비밀댓글이_아니면_볼_수_있다() {
+            // given
+            AuthComment comment = new AuthComment("내용", post, null, false, member);
+
+            // when
+            boolean result = comment.canSee(null);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void 댓글이_달린_포스트의_작성자면_볼_수_있다() {
+            // given
+            AuthComment comment = new AuthComment("내용", post, null, true, member);
+
+            // when
+            boolean result = comment.canSee(postWriter);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void 댓글의_작성자면_볼_수_있다() {
+            // given
+            AuthComment comment = new AuthComment("내용", post, null, true, member);
+
+            // when
+            boolean result = comment.canSee(member);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void 해당_댓글이_대댓글인_경우_부모_댓글의_작성자면_볼_수_있다() {
+            // given
+            AuthComment parent = new AuthComment("내용", post, null, true, other);
+            AuthComment comment = new AuthComment("내용", post, parent, true, member);
+
+            // when
+            boolean result = comment.canSee(other);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        void 나머지는_볼_수_없다() {
+            // given
+            AuthComment comment = new AuthComment("내용", post, null, true, member);
+
+            // when
+            boolean result = comment.canSee(other);
+
+            // then
+            assertThat(result).isFalse();
+        }
+    }
 }
