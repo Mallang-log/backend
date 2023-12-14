@@ -1,4 +1,4 @@
-package com.mallang.notification.domain.converter;
+package com.mallang.notification.domain.generator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,16 +22,16 @@ class NotificationGeneratorCompositeTest {
     @Test
     void 자신이_가진_알림_생성기들_중_주어진_이벤트를_받아_알림을_생성할_수_있는_생성기가_있으면_변환한다() {
         // given
-        var converter1 = mock(NotificationGenerator.class);
-        var converter2 = mock(NotificationGenerator.class);
-        var composite = new NotificationGeneratorComposite(List.of(converter1, converter2));
+        var generator1 = mock(NotificationGenerator.class);
+        var generator2 = mock(NotificationGenerator.class);
+        var composite = new NotificationGeneratorComposite(List.of(generator1, generator2));
         var mockEvent = mock(DomainEvent.class);
         var mockNotification = mock(Notification.class);
-        given(converter1.canGenerateFrom(mockEvent))
+        given(generator1.canGenerateFrom(mockEvent))
                 .willReturn(false);
-        given(converter2.canGenerateFrom(mockEvent))
+        given(generator2.canGenerateFrom(mockEvent))
                 .willReturn(true);
-        given(converter2.generate(mockEvent))
+        given(generator2.generate(mockEvent))
                 .willReturn(List.of(mockNotification));
 
         // when
@@ -44,14 +44,13 @@ class NotificationGeneratorCompositeTest {
     @Test
     void 가진_알림_생성기_중_주어진_이벤트를_처리할_수_있는_것이_없다면_예외() {
         // given
-        var converter1 = mock(NotificationGenerator.class);
-        var converter2 = mock(NotificationGenerator.class);
-        var composite = new NotificationGeneratorComposite(List.of(converter1, converter2));
+        var generator1 = mock(NotificationGenerator.class);
+        var generator2 = mock(NotificationGenerator.class);
+        var composite = new NotificationGeneratorComposite(List.of(generator1, generator2));
         var mockEvent = mock(DomainEvent.class);
-        var mockNotification = mock(Notification.class);
-        given(converter1.canGenerateFrom(mockEvent))
+        given(generator1.canGenerateFrom(mockEvent))
                 .willReturn(false);
-        given(converter2.canGenerateFrom(mockEvent))
+        given(generator2.canGenerateFrom(mockEvent))
                 .willReturn(false);
 
         // when & then

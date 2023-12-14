@@ -1,4 +1,4 @@
-package com.mallang.notification.domain.converter;
+package com.mallang.notification.domain.generator;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
@@ -28,7 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class BlogSubscribedNotificationGeneratorTest {
 
     private final BlogSubscribeRepository repository = mock(BlogSubscribeRepository.class);
-    private final BlogSubscribedNotificationGenerator converter = new BlogSubscribedNotificationGenerator(repository);
+    private final BlogSubscribedNotificationGenerator generator = new BlogSubscribedNotificationGenerator(repository);
     private final Member mallang = 깃허브_말랑(1L);
     private final Member donghun = 깃허브_동훈(2L);
     private final Blog blog = mallangBlog(3L, mallang);
@@ -40,7 +40,7 @@ class BlogSubscribedNotificationGeneratorTest {
         BlogSubscribedEvent event = new BlogSubscribedEvent(blogSubscribe);
 
         // when & then
-        assertThat(converter.canGenerateFrom(event)).isTrue();
+        assertThat(generator.canGenerateFrom(event)).isTrue();
     }
 
     @Test
@@ -49,7 +49,7 @@ class BlogSubscribedNotificationGeneratorTest {
         DomainEvent<?> event = mock(DomainEvent.class);
 
         // when & then
-        assertThat(converter.canGenerateFrom(event)).isFalse();
+        assertThat(generator.canGenerateFrom(event)).isFalse();
 
     }
 
@@ -61,10 +61,10 @@ class BlogSubscribedNotificationGeneratorTest {
         given(repository.getById(1L)).willReturn(blogSubscribe);
 
         // when
-        List<Notification> generate = converter.generate(event);
+        List<Notification> generated = generator.generate(event);
 
         // then
-        BlogSubscribedNotification notification = (BlogSubscribedNotification) generate.get(0);
+        BlogSubscribedNotification notification = (BlogSubscribedNotification) generated.get(0);
         assertThat(notification.getTargetMemberId()).isEqualTo(1L);
         assertThat(notification.getBlogId()).isEqualTo(3L);
         assertThat(notification.getSubscriberId()).isEqualTo(2L);

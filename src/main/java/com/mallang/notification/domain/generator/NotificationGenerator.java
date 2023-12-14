@@ -1,4 +1,4 @@
-package com.mallang.notification.domain.converter;
+package com.mallang.notification.domain.generator;
 
 import com.mallang.common.domain.DomainEvent;
 import com.mallang.notification.domain.Notification;

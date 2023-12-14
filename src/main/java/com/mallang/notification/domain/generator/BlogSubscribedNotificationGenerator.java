@@ -1,4 +1,4 @@
-package com.mallang.notification.domain.converter;
+package com.mallang.notification.domain.generator;
 
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.subscribe.BlogSubscribe;

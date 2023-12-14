@@ -8,7 +8,7 @@ import static org.mockito.Mockito.times;
 import com.mallang.common.domain.DomainEvent;
 import com.mallang.notification.domain.Notification;
 import com.mallang.notification.domain.NotificationRepository;
-import com.mallang.notification.domain.converter.NotificationGeneratorComposite;
+import com.mallang.notification.domain.generator.NotificationGeneratorComposite;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;

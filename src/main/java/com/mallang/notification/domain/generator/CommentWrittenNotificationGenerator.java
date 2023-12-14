@@ -1,4 +1,4 @@
-package com.mallang.notification.domain.converter;
+package com.mallang.notification.domain.generator;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.comment.domain.AuthComment;

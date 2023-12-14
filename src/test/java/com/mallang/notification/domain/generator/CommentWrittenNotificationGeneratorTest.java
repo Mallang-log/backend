@@ -1,4 +1,4 @@
-package com.mallang.notification.domain.converter;
+package com.mallang.notification.domain.generator;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 class CommentWrittenNotificationGeneratorTest {
 
     private final CommentRepository repository = mock(CommentRepository.class);
-    private final CommentWrittenNotificationGenerator converter = new CommentWrittenNotificationGenerator(repository);
+    private final CommentWrittenNotificationGenerator generator = new CommentWrittenNotificationGenerator(repository);
     private final Member mallang = 깃허브_말랑(1L);
     private final Member donghun = 깃허브_동훈(2L);
     private final Member other = 깃허브_회원(3L, "other");
@@ -48,7 +48,7 @@ class CommentWrittenNotificationGeneratorTest {
         CommentWrittenEvent event = mock(CommentWrittenEvent.class);
 
         // when & then
-        assertThat(converter.canGenerateFrom(event)).isTrue();
+        assertThat(generator.canGenerateFrom(event)).isTrue();
     }
 
     @Test
@@ -57,7 +57,7 @@ class CommentWrittenNotificationGeneratorTest {
         DomainEvent<?> event = mock(DomainEvent.class);
 
         // when & then
-        assertThat(converter.canGenerateFrom(event)).isFalse();
+        assertThat(generator.canGenerateFrom(event)).isFalse();
     }
 
     @Nested
@@ -74,8 +74,8 @@ class CommentWrittenNotificationGeneratorTest {
             CommentWrittenEvent unAuthWrittenEvent = new CommentWrittenEvent(unAuthComment);
 
             // when
-            List<Notification> byAuthed = converter.generate(authWrittenEvent);
-            List<Notification> byUnAuthed = converter.generate(unAuthWrittenEvent);
+            List<Notification> byAuthed = generator.generate(authWrittenEvent);
+            List<Notification> byUnAuthed = generator.generate(unAuthWrittenEvent);
 
             // then
             var expectedByAuth = List.of(new CommentWrittenNotification(
@@ -118,7 +118,7 @@ class CommentWrittenNotificationGeneratorTest {
             given(repository.getById(comment.getId())).willReturn(comment);
 
             // when
-            List<Notification> byBlogOwner = converter.generate(authWrittenEvent);
+            List<Notification> byBlogOwner = generator.generate(authWrittenEvent);
 
             // then
             assertThat(byBlogOwner).isEmpty();
@@ -141,7 +141,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 var expectedByAuth = List.of(new CommentWrittenNotification(
@@ -171,7 +171,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 assertThat(byReply).isEmpty();
@@ -191,7 +191,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 var expected = List.of(
@@ -238,7 +238,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 var expected = List.of(
@@ -272,7 +272,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 var expected = List.of(
@@ -306,7 +306,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 var expected = List.of(
@@ -340,7 +340,7 @@ class CommentWrittenNotificationGeneratorTest {
                 CommentWrittenEvent event = new CommentWrittenEvent(reply);
 
                 // when
-                List<Notification> byReply = converter.generate(event);
+                List<Notification> byReply = generator.generate(event);
 
                 // then
                 assertThat(byReply).isEmpty();
