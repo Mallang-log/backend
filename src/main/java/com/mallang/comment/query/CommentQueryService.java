@@ -64,6 +64,5 @@ public class CommentQueryService {
             return AuthCommentResponse.protectFrom(authComment);
         }
         return UnAuthCommentResponse.from((UnAuthComment) comment);
-
     }
 }
