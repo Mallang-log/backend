@@ -1,5 +1,6 @@
 package com.mallang.comment.query.response;
 
+import static com.mallang.comment.domain.AuthComment.AUTH_COMMENT_TYPE;
 import static com.mallang.comment.query.response.AuthCommentResponse.WriterResponse.ANONYMOUS;
 
 import com.mallang.auth.domain.Member;
@@ -13,7 +14,7 @@ public final class AuthCommentResponse extends CommentResponse {
 
     private final WriterResponse writer;
     private final boolean secret;
-    private final String type = AUTH_COMMENT_DATA_TYPE;
+    private final String type = AUTH_COMMENT_TYPE;
 
     @Builder
     public AuthCommentResponse(

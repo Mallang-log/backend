@@ -1,14 +1,14 @@
 package com.mallang.comment.query.response;
 
-import static com.mallang.comment.query.response.CommentResponse.AUTH_COMMENT_DATA_TYPE;
-import static com.mallang.comment.query.response.CommentResponse.UN_AUTH_COMMENT_DATA_TYPE;
+import static com.mallang.comment.domain.AuthComment.AUTH_COMMENT_TYPE;
+import static com.mallang.comment.domain.UnAuthComment.UN_AUTH_COMMENT_TYPE;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -16,15 +16,14 @@ import lombok.Data;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = AuthCommentResponse.class, name = AUTH_COMMENT_DATA_TYPE),
-        @JsonSubTypes.Type(value = UnAuthCommentResponse.class, name = UN_AUTH_COMMENT_DATA_TYPE),
+        @JsonSubTypes.Type(value = AuthCommentResponse.class, name = AUTH_COMMENT_TYPE),
+        @JsonSubTypes.Type(value = UnAuthCommentResponse.class, name = UN_AUTH_COMMENT_TYPE),
 })
-@Data
+@Getter
 public abstract sealed class CommentResponse
-        permits AuthCommentResponse, UnAuthCommentResponse {
-
-    public static final String AUTH_COMMENT_DATA_TYPE = "AuthComment";
-    public static final String UN_AUTH_COMMENT_DATA_TYPE = "UnAuthComment";
+        permits
+        AuthCommentResponse,
+        UnAuthCommentResponse {
 
     protected final Long id;
     protected final String content;

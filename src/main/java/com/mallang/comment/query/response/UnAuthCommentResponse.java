@@ -1,5 +1,7 @@
 package com.mallang.comment.query.response;
 
+import static com.mallang.comment.domain.UnAuthComment.UN_AUTH_COMMENT_TYPE;
+
 import com.mallang.comment.domain.UnAuthComment;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -9,7 +11,7 @@ import lombok.Getter;
 public final class UnAuthCommentResponse extends CommentResponse {
 
     private final WriterResponse writer;
-    private final String type = UN_AUTH_COMMENT_DATA_TYPE;
+    private final String type = UN_AUTH_COMMENT_TYPE;
 
     @Builder
     public UnAuthCommentResponse(
