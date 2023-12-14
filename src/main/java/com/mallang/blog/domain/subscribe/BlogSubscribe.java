@@ -39,5 +39,6 @@ public class BlogSubscribe extends CommonRootEntity<Long> {
 
     public void subscribe(BlogSubscribeValidator validator) {
         validator.validateSubscribe(this);
+        registerEvent(new BlogSubscribedEvent(this));
     }
 }
