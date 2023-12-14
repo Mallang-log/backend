@@ -28,7 +28,7 @@ public abstract class Notification extends CommonRootEntity<Long> {
 
     private Long targetMemberId;
 
-    public Notification(Long targetMemberId) {
+    protected Notification(Long targetMemberId) {
         this.targetMemberId = targetMemberId;
     }
 
