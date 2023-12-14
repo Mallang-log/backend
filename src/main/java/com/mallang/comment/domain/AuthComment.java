@@ -43,6 +43,19 @@ public class AuthComment extends Comment {
         post.validateAccess(writer, postPassword);
     }
 
+    public boolean canSee(Member member) {
+        if (!secret) {
+            return true;
+        }
+        if (post.isWriter(member)) {
+            return true;
+        }
+        if (writer.equals(member)) {
+            return true;
+        }
+        return parent != null && parent instanceof AuthComment authed && authed.getWriter().equals(member);
+    }
+
     public void validateUpdate(Member member, @Nullable String postPassword) {
         post.validateAccess(member, postPassword);
         if (member.equals(writer)) {

@@ -2,7 +2,6 @@ package com.mallang.comment.query.response;
 
 import com.mallang.comment.domain.UnAuthComment;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,10 +17,9 @@ public final class UnAuthCommentResponse extends CommentResponse {
             String content,
             LocalDateTime createdDate,
             boolean deleted,
-            WriterResponse writer,
-            List<CommentResponse> children
+            WriterResponse writer
     ) {
-        super(id, content, createdDate, deleted, children);
+        super(id, content, createdDate, deleted);
         this.writer = writer;
     }
 
@@ -31,9 +29,6 @@ public final class UnAuthCommentResponse extends CommentResponse {
                 .content(comment.getContent())
                 .createdDate(comment.getCreatedDate())
                 .deleted(comment.isDeleted())
-                .children(comment.getChildren().stream()
-                        .map(CommentResponse::from)
-                        .toList())
                 .writer(new WriterResponse(comment.getNickname()))
                 .build();
     }
