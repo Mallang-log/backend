@@ -1,6 +1,7 @@
 package com.mallang.notification.domain.type;
 
 
+import static com.mallang.notification.domain.type.CommentWrittenNotification.COMMENT_WRITTEN_NOTIFICATION_TYPE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
@@ -15,11 +16,13 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
-@DiscriminatorValue("CommentWritten")
+@Getter
+@DiscriminatorValue(COMMENT_WRITTEN_NOTIFICATION_TYPE)
 @Entity
 public class CommentWrittenNotification extends Notification {
+
+    public static final String COMMENT_WRITTEN_NOTIFICATION_TYPE = "CommentWritten";
 
     public enum Type {
         COMMENT,

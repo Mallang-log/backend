@@ -1,5 +1,6 @@
 package com.mallang.notification.domain.type;
 
+import static com.mallang.notification.domain.type.BlogSubscribedNotification.BLOG_SUBSCRIBED_NOTIFICATION_TYPE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.notification.domain.Notification;
@@ -8,11 +9,13 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
-@DiscriminatorValue("BlogSubscribed")
+@Getter
+@DiscriminatorValue(BLOG_SUBSCRIBED_NOTIFICATION_TYPE)
 @Entity
 public class BlogSubscribedNotification extends Notification {
+
+    public static final String BLOG_SUBSCRIBED_NOTIFICATION_TYPE = "BlogSubscribed";
 
     private Long blogId;
     private Long subscriberId;
