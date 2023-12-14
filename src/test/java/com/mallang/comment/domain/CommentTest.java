@@ -39,6 +39,35 @@ class CommentTest {
     private final Member other = 깃허브_동훈(2L);
 
     @Nested
+    class 작성_시 {
+
+        @Test
+        void 댓글_작성_이벤트가_발행된다() {
+            // when
+            AuthComment comment1 = AuthComment.builder()
+                    .content("내용")
+                    .post(post)
+                    .writer(member)
+                    .secret(false)
+                    .build();
+            UnAuthComment comment2 = UnAuthComment.builder()
+                    .post(post)
+                    .content("내용")
+                    .nickname("mallang")
+                    .password("1234")
+                    .build();
+
+            // then
+            assertThat(comment1.domainEvents())
+                    .hasSize(1)
+                    .containsExactly(new CommentWrittenEvent(comment1));
+            assertThat(comment2.domainEvents())
+                    .hasSize(1)
+                    .containsExactly(new CommentWrittenEvent(comment2));
+        }
+    }
+
+    @Nested
     class 대댓글_작성_시 {
 
         @Test

@@ -1,5 +1,6 @@
 package com.mallang.comment.application;
 
+import static com.mallang.common.EventsTestUtils.count;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -11,6 +12,7 @@ import com.mallang.comment.application.command.WriteAuthCommentCommand;
 import com.mallang.comment.application.command.WriteUnAuthCommentCommand;
 import com.mallang.comment.domain.AuthComment;
 import com.mallang.comment.domain.Comment;
+import com.mallang.comment.domain.CommentWrittenEvent;
 import com.mallang.comment.domain.UnAuthComment;
 import com.mallang.comment.exception.CommentDepthConstraintViolationException;
 import com.mallang.comment.exception.NoAuthorityCommentException;
@@ -63,6 +65,7 @@ class CommentServiceTest extends ServiceTest {
 
             // then
             assertThat(댓글_ID).isNotNull();
+            assertThat(count(events, CommentWrittenEvent.class)).isEqualTo(1);
         }
 
         @Test
@@ -81,6 +84,7 @@ class CommentServiceTest extends ServiceTest {
 
             // then
             assertThat(댓글_ID).isNotNull();
+            assertThat(count(events, CommentWrittenEvent.class)).isEqualTo(1);
         }
 
         @Test
@@ -99,12 +103,14 @@ class CommentServiceTest extends ServiceTest {
 
             // then
             assertThat(댓글_ID).isNotNull();
+            assertThat(count(events, CommentWrittenEvent.class)).isEqualTo(1);
         }
 
         @Test
         void 대댓글을_작성할_수_있다() {
             // given
             Long 말랑_댓글_ID = 댓글을_작성한다(postId.getPostId(), blogName, "말랑 댓글", false, postWriterId);
+            events.clear();
             WriteUnAuthCommentCommand command = WriteUnAuthCommentCommand.builder()
                     .postId(postId.getPostId())
                     .blogName(blogName)
@@ -125,12 +131,14 @@ class CommentServiceTest extends ServiceTest {
                 assertThat(대댓글.getParent()).isEqualTo(말랑_댓글);
                 assertThat(말랑_댓글.getChildren().get(0)).isEqualTo(대댓글);
             });
+            assertThat(count(events, CommentWrittenEvent.class)).isEqualTo(1);
         }
 
         @Test
         void 다른_사람의_댓글에_대댓글을_달_수_있다() {
             // given
             Long 말랑_댓글_ID = 댓글을_작성한다(postId.getPostId(), blogName, "말랑 댓글", true, postWriterId);
+            events.clear();
             WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(postId.getPostId())
                     .blogName(blogName)
@@ -150,6 +158,7 @@ class CommentServiceTest extends ServiceTest {
                 assertThat(대댓글.getParent()).isEqualTo(말랑_댓글);
                 assertThat(말랑_댓글.getChildren().get(0)).isEqualTo(대댓글);
             });
+            assertThat(count(events, CommentWrittenEvent.class)).isEqualTo(1);
         }
 
         @Test
@@ -157,6 +166,7 @@ class CommentServiceTest extends ServiceTest {
             // given
             Long 말랑_댓글_ID = 댓글을_작성한다(postId.getPostId(), blogName, "말랑 댓글", true, postWriterId);
             Long 대댓글_ID = 대댓글을_작성한다(postId.getPostId(), blogName, "대댓글", false, postWriterId, 말랑_댓글_ID);
+            events.clear();
             WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(postId.getPostId())
                     .blogName(blogName)
@@ -175,6 +185,7 @@ class CommentServiceTest extends ServiceTest {
                 Comment 대댓글 = 인증된_댓글을_조회한다(대댓글_ID);
                 assertThat(대댓글.getChildren()).isEmpty();
             });
+            assertThat(count(events, CommentWrittenEvent.class)).isZero();
         }
 
         @Test
@@ -182,6 +193,7 @@ class CommentServiceTest extends ServiceTest {
             // given
             PostId 포스트2_ID = 포스트를_저장한다(postWriterId, blogName, "포스트2", "내용");
             Long 말랑_댓글_ID = 댓글을_작성한다(postId.getPostId(), blogName, "말랑 댓글", true, postWriterId);
+            events.clear();
             WriteAuthCommentCommand command = WriteAuthCommentCommand.builder()
                     .postId(포스트2_ID.getPostId())
                     .blogName(blogName)
@@ -200,6 +212,7 @@ class CommentServiceTest extends ServiceTest {
                 Comment 대댓글 = 인증된_댓글을_조회한다(말랑_댓글_ID);
                 assertThat(대댓글.getChildren()).isEmpty();
             });
+            assertThat(count(events, CommentWrittenEvent.class)).isZero();
         }
     }
 
