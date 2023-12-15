@@ -12,14 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 public interface SubscribingBlogDao {
 
     Page<BlogSubscribe> findSubscribingBlogs(Long memberId, Pageable pageable);
 
     @RequiredArgsConstructor
-    @Component
+    @Repository
     class SubscribingBlogDaoImpl implements SubscribingBlogDao {
 
         private final JPAQueryFactory query;

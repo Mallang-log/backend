@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 
 public interface PostManageSearchDao {
@@ -35,7 +35,7 @@ public interface PostManageSearchDao {
     }
 
     @RequiredArgsConstructor
-    @Component
+    @Repository
     class PostManageSearchDaoImpl implements PostManageSearchDao {
 
         private final JPAQueryFactory query;

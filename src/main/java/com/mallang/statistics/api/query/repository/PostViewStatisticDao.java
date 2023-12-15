@@ -8,14 +8,14 @@ import com.mallang.statistics.statistic.PostViewStatistic;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 public interface PostViewStatisticDao {
 
     List<PostViewStatistic> findByPost(Post post, StatisticQueryCondition condition);
 
     @RequiredArgsConstructor
-    @Component
+    @Repository
     class PostViewStatisticDaoImpl implements PostViewStatisticDao {
 
         private final JPAQueryFactory query;

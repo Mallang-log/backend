@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 public interface BlogVisitStatisticSimpleDao {
 
     BlogVisitStatisticSimpleResponse getSimpleBlogVisitStatistics(String blogName, LocalDate today);
 
     @RequiredArgsConstructor
-    @Component
+    @Repository
     class BlogVisitStatisticSimpleDaoImpl implements BlogVisitStatisticSimpleDao {
 
         private final JPAQueryFactory query;

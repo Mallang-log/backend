@@ -8,14 +8,14 @@ import com.mallang.statistics.statistic.BlogVisitStatistic;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 public interface BlogVisitStatisticManageDao {
 
     List<BlogVisitStatistic> findByBlog(Blog blog, StatisticQueryCondition condition);
 
     @RequiredArgsConstructor
-    @Component
+    @Repository
     class BlogVisitStatisticManageDaoImpl implements BlogVisitStatisticManageDao {
 
         private final JPAQueryFactory query;

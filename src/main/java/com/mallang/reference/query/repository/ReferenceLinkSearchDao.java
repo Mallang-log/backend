@@ -9,7 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 public interface ReferenceLinkSearchDao {
@@ -25,7 +25,7 @@ public interface ReferenceLinkSearchDao {
     }
 
     @RequiredArgsConstructor
-    @Component
+    @Repository
     class ReferenceLinkSearchDaoImpl implements ReferenceLinkSearchDao {
 
         private final JPAQueryFactory query;
