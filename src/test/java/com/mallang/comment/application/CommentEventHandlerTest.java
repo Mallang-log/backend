@@ -1,12 +1,12 @@
 package com.mallang.comment.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
-import com.mallang.comment.domain.Comment;
-import com.mallang.common.ServiceTest;
+import com.mallang.comment.domain.CommentRepository;
 import com.mallang.post.domain.PostDeleteEvent;
 import com.mallang.post.domain.PostId;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -16,7 +16,10 @@ import org.junit.jupiter.api.Test;
 @DisplayName("댓글 이벤트 핸들러 (CommentEventHandler) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class CommentEventHandlerTest extends ServiceTest {
+class CommentEventHandlerTest {
+
+    private final CommentRepository commentRepository = mock(CommentRepository.class);
+    private final CommentEventHandler commentEventHandler = new CommentEventHandler(commentRepository);
 
     @Nested
     class 포스트_삭제_이벤트를_받아 {
@@ -24,26 +27,15 @@ class CommentEventHandlerTest extends ServiceTest {
         @Test
         void 해당_포스트에_달린_댓글들을_모두_제거한다() {
             // given
-            Long memberId = 회원을_저장한다("말랑");
-            Long otherMemberId = 회원을_저장한다("other");
-            String blogName = 블로그_개설(memberId, "mallang-log");
-            PostId postId1 = 포스트를_저장한다(memberId, blogName, "제목", "내용");
-            PostId postId2 = 포스트를_저장한다(memberId, blogName, "제목2", "내용1");
-            Long post1Comment1 = 댓글을_작성한다(postId1.getPostId(), blogName, "댓1", true, otherMemberId);
-            대댓글을_작성한다(postId1.getPostId(), blogName, "댓1", true, memberId, post1Comment1);
-            비인증_대댓글을_작성한다(postId1.getPostId(), blogName, "댓1", "익1", "1234", post1Comment1);
-            비인증_댓글을_작성한다(postId1.getPostId(), blogName, "댓1", "익2", "12345");
-
-            댓글을_작성한다(postId2.getPostId(), blogName, "댓1", true, otherMemberId); // no delete
+            PostId postId = new PostId(1L, 2L);
 
             // when
-            publisher.publishEvent(new PostDeleteEvent(postId1));
+            commentEventHandler.deleteCommentsFromPost(new PostDeleteEvent(postId));
 
             // then
-            List<Comment> all = commentRepository.findAll();
-            boolean nonDeleteCommentExist = all.stream()
-                    .anyMatch(it -> (it.getPost().getId().equals(postId1)));
-            assertThat(nonDeleteCommentExist).isFalse();
+            then(commentRepository)
+                    .should(times(1))
+                    .deleteAllByPostId(postId);
         }
     }
 }
