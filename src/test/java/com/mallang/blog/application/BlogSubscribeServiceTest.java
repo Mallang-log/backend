@@ -1,16 +1,30 @@
 package com.mallang.blog.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.blog.BlogFixture.blog;
+import static com.mallang.blog.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.application.command.BlogSubscribeCommand;
 import com.mallang.blog.application.command.BlogUnsubscribeCommand;
-import com.mallang.blog.domain.subscribe.BlogSubscribedEvent;
+import com.mallang.blog.domain.Blog;
+import com.mallang.blog.domain.BlogRepository;
+import com.mallang.blog.domain.subscribe.BlogSubscribe;
+import com.mallang.blog.domain.subscribe.BlogSubscribeRepository;
+import com.mallang.blog.domain.subscribe.BlogSubscribeValidator;
 import com.mallang.blog.exception.AlreadySubscribedException;
 import com.mallang.blog.exception.SelfSubscribeException;
 import com.mallang.blog.exception.UnsubscribeUnsubscribedBlogException;
-import com.mallang.common.EventsTestUtils;
-import com.mallang.common.ServiceTest;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -21,17 +35,32 @@ import org.junit.jupiter.api.Test;
 @DisplayName("블로그 구독 서비스 (BlogSubscribeService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class BlogSubscribeServiceTest extends ServiceTest {
+class BlogSubscribeServiceTest {
 
-    private Long mallangId;
-    private Long otherId;
-    private String otherBlogName;
+    private final BlogRepository blogRepository = mock(BlogRepository.class);
+    private final MemberRepository memberRepository = mock(MemberRepository.class);
+    private final BlogSubscribeRepository blogSubscribeRepository = mock(BlogSubscribeRepository.class);
+    private final BlogSubscribeValidator blogSubscribeValidator = mock(BlogSubscribeValidator.class);
+    private final BlogSubscribeService blogSubscribeService = new BlogSubscribeService(
+            blogRepository,
+            memberRepository,
+            blogSubscribeRepository,
+            blogSubscribeValidator
+    );
+
+    private final Long mallangId = 1L;
+    private final Member mallang = 깃허브_말랑(mallangId);
+    private final Member other = 깃허브_동훈(2L);
+    private final Blog mallangBlog = mallangBlog(1L, mallang);
+    private final Blog otherBlog = blog(2L, mallang);
+    private final String otherBlogName = otherBlog.getName();
 
     @BeforeEach
     void setUp() {
-        mallangId = 회원을_저장한다("mallang");
-        otherId = 회원을_저장한다("other");
-        otherBlogName = 블로그_개설(otherId, "other-log");
+        given(memberRepository.getById(mallang.getId())).willReturn(mallang);
+        given(memberRepository.getById(other.getId())).willReturn(other);
+        given(blogRepository.getByName(mallangBlog.getName())).willReturn(mallangBlog);
+        given(blogRepository.getByName(otherBlog.getName())).willReturn(otherBlog);
     }
 
     @Nested
@@ -40,52 +69,46 @@ class BlogSubscribeServiceTest extends ServiceTest {
         @Test
         void 블로그를_구독한다() {
             // given
-            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
+            BlogSubscribe blogSubscribe = new BlogSubscribe(mallang, otherBlog);
+            given(blogSubscribeRepository.save(any()))
+                    .willReturn(blogSubscribe);
+            var command = new BlogSubscribeCommand(mallangId, otherBlogName);
 
             // when
-            Long subscribeId = blogSubscribeService.subscribe(command);
+            blogSubscribeService.subscribe(command);
 
             // then
-            assertThat(blogSubscribeRepository.findById(subscribeId)).isPresent();
+            then(blogSubscribeRepository)
+                    .should(times(1))
+                    .save(any());
         }
 
         @Test
         void 자신의_블로그를_구독하면_예외() {
             // given
-            String mallangBlogName = 블로그_개설(mallangId, "mallang-log");
-            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, mallangBlogName);
+            willThrow(SelfSubscribeException.class)
+                    .given(blogSubscribeValidator)
+                    .validateSubscribe(any());
+            var command = new BlogSubscribeCommand(mallangId, mallangBlog.getName());
 
             // when & then
             assertThatThrownBy(() ->
                     blogSubscribeService.subscribe(command)
             ).isInstanceOf(SelfSubscribeException.class);
-            assertThat(EventsTestUtils.count(events, BlogSubscribedEvent.class)).isZero();
         }
 
         @Test
         void 이미_구독한_블로그라면_예외() {
             // given
-            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
-            blogSubscribeService.subscribe(command);
-            events.clear();
+            willThrow(AlreadySubscribedException.class)
+                    .given(blogSubscribeValidator)
+                    .validateSubscribe(any());
+            var command = new BlogSubscribeCommand(mallangId, otherBlogName);
 
             // when & then
             assertThatThrownBy(() ->
                     blogSubscribeService.subscribe(command)
             ).isInstanceOf(AlreadySubscribedException.class);
-            assertThat(EventsTestUtils.count(events, BlogSubscribedEvent.class)).isZero();
-        }
-
-        @Test
-        void 블로그_구독_시_블로그_구독_이벤트가_발행된다() {
-            // given
-            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
-
-            // when
-            Long subscribeId = blogSubscribeService.subscribe(command);
-
-            // then
-            assertThat(EventsTestUtils.count(events, BlogSubscribedEvent.class)).isEqualTo(1);
         }
     }
 
@@ -95,21 +118,26 @@ class BlogSubscribeServiceTest extends ServiceTest {
         @Test
         void 구독한_블로그를_구독_취소한다() {
             // given
-            BlogSubscribeCommand subscribeCommand = new BlogSubscribeCommand(mallangId, otherBlogName);
-            Long subscribeId = blogSubscribeService.subscribe(subscribeCommand);
-            BlogUnsubscribeCommand unsubscribeCommand = new BlogUnsubscribeCommand(mallangId, otherBlogName);
+            BlogSubscribe blogSubscribe = new BlogSubscribe(mallang, otherBlog);
+            given(blogSubscribeRepository.findBySubscriberAndBlog(mallangId, otherBlogName))
+                    .willReturn(Optional.of(blogSubscribe));
+            var unsubscribeCommand = new BlogUnsubscribeCommand(mallangId, otherBlogName);
 
             // when
             blogSubscribeService.unsubscribe(unsubscribeCommand);
 
             // then
-            assertThat(blogSubscribeRepository.findById(subscribeId)).isEmpty();
+            then(blogSubscribeRepository)
+                    .should(times(1))
+                    .delete(blogSubscribe);
         }
 
         @Test
         void 구독하지_않은_블로그라면_예외() {
             // given
-            BlogUnsubscribeCommand command = new BlogUnsubscribeCommand(mallangId, otherBlogName);
+            given(blogSubscribeRepository.findBySubscriberAndBlog(mallangId, otherBlogName))
+                    .willReturn(Optional.empty());
+            var command = new BlogUnsubscribeCommand(mallangId, otherBlogName);
 
             // when & then
             assertThatThrownBy(() ->

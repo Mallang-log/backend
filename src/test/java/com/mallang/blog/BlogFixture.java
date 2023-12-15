@@ -20,4 +20,22 @@ public class BlogFixture {
         ReflectionTestUtils.setField(blog, "id", id);
         return blog;
     }
+
+    public static Blog blog(Long id, Member owner) {
+        Blog blog = Blog.builder()
+                .name("other-blog")
+                .owner(owner)
+                .build();
+        ReflectionTestUtils.setField(blog, "id", id);
+        return blog;
+    }
+
+    public static Blog blog(Long id, String name, Member owner) {
+        Blog blog = Blog.builder()
+                .name(name)
+                .owner(owner)
+                .build();
+        ReflectionTestUtils.setField(blog, "id", id);
+        return blog;
+    }
 }
