@@ -17,5 +17,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CommentWrittenNotificationListResponse.class, name = COMMENT_WRITTEN_NOTIFICATION_TYPE),
 })
 public interface NotificationListResponse {
+
+    Long id();
+
+    boolean isRead();
 }
 
