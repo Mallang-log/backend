@@ -5,8 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record UpdateUnAuthCommentCommand(
-        String password,
         Long commentId,
+        String password,
         String content,
         @Nullable String postPassword
 ) {

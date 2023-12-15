@@ -10,6 +10,29 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class CommentFixture {
 
+    public static UnAuthComment unAuthComment(
+            Long id,
+            Post post,
+            String nickname,
+            String password,
+            @Nullable Comment parent
+    ) {
+        UnAuthComment comment = new UnAuthComment("댓글", post, parent, nickname, password);
+        ReflectionTestUtils.setField(comment, "id", id);
+        return comment;
+    }
+
+    public static AuthComment authComment(
+            Long id,
+            Post post,
+            @Nullable Comment parent,
+            Member writer
+    ) {
+        AuthComment comment = new AuthComment("댓글", post, parent, true, writer);
+        ReflectionTestUtils.setField(comment, "id", id);
+        return comment;
+    }
+
     public static AuthComment authComment(
             Long id,
             String content,
