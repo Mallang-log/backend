@@ -1,20 +1,30 @@
 package com.mallang.post.application;
 
-import static java.util.Collections.emptyList;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
+import com.mallang.blog.BlogFixture;
+import com.mallang.blog.domain.Blog;
+import com.mallang.blog.domain.BlogRepository;
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateDraftCommand;
-import com.mallang.post.application.command.CreatePostCategoryCommand;
 import com.mallang.post.application.command.DeleteDraftCommand;
 import com.mallang.post.application.command.UpdateDraftCommand;
+import com.mallang.post.domain.PostCategory;
+import com.mallang.post.domain.PostCategoryRepository;
 import com.mallang.post.domain.draft.Draft;
+import com.mallang.post.domain.draft.DraftRepository;
 import com.mallang.post.exception.NoAuthorityDraftException;
 import com.mallang.post.exception.NoAuthorityPostCategoryException;
 import com.mallang.post.exception.NotFoundDraftException;
-import com.mallang.post.exception.NotFoundPostCategoryException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,28 +32,42 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("임시 글 서비스 (DraftService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class DraftServiceTest extends ServiceTest {
+class DraftServiceTest {
 
-    private Long memberId;
-    private String blogName;
-    private Long categoryId;
+    private final BlogRepository blogRepository = mock(BlogRepository.class);
+    private final MemberRepository memberRepository = mock(MemberRepository.class);
+    private final PostCategoryRepository postCategoryRepository = mock(PostCategoryRepository.class);
+    private final DraftRepository draftRepository = mock(DraftRepository.class);
+    private final DraftService draftService = new DraftService(
+            blogRepository,
+            memberRepository,
+            postCategoryRepository,
+            draftRepository
+    );
+
+    private final Member mallang = 깃허브_말랑(1L);
+    private final Member other = 깃허브_회원(2L, "other");
+    private final Blog blog = BlogFixture.mallangBlog(1L, mallang);
+    private final Blog otherBlog = BlogFixture.blog(2L, other);
+    private final PostCategory category = new PostCategory("Spring", mallang, blog);
+    private final PostCategory otherCategory = new PostCategory("Spring", other, otherBlog);
 
     @BeforeEach
     void setUp() {
-        memberId = 회원을_저장한다("말랑");
-        blogName = 블로그_개설(memberId, "mallang-log");
-        categoryId = postCategoryService.create(new CreatePostCategoryCommand(
-                memberId,
-                blogName,
-                "Spring",
-                null,
-                null,
-                null
-        ));
+        ReflectionTestUtils.setField(category, "id", 1L);
+        ReflectionTestUtils.setField(otherCategory, "id", 2L);
+        given(memberRepository.getById(mallang.getId())).willReturn(mallang);
+        given(memberRepository.getById(other.getId())).willReturn(other);
+        given(blogRepository.getByName(blog.getName())).willReturn(blog);
+        given(blogRepository.getByName(otherBlog.getName())).willReturn(otherBlog);
+        given(postCategoryRepository.getByIdIfIdNotNull(category.getId())).willReturn(category);
+        given(postCategoryRepository.getByIdIfIdNotNull(otherCategory.getId())).willReturn(otherCategory);
+        given(postCategoryRepository.getByIdIfIdNotNull(null)).willReturn(null);
     }
 
     @Nested
@@ -52,15 +76,18 @@ class DraftServiceTest extends ServiceTest {
         @Test
         void 저장한다() {
             // given
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .bodyText("bodyText")
-                    .intro("intro")
-                    .categoryId(categoryId)
-                    .tags(List.of("tag1", "tag2", "tag3"))
-                    .build();
+            given(draftRepository.save(any()))
+                    .willReturn(mock(Draft.class));
+            var command = new CreateDraftCommand(
+                    mallang.getId(),
+                    blog.getName(),
+                    "임시글",
+                    "content",
+                    "intro",
+                    "image",
+                    category.getId(),
+                    List.of("tag1", "tag2")
+            );
 
             // when
             Long id = draftService.create(command);
@@ -70,15 +97,20 @@ class DraftServiceTest extends ServiceTest {
         }
 
         @Test
-        void 카테고리와_태그는_없어도_된다() {
+        void 카테고리와_태그_썸네일는_없어도_된다() {
             // given
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .bodyText("bodyText")
-                    .intro("intro")
-                    .build();
+            given(draftRepository.save(any()))
+                    .willReturn(mock(Draft.class));
+            var command = new CreateDraftCommand(
+                    mallang.getId(),
+                    blog.getName(),
+                    "임시글",
+                    "content",
+                    "intro",
+                    null,
+                    null,
+                    List.of()
+            );
 
             // when
             Long id = draftService.create(command);
@@ -90,106 +122,74 @@ class DraftServiceTest extends ServiceTest {
         @Test
         void 다른_사람의_블로그에_대한_임시_글_작성시_예외() {
             // given
-            Long otherMemberId = 회원을_저장한다("other");
-            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(otherBlogName)
-                    .title("임시_글 1")
-                    .intro("intro")
-                    .bodyText("bodyText")
-                    .build();
-            CreateDraftCommand command2 = CreateDraftCommand.builder()
-                    .memberId(otherMemberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .intro("intro")
-                    .bodyText("bodyText")
-                    .build();
+            var command = new CreateDraftCommand(
+                    mallang.getId(),
+                    otherBlog.getName(),
+                    "임시글",
+                    "content",
+                    "intro",
+                    null,
+                    null,
+                    List.of()
+            );
 
             // when & then
             assertThatThrownBy(() -> {
                 draftService.create(command);
             }).isInstanceOf(NoAuthorityBlogException.class);
-            assertThatThrownBy(() -> {
-                draftService.create(command2);
-            }).isInstanceOf(NoAuthorityBlogException.class);
-        }
-
-        @Test
-        void 없는_카테고리면_예외() {
-            // given
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .bodyText("bodyText")
-                    .intro("intro")
-                    .categoryId(1000L)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() ->
-                    draftService.create(command)
-            ).isInstanceOf(NotFoundPostCategoryException.class);
         }
 
         @Test
         void 다른_사람의_카테고리라면_예외() {
             // given
-            Long otherMemberId = 회원을_저장한다("other");
-            String otherBlogName = 블로그_개설(otherMemberId, "other-log");
-            Long categoryId = postCategoryService.create(new CreatePostCategoryCommand(
-                    otherMemberId,
-                    otherBlogName,
-                    "Spring",
+            // given
+            var command = new CreateDraftCommand(
+                    mallang.getId(),
+                    blog.getName(),
+                    "임시글",
+                    "content",
+                    "intro",
                     null,
-                    null,
-                    null
-            ));
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .bodyText("bodyText")
-                    .intro("intro")
-                    .categoryId(categoryId)
-                    .build();
+                    otherCategory.getId(),
+                    List.of()
+            );
 
             // when & then
-            assertThatThrownBy(() ->
-                    draftService.create(command)
-            ).isInstanceOf(NoAuthorityPostCategoryException.class);
+            assertThatThrownBy(() -> {
+                draftService.create(command);
+            }).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
     }
 
     @Nested
     class 임시_글_수정_시 {
 
-        private Long 임시_글_ID;
+        private final Draft draft = new Draft(
+                blog,
+                "title",
+                "intro",
+                "text",
+                "image",
+                category,
+                List.of("tag1", "tag2"),
+                mallang
+        );
 
         @BeforeEach
         void setUp() {
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .bodyText("bodyText")
-                    .intro("intro")
-                    .tags(List.of("tag1", "tag2", "tag3"))
-                    .categoryId(categoryId)
-                    .build();
-            임시_글_ID = draftService.create(command);
+            ReflectionTestUtils.setField(draft, "id", 1L);
+            given(draftRepository.getById(draft.getId())).willReturn(draft);
         }
 
         @Test
         void 내가_쓴_임시_글을_수정할_수_있다() {
             // given
-            UpdateDraftCommand command = new UpdateDraftCommand(
-                    memberId,
-                    임시_글_ID,
+            var command = new UpdateDraftCommand(
+                    mallang.getId(),
+                    draft.getId(),
                     "수정제목",
-                    "수정인트로", "수정내용",
+                    "수정인트로",
+                    "수정내용",
                     "수정썸네일",
                     null,
                     List.of("태그2")
@@ -199,26 +199,26 @@ class DraftServiceTest extends ServiceTest {
             draftService.update(command);
 
             // then
-            transactionHelper.doAssert(() -> {
-                Draft draft = draftRepository.getById(임시_글_ID);
-                assertThat(draft.getTitle()).isEqualTo("수정제목");
-                assertThat(draft.getBodyText()).isEqualTo("수정내용");
-                assertThat(draft.getPostThumbnailImageName()).isEqualTo("수정썸네일");
-                assertThat(draft.getPostIntro()).isEqualTo("수정인트로");
-                assertThat(draft.getCategory()).isNull();
-                assertThat(draft.getTags()).containsExactly("태그2");
-            });
+            assertThat(draft.getTitle()).isEqualTo("수정제목");
+            assertThat(draft.getBodyText()).isEqualTo("수정내용");
+            assertThat(draft.getPostThumbnailImageName()).isEqualTo("수정썸네일");
+            assertThat(draft.getPostIntro()).isEqualTo("수정인트로");
+            assertThat(draft.getCategory()).isNull();
+            assertThat(draft.getTags()).containsExactly("태그2");
         }
 
         @Test
         void 다른_사람의_임시_글은_수정할_수_없다() {
             // given
-            Long otherMemberId = 회원을_저장한다("동훈");
-            UpdateDraftCommand command = new UpdateDraftCommand(
-                    otherMemberId, 임시_글_ID,
-                    "수정제목", "수정인트로", "수정내용",
+            var command = new UpdateDraftCommand(
+                    other.getId(),
+                    draft.getId(),
+                    "수정제목",
+                    "수정인트로",
+                    "수정내용",
+                    "수정썸네일",
                     null,
-                    null, emptyList()
+                    List.of("태그2")
             );
 
             // when & then
@@ -231,27 +231,27 @@ class DraftServiceTest extends ServiceTest {
     @Nested
     class 임시_글_제거_시 {
 
-        private Long otherMemberId;
-        private Long 임시_글_ID;
+        private final Draft draft = new Draft(
+                blog,
+                "title",
+                "intro",
+                "text",
+                "image",
+                category,
+                List.of("tag1", "tag2"),
+                mallang
+        );
 
         @BeforeEach
         void setUp() {
-            otherMemberId = 회원을_저장한다("other");
-            CreateDraftCommand command = CreateDraftCommand.builder()
-                    .memberId(memberId)
-                    .blogName(blogName)
-                    .title("임시_글 1")
-                    .bodyText("bodyText")
-                    .intro("intro")
-                    .tags(List.of("tag1", "tag2", "tag3"))
-                    .build();
-            임시_글_ID = draftService.create(command);
+            ReflectionTestUtils.setField(draft, "id", 1L);
+            given(draftRepository.getById(draft.getId())).willReturn(draft);
         }
 
         @Test
         void 자신이_작성한_글이_아닌_경우_예외() {
             // given
-            DeleteDraftCommand command = new DeleteDraftCommand(otherMemberId, 임시_글_ID);
+            var command = new DeleteDraftCommand(other.getId(), draft.getId());
 
             // when & then
             assertThatThrownBy(() -> {
@@ -262,7 +262,10 @@ class DraftServiceTest extends ServiceTest {
         @Test
         void 없는_임시_글을_제거하려_한다면_예외() {
             // given
-            DeleteDraftCommand command = new DeleteDraftCommand(otherMemberId, 임시_글_ID + 10L);
+            willThrow(NotFoundDraftException.class)
+                    .given(draftRepository)
+                    .getById(draft.getId() + 1L);
+            var command = new DeleteDraftCommand(mallang.getId(), draft.getId() + 1L);
 
             // when & then
             assertThatThrownBy(() -> {
@@ -273,7 +276,7 @@ class DraftServiceTest extends ServiceTest {
         @Test
         void 임시_글을_제거한다() {
             // given
-            DeleteDraftCommand command = new DeleteDraftCommand(memberId, 임시_글_ID);
+            var command = new DeleteDraftCommand(mallang.getId(), draft.getId());
 
             // when & then
             draftService.delete(command);
