@@ -55,7 +55,6 @@ class PostLikeServiceTest {
     private final Long postId = 10L;
     private final Post post = PostFixture.publicPost(postId, blog);
 
-
     @BeforeEach
     void setUp() {
         given(memberRepository.getById(member.getId())).willReturn(member);
