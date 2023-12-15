@@ -1,19 +1,32 @@
 package com.mallang.post.application;
 
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.blog.BlogFixture.mallangBlog;
+import static com.mallang.post.PostFixture.privatePost;
+import static com.mallang.post.PostFixture.publicPost;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
+import com.mallang.blog.domain.Blog;
 import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CancelPostStarCommand;
-import com.mallang.post.application.command.CreateStarGroupCommand;
 import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.domain.Post;
-import com.mallang.post.domain.PostVisibilityPolicy;
+import com.mallang.post.domain.PostRepository;
 import com.mallang.post.domain.star.PostStar;
+import com.mallang.post.domain.star.PostStarRepository;
+import com.mallang.post.domain.star.StarGroup;
+import com.mallang.post.domain.star.StarGroupRepository;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.NoAuthorityStarGroupException;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,162 +35,134 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("포스트 즐겨찾기 서비스 (PostStarService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class PostStarServiceTest extends ServiceTest {
 
-    private Long memberId;
-    private Long otherMemberId;
-    private String blogName;
-    private Long publicPostId;
-    private Long protectedPostId;
-    private Long privatePostId;
+    private final PostRepository postRepository = mock(PostRepository.class);
+    private final MemberRepository memberRepository = mock(MemberRepository.class);
+    private final PostStarRepository postStarRepository = mock(PostStarRepository.class);
+    private final StarGroupRepository starGroupRepository = mock(StarGroupRepository.class);
+    private final PostStarService postStarService = new PostStarService(
+            postRepository,
+            memberRepository,
+            postStarRepository,
+            starGroupRepository
+    );
+
+    private final Member member = 깃허브_말랑(1L);
+    private final Member other = 깃허브_동훈(2L);
+    private final Blog blog = mallangBlog(member);
+    private final Long postId = 10L;
+    private final Post post = publicPost(postId, blog);
+    private final StarGroup starGroup = new StarGroup("spring", member);
 
     @BeforeEach
     void setUp() {
-        memberId = 회원을_저장한다("말랑");
-        otherMemberId = 회원을_저장한다("other");
-        blogName = 블로그_개설(memberId, "mallang-log");
-        publicPostId = 포스트를_저장한다(
-                memberId,
-                blogName,
-                "포스트",
-                "내용",
-                new PostVisibilityPolicy(PUBLIC, null)
-        ).getPostId();
-        protectedPostId = 포스트를_저장한다(
-                memberId,
-                blogName,
-                "포스트",
-                "내용",
-                new PostVisibilityPolicy(PROTECTED, "1234")
-        ).getPostId();
-        privatePostId = 포스트를_저장한다(
-                memberId,
-                blogName,
-                "포스트",
-                "내용",
-                new PostVisibilityPolicy(PRIVATE, null)
-        ).getPostId();
+        given(memberRepository.getById(member.getId())).willReturn(member);
+        given(memberRepository.getById(other.getId())).willReturn(other);
+        given(postRepository.getById(postId, blog.getName())).willReturn(post);
+        ReflectionTestUtils.setField(starGroup, "id", 1L);
+        given(starGroupRepository.getByIdIfIdNotNull(starGroup.getId())).willReturn(starGroup);
+        given(starGroupRepository.getByIdIfIdNotNull(null)).willReturn(null);
     }
 
     @Nested
     class 즐겨찾기_시 {
 
         @Test
-        void 로그인해야_즐겨찾기를_누를_수_있다() {
+        void 포스트_접근_권한이_없으면_예외() {
             // given
-            StarPostCommand command = new StarPostCommand(publicPostId, blogName, null, null, null);
+            Post post = privatePost(postId, blog);
+            given(postRepository.getById(postId, blog.getName())).willReturn(post);
+            var command = new StarPostCommand(
+                    postId,
+                    blog.getName(),
+                    starGroup.getId(),
+                    other.getId(),
+                    null
+            );
 
             // when & then
             assertThatThrownBy(() -> {
                 postStarService.star(command);
-            }).isInstanceOf(InvalidDataAccessApiUsageException.class);
+            }).isInstanceOf(NoAuthorityPostException.class);
         }
 
         @Test
-        void 즐겨찾기_시_즐켜찾기_그룹을_설정할_수_있다() {
+        void 즐겨찾기를_한다() {
             // given
-            var createStarGroupCommand = new CreateStarGroupCommand(memberId, "Spring", null, null, null);
-            var springStarGroupId = starGroupService.create(createStarGroupCommand);
-            var command = new StarPostCommand(publicPostId, blogName, springStarGroupId, memberId, null);
+            PostStar postStar = new PostStar(post, member);
+            given(postStarRepository.findByPostAndMember(post, member))
+                    .willReturn(empty());
+            given(postStarRepository.save(any()))
+                    .willReturn(postStar);
+            var command = new StarPostCommand(
+                    postId,
+                    blog.getName(),
+                    starGroup.getId(),
+                    member.getId(),
+                    null
+            );
 
             // when
             Long starId = postStarService.star(command);
 
             // then
-            PostStar find = postStarRepository.getById(starId);
-            assertThat(find.getStarGroup().getId())
-                    .isEqualTo(springStarGroupId);
+            then(postStarRepository)
+                    .should(times(1))
+                    .save(any());
+            assertThat(postStar.getStarGroup()).isEqualTo(starGroup);
         }
 
         @Test
         void 회원이_이미_해당_포스트에_즐겨찾기를_누른_경우_그룹이_업데이트된다() {
             // given
-            var createStarGroupCommand = new CreateStarGroupCommand(memberId, "Spring", null, null, null);
-            var springStarGroupId = starGroupService.create(createStarGroupCommand);
-            var starPostCommand = new StarPostCommand(publicPostId, blogName, springStarGroupId, memberId, null);
-            Long starId = postStarService.star(starPostCommand);
-
-            StarPostCommand command = new StarPostCommand(publicPostId, blogName, null, memberId, null);
+            PostStar postStar = new PostStar(post, member);
+            given(postStarRepository.findByPostAndMember(post, member))
+                    .willReturn(of(postStar));
+            var command = new StarPostCommand(
+                    postId,
+                    blog.getName(),
+                    starGroup.getId(),
+                    member.getId(),
+                    null
+            );
 
             // when
-            postStarService.star(command);
+            Long starId = postStarService.star(command);
 
             // then
-            PostStar postStar = postStarRepository.getById(starId);
-            assertThat(postStar.getStarGroup()).isNull();
+            then(postStarRepository)
+                    .should(times(0))
+                    .save(any());
+            assertThat(postStar.getStarGroup()).isEqualTo(starGroup);
         }
 
         @Test
         void 타인의_즐겨찾기_그룹을_설정한_경우_예외() {
             // given
-            var createStarGroupCommand = new CreateStarGroupCommand(otherMemberId, "Spring", null, null, null);
-            var springStarGroupId = starGroupService.create(createStarGroupCommand);
-            var command = new StarPostCommand(publicPostId, blogName, springStarGroupId, memberId, null);
+            PostStar postStar = new PostStar(post, member);
+            given(postStarRepository.findByPostAndMember(post, member)).willReturn(empty());
+            given(postStarRepository.save(any())).willReturn(postStar);
+            StarGroup otherGroup = new StarGroup("spring", other);
+            given(starGroupRepository.getByIdIfIdNotNull(1L)).willReturn(otherGroup);
+
+            var command = new StarPostCommand(
+                    postId,
+                    blog.getName(),
+                    1L,
+                    member.getId(),
+                    null
+            );
 
             // when & then
             assertThatThrownBy(() ->
                     postStarService.star(command)
             ).isInstanceOf(NoAuthorityStarGroupException.class);
-        }
-
-        @Test
-        void 해당_포스트에_즐겨찾기를_누른_적이_없으면_즐겨찾기를_누른다() {
-            // when
-            Long starId = postStarService.star(new StarPostCommand(publicPostId, blogName, null, memberId, null));
-
-            // then
-            assertThat(starId).isNotNull();
-        }
-
-        @Test
-        void 글_작성자는_보호된_글에_즐겨찾기를_누를_수_있다() {
-            // when
-            Long starId = postStarService.star(new StarPostCommand(protectedPostId, blogName, null, memberId, null));
-
-            // then
-            assertThat(starId).isNotNull();
-        }
-
-        @Test
-        void 보호된_글의_비밀번호와_입력한_비밀번호가_일치하면_즐겨찾기를_누를_수_있다() {
-            // when
-            Long starId = postStarService.star(
-                    new StarPostCommand(protectedPostId, blogName, null, otherMemberId, "1234")
-            );
-
-            // then
-            assertThat(starId).isNotNull();
-        }
-
-        @Test
-        void 보호된_글의_비밀번호와_입력한_비밀번호가_다르면_예외() {
-            // given
-            StarPostCommand command = new StarPostCommand(protectedPostId, blogName, null, otherMemberId, "12345");
-
-            // when & then
-            assertThatThrownBy(() -> {
-                postStarService.star(command);
-            }).isInstanceOf(NoAuthorityPostException.class);
-        }
-
-        @Test
-        void 비공개_글에는_작성자_말고는_즐겨찾기를_누를_수_없다() {
-            // given
-            StarPostCommand command1 = new StarPostCommand(privatePostId, blogName, null, memberId, null);
-            StarPostCommand command2 = new StarPostCommand(privatePostId, blogName, null, otherMemberId, null);
-
-            // when & then
-            assertDoesNotThrow(() -> {
-                postStarService.star(command1);
-            });
-            assertThatThrownBy(() -> {
-                postStarService.star(command2);
-            }).isInstanceOf(NoAuthorityPostException.class);
         }
     }
 
@@ -187,30 +172,42 @@ class PostStarServiceTest extends ServiceTest {
         @Test
         void 즐겨찾기_취소_시_즐겨찾기가_제거된다() {
             // given
-            postStarService.star(new StarPostCommand(publicPostId, blogName, null, memberId, null));
+            PostStar star = new PostStar(post, member);
+            given(postStarRepository.getByPostAndMember(
+                    postId,
+                    blog.getName(),
+                    member.getId()
+            )).willReturn(star);
+            var command = new CancelPostStarCommand(member.getId(), postId, blog.getName());
 
             // when
-            postStarService.cancel(new CancelPostStarCommand(memberId, publicPostId, blogName));
+            postStarService.cancel(command);
 
             // then
-            Post post = postRepository.getById(publicPostId, blogName);
-            assertThat(post.getLikeCount()).isZero();
+            then(postStarRepository)
+                    .should(times(1))
+                    .delete(star);
         }
 
         @Test
         void 보호글_비공개글_여부에_관계없이_취소할_수_있다() {
             // given
-            postStarService.star(new StarPostCommand(protectedPostId, blogName, null, otherMemberId, "1234"));
-            postStarService.star(new StarPostCommand(publicPostId, blogName, null, otherMemberId, null));
-            포스트_공개여부를_업데이트한다(memberId, publicPostId, blogName, PRIVATE, null);
+            Post post = privatePost(postId, blog);
+            PostStar star = new PostStar(post, other);
+            given(postStarRepository.getByPostAndMember(
+                    postId,
+                    blog.getName(),
+                    other.getId()
+            )).willReturn(star);
+            var command = new CancelPostStarCommand(other.getId(), postId, blog.getName());
 
-            // when & then
-            assertDoesNotThrow(() -> {
-                postStarService.cancel(new CancelPostStarCommand(otherMemberId, protectedPostId, blogName));
-            });
-            assertDoesNotThrow(() -> {
-                postStarService.cancel(new CancelPostStarCommand(otherMemberId, publicPostId, blogName));
-            });
+            // when
+            postStarService.cancel(command);
+
+            // then
+            then(postStarRepository)
+                    .should(times(1))
+                    .delete(star);
         }
     }
 }
