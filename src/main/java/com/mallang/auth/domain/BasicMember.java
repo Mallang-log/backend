@@ -35,10 +35,6 @@ public class BasicMember extends Member {
         validator.validateDuplicateUsername(username);
     }
 
-    public String getPassword() {
-        return password.getEncryptedPassword();
-    }
-
     public void login(String rawPassword, PasswordEncoder passwordEncoder) {
         this.password.validatePassword(rawPassword, passwordEncoder);
     }
