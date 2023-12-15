@@ -64,6 +64,7 @@ public abstract class Comment extends CommonRootEntity<Long> {
         if (parent != null) {
             beChild(parent);
         }
+        registerEvent(new CommentWrittenEvent(this));
     }
 
     private void beChild(Comment parent) {

@@ -1,11 +1,13 @@
 package com.mallang.comment.domain;
 
+import static com.mallang.comment.domain.AuthComment.AUTH_COMMENT_TYPE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
 import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -14,10 +16,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
+@Getter
+@DiscriminatorValue(AUTH_COMMENT_TYPE)
 @Entity
 public class AuthComment extends Comment {
+
+    public static final String AUTH_COMMENT_TYPE = "AuthComment";
 
     private boolean secret;
 

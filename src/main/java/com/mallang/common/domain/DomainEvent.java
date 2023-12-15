@@ -1,6 +1,6 @@
 package com.mallang.common.domain;
 
-public interface DomainEvent {
+public interface DomainEvent<ID> {
 
-    Object id();
+    ID id();
 }

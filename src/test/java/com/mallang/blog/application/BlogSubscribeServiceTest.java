@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.mallang.blog.application.command.BlogSubscribeCommand;
 import com.mallang.blog.application.command.BlogUnsubscribeCommand;
+import com.mallang.blog.domain.subscribe.BlogSubscribedEvent;
 import com.mallang.blog.exception.AlreadySubscribedException;
 import com.mallang.blog.exception.SelfSubscribeException;
 import com.mallang.blog.exception.UnsubscribeUnsubscribedBlogException;
+import com.mallang.common.EventsTestUtils;
 import com.mallang.common.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +59,7 @@ class BlogSubscribeServiceTest extends ServiceTest {
             assertThatThrownBy(() ->
                     blogSubscribeService.subscribe(command)
             ).isInstanceOf(SelfSubscribeException.class);
+            assertThat(EventsTestUtils.count(events, BlogSubscribedEvent.class)).isZero();
         }
 
         @Test
@@ -64,11 +67,25 @@ class BlogSubscribeServiceTest extends ServiceTest {
             // given
             BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
             blogSubscribeService.subscribe(command);
+            events.clear();
 
             // when & then
             assertThatThrownBy(() ->
                     blogSubscribeService.subscribe(command)
             ).isInstanceOf(AlreadySubscribedException.class);
+            assertThat(EventsTestUtils.count(events, BlogSubscribedEvent.class)).isZero();
+        }
+
+        @Test
+        void 블로그_구독_시_블로그_구독_이벤트가_발행된다() {
+            // given
+            BlogSubscribeCommand command = new BlogSubscribeCommand(mallangId, otherBlogName);
+
+            // when
+            Long subscribeId = blogSubscribeService.subscribe(command);
+
+            // then
+            assertThat(EventsTestUtils.count(events, BlogSubscribedEvent.class)).isEqualTo(1);
         }
     }
 

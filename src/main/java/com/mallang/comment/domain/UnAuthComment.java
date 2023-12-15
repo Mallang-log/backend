@@ -1,5 +1,6 @@
 package com.mallang.comment.domain;
 
+import static com.mallang.comment.domain.UnAuthComment.UN_AUTH_COMMENT_TYPE;
 import static lombok.AccessLevel.PROTECTED;
 
 import com.mallang.auth.domain.Member;
@@ -7,15 +8,19 @@ import com.mallang.comment.exception.NoAuthorityCommentException;
 import com.mallang.post.domain.Post;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor(access = PROTECTED)
+@Getter
+@DiscriminatorValue(UN_AUTH_COMMENT_TYPE)
 @Entity
 public class UnAuthComment extends Comment {
+
+    public static final String UN_AUTH_COMMENT_TYPE = "UnAuthComment";
 
     @Column(nullable = false)
     private String nickname;

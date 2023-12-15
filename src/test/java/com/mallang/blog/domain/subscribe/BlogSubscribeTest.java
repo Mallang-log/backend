@@ -1,5 +1,6 @@
 package com.mallang.blog.domain.subscribe;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.willThrow;
@@ -66,6 +67,19 @@ class BlogSubscribeTest {
             assertDoesNotThrow(() -> {
                 blogSubscribe.subscribe(blogSubscribeValidator);
             });
+        }
+
+        @Test
+        void 구독_이벤트_발행() {
+            // given
+            BlogSubscribe blogSubscribe = new BlogSubscribe(other, mallangBlog);
+
+            // when
+            blogSubscribe.subscribe(blogSubscribeValidator);
+
+            // then
+            assertThat(blogSubscribe.domainEvents())
+                    .containsExactly(new BlogSubscribedEvent(blogSubscribe));
         }
     }
 }
