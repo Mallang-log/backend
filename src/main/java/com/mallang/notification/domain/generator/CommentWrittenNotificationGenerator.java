@@ -55,11 +55,11 @@ public class CommentWrittenNotificationGenerator implements NotificationGenerato
         if (post.isWriter(parentWriter) && post.isWriter(replyWriter)) {
             return list;
         }
-        if (post.isWriter(parentWriter) && !post.isWriter(replyWriter)) {
+        if (post.isWriter(parentWriter)) {
             list.add(CommentWrittenNotification.replyOf(postWriter, post, parent, reply));
             return list;
         }
-        if (!post.isWriter(parentWriter) && post.isWriter(replyWriter)) {
+        if (post.isWriter(replyWriter)) {
             if (parent instanceof AuthComment authParent) {
                 list.add(CommentWrittenNotification.replyOf(authParent.getWriter(), post, parent, reply));
             }

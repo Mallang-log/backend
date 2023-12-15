@@ -119,8 +119,7 @@ public class CommentWrittenNotification extends Notification {
     private static String getWriterName(Comment comment) {
         return switch (comment) {
             case AuthComment authComment -> authComment.getWriter().getNickname();
-            case UnAuthComment unAuthComment -> unAuthComment.getNickname();
-            default -> throw new IllegalStateException("Unexpected value: " + comment);
+            default -> ((UnAuthComment) comment).getNickname();
         };
     }
 
