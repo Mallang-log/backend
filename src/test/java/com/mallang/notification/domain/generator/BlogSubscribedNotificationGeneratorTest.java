@@ -2,7 +2,7 @@ package com.mallang.notification.domain.generator;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
-import static com.mallang.blog.domain.BlogFixture.mallangBlog;
+import static com.mallang.blog.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;

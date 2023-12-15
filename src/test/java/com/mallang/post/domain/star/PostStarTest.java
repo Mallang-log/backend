@@ -2,7 +2,7 @@ package com.mallang.post.domain.star;
 
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
-import static com.mallang.blog.domain.BlogFixture.mallangBlog;
+import static com.mallang.blog.BlogFixture.mallangBlog;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;

@@ -1,6 +1,7 @@
-package com.mallang.blog.domain;
+package com.mallang.blog;
 
 import com.mallang.auth.domain.Member;
+import com.mallang.blog.domain.Blog;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class BlogFixture {

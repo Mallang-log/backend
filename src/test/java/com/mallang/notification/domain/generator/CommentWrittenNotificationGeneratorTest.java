@@ -3,7 +3,7 @@ package com.mallang.notification.domain.generator;
 import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
 import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
 import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
-import static com.mallang.blog.domain.BlogFixture.mallangBlog;
+import static com.mallang.blog.BlogFixture.mallangBlog;
 import static com.mallang.comment.CommentFixture.authComment;
 import static com.mallang.comment.CommentFixture.unAuthComment;
 import static com.mallang.post.PostFixture.publicPost;
