@@ -40,7 +40,6 @@ import com.mallang.comment.query.response.UnAuthCommentResponse;
 import com.mallang.comment.query.response.UnAuthCommentResponse.WriterResponse;
 import com.mallang.post.presentation.request.UpdatePostRequest;
 import java.util.List;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -64,7 +63,6 @@ class CommentAcceptanceTest extends AcceptanceTest {
     private WriteAuthCommentRequest 인증_댓글_작성_요청;
     private UpdatePostRequest 공개_포스트를_비공개로_바꾸는_요청;
 
-    @SneakyThrows
     @BeforeEach
     protected void setUp() {
         super.setUp();
