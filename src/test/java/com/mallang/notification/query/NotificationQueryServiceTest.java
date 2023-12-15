@@ -42,7 +42,7 @@ class NotificationQueryServiceTest {
                 pageRequest,
                 50
         );
-        given(notificationQueryRepository.findAllByTargetMemberIdOrderByCreatedDateDesc(1L, pageRequest))
+        given(notificationQueryRepository.findAllByTargetMemberId(1L, pageRequest))
                 .willReturn(result);
         given(composite.mapToResponse(notification))
                 .willReturn(new BlogSubscribedNotificationListResponse(

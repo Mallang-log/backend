@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationQueryRepository extends JpaRepository<Notification, Long> {
 
-    Page<Notification> findAllByTargetMemberIdOrderByCreatedDateDesc(Long memberId, Pageable pageable);
+    Page<Notification> findAllByTargetMemberId(Long memberId, Pageable pageable);
 }

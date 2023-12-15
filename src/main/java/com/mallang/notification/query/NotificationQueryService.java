@@ -20,7 +20,7 @@ public class NotificationQueryService {
 
     public Page<NotificationListResponse> findAllByMemberId(Long memberId, Pageable pageable) {
         Page<Notification> result =
-                notificationQueryRepository.findAllByTargetMemberIdOrderByCreatedDateDesc(memberId, pageable);
+                notificationQueryRepository.findAllByTargetMemberId(memberId, pageable);
         return result.map(mapper::mapToResponse);
     }
 }

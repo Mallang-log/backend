@@ -2,6 +2,7 @@ package com.mallang.notification.query.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import com.mallang.blog.query.repository.SubscriberDao;
 import com.mallang.blog.query.repository.SubscriberDao.SubscriberDaoImpl;
@@ -32,6 +33,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @DisplayName("알림 조회 Repository (NotificationQueryRepository) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -109,7 +111,7 @@ class NotificationQueryRepositoryTest {
 
         // when
         Page<Notification> response = notificationQueryRepository
-                .findAllByTargetMemberIdOrderByCreatedDateDesc(1L, PageRequest.of(0, 3));
+                .findAllByTargetMemberId(1L, PageRequest.of(0, 3, Sort.by(DESC, "createdDate")));
 
         // then
         assertThat(response.getTotalPages()).isEqualTo(2);
