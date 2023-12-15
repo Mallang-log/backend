@@ -1,74 +1,94 @@
 package com.mallang.blog.query;
 
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
+import static com.mallang.blog.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
-import com.mallang.blog.application.command.BlogSubscribeCommand;
+import com.mallang.auth.domain.Member;
+import com.mallang.blog.domain.Blog;
+import com.mallang.blog.domain.subscribe.BlogSubscribe;
+import com.mallang.blog.query.repository.BlogSubscribeQueryRepository;
 import com.mallang.blog.query.response.SubscriberResponse;
 import com.mallang.blog.query.response.SubscribingBlogResponse;
-import com.mallang.common.ServiceTest;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DisplayName("블로그 구독 조회 서비스 (BlogSubscribeQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class BlogSubscribeQueryServiceTest extends ServiceTest {
+class BlogSubscribeQueryServiceTest {
 
-    private Long 주인_ID;
-    private String 주인_블로그_이름;
-    private Long 구독자1_ID;
-    private Long 다른블로그주인_ID;
-    private String 다른_블로그_이름;
+    private final BlogSubscribeQueryRepository blogSubscribeQueryRepository = mock(BlogSubscribeQueryRepository.class);
+    private final BlogSubscribeQueryService blogSubscribeQueryService = new BlogSubscribeQueryService(
+            blogSubscribeQueryRepository
+    );
 
-    @BeforeEach
-    void setUp() {
-        주인_ID = 회원을_저장한다("주인");
-        주인_블로그_이름 = 블로그_개설(주인_ID, "owner-blog");
-        구독자1_ID = 회원을_저장한다("구독자1");
-        다른블로그주인_ID = 회원을_저장한다("다른블로그주인");
-        다른_블로그_이름 = 블로그_개설(다른블로그주인_ID, "other-blog");
-    }
+    private final Pageable pageable = PageRequest.of(0, 10);
+    private final Member mallang = 깃허브_말랑();
+    private final Blog blog = mallangBlog(mallang);
 
     @Test
     void 특정_회원을_구독중인_구독자_모두_조회() {
         // given
-        Long 구독자2_ID = 회원을_저장한다("구독자2");
-        Long 구독자3_ID = 회원을_저장한다("구독자3");
-        Long 다른블로그구독자1_ID = 회원을_저장한다("다른블로그구독자1");
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_이름));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자2_ID, 주인_블로그_이름));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자3_ID, 주인_블로그_이름));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(다른블로그구독자1_ID, 다른_블로그_이름));
+        Member 구독자2 = 깃허브_회원("구독자2");
+        Member 구독자1 = 깃허브_회원("구독자1");
+        PageImpl<BlogSubscribe> result = new PageImpl<>(
+                List.of(
+                        new BlogSubscribe(구독자2, blog),
+                        new BlogSubscribe(구독자1, blog)
+                ),
+                pageable,
+                2
+        );
+        given(blogSubscribeQueryRepository.findSubscribers("mallang-blog", pageable))
+                .willReturn(result);
 
         // when
-        List<SubscriberResponse> result = blogSubscribeQueryService.findSubscribers(주인_블로그_이름, pageable)
+        List<SubscriberResponse> responses = blogSubscribeQueryService.findSubscribers("mallang-blog", pageable)
                 .getContent();
 
         // then
-        assertThat(result).hasSize(3);
-        assertThat(result)
+        assertThat(responses)
+                .hasSize(2)
                 .extracting(SubscriberResponse::subscriberNickname)
-                .containsExactly("구독자3", "구독자2", "구독자1");
+                .containsExactly("구독자2", "구독자1");
     }
 
     @Test
     void 특정_회원이_구독중인_블로그_모두_조회() {
         // given
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 주인_블로그_이름));
-        blogSubscribeService.subscribe(new BlogSubscribeCommand(구독자1_ID, 다른_블로그_이름));
+        Member other1 = 깃허브_회원("other1");
+        Member other2 = 깃허브_회원("other2");
+        Blog blog1 = new Blog("other1-blog", other1);
+        Blog blog2 = new Blog("other2-blog", other2);
+        PageImpl<BlogSubscribe> result = new PageImpl<>(
+                List.of(
+                        new BlogSubscribe(mallang, blog2),
+                        new BlogSubscribe(mallang, blog1)
+                ),
+                pageable,
+                2
+        );
+        given(blogSubscribeQueryRepository.findSubscribingBlogs(mallang.getId(), pageable))
+                .willReturn(result);
 
         // when
-        List<SubscribingBlogResponse> result = blogSubscribeQueryService.findSubscribingBlogs(구독자1_ID, pageable)
-                .getContent();
+        List<SubscribingBlogResponse> responses =
+                blogSubscribeQueryService.findSubscribingBlogs(mallang.getId(), pageable).getContent();
 
         // then
-        assertThat(result)
+        assertThat(responses)
                 .hasSize(2)
                 .extracting(SubscribingBlogResponse::blogName)
-                .containsExactly("other-blog", "owner-blog");
+                .containsExactly("other2-blog", "other1-blog");
     }
 }
