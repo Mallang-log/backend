@@ -4,7 +4,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static jakarta.persistence.InheritanceType.JOINED;
 import static lombok.AccessLevel.PROTECTED;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.common.domain.CommonRootEntity;
+import com.mallang.notification.exception.NoAuthorityNotificationException;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,5 +36,11 @@ public abstract class Notification extends CommonRootEntity<Long> {
 
     public void read() {
         this.read = true;
+    }
+
+    public void validateMember(Member member) {
+        if (!member.getId().equals(targetMemberId)) {
+            throw new NoAuthorityNotificationException();
+        }
     }
 }
