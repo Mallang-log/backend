@@ -1,64 +1,26 @@
 package com.mallang.notification.query.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
-import com.mallang.blog.query.repository.SubscriberDao;
-import com.mallang.blog.query.repository.SubscriberDao.SubscriberDaoImpl;
-import com.mallang.blog.query.repository.SubscribingBlogDao.SubscribingBlogDaoImpl;
-import com.mallang.common.config.JpaConfig;
-import com.mallang.common.config.QueryDslConfig;
+import com.mallang.common.RepositoryTest;
 import com.mallang.notification.domain.Notification;
 import com.mallang.notification.domain.NotificationRepository;
 import com.mallang.notification.domain.type.BlogSubscribedNotification;
 import com.mallang.notification.domain.type.CommentWrittenNotification;
 import com.mallang.notification.domain.type.CommentWrittenNotification.Type;
 import com.mallang.post.domain.PostId;
-import com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchDaoImpl;
-import com.mallang.post.query.repository.PostSearchDao.PostSearchDaoImpl;
-import com.mallang.post.query.repository.StaredPostDao.StaredPostDaoImpl;
-import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoImpl;
-import com.mallang.statistics.api.query.repository.BlogVisitStatisticManageDao.BlogVisitStatisticManageDaoImpl;
-import com.mallang.statistics.api.query.repository.BlogVisitStatisticSimpleDao.BlogVisitStatisticSimpleDaoImpl;
-import com.mallang.statistics.api.query.repository.PostViewStatisticDao.PostViewStatisticDaoImpl;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @DisplayName("알림 조회 Repository (NotificationQueryRepository) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@DataJpaTest(
-        includeFilters = {
-                @Filter(type = ASSIGNABLE_TYPE, classes = {
-                        // TODO polishing
-                        JpaConfig.class,
-                        QueryDslConfig.class,
-                        JPAQueryFactory.class,
-                        SubscriberDao.SubscriberDaoImpl.class,
-                        BlogVisitStatisticManageDaoImpl.class,
-                        BlogVisitStatisticManageDaoImpl.class,
-                        PostSearchDaoImpl.class,
-                        BlogVisitStatisticSimpleDaoImpl.class,
-                        PostManageSearchDaoImpl.class,
-                        PostViewStatisticDaoImpl.class,
-                        ReferenceLinkSearchDaoImpl.class,
-                        StaredPostDaoImpl.class,
-                        SubscriberDaoImpl.class,
-                        SubscribingBlogDaoImpl.class
-                })
-        }
-)
+@RepositoryTest
 class NotificationQueryRepositoryTest {
 
     @Autowired
