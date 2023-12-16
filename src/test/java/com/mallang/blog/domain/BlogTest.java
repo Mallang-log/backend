@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 
 import com.mallang.auth.domain.Member;
+import com.mallang.blog.exception.BlogNameException;
 import com.mallang.blog.exception.DuplicateBlogNameException;
 import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.blog.exception.TooManyBlogsException;
@@ -31,6 +32,17 @@ class BlogTest {
 
     @Nested
     class 개설_시 {
+
+        @Test
+        void 블로그_이름에_문제가_있으면_예외() {
+            // given
+            String blogName = "aaa";
+
+            // when & then
+            assertThatThrownBy(() -> {
+                new Blog(blogName, owner);
+            }).isInstanceOf(BlogNameException.class);
+        }
 
         @Test
         void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예외() {

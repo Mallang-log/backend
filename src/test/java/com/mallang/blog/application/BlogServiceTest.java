@@ -1,10 +1,21 @@
 package com.mallang.blog.application;
 
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.blog.BlogFixture.mallangBlog;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.application.command.OpenBlogCommand;
+import com.mallang.blog.domain.Blog;
+import com.mallang.blog.domain.BlogName;
+import com.mallang.blog.domain.BlogRepository;
+import com.mallang.blog.domain.BlogValidator;
 import com.mallang.blog.exception.BlogNameException;
 import com.mallang.blog.exception.DuplicateBlogNameException;
 import com.mallang.blog.exception.TooManyBlogsException;
@@ -15,125 +26,85 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("블로그 서비스 (BlogService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class BlogServiceTest extends ServiceTest {
 
-    private Long 말랑_ID;
+    private final BlogRepository blogRepository = mock(BlogRepository.class);
+    private final MemberRepository memberRepository = mock(MemberRepository.class);
+    private final BlogValidator blogValidator = mock(BlogValidator.class);
+    private final BlogService blogService = new BlogService(
+            blogRepository,
+            memberRepository,
+            blogValidator
+    );
+
+    private final Long 말랑_ID = 1L;
+    private final Member member = 깃허브_말랑(말랑_ID);
+    private final Blog blog = mallangBlog(2L, member);
 
     @Nested
     class 개설_시 {
 
         @BeforeEach
         void setUp() {
-            말랑_ID = 회원을_저장한다("말랑");
-        }
-
-        @Test
-        void 문제_없는경우_개설된다() {
-            // when
-            Long 말랑블로그_ID = blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog"));
-
-            // then
-            assertThat(말랑블로그_ID).isNotNull();
+            given(memberRepository.getById(말랑_ID))
+                    .willReturn(member);
         }
 
         @Test
         void 블로그를_생성하려는_회원이_이미_다른_블로그를_가지고_있으면_예외() {
             // given
-            blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog"));
+            var command = new OpenBlogCommand(말랑_ID, "mallang-blog");
+            willThrow(TooManyBlogsException.class)
+                    .given(blogValidator)
+                    .validateOpen(member.getId(), new BlogName("mallang-blog"));
 
             // when & then
             assertThatThrownBy(() -> {
-                blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog2"));
+                blogService.open(command);
             }).isInstanceOf(TooManyBlogsException.class);
         }
 
         @Test
         void 중복된_이름을_가진_다른_블로그가_존재하면_예외() {
             // given
-            Long 안말랑_ID = 회원을_저장한다("안말랑");
-            blogService.open(new OpenBlogCommand(말랑_ID, "mallangblog"));
+            var command = new OpenBlogCommand(말랑_ID, "mallang-blog");
+            willThrow(DuplicateBlogNameException.class)
+                    .given(blogValidator)
+                    .validateOpen(member.getId(), new BlogName("mallang-blog"));
 
             // when & then
             assertThatThrownBy(() -> {
-                blogService.open(new OpenBlogCommand(안말랑_ID, "mallangblog"));
+                blogService.open(command);
             }).isInstanceOf(DuplicateBlogNameException.class);
         }
 
-        @ParameterizedTest
-        @ValueSource(strings = {
-                "aaaa",
-                "01234567890123456789012345678901"
-        })
-        void 블로그_이름은_최소_4자_최대_32자_이내여야_한다(String name) {
-            // when & then
-            assertDoesNotThrow(() -> {
-                blogService.open(new OpenBlogCommand(말랑_ID, name));
-            });
-        }
+        @Test
+        void 블로그_이름이_규칙에_맞지_않으면_예외() {
+            // given
+            var invalidName = "invalid--name";
 
-        @ParameterizedTest
-        @ValueSource(strings = {
-                "aaa",
-                "012345678901234567890123456789012"
-        })
-        void 블로그_이름이_4자_미만이거나_32자_초과이면_예외(String name) {
             // when & then
             assertThatThrownBy(() ->
-                    blogService.open(new OpenBlogCommand(말랑_ID, name))
+                    blogService.open(new OpenBlogCommand(말랑_ID, invalidName))
             ).isInstanceOf(BlogNameException.class);
         }
 
-        @ParameterizedTest
-        @ValueSource(strings = {
-                "correct-domain-name-1234",
-                "2-it-is-also-right-domain-1"
-        })
-        void 블로그_이름은_영문_소문자_숫자_하이픈으로만_구성되어야_한다(String name) {
-            // when & then
-            assertDoesNotThrow(() -> {
-                blogService.open(new OpenBlogCommand(말랑_ID, name));
-            });
-        }
+        @Test
+        void 문제_없는경우_개설된다() {
+            // given
+            given(blogRepository.save(any()))
+                    .willReturn(blog);
+            var command = new OpenBlogCommand(말랑_ID, "mallang-blog");
 
-        @ParameterizedTest
-        @ValueSource(strings = {
-                "wrong-이름",
-                "it-is-wrong-👍"
-        })
-        void 블로그_이름에_영문_대문자_한글_이모지_언더바_등이_들어오면_예외(String name) {
-            // when & then
-            assertThatThrownBy(() ->
-                    blogService.open(new OpenBlogCommand(말랑_ID, name))
-            ).isInstanceOf(BlogNameException.class);
-        }
+            // when
+            Long id = blogService.open(command);
 
-        @ParameterizedTest
-        @ValueSource(strings = {
-                "wrong--이름",
-        })
-        void 블로그_이름에_하이폰은_연속해서_사용할_수_없다(String name) {
-            // when & then
-            assertThatThrownBy(() ->
-                    blogService.open(new OpenBlogCommand(말랑_ID, name))
-            ).isInstanceOf(BlogNameException.class);
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {
-                "-wrong-이름",
-                "wrong-이름-",
-        })
-        void 블로그_이름은_하이폰으로_시작하거나_끝나서는_안된다(String name) {
-            // when & then
-            assertThatThrownBy(() ->
-                    blogService.open(new OpenBlogCommand(말랑_ID, name))
-            ).isInstanceOf(BlogNameException.class);
+            // then
+            assertThat(id).isNotNull();
         }
     }
 }
