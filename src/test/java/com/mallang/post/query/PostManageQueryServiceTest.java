@@ -1,23 +1,32 @@
 package com.mallang.post.query;
 
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.blog.BlogFixture.mallangBlog;
+import static com.mallang.post.PostFixture.privatePost;
+import static com.mallang.post.PostFixture.protectedPost;
+import static com.mallang.post.PostFixture.publicPost;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.query.repository.MemberQueryRepository;
+import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NoAuthorityBlogException;
-import com.mallang.common.ServiceTest;
-import com.mallang.post.application.command.CreatePostCategoryCommand;
-import com.mallang.post.application.command.CreatePostCommand;
-import com.mallang.post.domain.PostId;
+import com.mallang.blog.query.repository.BlogQueryRepository;
+import com.mallang.post.domain.Post;
 import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchCond;
+import com.mallang.post.query.repository.PostQueryRepository;
 import com.mallang.post.query.response.PostManageDetailResponse;
 import com.mallang.post.query.response.PostManageDetailResponse.CategoryResponse;
 import com.mallang.post.query.response.PostManageDetailResponse.TagResponses;
 import com.mallang.post.query.response.PostManageSearchResponse;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -25,55 +34,69 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DisplayName("포스트 관리용 조회 서비스 (PostManageQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class PostManageQueryServiceTest extends ServiceTest {
+class PostManageQueryServiceTest {
 
-    private Long mallangId;
-    private Long donghunId;
-    private String mallangBlogName;
+    private final BlogQueryRepository blogQueryRepository = mock(BlogQueryRepository.class);
+    private final PostQueryRepository postQueryRepository = mock(PostQueryRepository.class);
+    private final MemberQueryRepository memberQueryRepository = mock(MemberQueryRepository.class);
+    private final PostManageQueryService postManageQueryService = new PostManageQueryService(
+            blogQueryRepository,
+            postQueryRepository,
+            memberQueryRepository
+    );
+
+    private final Member member = 깃허브_말랑(1L);
+    private final Member other = 깃허브_동훈(2L);
+    private final Blog blog = mallangBlog(member);
 
     @BeforeEach
     void setUp() {
-        mallangId = 회원을_저장한다("말랑");
-        donghunId = 회원을_저장한다("동훈");
-        mallangBlogName = 블로그_개설(mallangId, "mallang-log");
+        given(memberQueryRepository.getById(member.getId())).willReturn(member);
+        given(memberQueryRepository.getById(other.getId())).willReturn(other);
+        given(blogQueryRepository.getByName(blog.getName())).willReturn(blog);
     }
 
     @Nested
     class 포스트_단일_조회_시 {
 
         @Test
-        void 보호_글의_경우_모든_정보를_보여준다() {
+        void 포스트_작성자가_아니라면_예외() {
             // given
-            var 말랑_protected_포스트_작성_요청 = new CreatePostCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "mallang-protected",
-                    "mallang-protected", "mallang-protected",
-                    null,
-                    PROTECTED,
-                    "1234",
-                    null,
-                    Collections.emptyList()
-            );
-            PostId postId = postService.create(말랑_protected_포스트_작성_요청);
+            Post post = publicPost(1L, blog);
+            given(postQueryRepository.getById(post.getId().getPostId(), blog.getName())).willReturn(post);
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postManageQueryService.getById(other.getId(), post.getId().getPostId(), blog.getName())
+            ).isInstanceOf(NoAuthorityPostException.class);
+        }
+
+        @Test
+        void 포스트의_모든_정보를_조회한다() {
+            // given
+            Post post = protectedPost(1L, blog, "1234");
+            given(postQueryRepository.getById(post.getId().getPostId(), blog.getName())).willReturn(post);
 
             // when
             PostManageDetailResponse response =
-                    postManageQueryService.getById(mallangId, postId.getPostId(), mallangBlogName);
+                    postManageQueryService.getById(member.getId(), post.getId().getPostId(), blog.getName());
 
             // then
             assertThat(response).usingRecursiveComparison()
                     .ignoringFields("createdDate")
                     .isEqualTo(new PostManageDetailResponse(
-                            postId.getPostId(),
-                            "mallang-protected",
-                            "mallang-protected",
-                            "mallang-protected",
-                            null,
+                            post.getId().getPostId(),
+                            "title",
+                            "intro",
+                            "content",
+                            "image",
                             PROTECTED,
                             "1234",
                             null,
@@ -81,208 +104,12 @@ class PostManageQueryServiceTest extends ServiceTest {
                             new TagResponses(Collections.emptyList()))
                     );
         }
-
-        @Test
-        void 비밀_글도_조회_가능하다() {
-            // given
-            var 말랑_private_포스트_작성_요청 = new CreatePostCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "mallang-private",
-                    "mallang-private", "mallang-private",
-                    null,
-                    PRIVATE,
-                    null,
-                    null,
-                    Collections.emptyList()
-            );
-            PostId postId = postService.create(말랑_private_포스트_작성_요청);
-
-            // when
-            PostManageDetailResponse response =
-                    postManageQueryService.getById(mallangId, postId.getPostId(), mallangBlogName);
-
-            // then
-            assertThat(response).isNotNull();
-        }
-
-        @Test
-        void 포스트_작성자가_아니라면_예외() {
-            // given
-            var 말랑_public_포스트_작성_요청 = new CreatePostCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "mallang-public",
-                    "mallang-public", "mallang-public",
-                    null,
-                    PUBLIC,
-                    null,
-                    null,
-                    Collections.emptyList()
-            );
-            PostId postId = postService.create(말랑_public_포스트_작성_요청);
-
-            // when & then
-            assertThatThrownBy(() ->
-                    postManageQueryService.getById(donghunId, postId.getPostId(), mallangBlogName)
-            ).isInstanceOf(NoAuthorityPostException.class);
-        }
     }
 
     @Nested
     class 포스트_검색_시 {
 
-        private CreatePostCommand 말랑_public_포스트_작성_요청;
-        private CreatePostCommand 말랑_protected_포스트_작성_요청;
-        private CreatePostCommand 말랑_private_포스트_작성_요청;
-        private Long 스프링_카테고리_ID;
-
-        @BeforeEach
-        void setUp() {
-            스프링_카테고리_ID = postCategoryService.create(
-                    new CreatePostCategoryCommand(mallangId, mallangBlogName, "스프링", null, null, null)
-            );
-            말랑_public_포스트_작성_요청 = new CreatePostCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "mallang-public",
-                    "mallang-public", "mallang-public",
-                    null,
-                    PUBLIC,
-                    null,
-                    null,
-                    Collections.emptyList()
-            );
-            말랑_protected_포스트_작성_요청 = new CreatePostCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "mallang-protected",
-                    "mallang-protected", "mallang-protected",
-                    null,
-                    PROTECTED,
-                    "1234",
-                    스프링_카테고리_ID,
-                    Collections.emptyList()
-            );
-            말랑_private_포스트_작성_요청 = new CreatePostCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "mallang-private",
-                    "mallang-private", "mallang-private",
-                    null,
-                    PRIVATE,
-                    null,
-                    null,
-                    Collections.emptyList()
-            );
-            postService.create(말랑_public_포스트_작성_요청);
-            postService.create(말랑_protected_포스트_작성_요청);
-            postService.create(말랑_private_포스트_작성_요청);
-        }
-
-        @Test
-        void 아무_조건이_없으면_모두_조회된다() {
-            // given
-            PostManageSearchCond cond = new PostManageSearchCond(null, null, null, null);
-
-            // when
-            Page<PostManageSearchResponse> responses = postManageQueryService.search(
-                    mallangId,
-                    mallangBlogName,
-                    cond,
-                    pageable
-            );
-
-            // then
-            assertThat(responses).hasSize(3);
-        }
-
-        @Test
-        void 제목으로_검색한다() {
-            // given
-            PostManageSearchCond cond = new PostManageSearchCond("protect", null, null, null);
-
-            // when
-            Page<PostManageSearchResponse> responses = postManageQueryService.search(
-                    mallangId,
-                    mallangBlogName,
-                    cond,
-                    pageable
-            );
-
-            // then
-            assertThat(responses).hasSize(1);
-        }
-
-        @Test
-        void 내용으로_검색한다() {
-            // given
-            PostManageSearchCond cond = new PostManageSearchCond(null, "pri", null, null);
-
-            // when
-            Page<PostManageSearchResponse> responses = postManageQueryService.search(
-                    mallangId,
-                    mallangBlogName,
-                    cond,
-                    pageable
-            );
-
-            // then
-            assertThat(responses).hasSize(1);
-        }
-
-        @Test
-        void 카테고리로_검색한다() {
-            // given
-            PostManageSearchCond cond = new PostManageSearchCond(null, null, 스프링_카테고리_ID, null);
-
-            // when
-            Page<PostManageSearchResponse> responses = postManageQueryService.search(
-                    mallangId,
-                    mallangBlogName,
-                    cond,
-                    pageable
-            );
-
-            // then
-            assertThat(responses).hasSize(1);
-        }
-
-        @Test
-        void 공개범위로_검색한다() {
-            // given
-            PostManageSearchCond cond = new PostManageSearchCond(null, null, null, PRIVATE);
-
-            // when
-            Page<PostManageSearchResponse> responses = postManageQueryService.search(
-                    mallangId,
-                    mallangBlogName,
-                    cond,
-                    pageable
-            );
-
-            // then
-            assertThat(responses).hasSize(1);
-        }
-
-        @Test
-        void 보호_글의_경우_비밀번호가_보인다() {
-            // given
-            PostManageSearchCond cond = new PostManageSearchCond(null, null, null, null);
-
-            // when
-            Page<PostManageSearchResponse> responses = postManageQueryService.search(
-                    mallangId,
-                    mallangBlogName,
-                    cond,
-                    pageable
-            );
-
-            // then
-            PostManageSearchResponse postManageSearchResponse = responses.getContent().get(1);
-            assertThat(postManageSearchResponse.password()).isEqualTo("1234");
-        }
-
+        private final Pageable pageable = PageRequest.of(0, 10);
 
         @Test
         void 블로그_주인이_아니면_예외() {
@@ -292,12 +119,38 @@ class PostManageQueryServiceTest extends ServiceTest {
             // when & then
             assertThatThrownBy(() ->
                     postManageQueryService.search(
-                            donghunId,
-                            mallangBlogName,
+                            other.getId(),
+                            blog.getName(),
                             cond,
                             pageable
                     )
             ).isInstanceOf(NoAuthorityBlogException.class);
+        }
+
+        @Test
+        void 포스트들을_조건에_맞게_조회한다() {
+            // given
+            Post post1 = protectedPost(1L, blog, "1234");
+            Post post2 = privatePost(2L, blog);
+            PageImpl<Post> result = new PageImpl<>(
+                    List.of(post1, post2),
+                    pageable,
+                    2
+            );
+            PostManageSearchCond cond = new PostManageSearchCond(null, null, null, null);
+            given(postQueryRepository.searchForManage(blog, cond, pageable))
+                    .willReturn(result);
+
+            // when
+            Page<PostManageSearchResponse> responses = postManageQueryService.search(
+                    member.getId(),
+                    blog.getName(),
+                    cond,
+                    pageable
+            );
+
+            // then
+            assertThat(responses).hasSize(2);
         }
     }
 }
