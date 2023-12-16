@@ -1,21 +1,39 @@
 package com.mallang.post.application;
 
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.auth.OauthMemberFixture.깃허브_회원;
+import static com.mallang.blog.BlogFixture.mallangBlog;
+import static com.mallang.post.PostFixture.privatePost;
+import static com.mallang.post.PostFixture.publicPost;
+import static com.mallang.post.StarGroupFixture.starGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.domain.MemberRepository;
+import com.mallang.blog.domain.Blog;
 import com.mallang.category.CategoryHierarchyViolationException;
 import com.mallang.category.ChildCategoryExistException;
 import com.mallang.category.DuplicateCategoryNameException;
-import com.mallang.common.ServiceTest;
 import com.mallang.post.application.command.CreateStarGroupCommand;
 import com.mallang.post.application.command.DeleteStarGroupCommand;
-import com.mallang.post.application.command.StarPostCommand;
 import com.mallang.post.application.command.UpdateStarGroupHierarchyCommand;
 import com.mallang.post.application.command.UpdateStarGroupNameCommand;
+import com.mallang.post.domain.Post;
 import com.mallang.post.domain.star.PostStar;
+import com.mallang.post.domain.star.PostStarRepository;
 import com.mallang.post.domain.star.StarGroup;
+import com.mallang.post.domain.star.StarGroupRepository;
+import com.mallang.post.domain.star.StarGroupValidator;
 import com.mallang.post.exception.NoAuthorityStarGroupException;
-import com.mallang.post.exception.NotFoundStarGroupException;
+import com.mallang.post.exception.NotFoundPostCategoryException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -26,26 +44,39 @@ import org.junit.jupiter.api.Test;
 @DisplayName("즐겨찾기 그룹 서비스 (StarGroupService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class StarGroupServiceTest extends ServiceTest {
+class StarGroupServiceTest {
 
-    private Long mallangId;
-    private Long otherMemberId;
+    private final MemberRepository memberRepository = mock(MemberRepository.class);
+    private final PostStarRepository postStarRepository = mock(PostStarRepository.class);
+    private final StarGroupRepository starGroupRepository = mock(StarGroupRepository.class);
+    private final StarGroupValidator starGroupValidator = mock(StarGroupValidator.class);
+    private final StarGroupService starGroupService = new StarGroupService(
+            memberRepository,
+            postStarRepository,
+            starGroupRepository,
+            starGroupValidator
+    );
+
+    private final Member mallang = 깃허브_말랑(1L);
+    private final Member other = 깃허브_회원(2L, "other");
 
     @BeforeEach
     void setUp() {
-        mallangId = 회원을_저장한다("mallang");
-        otherMemberId = 회원을_저장한다("동훈");
+        given(memberRepository.getById(mallang.getId())).willReturn(mallang);
+        given(memberRepository.getById(other.getId())).willReturn(other);
+        given(starGroupRepository.getByIdIfIdNotNull(null)).willReturn(null);
+        given(starGroupRepository.save(any())).willReturn(mock(StarGroup.class));
     }
 
     @Nested
     class 생성_시 {
 
         @Test
-        void 최상위_그룹으로_생성될_수_있다() {
+        void 그룹을_저장한다() {
             // given
             var command = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
+                    mallang.getId(),
+                    "최상위 그룹",
                     null,
                     null,
                     null
@@ -55,199 +86,213 @@ class StarGroupServiceTest extends ServiceTest {
             Long id = starGroupService.create(command);
 
             // then
-            assertThat(id).isNotNull();
+            then(starGroupRepository)
+                    .should(times(1))
+                    .save(any());
         }
 
         @Test
-        void 하위_그룹으로_생성될_수_있다() {
+        void 이미_그룹이_존재하는데_이와의_관계를_명시하지_않으면_예외() {
             // given
-            var createRootCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
+            willThrow(CategoryHierarchyViolationException.class)
+                    .given(starGroupValidator)
+                    .validateNoCategories(any());
+            var command = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "최상위 카테고리",
                     null,
                     null,
                     null
-            );
-            Long rootId = starGroupService.create(createRootCommand);
-            var createChildCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "JPA",
-                    rootId,
-                    null,
-                    null
-            );
-
-            // when
-            Long id = starGroupService.create(createChildCommand);
-
-            // then
-            StarGroup child = starGroupRepository.getById(id);
-            assertThat(child.getParent().getId())
-                    .isEqualTo(rootId);
-        }
-
-        @Test
-        void 이전_형제와_다음_형제들을_지정할_수_있다() {
-            // given
-            var createRootCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
-                    null,
-                    null,
-                    null
-            );
-            Long rootId = starGroupService.create(createRootCommand);
-            var createNextRootCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Node",
-                    null,
-                    rootId,
-                    null
-            );
-
-            // when
-            Long nextId = starGroupService.create(createNextRootCommand);
-
-            // then
-            transactionHelper.doAssert(() -> {
-                StarGroup next = starGroupRepository.getById(nextId);
-                StarGroup prev = starGroupRepository.getById(rootId);
-                assertThat(next.getPreviousSibling())
-                        .isEqualTo(prev);
-                assertThat(prev.getNextSibling())
-                        .isEqualTo(next);
-            });
-        }
-
-        @Test
-        void 없는_부모나_형제_그룹으로_생성하려는_경우_예외() {
-            // given
-            var invalidParentCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
-                    100L,
-                    null,
-                    null
-            );
-            var invalidPrevCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
-                    null,
-                    100L,
-                    null
-            );
-            var invalidNextCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
-                    null,
-                    null,
-                    100L
             );
 
             // when & then
             assertThatThrownBy(() -> {
-                starGroupService.create(invalidParentCommand);
-            }).isInstanceOf(NotFoundStarGroupException.class);
-            assertThatThrownBy(() -> {
-                starGroupService.create(invalidPrevCommand);
-            }).isInstanceOf(NotFoundStarGroupException.class);
-            assertThatThrownBy(() -> {
-                starGroupService.create(invalidNextCommand);
-            }).isInstanceOf(NotFoundStarGroupException.class);
+                starGroupService.create(command);
+            }).isInstanceOf(CategoryHierarchyViolationException.class);
         }
 
         @Test
-        void 형제_중_중복된_이름이_있으면_예외() {
+        void 계층형으로_저장할_수_있다() {
             // given
-            var createFirstCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
-                    null,
+            var parent = starGroup(1L, "root", mallang);
+            var prev = starGroup(2L, "prev", mallang);
+            var next = starGroup(3L, "next", mallang);
+            prev.updateHierarchy(parent, null, null);
+            next.updateHierarchy(parent, prev, null);
+            given(starGroupRepository.getByIdIfIdNotNull(parent.getId())).willReturn(parent);
+            given(starGroupRepository.getByIdIfIdNotNull(prev.getId())).willReturn(prev);
+            given(starGroupRepository.getByIdIfIdNotNull(next.getId())).willReturn(next);
+            var command = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "prev 와 next 차이 parent 자식",
+                    parent.getId(),
+                    prev.getId(),
+                    next.getId()
+            );
+
+            // when
+            Long id = starGroupService.create(command);
+
+            // then
+            then(starGroupRepository)
+                    .should(times(1))
+                    .save(any());
+            assertThat(parent.getChildren()).hasSize(3);
+            assertThat(prev.getNextSibling()).isNotEqualTo(next);
+            assertThat(next.getPreviousSibling()).isNotEqualTo(prev);
+            var saved = prev.getNextSibling();
+            assertThat(saved).isEqualTo(next.getPreviousSibling());
+            assertThat(saved.getParent()).isEqualTo(parent);
+        }
+
+        @Test
+        void 없는_부모나_형제_그룹_ID를_설정한_경우_예외() {
+            // given
+            given(starGroupRepository.getByIdIfIdNotNull(100L))
+                    .willThrow(NotFoundPostCategoryException.class);
+            var command1 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "name",
+                    100L,
                     null,
                     null
             );
-            Long firstId = starGroupService.create(createFirstCommand);
-            var createNextCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
+            var command2 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "name",
+                    100L,
                     null,
-                    firstId,
+                    null
+            );
+            var command3 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "name",
+                    100L,
+                    null,
                     null
             );
 
             // when & then
             assertThatThrownBy(() ->
-                    starGroupService.create(createNextCommand)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
+                    starGroupService.create(command1)
+            ).isInstanceOf(NotFoundPostCategoryException.class);
+            assertThatThrownBy(() ->
+                    starGroupService.create(command2)
+            ).isInstanceOf(NotFoundPostCategoryException.class);
+            assertThatThrownBy(() ->
+                    starGroupService.create(command3)
+            ).isInstanceOf(NotFoundPostCategoryException.class);
         }
 
         @Test
         void 다른_사람의_하위_그룹으로_생성되려는_경우_예외() {
             // given
-            var createMallangRootCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
-                    null,
-                    null,
-                    null
-            );
-            Long mallangRootId = starGroupService.create(createMallangRootCommand);
-            var createOtherChildCommand = new CreateStarGroupCommand(
-                    otherMemberId,
-                    "JPA",
-                    mallangRootId,
+            var parent = starGroup(1L, "root", other);
+            given(starGroupRepository.getByIdIfIdNotNull(parent.getId())).willReturn(parent);
+            var command = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "name",
+                    parent.getId(),
                     null,
                     null
             );
 
             // when & then
             assertThatThrownBy(() ->
-                    starGroupService.create(createOtherChildCommand)
+                    starGroupService.create(command)
             ).isInstanceOf(NoAuthorityStarGroupException.class);
         }
 
         @Test
         void 다른_사람의_형제_그룹으로_생성되려는_경우_예외() {
             // given
-            var createMallangRootCommand = new CreateStarGroupCommand(
-                    mallangId,
-                    "Spring",
+            var prev = starGroup(1L, "prev", other);
+            given(starGroupRepository.getByIdIfIdNotNull(prev.getId())).willReturn(prev);
+            var command1 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "name",
                     null,
-                    null,
+                    prev.getId(),
                     null
             );
-            Long mallangRootId = starGroupService.create(createMallangRootCommand);
-            var createOtherSiblingCommand = new CreateStarGroupCommand(
-                    otherMemberId,
-                    "JPA",
+            var command2 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "name",
                     null,
                     null,
-                    mallangRootId
+                    prev.getId()
             );
 
             // when & then
             assertThatThrownBy(() ->
-                    starGroupService.create(createOtherSiblingCommand)
+                    starGroupService.create(command1)
             ).isInstanceOf(NoAuthorityStarGroupException.class);
+            assertThatThrownBy(() ->
+                    starGroupService.create(command2)
+            ).isInstanceOf(NoAuthorityStarGroupException.class);
+        }
+
+        @Test
+        void 형제끼리는_이름이_같을_수_없다() {
+            // given
+            var parent = starGroup(1L, "same name", mallang);
+            given(starGroupRepository.getByIdIfIdNotNull(parent.getId())).willReturn(parent);
+            var command1 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "same name",
+                    null,
+                    parent.getId(),
+                    null
+            );
+            var command2 = new CreateStarGroupCommand(
+                    mallang.getId(),
+                    "same name",
+                    null,
+                    null,
+                    parent.getId()
+            );
+
+            // when & then
+            assertThatThrownBy(() ->
+                    starGroupService.create(command1)
+            ).isInstanceOf(DuplicateCategoryNameException.class);
+            assertThatThrownBy(() ->
+                    starGroupService.create(command2)
+            ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
 
     @Nested
     class 이름_수정_시 {
 
+        private final StarGroup starGroup = starGroup(1L, "spring", mallang);
+
+        @BeforeEach
+        void setUp() {
+            given(starGroupRepository.getById(starGroup.getId())).willReturn(starGroup);
+        }
+
         @Test
-        void 자신의_그룹이라면_수정_가능() {
+        void 다른_사람의_카테고리는_수정할_수_없다() {
             // given
-            Long groupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
             var command = new UpdateStarGroupNameCommand(
-                    groupId,
-                    mallangId,
+                    starGroup.getId(),
+                    other.getId(),
+                    "수정"
+            );
+
+            // when & then
+            assertThatThrownBy(() -> {
+                starGroupService.updateName(command);
+            }).isInstanceOf(NoAuthorityStarGroupException.class);
+        }
+
+        @Test
+        void 자신의_카테고리라면_수정_가능() {
+            // given
+            var command = new UpdateStarGroupNameCommand(
+                    starGroup.getId(),
+                    mallang.getId(),
                     "수정"
             );
 
@@ -255,67 +300,18 @@ class StarGroupServiceTest extends ServiceTest {
             starGroupService.updateName(command);
 
             // then
-            StarGroup group = starGroupRepository.getById(groupId);
-            assertThat(group.getName()).isEqualTo("수정");
+            assertThat(starGroup.getName()).isEqualTo("수정");
         }
 
         @Test
-        void 형제들_중_이름이_중복되면_예외() {
+        void 형제끼리는_이름이_같을_수_없다() {
             // given
-            Long 최상위 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long 자식1 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위1",
-                    최상위,
-                    null,
-                    null
-            ));
-            Long 자식2 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위2",
-                    최상위,
-                    자식1,
-                    null
-            ));
+            StarGroup next = new StarGroup("next", mallang);
+            next.updateHierarchy(null, starGroup, null);
             var command = new UpdateStarGroupNameCommand(
-                    자식2,
-                    mallangId,
-                    "하위1"
-            );
-
-            // when & then
-            assertThatThrownBy(() ->
-                    starGroupService.updateName(command)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
-        }
-
-        @Test
-        void 루트끼리는_이름이_같을_수_없다() {
-            // given
-            Long 최상위 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long 최상위2 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위2",
-                    null,
-                    최상위,
-                    null
-            ));
-            var command = new UpdateStarGroupNameCommand(
-                    최상위2,
-                    mallangId,
-                    "최상위"
+                    starGroup.getId(),
+                    mallang.getId(),
+                    "next"
             );
 
             // when & then
@@ -328,28 +324,31 @@ class StarGroupServiceTest extends ServiceTest {
     @Nested
     class 계층구조_수정_시 {
 
+        private final StarGroup parent = starGroup(1L, "parent", mallang);
+        private final StarGroup prev = starGroup(2L, "prev", mallang);
+        private final StarGroup next = starGroup(3L, "next", mallang);
+
+        @BeforeEach
+        void setUp() {
+            prev.updateHierarchy(parent, null, null);
+            next.updateHierarchy(parent, prev, null);
+            given(starGroupRepository.getById(parent.getId())).willReturn(parent);
+            given(starGroupRepository.getById(prev.getId())).willReturn(prev);
+            given(starGroupRepository.getById(next.getId())).willReturn(next);
+            given(starGroupRepository.getByIdIfIdNotNull(parent.getId())).willReturn(parent);
+            given(starGroupRepository.getByIdIfIdNotNull(prev.getId())).willReturn(prev);
+            given(starGroupRepository.getByIdIfIdNotNull(next.getId())).willReturn(next);
+            given(starGroupRepository.getByIdIfIdNotNull(null)).willReturn(null);
+        }
+
         @Test
-        void 자신의_그룹이라면_수정_가능() {
+        void 자신의_카테고리라면_수정_가능() {
             // given
-            Long rootGroupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long childGroupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    rootGroupId,
-                    null,
-                    null
-            ));
             var command = new UpdateStarGroupHierarchyCommand(
-                    childGroupId,
-                    mallangId,
+                    prev.getId(),
+                    mallang.getId(),
+                    next.getId(),
                     null,
-                    rootGroupId,
                     null
             );
 
@@ -357,161 +356,20 @@ class StarGroupServiceTest extends ServiceTest {
             starGroupService.updateHierarchy(command);
 
             // then
-            StarGroup group = starGroupRepository.getById(childGroupId);
-            assertThat(group.getPreviousSibling().getId()).isEqualTo(rootGroupId);
-            assertThat(group.getNextSibling()).isNull();
+            assertThat(prev.getParent()).isEqualTo(next);
+            assertThat(prev.getNextSibling()).isNull();
+            assertThat(next.getPreviousSibling()).isNull();
+            assertThat(next.getChildren())
+                    .containsExactly(prev);
         }
 
         @Test
-        void 부모_그룹를_제거함으로써_최상위_그룹으로_만들_수_있다() {
+        void 자신의_카테고리가_아니면_예외() {
             // given
-            Long rootGroupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long childGroupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    rootGroupId,
-                    null,
-                    null
-            ));
             var command = new UpdateStarGroupHierarchyCommand(
-                    childGroupId,
-                    mallangId,
-                    null,
-                    rootGroupId,
-                    null
-            );
-
-            // when
-            starGroupService.updateHierarchy(command);
-
-            // then
-            StarGroup group = starGroupRepository.getById(childGroupId);
-            assertThat(group.getName()).isEqualTo("하위");
-            assertThat(group.getParent()).isNull();
-        }
-
-        @Test
-        void 부모_그룹을_변경할_수_있다() {
-            // given
-            Long groupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long childId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    groupId,
-                    null,
-                    null
-            ));
-            Long descendantId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "더하위",
-                    childId,
-                    null,
-                    null
-            ));
-            var command = new UpdateStarGroupHierarchyCommand(
-                    descendantId,
-                    mallangId,
-                    groupId,
-                    childId,
-                    null
-            );
-
-            // when
-            starGroupService.updateHierarchy(command);
-
-            // then
-            transactionHelper.doAssert(() -> {
-                StarGroup group = starGroupRepository.getById(groupId);
-                assertThat(group.getSortedChildren())
-                        .extracting(StarGroup::getName)
-                        .containsExactly("하위", "더하위");
-            });
-        }
-
-        @Test
-        void 자신_혹은_자신의_하위_그룹을_자신의_부모로_만드려는_경우_예외() {
-            // given
-            Long groupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long childId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    groupId,
-                    null,
-                    null
-            ));
-            Long descendantId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "더하위",
-                    childId,
-                    null,
-                    null
-            ));
-            var selfParent = new UpdateStarGroupHierarchyCommand(
-                    groupId,
-                    mallangId,
-                    groupId,
-                    null,
-                    null
-            );
-            var childToParent = new UpdateStarGroupHierarchyCommand(
-                    groupId,
-                    mallangId,
-                    childId,
-                    null,
-                    null
-            );
-            var descendantToParent = new UpdateStarGroupHierarchyCommand(
-                    groupId,
-                    mallangId,
-                    descendantId,
-                    null,
-                    null
-            );
-
-            // when & then
-            assertThatThrownBy(() ->
-                    starGroupService.updateHierarchy(selfParent)
-            ).isInstanceOf(CategoryHierarchyViolationException.class);
-            assertThatThrownBy(() ->
-                    starGroupService.updateHierarchy(childToParent)
-            ).isInstanceOf(CategoryHierarchyViolationException.class);
-            assertThatThrownBy(() ->
-                    starGroupService.updateHierarchy(descendantToParent)
-            ).isInstanceOf(CategoryHierarchyViolationException.class);
-        }
-
-        @Test
-        void 자신의_그룹이_아니면_예외() {
-            // given
-            Long groupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            var command = new UpdateStarGroupHierarchyCommand(
-                    groupId,
-                    otherMemberId,
-                    null,
+                    prev.getId(),
+                    other.getId(),
+                    next.getId(),
                     null,
                     null
             );
@@ -523,26 +381,31 @@ class StarGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        void 다른_사람의_그룹의_하위_그룹으로_변경하려는_경우_예외() {
+        void 자신_혹은_자신의_하위_카테고리를_자신의_부모로_만드려는_경우_예외() {
             // given
-            Long groupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long otherGroupId = starGroupService.create(new CreateStarGroupCommand(
-                    otherMemberId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
             var command = new UpdateStarGroupHierarchyCommand(
-                    groupId,
-                    mallangId,
-                    otherGroupId,
+                    parent.getId(),
+                    mallang.getId(),
+                    next.getId(),
+                    null,
+                    null
+            );
+
+            // when & then
+            assertThatThrownBy(() ->
+                    starGroupService.updateHierarchy(command)
+            ).isInstanceOf(CategoryHierarchyViolationException.class);
+        }
+
+        @Test
+        void 다른_사람의_카테고리의_하위_카테고리로_변경하려는_경우_예외() {
+            // given
+            StarGroup otherGroup = starGroup(4L, "other", other);
+            given(starGroupRepository.getByIdIfIdNotNull(otherGroup.getId())).willReturn(otherGroup);
+            var command = new UpdateStarGroupHierarchyCommand(
+                    prev.getId(),
+                    other.getId(),
+                    otherGroup.getId(),
                     null,
                     null
             );
@@ -554,28 +417,16 @@ class StarGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        void 다른_사람의_그룹의_형제_그룹으로_변경하려는_경우_예외() {
+        void 다른_사람의_카테고리의_형제_카테고리로_변경하려는_경우_예외() {
             // given
-            Long groupId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long otherGroupId = starGroupService.create(new CreateStarGroupCommand(
-                    otherMemberId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
+            StarGroup otherGroup = starGroup(4L, "other", other);
+            given(starGroupRepository.getByIdIfIdNotNull(otherGroup.getId())).willReturn(otherGroup);
             var command = new UpdateStarGroupHierarchyCommand(
-                    groupId,
-                    mallangId,
+                    prev.getId(),
+                    other.getId(),
                     null,
-                    otherGroupId,
-                    null
+                    null,
+                    otherGroup.getId()
             );
 
             // when & then
@@ -585,50 +436,22 @@ class StarGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        void 형제끼리_이름이_겹치면_예외() {
+        void 변경_시_이름이_겹치는_형제가_있으면_예외() {
             // given
-            Long 최상위 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
+            StarGroup last = starGroup(5L, "parent", mallang);
+            last.updateHierarchy(parent, next, null);
+            given(starGroupRepository.getById(last.getId())).willReturn(last);
+            var command = new UpdateStarGroupHierarchyCommand(
+                    last.getId(),
+                    mallang.getId(),
                     null,
-                    null,
+                    parent.getId(),
                     null
-            ));
-            Long 최상위2 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "자식1",
-                    null,
-                    최상위,
-                    null
-            ));
-            Long 자식1 = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "자식1",
-                    최상위,
-                    null,
-                    null
-            ));
-            var rootToChild = new UpdateStarGroupHierarchyCommand(
-                    최상위2,
-                    mallangId,
-                    최상위,
-                    자식1,
-                    null
-            );
-            var childToRoot = new UpdateStarGroupHierarchyCommand(
-                    자식1,
-                    mallangId,
-                    null,
-                    최상위,
-                    최상위2
             );
 
             // when & then
             assertThatThrownBy(() ->
-                    starGroupService.updateHierarchy(rootToChild)
-            ).isInstanceOf(DuplicateCategoryNameException.class);
-            assertThatThrownBy(() ->
-                    starGroupService.updateHierarchy(childToRoot)
+                    starGroupService.updateHierarchy(command)
             ).isInstanceOf(DuplicateCategoryNameException.class);
         }
     }
@@ -636,185 +459,120 @@ class StarGroupServiceTest extends ServiceTest {
     @Nested
     class 제거_시 {
 
+        private final StarGroup parent = starGroup(1L, "parent", mallang);
+        private final StarGroup prev = starGroup(2L, "prev", mallang);
+        private final StarGroup next = starGroup(3L, "next", mallang);
+
+        @BeforeEach
+        void setUp() {
+            prev.updateHierarchy(parent, null, null);
+            next.updateHierarchy(parent, prev, null);
+            given(starGroupRepository.getById(parent.getId())).willReturn(parent);
+            given(starGroupRepository.getById(prev.getId())).willReturn(prev);
+            given(starGroupRepository.getById(next.getId())).willReturn(next);
+            given(starGroupRepository.getByIdIfIdNotNull(parent.getId())).willReturn(parent);
+            given(starGroupRepository.getByIdIfIdNotNull(prev.getId())).willReturn(prev);
+            given(starGroupRepository.getByIdIfIdNotNull(next.getId())).willReturn(next);
+            given(starGroupRepository.getByIdIfIdNotNull(null)).willReturn(null);
+        }
+
         @Test
-        void 하위_그룹이_있다면_예외() {
+        void 하위_카테고리가_있다면_예외() {
             // given
-            Long categoryId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    categoryId,
-                    null,
-                    null
-            ));
             var command = new DeleteStarGroupCommand(
-                    mallangId,
-                    categoryId
+                    mallang.getId(),
+                    parent.getId()
             );
 
-            // when
+            // when & then
             assertThatThrownBy(() ->
                     starGroupService.delete(command)
             ).isInstanceOf(ChildCategoryExistException.class);
-
-            // then
-            assertThat(starGroupRepository.getById(categoryId)).isNotNull();
         }
 
         @Test
-        void 자신의_그룹이_아니라면_예외() {
+        void 자신의_카테고리가_아니라면_예외() {
             // given
-            Long categoryId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    categoryId,
-                    null,
-                    null
-            ));
-            var command = new DeleteStarGroupCommand(otherMemberId, categoryId);
+            var command = new DeleteStarGroupCommand(
+                    other.getId(),
+                    prev.getId()
+            );
 
-            // when
+            // when & then
             assertThatThrownBy(() ->
                     starGroupService.delete(command)
             ).isInstanceOf(NoAuthorityStarGroupException.class);
-
-            // then
-            assertThat(starGroupRepository.getById(categoryId)).isNotNull();
         }
 
         @Test
-        void 부모_그룹의_자식에서_제거된다() {
+        void 부모_카테고리의_자식에서_제거된다() {
             // given
-            Long categoryId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "최상위",
-                    null,
-                    null,
-                    null
-            ));
-            Long childCategoryId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "하위",
-                    categoryId,
-                    null,
-                    null
-            ));
-            var command = new DeleteStarGroupCommand(mallangId, childCategoryId);
-
-            // when
-            starGroupService.delete(command);
-
-            // then
-            assertThatThrownBy(() ->
-                    starGroupRepository.getById(childCategoryId)
-            ).isInstanceOf(NotFoundStarGroupException.class);
-            transactionHelper.doAssert(() ->
-                    assertThat(
-                            starGroupRepository.getById(categoryId).getSortedChildren()).isEmpty()
+            var command = new DeleteStarGroupCommand(
+                    mallang.getId(),
+                    prev.getId()
             );
-        }
-
-        @Test
-        void 이전_그룹과_다음_그룹은_이어진다() {
-            // given
-            Long firstId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "1",
-                    null,
-                    null,
-                    null
-            ));
-            Long secondId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "2",
-                    null,
-                    firstId,
-                    null
-            ));
-            Long thirdId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "3",
-                    null,
-                    secondId,
-                    null
-            ));
-            Long forthId = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "4",
-                    null,
-                    thirdId,
-                    null
-            ));
-            var command = new DeleteStarGroupCommand(mallangId, thirdId);
 
             // when
             starGroupService.delete(command);
 
             // then
-            transactionHelper.doAssert(() -> {
-                StarGroup second = starGroupRepository.getById(secondId);
-                StarGroup forth = starGroupRepository.getById(forthId);
-                assertThat(second.getNextSibling()).isEqualTo(forth);
-                assertThat(forth.getPreviousSibling()).isEqualTo(second);
+            then(starGroupRepository)
+                    .should(times(1))
+                    .delete(prev);
+            assertThat(parent.getChildren()).doesNotContain(prev);
+            assertThat(next.getPreviousSibling()).isNull();
+        }
 
-            });
+        @Test
+        void 이전_카테고리와_다음_카테고리는_이어진다() {
+            // given
+            StarGroup last = starGroup(5L, "last", mallang);
+            last.updateHierarchy(parent, next, null);
+            var command = new DeleteStarGroupCommand(
+                    mallang.getId(),
+                    next.getId()
+            );
+
+            // when
+            starGroupService.delete(command);
+
+            // then
+            then(starGroupRepository)
+                    .should(times(1))
+                    .delete(next);
+            assertThat(prev.getNextSibling()).isEqualTo(last);
+            assertThat(last.getPreviousSibling()).isEqualTo(prev);
+            assertThat(next.getNextSibling()).isNull();
+            assertThat(next.getPreviousSibling()).isNull();
+            assertThat(parent.getChildren()).doesNotContain(next);
         }
 
         @Test
         void 해당_그룹에_속한_즐겨찾기된_포스트들을_그룹_없음으로_만든다() {
             // given
-            String blogName = 블로그_개설(mallangId, "blog");
-            Long postId1 = 포스트를_저장한다(mallangId, blogName, "제목1", "내용")
-                    .getPostId();
-            Long postId2 = 포스트를_저장한다(mallangId, blogName, "제목2", "내용")
-                    .getPostId();
-            Long postId3 = 포스트를_저장한다(mallangId, blogName, "안삭제", "내용")
-                    .getPostId();
-            Long group1Id = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "1",
-                    null,
-                    null,
-                    null
-            ));
-            Long group2Id = starGroupService.create(new CreateStarGroupCommand(
-                    mallangId,
-                    "2",
-                    null,
-                    group1Id,
-                    null
-            ));
-            var starPost1Command = new StarPostCommand(postId1, blogName, group1Id, mallangId, null);
-            var starPost2Command = new StarPostCommand(postId2, blogName, group1Id, mallangId, null);
-            var starPost3Command = new StarPostCommand(postId3, blogName, group2Id, mallangId, null);
-            Long star1Id = postStarService.star(starPost1Command);
-            Long star2Id = postStarService.star(starPost2Command);
-            Long star3Id = postStarService.star(starPost3Command);
-            var command = new DeleteStarGroupCommand(mallangId, group1Id);
+            Blog blog = mallangBlog(1L, mallang);
+            Post post1 = publicPost(1L, blog);
+            Post post2 = privatePost(2L, blog);
+            PostStar postStar1 = new PostStar(post1, mallang);
+            PostStar postStar2 = new PostStar(post2, mallang);
+            postStar1.updateGroup(prev);
+            postStar2.updateGroup(prev);
+            given(postStarRepository.findAllByStarGroup(prev))
+                    .willReturn(List.of(postStar1, postStar2));
+            var command = new DeleteStarGroupCommand(
+                    mallang.getId(),
+                    prev.getId()
+            );
 
             // when
             starGroupService.delete(command);
 
             // then
-            PostStar star1 = postStarRepository.getById(star1Id);
-            PostStar star2 = postStarRepository.getById(star2Id);
-            PostStar star3 = postStarRepository.getById(star3Id);
-            assertThat(star1.getStarGroup()).isNull();
-            assertThat(star2.getStarGroup()).isNull();
-            assertThat(star3.getStarGroup().getId()).isEqualTo(group2Id);
+            then(starGroupRepository)
+                    .should(times(1))
+                    .delete(prev);
+            assertThat(postStar1.getStarGroup()).isNull();
+            assertThat(postStar1.getStarGroup()).isNull();
         }
     }
 }

@@ -9,6 +9,7 @@ import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
+import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
@@ -132,6 +133,24 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 권한_없음);
         }
+
+        @Test
+        void 형제와_이름이_중복되면_예외() {
+            // given
+            var 그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_생성_요청));
+            var 형제_생성_요청 = new CreateStarGroupRequest(
+                    "Spring",
+                    null,
+                    그룹_ID,
+                    null
+            );
+
+            // when
+            var 응답 = 즐겨찾기_그룹_생성_요청(말랑_세션_ID, 형제_생성_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 중복됨);
+        }
     }
 
     @Nested
@@ -211,6 +230,31 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 권한_없음);
         }
+
+        @Test
+        void 형제와_이름이_중복되면_예외() {
+            // given
+            var Spring_즐겨찾기_그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_생성_요청));
+            var Spring_하위_즐겨찾기_그룹_생성_요청 = new CreateStarGroupRequest(
+                    "Spring",
+                    Spring_즐겨찾기_그룹_ID,
+                    null,
+                    null
+            );
+            var Spring_하위_즐겨찾기_그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_하위_즐겨찾기_그룹_생성_요청));
+
+            // when
+            var 응답 = 즐겨찾기_그룹_계층구조_수정_요청(
+                    말랑_세션_ID,
+                    Spring_하위_즐겨찾기_그룹_ID,
+                    null,
+                    Spring_즐겨찾기_그룹_ID,
+                    null
+            );
+
+            // then
+            응답_상태를_검증한다(응답, 중복됨);
+        }
     }
 
     @Nested
@@ -229,7 +273,26 @@ class StarGroupAcceptanceTest extends AcceptanceTest {
         }
 
         @Test
-        void 자신의_즐겨찾기_그룹가_아니라면_수정할_수_없다() {
+        void 형제와_이름이_중복되면_예외() {
+            // given
+            var Spring_즐겨찾기_그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_생성_요청));
+            var NODE_즐겨찾기_그룹_생성_요청 = new CreateStarGroupRequest(
+                    "NODE",
+                    null,
+                    Spring_즐겨찾기_그룹_ID,
+                    null
+            );
+            var NODE_즐겨찾기_그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, NODE_즐겨찾기_그룹_생성_요청));
+
+            // when
+            var 응답 = 즐겨찾기_그룹_이름_수정_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_ID, "NODE");
+
+            // then
+            응답_상태를_검증한다(응답, 중복됨);
+        }
+
+        @Test
+        void 자신의_즐겨찾기_그룹이_아니라면_수정할_수_없다() {
             // given
             var Spring_즐겨찾기_그룹_ID = ID를_추출한다(즐겨찾기_그룹_생성_요청(말랑_세션_ID, Spring_즐겨찾기_그룹_생성_요청));
 
