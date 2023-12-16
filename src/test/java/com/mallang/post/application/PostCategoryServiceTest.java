@@ -19,6 +19,7 @@ import com.mallang.auth.domain.Member;
 import com.mallang.auth.domain.MemberRepository;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.domain.BlogRepository;
+import com.mallang.blog.exception.NoAuthorityBlogException;
 import com.mallang.category.CategoryHierarchyViolationException;
 import com.mallang.category.ChildCategoryExistException;
 import com.mallang.category.DuplicateCategoryNameException;
@@ -40,7 +41,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("포스트 카테고리 서비스 (PostCategoryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -71,8 +71,7 @@ class PostCategoryServiceTest {
         given(memberRepository.getById(other.getId())).willReturn(other);
         given(blogRepository.getByName(mallangBlog.getName())).willReturn(mallangBlog);
         given(blogRepository.getByName(otherBlog.getName())).willReturn(otherBlog);
-        given(postCategoryRepository.getByIdIfIdNotNull(null))
-                .willReturn(null);
+        given(postCategoryRepository.getByIdIfIdNotNull(null)).willReturn(null);
         given(postCategoryRepository.save(any()))
                 .willReturn(mock(PostCategory.class));
     }
@@ -99,6 +98,24 @@ class PostCategoryServiceTest {
             then(postCategoryRepository)
                     .should(times(1))
                     .save(any());
+        }
+
+        @Test
+        void 다른_사람의_블로그에_저장하려는_경우_예외() {
+            // given
+            var command = new CreatePostCategoryCommand(
+                    other.getId(),
+                    mallangBlog.getName(),
+                    "최상위 카테고리",
+                    null,
+                    null,
+                    null
+            );
+
+            // when & then
+            assertThatThrownBy(() -> {
+                postCategoryService.create(command);
+            }).isInstanceOf(NoAuthorityBlogException.class);
         }
 
         @Test
@@ -285,16 +302,15 @@ class PostCategoryServiceTest {
     @Nested
     class 이름_수정_시 {
 
-        private final PostCategory postCategory = new PostCategory("spring", mallang, mallangBlog);
+        private final PostCategory postCategory = postCategory(1L, "spring", mallangBlog);
 
         @BeforeEach
         void setUp() {
-            ReflectionTestUtils.setField(postCategory, "id", 1L);
             given(postCategoryRepository.getById(postCategory.getId())).willReturn(postCategory);
         }
 
         @Test
-        void 다른_사람의_카테고리는_수정할_수_없단() {
+        void 다른_사람의_카테고리는_수정할_수_없다() {
             // given
             var command = new UpdatePostCategoryNameCommand(
                     postCategory.getId(),
@@ -385,23 +401,6 @@ class PostCategoryServiceTest {
         }
 
         @Test
-        void 자신_혹은_자신의_하위_카테고리를_자신의_부모로_만드려는_경우_예외() {
-            // given
-            var command = new UpdatePostCategoryHierarchyCommand(
-                    parent.getId(),
-                    mallang.getId(),
-                    next.getId(),
-                    null,
-                    null
-            );
-
-            // when & then
-            assertThatThrownBy(() ->
-                    postCategoryService.updateHierarchy(command)
-            ).isInstanceOf(CategoryHierarchyViolationException.class);
-        }
-
-        @Test
         void 자신의_카테고리가_아니면_예외() {
             // given
             var command = new UpdatePostCategoryHierarchyCommand(
@@ -416,6 +415,23 @@ class PostCategoryServiceTest {
             assertThatThrownBy(() ->
                     postCategoryService.updateHierarchy(command)
             ).isInstanceOf(NoAuthorityPostCategoryException.class);
+        }
+
+        @Test
+        void 자신_혹은_자신의_하위_카테고리를_자신의_부모로_만드려는_경우_예외() {
+            // given
+            var command = new UpdatePostCategoryHierarchyCommand(
+                    parent.getId(),
+                    mallang.getId(),
+                    next.getId(),
+                    null,
+                    null
+            );
+
+            // when & then
+            assertThatThrownBy(() ->
+                    postCategoryService.updateHierarchy(command)
+            ).isInstanceOf(CategoryHierarchyViolationException.class);
         }
 
         @Test
@@ -542,8 +558,7 @@ class PostCategoryServiceTest {
             then(postCategoryRepository)
                     .should(times(1))
                     .delete(prev);
-            assertThat(parent.getChildren())
-                    .doesNotContain(prev);
+            assertThat(parent.getChildren()).doesNotContain(prev);
             assertThat(next.getPreviousSibling()).isNull();
         }
 
@@ -568,8 +583,7 @@ class PostCategoryServiceTest {
             assertThat(last.getPreviousSibling()).isEqualTo(prev);
             assertThat(next.getNextSibling()).isNull();
             assertThat(next.getPreviousSibling()).isNull();
-            assertThat(parent.getChildren())
-                    .doesNotContain(next);
+            assertThat(parent.getChildren()).doesNotContain(next);
         }
 
         @Test
