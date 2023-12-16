@@ -33,22 +33,23 @@ public record PostDetailResponse(
     }
 
     public static PostDetailResponse withLiked(Post post, boolean isLiked) {
-        return PostDetailResponse.builder()
-                .postId(post.getId().getPostId())
-                .blogId(post.getId().getBlogId())
-                .blogName(post.getBlog().getName())
-                .title(post.getTitle())
-                .bodyText(post.getBodyText())
-                .postThumbnailImageName(post.getPostThumbnailImageName())
-                .visibility(post.getVisibilityPolish().getVisibility())
-                .password(post.getVisibilityPolish().getPassword())
-                .likeCount(post.getLikeCount())
-                .isLiked(isLiked)
-                .createdDate(post.getCreatedDate())
-                .writer(WriterResponse.from(post))
-                .category(CategoryResponse.from(post))
-                .tags(TagResponses.from(post))
-                .build();
+        return new PostDetailResponse(
+                post.getId().getPostId(),
+                post.getId().getBlogId(),
+                post.getBlog().getName(),
+                post.getTitle(),
+                post.getBodyText(),
+                post.getPostThumbnailImageName(),
+                post.getVisibilityPolish().getVisibility(),
+                false,
+                post.getVisibilityPolish().getPassword(),
+                post.getLikeCount(),
+                isLiked,
+                post.getCreatedDate(),
+                WriterResponse.from(post),
+                CategoryResponse.from(post),
+                TagResponses.from(post)
+        );
     }
 
     public static PostDetailResponse protectedPost(Post post) {

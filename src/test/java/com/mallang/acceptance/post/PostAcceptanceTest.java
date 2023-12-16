@@ -367,7 +367,7 @@ class PostAcceptanceTest extends AcceptanceTest {
                             null,
                             new PostSearchResponse.WriterResponse(null, "말랑", "말랑"),
                             new PostSearchResponse.CategoryResponse(말랑_카테고리_ID, "Spring"),
-                            null
+                            new PostSearchResponse.TagResponses(emptyList())
                     ),
                     new PostSearchResponse(
                             말랑_공개_포스트_ID,

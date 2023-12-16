@@ -1,17 +1,25 @@
 package com.mallang.post.query;
 
-import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PRIVATE;
+import static com.mallang.auth.OauthMemberFixture.깃허브_동훈;
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.blog.BlogFixture.mallangBlog;
+import static com.mallang.post.PostFixture.privatePost;
+import static com.mallang.post.PostFixture.protectedPost;
+import static com.mallang.post.PostFixture.publicPost;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PROTECTED;
 import static com.mallang.post.domain.PostVisibilityPolicy.Visibility.PUBLIC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
-import com.mallang.common.ServiceTest;
-import com.mallang.post.application.command.ClickPostLikeCommand;
-import com.mallang.post.application.command.CreatePostCategoryCommand;
-import com.mallang.post.application.command.CreatePostCommand;
-import com.mallang.post.exception.BadPostSearchCondException;
+import com.mallang.auth.domain.Member;
+import com.mallang.auth.query.repository.MemberQueryRepository;
+import com.mallang.blog.domain.Blog;
+import com.mallang.post.domain.Post;
 import com.mallang.post.exception.NoAuthorityPostException;
+import com.mallang.post.query.repository.PostLikeQueryRepository;
+import com.mallang.post.query.repository.PostQueryRepository;
 import com.mallang.post.query.repository.PostSearchDao.PostSearchCond;
 import com.mallang.post.query.response.PostDetailResponse;
 import com.mallang.post.query.response.PostSearchResponse;
@@ -26,96 +34,36 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @DisplayName("포스트 조회 서비스 (PostQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class PostQueryServiceTest extends ServiceTest {
+class PostQueryServiceTest {
 
-    private Long mallangId;
-    private Long donghunId;
-    private String mallangBlogName;
-    private String donghunBlogName;
+    private final PostQueryRepository postQueryRepository = mock(PostQueryRepository.class);
+    private final MemberQueryRepository memberQueryRepository = mock(MemberQueryRepository.class);
+    private final PostLikeQueryRepository postLikeQueryRepository = mock(PostLikeQueryRepository.class);
+    private final PostQueryService postQueryService = new PostQueryService(
+            postQueryRepository,
+            memberQueryRepository,
+            postLikeQueryRepository
+    );
 
-    private CreatePostCommand 말랑_public_포스트_작성_요청;
-    private CreatePostCommand 말랑_protected_포스트_작성_요청;
-    private CreatePostCommand 말랑_private_포스트_작성_요청;
-    private CreatePostCommand 동훈_public_포스트_작성_요청;
-    private CreatePostCommand 동훈_protected_포스트_작성_요청;
-    private CreatePostCommand 동훈_private_포스트_작성_요청;
+    private final Member member = 깃허브_말랑(1L);
+    private final Member other = 깃허브_동훈(2L);
+    private final Blog blog = mallangBlog(member);
+    private final Pageable pageable = PageRequest.of(0, 10);
 
     @BeforeEach
     void setUp() {
-        mallangId = 회원을_저장한다("말랑");
-        donghunId = 회원을_저장한다("동훈");
-        mallangBlogName = 블로그_개설(mallangId, "mallang-log");
-        donghunBlogName = 블로그_개설(donghunId, "donghun-log");
-        말랑_public_포스트_작성_요청 = new CreatePostCommand(
-                mallangId,
-                mallangBlogName,
-                "mallang-public",
-                "mallang-public", "mallang-public",
-                null,
-                PUBLIC,
-                null,
-                null,
-                Collections.emptyList()
-        );
-        말랑_protected_포스트_작성_요청 = new CreatePostCommand(
-                mallangId,
-                mallangBlogName,
-                "mallang-protected",
-                "mallang-protected", "mallang-protected",
-                null,
-                PROTECTED,
-                "1234",
-                null,
-                Collections.emptyList()
-        );
-        말랑_private_포스트_작성_요청 = new CreatePostCommand(
-                mallangId,
-                mallangBlogName,
-                "mallang-private",
-                "mallang-private", "mallang-private",
-                null,
-                PRIVATE,
-                null,
-                null,
-                Collections.emptyList()
-        );
-        동훈_public_포스트_작성_요청 = new CreatePostCommand(
-                donghunId,
-                donghunBlogName,
-                "donghun-public",
-                "donghun-public", "donghun-public",
-                null,
-                PUBLIC,
-                null,
-                null,
-                Collections.emptyList()
-        );
-        동훈_protected_포스트_작성_요청 = new CreatePostCommand(
-                donghunId,
-                donghunBlogName,
-                "donghun-protected",
-                "donghun-protected", "donghun-protected",
-                null,
-                PROTECTED,
-                "1234",
-                null,
-                Collections.emptyList()
-        );
-        동훈_private_포스트_작성_요청 = new CreatePostCommand(
-                donghunId,
-                donghunBlogName,
-                "donghun-private",
-                "donghun-private", "donghun-private",
-                null,
-                PRIVATE,
-                null,
-                null,
-                Collections.emptyList()
-        );
+        given(memberQueryRepository.getById(member.getId())).willReturn(member);
+        given(memberQueryRepository.getById(other.getId())).willReturn(other);
+        given(memberQueryRepository.getMemberIfIdNotNull(member.getId())).willReturn(member);
+        given(memberQueryRepository.getMemberIfIdNotNull(other.getId())).willReturn(other);
+        given(memberQueryRepository.getMemberIfIdNotNull(null)).willReturn(null);
     }
 
     @Nested
@@ -124,10 +72,17 @@ class PostQueryServiceTest extends ServiceTest {
         @Test
         void 포스트를_조회한다() {
             // given
-            Long id = postService.create(말랑_public_포스트_작성_요청).getPostId();
+            Post post = publicPost(1L, blog);
+            post.clickLike();
+            given(postQueryRepository.getById(1L, blog.getName())).willReturn(post);
 
             // when
-            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, null, null);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(
+                    1L,
+                    blog.getName(),
+                    null,
+                    null
+            );
 
             // then
             assertThat(response)
@@ -135,89 +90,109 @@ class PostQueryServiceTest extends ServiceTest {
                     .ignoringExpectedNullFields()
                     .ignoringFields("createdDate")
                     .isEqualTo(PostDetailResponse.builder()
-                            .postId(id)
-                            .title("mallang-public")
-                            .bodyText("mallang-public")
+                            .postId(1L)
+                            .title("title")
+                            .bodyText("content")
                             .visibility(PUBLIC)
-                            .writer(new PostDetailResponse.WriterResponse(mallangId, "말랑", "말랑"))
+                            .writer(new PostDetailResponse.WriterResponse(
+                                    member.getId(),
+                                    member.getNickname(),
+                                    member.getProfileImageUrl()
+                            ))
+                            .likeCount(1)
+                            .isLiked(false)
                             .build());
         }
 
         @Test
         void 좋아요_눌렀는지_여부가_반영된다() {
             // given
-            Long id = postService.create(말랑_public_포스트_작성_요청).getPostId();
-            postLikeService.like(new ClickPostLikeCommand(id, mallangBlogName, mallangId, null));
+            Post post = publicPost(1L, blog);
+            post.clickLike();
+            given(postQueryRepository.getById(1L, blog.getName())).willReturn(post);
+            given(postLikeQueryRepository.existsByMemberAndPost(member, post)).willReturn(true);
 
             // when
-            PostDetailResponse responseClickLike = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId,
-                    null);
-            PostDetailResponse responseNoLike = postQueryService.getByIdAndBlogName(id, mallangBlogName, null, null);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(
+                    1L,
+                    blog.getName(),
+                    member.getId(),
+                    null
+            );
 
             // then
-            assertThat(responseClickLike.isLiked()).isTrue();
-            assertThat(responseNoLike.isLiked()).isFalse();
+            assertThat(response.isLiked()).isTrue();
         }
 
         @Test
         void 블로그_주인은_비공개_글을_볼_수_있다() {
             // given
-            Long id = postService.create(말랑_private_포스트_작성_요청).getPostId();
+            Post post = privatePost(1L, blog);
+            given(postQueryRepository.getById(1L, blog.getName())).willReturn(post);
 
             // when
-            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId, null);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(
+                    1L,
+                    blog.getName(),
+                    member.getId(),
+                    null
+            );
 
             // then
-            assertThat(response.postId()).isEqualTo(id);
+            assertThat(response.title()).isEqualTo(post.getTitle());
         }
 
         @Test
         void 블로그_주인이_아니라면_비공개_글_조회시_예외() {
             // given
-            Long id = postService.create(말랑_private_포스트_작성_요청).getPostId();
+            Post post = privatePost(1L, blog);
+            given(postQueryRepository.getById(1L, blog.getName())).willReturn(post);
 
             // when & then
             assertThatThrownBy(() ->
-                    postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1, null)
+                    postQueryService.getByIdAndBlogName(
+                            1L,
+                            blog.getName(),
+                            null,
+                            null
+                    )
             ).isInstanceOf(NoAuthorityPostException.class);
-        }
-
-        @Test
-        void 블로그_주인은_보호글을_볼_수_있다() {
-            // given
-            Long id = postService.create(말랑_protected_포스트_작성_요청).getPostId();
-
-            // when
-            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId, null);
-
-            // then
-            assertThat(response.postId()).isEqualTo(id);
-            assertThat(response.title()).isEqualTo("mallang-protected");
-            assertThat(response.bodyText()).isEqualTo("mallang-protected");
         }
 
         @Test
         void 블로그_주인이_아닌_경우_비밀번호가_일치하면_보호글을_볼_수_있다() {
             // given
-            Long id = postService.create(말랑_protected_포스트_작성_요청).getPostId();
+            Post post = protectedPost(1L, blog, "1234");
+            given(postQueryRepository.getById(1L, blog.getName())).willReturn(post);
 
             // when
-            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1,
-                    "1234");
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(
+                    1L,
+                    blog.getName(),
+                    null,
+                    "1234"
+            );
 
             // then
-            assertThat(response.postId()).isEqualTo(id);
-            assertThat(response.title()).isEqualTo("mallang-protected");
-            assertThat(response.bodyText()).isEqualTo("mallang-protected");
+            assertThat(response.title()).isEqualTo(post.getTitle());
+            assertThat(response.bodyText()).isEqualTo(post.getBodyText());
+            assertThat(response.postThumbnailImageName()).isEqualTo(post.getPostThumbnailImageName());
+            assertThat(response.isProtected()).isFalse();
         }
 
         @Test
         void 블로그_주인이_아니며_비밀번호가_일치하지_않는_경우_보호글_조회시_내용이_보호된다() {
             // given
-            Long id = postService.create(말랑_protected_포스트_작성_요청).getPostId();
+            Post post = protectedPost(1L, blog, "1234");
+            given(postQueryRepository.getById(1L, blog.getName())).willReturn(post);
 
             // when
-            PostDetailResponse response = postQueryService.getByIdAndBlogName(id, mallangBlogName, mallangId + 1, null);
+            PostDetailResponse response = postQueryService.getByIdAndBlogName(
+                    1L,
+                    blog.getName(),
+                    null,
+                    null
+            );
 
             // then
             assertThat(response)
@@ -225,12 +200,17 @@ class PostQueryServiceTest extends ServiceTest {
                     .ignoringExpectedNullFields()
                     .ignoringFields("createdDate", "blogId")
                     .isEqualTo(PostDetailResponse.builder()
-                            .postId(id)
-                            .title("mallang-protected")
+                            .postId(1L)
+                            .title(post.getTitle())
                             .bodyText("보호되어 있는 글입니다. 내용을 보시려면 비밀번호를 입력하세요.")
+                            .postThumbnailImageName("")
                             .visibility(PROTECTED)
                             .isProtected(true)
-                            .writer(new PostDetailResponse.WriterResponse(mallangId, "말랑", "말랑"))
+                            .writer(new PostDetailResponse.WriterResponse(
+                                    member.getId(),
+                                    member.getNickname(),
+                                    member.getProfileImageUrl()
+                            ))
                             .build());
         }
     }
@@ -239,320 +219,56 @@ class PostQueryServiceTest extends ServiceTest {
     class 포스트_검색_시 {
 
         @Test
-        void 포스트를_전체_조회한다() {
+        void 포스트를_조건에_맞게_조회한다() {
             // given
-            Long post1Id = postService.create(말랑_public_포스트_작성_요청).getPostId();
-            Long post2Id = postService.create(말랑_public_포스트_작성_요청).getPostId();
+            Post post1 = publicPost(1L, blog);
+            Post post2 = protectedPost(2L, blog, "1234");
+            Post post3 = privatePost(3L, blog);
             PostSearchCond cond = PostSearchCond.builder().build();
+            List<Post> content = List.of(post3, post2, post1);
+            PageImpl<Post> result = new PageImpl<>(content, pageable, 3);
+            given(postQueryRepository.search(member.getId(), cond, pageable))
+                    .willReturn(result);
 
             // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
+            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, member.getId())
                     .getContent();
 
             // then
-            assertThat(responses).hasSize(2)
+            assertThat(responses).hasSize(3)
                     .extracting(PostSearchResponse::id)
-                    .containsExactly(post2Id, post1Id);
+                    .containsExactly(3L, 2L, 1L);
         }
 
         @Test
-        void 비공개_포스트인_경우_주인에게만_조회되며_나머지_포스트는_모든_사람이_조회할_수_있다() {
+        void 포스트를_볼_권한이_없는_경우_내용이_보호되어_조회된다() {
             // given
-            postService.create(말랑_public_포스트_작성_요청);
-            postService.create(말랑_protected_포스트_작성_요청);
-            postService.create(말랑_private_포스트_작성_요청);
-            postService.create(동훈_public_포스트_작성_요청);
-            postService.create(동훈_protected_포스트_작성_요청);
-            postService.create(동훈_private_포스트_작성_요청);
-
-            // when
-            List<PostSearchResponse> search = postQueryService.search(new PostSearchCond(null, null, null, null,
-                            null, null, null), pageable, mallangId
-                    )
-                    .getContent();
-
-            // then
-            assertThat(search)
-                    .extracting(PostSearchResponse::title)
-                    .containsExactly("donghun-protected", "donghun-public",
-                            "mallang-private", "mallang-protected", "mallang-public");
-            assertThat(search)
-                    .extracting(PostSearchResponse::bodyText)
-                    .containsExactly("보호되어 있는 글입니다.", "donghun-public",
-                            "mallang-private", "mallang-protected", "mallang-public");
-        }
-
-        @Test
-        void 특정_카테고리의_포스트만_조회한다() {
-            // given
-            Long 스프링 = postCategoryService.create(new CreatePostCategoryCommand(mallangId,
-                    mallangBlogName,
-                    "스프링",
-                    null,
-                    null,
-                    null
-            ));
-            Long 노드 = postCategoryService.create(new CreatePostCategoryCommand(mallangId,
-                    mallangBlogName,
-                    "노드",
-                    null,
-                    스프링,
-                    null
-            ));
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링).getPostId();
-            포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", 노드);
-            PostSearchCond cond = PostSearchCond.builder()
-                    .categoryId(스프링)
-                    .blogName(mallangBlogName)
-                    .build();
+            Post post = protectedPost(2L, blog, "1234");
+            PostSearchCond cond = PostSearchCond.builder().build();
+            List<Post> content = List.of(post);
+            PageImpl<Post> result = new PageImpl<>(content, pageable, 1);
+            given(postQueryRepository.search(null, cond, pageable))
+                    .willReturn(result);
 
             // when
             List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
                     .getContent();
 
             // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post1Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .bodyText("content1")
-                                            .category(new CategoryResponse(스프링, "스프링"))
-                                            .build()
-                            )
-                    );
-        }
-
-        @Test
-        void 최상위_카테고리로_조회_시_하위_카테고리도_포함되면_조회한다() {
-            // given
-            Long 스프링 = postCategoryService.create(new CreatePostCategoryCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "스프링",
-                    null,
-                    null,
-                    null
-            ));
-            Long JPA = postCategoryService.create(new CreatePostCategoryCommand(
-                    mallangId,
-                    mallangBlogName,
-                    "JPA",
-                    스프링,
-                    null,
-                    null
-            ));
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", 스프링).getPostId();
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", JPA).getPostId();
-            PostSearchCond cond = PostSearchCond.builder()
-                    .categoryId(스프링)
-                    .blogName(mallangBlogName)
-                    .build();
-
-            // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
-                    .getContent();
-
-            // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post2Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트2")
-                                            .bodyText("content2")
-                                            .category(new CategoryResponse(JPA, "JPA"))
-                                            .build(),
-                                    PostSearchResponse.builder()
-                                            .id(post1Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .bodyText("content1")
-                                            .category(new CategoryResponse(스프링, "스프링"))
-                                            .build()
-                            )
-                    );
-        }
-
-        @Test
-        void 특정_태그의_포스트만_조회한다() {
-            // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "content1", "tag1").getPostId();
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1", "tag2")
-                    .getPostId();
-            PostSearchCond cond = PostSearchCond.builder()
-                    .tag("tag2")
-                    .build();
-
-            // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
-                    .getContent();
-
-            // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post2Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트2")
-                                            .bodyText("content2")
-                                            .tags(new TagResponses(List.of("tag1", "tag2")))
-                                            .build()
-                            )
-                    );
-        }
-
-        @Test
-        void 특정_작성자의_포스트만_조회한다() {
-            // given
-            Long findWriterId = 회원을_저장한다("말랑말랑");
-            String otherBlogName = 블로그_개설(findWriterId, "other");
-            Long post1Id = 포스트를_저장한다(findWriterId, otherBlogName, "포스트1", "content1", "tag1").getPostId();
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "content2", "tag1", "tag2")
-                    .getPostId();
-            PostSearchCond cond = PostSearchCond.builder()
-                    .writerId(findWriterId)
-                    .build();
-
-            // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
-                    .getContent();
-
-            // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post1Id)
-                                            .writer(new WriterResponse(findWriterId, "말랑말랑", "말랑말랑"))
-                                            .title("포스트1")
-                                            .bodyText("content1")
-                                            .tags(new TagResponses(List.of("tag1")))
-                                            .build()
-                            )
-                    );
-        }
-
-        @Test
-        void 제목으로_조회() {
-            // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕").getPostId();
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getPostId();
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히").getPostId();
-            PostSearchCond cond = PostSearchCond.builder()
-                    .title("안녕")
-                    .build();
-
-            // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
-                    .getContent();
-
-            // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post3Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("안녕")
-                                            .bodyText("히히")
-                                            .build()
-                            )
-                    );
-        }
-
-        @Test
-        void 내용으로_조회() {
-            // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕").getPostId();
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getPostId();
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕", "히히").getPostId();
-            PostSearchCond cond = PostSearchCond.builder()
-                    .bodyText("안녕")
-                    .build();
-
-            // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
-                    .getContent();
-
-            // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post2Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트2")
-                                            .bodyText("안녕하세요")
-                                            .build(),
-                                    PostSearchResponse.builder()
-                                            .id(post1Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .bodyText("안녕")
-                                            .build()
-                            )
-                    );
-        }
-
-        @DisplayName("내용 + 제목으로 조회")
-        @Test
-        void 내용_and_제목으로_조회() {
-            // given
-            Long post1Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트1", "안녕").getPostId();
-            Long post2Id = 포스트를_저장한다(mallangId, mallangBlogName, "포스트2", "안녕하세요").getPostId();
-            Long post3Id = 포스트를_저장한다(mallangId, mallangBlogName, "안녕히", "히히").getPostId();
-            PostSearchCond cond = PostSearchCond.builder()
-                    .titleOrBodyText("안녕")
-                    .build();
-
-            // when
-            List<PostSearchResponse> responses = postQueryService.search(cond, pageable, null)
-                    .getContent();
-
-            // then
-            assertThat(responses).usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
-                    .isEqualTo(List.of(
-                                    PostSearchResponse.builder()
-                                            .id(post3Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("안녕히")
-                                            .bodyText("히히")
-                                            .build(),
-                                    PostSearchResponse.builder()
-                                            .id(post2Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트2")
-                                            .bodyText("안녕하세요")
-                                            .build(),
-                                    PostSearchResponse.builder()
-                                            .id(post1Id)
-                                            .writer(new WriterResponse(mallangId, "말랑", "말랑"))
-                                            .title("포스트1")
-                                            .bodyText("안녕")
-                                            .build()
-                            )
-                    );
-        }
-
-        @DisplayName("제목이나 내용이 있는데 제목 + 내용도 있다면 예외")
-        @Test
-        void 제목이나_내용이_있는데_제목_and_내용도_있다면_예외() {
-            // given
-            PostSearchCond cond = PostSearchCond.builder()
-                    .title("1")
-                    .titleOrBodyText("안녕")
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() ->
-                    postQueryService.search(cond, pageable, null)
-            ).isInstanceOf(BadPostSearchCondException.class);
+            assertThat(responses).hasSize(1)
+                    .containsExactly(new PostSearchResponse(
+                            2L,
+                            blog.getName(),
+                            post.getTitle(),
+                            "보호되어 있는 글입니다.", "보호되어 있는 글입니다.",
+                            "",
+                            PROTECTED,
+                            0,
+                            post.getCreatedDate(),
+                            new WriterResponse(member.getId(), member.getNickname(), member.getProfileImageUrl()),
+                            new CategoryResponse(null, null),
+                            new TagResponses(Collections.emptyList())
+                    ));
         }
     }
 }

@@ -6,6 +6,7 @@ import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.PostVisibilityPolicy.Visibility;
 import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 
@@ -53,7 +54,7 @@ public record PostSearchResponse(
                 post.getCreatedDate(),
                 WriterResponse.from(post),
                 CategoryResponse.from(post),
-                null
+                new TagResponses(Collections.emptyList())
         );
     }
 
