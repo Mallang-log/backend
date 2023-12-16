@@ -1,9 +1,16 @@
 package com.mallang.post.query;
 
+import static com.mallang.auth.OauthMemberFixture.깃허브_말랑;
+import static com.mallang.blog.BlogFixture.mallangBlog;
+import static com.mallang.post.PostCategoryFixture.postCategory;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
-import com.mallang.common.ServiceTest;
-import com.mallang.post.application.command.CreatePostCategoryCommand;
+import com.mallang.auth.domain.Member;
+import com.mallang.blog.domain.Blog;
+import com.mallang.post.domain.PostCategory;
+import com.mallang.post.query.repository.PostCategoryQueryRepository;
 import com.mallang.post.query.response.PostCategoryResponse;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -14,16 +21,21 @@ import org.junit.jupiter.api.Test;
 @DisplayName("포스트 카테고리 조회 서비스 (PostCategoryQueryService) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class PostCategoryQueryServiceTest extends ServiceTest {
+class PostCategoryQueryServiceTest {
+
+    private final PostCategoryQueryRepository postCategoryQueryRepository = mock(PostCategoryQueryRepository.class);
+    private final PostCategoryQueryService postCategoryQueryService = new PostCategoryQueryService(
+            postCategoryQueryRepository
+    );
 
     @Test
     void 카테고리_목록이_없는_경우_빈_리스트_반환() {
         // given
-        var memberId = 회원을_저장한다("동훈");
-        var 동훈_블로그_이름 = 블로그_개설(memberId, "donghun");
+        given(postCategoryQueryRepository.findAllByBlogName("blog-name"))
+                .willReturn(List.of());
 
         // when
-        List<PostCategoryResponse> result = postCategoryQueryService.findAllByBlogName(동훈_블로그_이름);
+        List<PostCategoryResponse> result = postCategoryQueryService.findAllByBlogName("blog-name");
 
         // then
         assertThat(result).isEmpty();
@@ -32,83 +44,47 @@ class PostCategoryQueryServiceTest extends ServiceTest {
     @Test
     void 특정_블로그의_카테고리를_순서대로_전체_조회한다() {
         // given
-        Long 동훈_ID = 회원을_저장한다("동훈");
-        String 동훈_블로그_이름 = 블로그_개설(동훈_ID, "donghun");
-        postCategoryService.create(new CreatePostCategoryCommand(
-                동훈_ID,
-                동훈_블로그_이름,
-                "Node",
-                null,
-                null,
-                null
-        ));
+        Member member = 깃허브_말랑(1L);
+        Blog blog = mallangBlog(1L, member);
+        Long springId = 2L;
+        Long jpaId = 4L;
+        Long n1Id = 1L;
+        Long securityId = 3L;
+        Long oAuthId = 7L;
+        Long csrfId = 8L;
+        Long algorithmId = 10L;
+        Long dfsId = 5L;
+        PostCategory spring = postCategory(springId, "Spring", blog);
+        PostCategory jpa = postCategory(jpaId, "JPA", blog);
+        PostCategory n1 = postCategory(n1Id, "N + 1", blog);
+        PostCategory security = postCategory(securityId, "Security", blog);
+        PostCategory oauth = postCategory(oAuthId, "OAuth", blog);
+        PostCategory csrf = postCategory(csrfId, "CSRF", blog);
+        PostCategory algorithm = postCategory(algorithmId, "Algorithm", blog);
+        PostCategory dfs = postCategory(dfsId, "DFS", blog);
+        dfs.updateHierarchy(algorithm, null, null);
+        spring.updateHierarchy(null, algorithm, null);
+        n1.updateHierarchy(jpa, null, null);
+        csrf.updateHierarchy(security, null, null);
+        oauth.updateHierarchy(security, csrf, null);
+        jpa.updateHierarchy(spring, null, null);
+        security.updateHierarchy(spring, jpa, null);
+        given(postCategoryQueryRepository.findAllByBlogName(blog.getName()))
+                .willReturn(List.of(
+                        spring,
+                        jpa,
+                        n1,
+                        security,
+                        oauth,
+                        csrf,
+                        algorithm,
+                        dfs
+                ));
 
-        Long 말랑_ID = 회원을_저장한다("말랑");
-        String 말랑_블로그_이름 = 블로그_개설(말랑_ID, "mallang");
-        Long springId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "Spring",
-                null,
-                null,
-                null
-        ));
-        Long jpaId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "JPA",
-                springId,
-                null,
-                null
-        ));
-        Long n1Id = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "N + 1",
-                jpaId,
-                null,
-                null
-        ));
-        Long securityId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "Security",
-                springId,
-                jpaId,
-                null
-        ));
-        Long oAuthId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "OAuth",
-                securityId,
-                null,
-                null
-        ));
-        Long csrfId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "CSRF",
-                securityId,
-                null,
-                oAuthId
-        ));
-        Long algorithmId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "Algorithm",
-                null,
-                null,
-                springId
-        ));
-        Long dfsId = postCategoryService.create(new CreatePostCategoryCommand(
-                말랑_ID,
-                말랑_블로그_이름,
-                "DFS",
-                algorithmId,
-                null,
-                null
-        ));
+        // when
+        List<PostCategoryResponse> allByMemberId = postCategoryQueryService.findAllByBlogName(blog.getName());
+
+        // then
         List<PostCategoryResponse> expected = List.of(
                 new PostCategoryResponse(
                         algorithmId,
@@ -176,10 +152,6 @@ class PostCategoryQueryServiceTest extends ServiceTest {
                         ))
         );
 
-        // when
-        List<PostCategoryResponse> allByMemberId = postCategoryQueryService.findAllByBlogName(말랑_블로그_이름);
-
-        // then
         assertThat(allByMemberId).usingRecursiveComparison()
                 .isEqualTo(expected);
     }
