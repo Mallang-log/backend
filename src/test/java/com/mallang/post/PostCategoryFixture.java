@@ -11,6 +11,12 @@ public class PostCategoryFixture {
     public static Long id = 1L;
     public static Long childId = 1L;
 
+    public static PostCategory postCategory(Long id, String name, Blog blog) {
+        PostCategory postCategory = new PostCategory(name, blog.getOwner(), blog);
+        ReflectionTestUtils.setField(postCategory, "id", id);
+        return postCategory;
+    }
+
     public static PostCategory 루트_카테고리(String name, Member member, Blog blog) {
         return 루트_카테고리(id++, name, member, blog);
     }

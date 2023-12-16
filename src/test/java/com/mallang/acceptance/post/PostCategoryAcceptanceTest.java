@@ -9,6 +9,7 @@ import static com.mallang.acceptance.AcceptanceSteps.없음;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.정상_처리;
+import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설;
 import static com.mallang.acceptance.post.PostAcceptanceSteps.포스트_단일_조회_요청;
@@ -155,6 +156,26 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 권한_없음);
         }
+
+        @Test
+        void 형제끼리_이름이_겹치는_경우_예외() {
+            // given
+            var 카테고리_생성_응답 = 카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청);
+            var 카테고리_ID = ID를_추출한다(카테고리_생성_응답);
+            var JPA_카테고리_생성_요청 = new CreatePostCategoryRequest(
+                    말랑_블로그_이름,
+                    "Spring",
+                    null,
+                    카테고리_ID,
+                    null
+            );
+
+            // when
+            var 응답 = 카테고리_생성_요청(말랑_세션_ID, JPA_카테고리_생성_요청);
+
+            // then
+            응답_상태를_검증한다(응답, 중복됨);
+        }
     }
 
     @Nested
@@ -237,6 +258,66 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 권한_없음);
         }
+
+        @Test
+        void 계층구조에_문제가_있다면_예외() {
+            // given
+            var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
+            var JPA_카테고리_생성_요청 = new CreatePostCategoryRequest(
+                    말랑_블로그_이름,
+                    "JPA",
+                    Spring_카테고리_ID,
+                    null,
+                    null
+            );
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, JPA_카테고리_생성_요청);
+
+            // when
+            var 응답 = 카테고리_계층구조_수정_요청(
+                    말랑_세션_ID,
+                    Spring_카테고리_ID,
+                    null,
+                    null,
+                    JPA_카테고리_ID
+            );
+
+            // then
+            응답_상태를_검증한다(응답, 잘못된_요청);
+        }
+
+        @Test
+        void 계층구조_변경_시_이름이_중복되는_형제가_있다면_예외() {
+            // given
+            var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
+            var JPA_카테고리_생성_요청 = new CreatePostCategoryRequest(
+                    말랑_블로그_이름,
+                    "JPA",
+                    Spring_카테고리_ID,
+                    null,
+                    null
+            );
+            var JPA_카테고리_ID = 카테고리_생성(말랑_세션_ID, JPA_카테고리_생성_요청);
+            var 하위_Spring_카테고리_생성_요청 = new CreatePostCategoryRequest(
+                    말랑_블로그_이름,
+                    "Spring",
+                    Spring_카테고리_ID,
+                    JPA_카테고리_ID,
+                    null
+            );
+            var 하위_Spring_카테고리_ID = 카테고리_생성(말랑_세션_ID, 하위_Spring_카테고리_생성_요청);
+
+            // when
+            var 응답 = 카테고리_계층구조_수정_요청(
+                    말랑_세션_ID,
+                    하위_Spring_카테고리_ID,
+                    null,
+                    Spring_카테고리_ID,
+                    null
+            );
+
+            // then
+            응답_상태를_검증한다(응답, 중복됨);
+        }
     }
 
     @Nested
@@ -264,6 +345,26 @@ class PostCategoryAcceptanceTest extends AcceptanceTest {
 
             // then
             응답_상태를_검증한다(응답, 권한_없음);
+        }
+
+        @Test
+        void 형제와_이름이_겹치면_예외() {
+            // given
+            var Spring_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, Spring_카테고리_생성_요청));
+            var NODE_카테고리_생성_요청 = new CreatePostCategoryRequest(
+                    말랑_블로그_이름,
+                    "NODE",
+                    null,
+                    Spring_카테고리_ID,
+                    null
+            );
+            var NODE_카테고리_ID = ID를_추출한다(카테고리_생성_요청(말랑_세션_ID, NODE_카테고리_생성_요청));
+
+            // when
+            var 응답 = 카테고리_이름_수정_요청(말랑_세션_ID, Spring_카테고리_ID, "NODE");
+
+            // then
+            응답_상태를_검증한다(응답, 중복됨);
         }
     }
 
