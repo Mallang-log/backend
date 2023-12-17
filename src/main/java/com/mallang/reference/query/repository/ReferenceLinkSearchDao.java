@@ -1,5 +1,6 @@
 package com.mallang.reference.query.repository;
 
+import static com.mallang.reference.domain.QLabel.label;
 import static com.mallang.reference.domain.QReferenceLink.referenceLink;
 
 import com.mallang.auth.domain.Member;
@@ -33,6 +34,7 @@ public interface ReferenceLinkSearchDao {
         @Override
         public List<ReferenceLink> search(Member member, ReferenceLinkSearchDaoCond cond) {
             return query.selectFrom(referenceLink)
+                    .leftJoin(referenceLink.label, label).fetchJoin()
                     .where(
                             memberEq(member),
                             urlContains(cond.url()),
