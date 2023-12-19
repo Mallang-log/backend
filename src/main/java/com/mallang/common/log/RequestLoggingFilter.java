@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.web.cors.CorsUtils;
 
@@ -33,10 +34,9 @@ public class RequestLoggingFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
-        UUID uuid = UUID.randomUUID();
         StopWatch stopWatch = new StopWatch();
         try {
-            MDC.put("request_id", uuid.toString());
+            MDC.put("requestId", getRequestId(httpRequest));
             stopWatch.start();
             log.info("request start [api: {}]", httpRequest.getRequestURI());
             chain.doFilter(request, response);
@@ -45,6 +45,14 @@ public class RequestLoggingFilter implements Filter {
             log.info("request end [time: {}ms]", stopWatch.getTotalTimeMillis());
             MDC.clear();
         }
+    }
+
+    private String getRequestId(HttpServletRequest httpRequest) {
+        String requestId = httpRequest.getHeader("X-Request-ID");
+        if (ObjectUtils.isEmpty(requestId)) {
+            return UUID.randomUUID().toString().replaceAll("-", "");
+        }
+        return requestId;
     }
 
     private boolean isIgnoredUrl(HttpServletRequest request) {
