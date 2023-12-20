@@ -24,7 +24,7 @@ public class EventHandleLogAop {
     }
 
     @Before("(eventListeners() || transactionalEventListeners()) && args(event)")
-    public void handleEventLog(JoinPoint joinPoint, DomainEvent event) {
+    public void handleEventLog(JoinPoint joinPoint, DomainEvent<?> event) {
         String className = getClassSimpleName(joinPoint);
         String methodName = getMethodName(joinPoint);
         log.info("Handle [{}(Domain Id: {})] by [{}.{}()]",
