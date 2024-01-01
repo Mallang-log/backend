@@ -1,7 +1,6 @@
 package com.mallang.common.infra.s3.presentation;
 
-import com.mallang.common.infra.s3.AwsS3Property;
-import com.mallang.common.infra.s3.PresignedUrlClient;
+import com.mallang.common.infra.s3.PresignedUrlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,14 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PresignedUrlController {
 
-    private final AwsS3Property awsS3Property;
-    private final PresignedUrlClient presignedUrlClient;
+    private final PresignedUrlService presignedUrlService;
 
     @PostMapping
     public ResponseEntity<CreatePresignedUrlResponse> createPresignedUrl(
             CreatePresignedUrlRequest request
     ) {
-        String url = presignedUrlClient.create(awsS3Property.imagePath(), request.fileName());
+        String url = presignedUrlService.create(request.imageExtension());
         return ResponseEntity.ok(new CreatePresignedUrlResponse(url));
     }
 }
