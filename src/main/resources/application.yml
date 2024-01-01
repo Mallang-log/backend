@@ -24,3 +24,9 @@ auth:
 #  level:
 #    org.hibernate.orm.jdbc.bind: TRACE
 
+# sample
+aws:
+  s3:
+    bucket: "bucket-name"
+    image-path: "images/"  # 마지막 / 필수
+    presigned-url-expires-minutes: 10

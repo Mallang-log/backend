@@ -47,7 +47,7 @@ public class AuthConfig implements WebMvcConfigurer {
                         .params(Map.of("unauthenticated", "true"))
                         .build(),
                 UriAndMethodAndParamCondition.builder()
-                        .uriPatterns(Set.of("/members", "/members/login"))
+                        .uriPatterns(Set.of("/members", "/members/login", "/infra/aws/s3/presigned-url"))
                         .httpMethods(Set.of(POST))
                         .build(),
                 UriAndMethodAndParamCondition.builder()
