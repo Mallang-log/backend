@@ -38,6 +38,10 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto'
     implementation 'org.jsoup:jsoup:1.16.1'
 
+    // S3
+    implementation(platform("software.amazon.awssdk:bom:2.20.56"))
+    implementation("software.amazon.awssdk:s3")
+
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
 
     compileOnly 'org.projectlombok:lombok'
