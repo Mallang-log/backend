@@ -25,7 +25,7 @@ public class PresignedUrlAcceptanceTest extends AcceptanceTest {
                     .body(new CreatePresignedUrlRequest("fileName"))
                     .post("/infra/aws/s3/presigned-url")
                     .then()
-                    .log().all()
+                    //.log().all()
                     .extract()
                     .as(CreatePresignedUrlResponse.class);
 
