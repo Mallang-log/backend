@@ -5,8 +5,8 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
+import com.mallang.common.infra.s3.CreatePresignedUrlResponse;
 import com.mallang.common.infra.s3.presentation.CreatePresignedUrlRequest;
-import com.mallang.common.infra.s3.presentation.CreatePresignedUrlResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
