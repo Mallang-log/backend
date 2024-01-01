@@ -35,4 +35,11 @@ public class BlogAcceptanceSteps {
                 .then()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 내_블로그_정보_조회_요청(String 세션) {
+        return given(세션)
+                .get("/blogs/my")
+                .then()
+                .extract();
+    }
 }

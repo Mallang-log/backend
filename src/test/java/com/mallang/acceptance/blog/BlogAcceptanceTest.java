@@ -4,9 +4,12 @@ import static com.mallang.acceptance.AcceptanceSteps.ID를_추출한다;
 import static com.mallang.acceptance.AcceptanceSteps.값이_존재한다;
 import static com.mallang.acceptance.AcceptanceSteps.생성됨;
 import static com.mallang.acceptance.AcceptanceSteps.응답_상태를_검증한다;
+import static com.mallang.acceptance.AcceptanceSteps.인증되지_않음;
 import static com.mallang.acceptance.AcceptanceSteps.잘못된_요청;
 import static com.mallang.acceptance.AcceptanceSteps.중복됨;
+import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
+import static com.mallang.acceptance.blog.BlogAcceptanceSteps.내_블로그_정보_조회_요청;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_정보_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -104,6 +107,53 @@ class BlogAcceptanceTest extends AcceptanceTest {
                             블로그_이름,
                             new OwnerResponse(null, "말랑", "말랑")
                     ));
+        }
+    }
+
+    @Nested
+    class 내_블로그_정보_조회_시 {
+
+        @Test
+        void 내_블로그_정보를_조회한다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            var 블로그_ID = ID를_추출한다(블로그_개설_요청(말랑_세션_ID, "mallang-log"));
+            var 블로그_이름 = "mallang-log";
+
+            // when
+            var 응답 = 내_블로그_정보_조회_요청(말랑_세션_ID);
+
+            // then
+            BlogResponse blogResponse = 응답.as(BlogResponse.class);
+            assertThat(blogResponse)
+                    .usingRecursiveComparison()
+                    .ignoringFields("owner.memberId")
+                    .isEqualTo(new BlogResponse(
+                            블로그_ID,
+                            블로그_이름,
+                            new OwnerResponse(null, "말랑", "말랑")
+                    ));
+        }
+
+        @Test
+        void 로그인되지_않은_경우_401() {
+            // when
+            var 응답 = 내_블로그_정보_조회_요청(null);
+
+            // then
+            응답_상태를_검증한다(응답, 인증되지_않음);
+        }
+
+        @Test
+        void 블로그를_아직_개설하지_않은_경우_404() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+
+            // when
+            var 응답 = 내_블로그_정보_조회_요청(말랑_세션_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 찾을수_없음);
         }
     }
 }

@@ -38,4 +38,11 @@ public class BlogController {
     ) {
         return ResponseEntity.ok(blogQueryService.findByName(blogName));
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<BlogResponse> findMyBlog(
+            @Auth Long memberId
+    ) {
+        return ResponseEntity.ok(blogQueryService.findByOwnerId(memberId));
+    }
 }
