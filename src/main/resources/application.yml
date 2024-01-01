@@ -30,3 +30,6 @@ aws:
     bucket: "bucket-name"
     image-path: "images/"  # 마지막 / 필수
     presigned-url-expires-minutes: 10
+
+cors:
+  allowedOrigins: "http://localhost:3000, http://localhost:8080"
