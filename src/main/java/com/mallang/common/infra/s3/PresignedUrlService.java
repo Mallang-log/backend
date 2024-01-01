@@ -16,9 +16,10 @@ public class PresignedUrlService {
     private final S3Presigner.Builder presignerBuilder;
     private final AwsS3Property s3Property;
 
-    public String create(String imageExtension) {
+    public CreatePresignedUrlResponse create(String imageExtension) {
         String imageName = createImageName(imageExtension);
-        return createPresignedUrl(imageName);
+        String presignedUrl = createPresignedUrl(imageName);
+        return new CreatePresignedUrlResponse(imageName, presignedUrl);
     }
 
     private String createImageName(String imageExtension) {
