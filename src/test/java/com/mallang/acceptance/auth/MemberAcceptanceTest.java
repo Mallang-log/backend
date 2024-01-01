@@ -8,6 +8,7 @@ import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
+import static com.mallang.acceptance.auth.MemberAcceptanceSteps.로그아웃_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.아이디_중복_체크_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.일반_로그인_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.일반_회원가입_요청;
@@ -129,6 +130,24 @@ class MemberAcceptanceTest extends AcceptanceTest {
             // then
             응답_상태를_검증한다(응답, 인증되지_않음);
             assertThat(응답.cookie("JSESSIONID")).isNull();
+        }
+    }
+
+
+    @Nested
+    class 로그아웃_API {
+
+        @Test
+        void 로그아웃한다() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("mallang");
+
+            // when
+            var 응답 = 로그아웃_요청(말랑_세션_ID);
+
+            // then
+            응답_상태를_검증한다(응답, 정상_처리);
+            assertThat(응답.header("Set-Cookie")).contains("Max-Age=0");
         }
     }
 
