@@ -24,4 +24,8 @@ public class BlogQueryService {
         Member member = memberQueryRepository.getById(memberId);
         return BlogResponse.from(blogQueryRepository.getByOwner(member));
     }
+
+    public boolean checkDuplicatedBlogName(String blogName) {
+        return blogQueryRepository.existsByName(blogName);
+    }
 }
