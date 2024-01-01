@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.util.PathMatcher;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @RequiredArgsConstructor
@@ -28,6 +29,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (CorsUtils.isCorsRequest(request)) {
+            return true;
+        }
         if (authenticationRequired(request) && authContext.unAuthenticated()) {
             throw new NoAuthenticationSessionException();
         }
