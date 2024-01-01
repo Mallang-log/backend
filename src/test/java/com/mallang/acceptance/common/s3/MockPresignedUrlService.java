@@ -1,7 +1,9 @@
 package com.mallang.acceptance.common.s3;
 
 import com.mallang.common.infra.s3.AwsS3Property;
+import com.mallang.common.infra.s3.CreatePresignedUrlResponse;
 import com.mallang.common.infra.s3.PresignedUrlService;
+import java.util.UUID;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,7 +22,11 @@ public class MockPresignedUrlService extends PresignedUrlService {
     }
 
     @Override
-    public String create(String imageExtension) {
-        return "https://example/sample." + imageExtension;
+    public CreatePresignedUrlResponse create(String imageExtension) {
+        String name = UUID.randomUUID().toString();
+        return new CreatePresignedUrlResponse(
+                name,
+                "https://sample/url/" + name + "." + imageExtension
+        );
     }
 }

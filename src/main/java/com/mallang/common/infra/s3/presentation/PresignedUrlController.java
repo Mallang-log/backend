@@ -1,5 +1,6 @@
 package com.mallang.common.infra.s3.presentation;
 
+import com.mallang.common.infra.s3.CreatePresignedUrlResponse;
 import com.mallang.common.infra.s3.PresignedUrlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class PresignedUrlController {
     public ResponseEntity<CreatePresignedUrlResponse> createPresignedUrl(
             CreatePresignedUrlRequest request
     ) {
-        String url = presignedUrlService.create(request.imageExtension());
-        return ResponseEntity.ok(new CreatePresignedUrlResponse(url));
+        CreatePresignedUrlResponse response = presignedUrlService.create(request.imageExtension());
+        return ResponseEntity.ok(response);
     }
 }
