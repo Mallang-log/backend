@@ -62,7 +62,8 @@ public class AuthConfig implements WebMvcConfigurer {
                                 "/star-groups",
                                 "/abouts",
                                 "/statistics/**",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/error"
                         ))
                         .httpMethods(Set.of(GET))
                         .build()
