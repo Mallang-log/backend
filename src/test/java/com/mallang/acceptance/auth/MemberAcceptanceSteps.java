@@ -29,6 +29,16 @@ public class MemberAcceptanceSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 로그아웃_요청(
+            String 세션
+    ) {
+        return given(세션)
+                .get("/members/logout")
+                .then()
+                .log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> 일반_로그인_요청(
             String 아이디,
             String 비밀번호

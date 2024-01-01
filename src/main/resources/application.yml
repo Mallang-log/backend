@@ -20,6 +20,15 @@ auth:
   session:
     ttl: 3600
 
+server:
+  servlet:
+    session:
+      cookie:
+        path: /
+        max-age: 864000   # 10일 = 10 * 24 * 60 * 60 초
+        http-only: true
+        secure: false
+
 #logging:
 #  level:
 #    org.hibernate.orm.jdbc.bind: TRACE
