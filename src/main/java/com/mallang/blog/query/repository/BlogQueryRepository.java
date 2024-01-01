@@ -1,5 +1,6 @@
 package com.mallang.blog.query.repository;
 
+import com.mallang.auth.domain.Member;
 import com.mallang.blog.domain.Blog;
 import com.mallang.blog.exception.NotFoundBlogException;
 import java.util.Optional;
@@ -30,4 +31,11 @@ public interface BlogQueryRepository extends JpaRepository<Blog, Long> {
 
     @Query("SELECT b FROM Blog b WHERE b.name.value = :blogName AND b.owner.id = :memberId")
     Optional<Blog> findByMemberAndBlog(Long memberId, String blogName);
+
+    default Blog getByOwner(Member owner) {
+        return findByOwner(owner)
+                .orElseThrow(NotFoundBlogException::new);
+    }
+
+    Optional<Blog> findByOwner(Member owner);
 }
