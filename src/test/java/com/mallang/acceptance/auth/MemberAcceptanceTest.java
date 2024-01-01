@@ -133,7 +133,6 @@ class MemberAcceptanceTest extends AcceptanceTest {
         }
     }
 
-
     @Nested
     class 로그아웃_API {
 
