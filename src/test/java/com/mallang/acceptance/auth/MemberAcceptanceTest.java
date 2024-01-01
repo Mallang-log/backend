@@ -8,6 +8,7 @@ import static com.mallang.acceptance.AcceptanceSteps.중복됨;
 import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.내_정보_조회_요청;
+import static com.mallang.acceptance.auth.MemberAcceptanceSteps.아이디_중복_체크_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.일반_로그인_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.일반_회원가입_요청;
 import static com.mallang.acceptance.auth.MemberAcceptanceSteps.회원_정보_조회_결과_데이터;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.auth.presentation.request.BasicSignupRequest;
+import com.mallang.auth.presentation.response.CheckDuplicateResponse;
 import com.mallang.auth.query.response.MemberResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +40,33 @@ class MemberAcceptanceTest extends AcceptanceTest {
             "mallang",
             "profile"
     );
+
+    @Nested
+    class 아이디_중복_체크_API {
+
+        @Test
+        void 주어진_아이디가_이미_존재하면_중복됨() {
+            // given
+            일반_회원가입_요청(회원가입_요청);
+
+            // when
+            var 응답 = 아이디_중복_체크_요청(아이디);
+
+            // then
+            CheckDuplicateResponse response = 응답.as(CheckDuplicateResponse.class);
+            assertThat(response.duplicated()).isTrue();
+        }
+
+        @Test
+        void 주어진_아이디가_존재하지_않으면_중복되지_않음() {
+            // when
+            var 응답 = 아이디_중복_체크_요청(아이디);
+
+            // then
+            CheckDuplicateResponse response = 응답.as(CheckDuplicateResponse.class);
+            assertThat(response.duplicated()).isFalse();
+        }
+    }
 
     @Nested
     class 회원가입_API {

@@ -29,4 +29,8 @@ public class BasicAuthService {
         member.login(rawPassword, passwordEncoder);
         return member.getId();
     }
+
+    public boolean checkDuplicatedUsername(String username) {
+        return basicMemberRepository.existsByUsername(username);
+    }
 }

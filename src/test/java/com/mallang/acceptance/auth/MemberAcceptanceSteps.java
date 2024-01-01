@@ -12,6 +12,15 @@ import io.restassured.response.Response;
 @SuppressWarnings("NonAsciiCharacters")
 public class MemberAcceptanceSteps {
 
+    public static ExtractableResponse<Response> 아이디_중복_체크_요청(String username) {
+        return given()
+                .queryParam("username", username)
+                .get("/members/check-duplicate")
+                .then()
+                //.log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> 일반_회원가입_요청(BasicSignupRequest request) {
         return given()
                 .body(request)
