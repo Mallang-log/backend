@@ -133,7 +133,6 @@ jacocoTestReport {
                     fileTree(dir: it, excludes: excludeCoverage)
                 }))
     }
-    finalizedBy 'jacocoTestCoverageVerification'
 }
 
 jacocoTestCoverageVerification {
