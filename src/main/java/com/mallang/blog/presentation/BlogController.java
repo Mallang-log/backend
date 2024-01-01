@@ -5,8 +5,10 @@ import com.mallang.blog.application.BlogService;
 import com.mallang.blog.presentation.request.OpenBlogRequest;
 import com.mallang.blog.query.BlogQueryService;
 import com.mallang.blog.query.response.BlogResponse;
+import com.mallang.blog.query.response.CheckDuplicateResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,5 +46,13 @@ public class BlogController {
             @Auth Long memberId
     ) {
         return ResponseEntity.ok(blogQueryService.findByOwnerId(memberId));
+    }
+
+    @GetMapping("/duplicate")
+    public ResponseEntity<CheckDuplicateResponse> checkDuplicate(
+            @Param("blogName") String blogName
+    ) {
+        boolean duplicated = blogQueryService.checkDuplicatedBlogName(blogName);
+        return ResponseEntity.ok(new CheckDuplicateResponse(duplicated));
     }
 }

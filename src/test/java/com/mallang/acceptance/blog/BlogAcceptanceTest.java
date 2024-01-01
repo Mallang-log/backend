@@ -11,12 +11,14 @@ import static com.mallang.acceptance.AcceptanceSteps.찾을수_없음;
 import static com.mallang.acceptance.auth.AuthAcceptanceSteps.회원가입과_로그인_후_세션_ID_반환;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.내_블로그_정보_조회_요청;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_개설_요청;
+import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_이름_중복_확인_요청;
 import static com.mallang.acceptance.blog.BlogAcceptanceSteps.블로그_정보_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mallang.acceptance.AcceptanceTest;
 import com.mallang.blog.query.response.BlogResponse;
 import com.mallang.blog.query.response.BlogResponse.OwnerResponse;
+import com.mallang.blog.query.response.CheckDuplicateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -29,7 +31,35 @@ import org.junit.jupiter.api.Test;
 class BlogAcceptanceTest extends AcceptanceTest {
 
     @Nested
-    class 블로그_조회_API {
+    class 블로그_이름_중복_체크_API {
+
+        @Test
+        void 주어진_이름이_이미_사용중이면_중복됨() {
+            // given
+            var 말랑_세션_ID = 회원가입과_로그인_후_세션_ID_반환("말랑");
+            블로그_개설_요청(말랑_세션_ID, "mallang-blog");
+
+            // when
+            var 응답 = 블로그_이름_중복_확인_요청("mallang-blog");
+
+            // then
+            CheckDuplicateResponse response = 응답.as(CheckDuplicateResponse.class);
+            assertThat(response.duplicated()).isTrue();
+        }
+
+        @Test
+        void 주어진_이름이_사용중이지_않으면_중복되지_않음() {
+            // when
+            var 응답 = 블로그_이름_중복_확인_요청("mallang-blog");
+
+            // then
+            CheckDuplicateResponse response = 응답.as(CheckDuplicateResponse.class);
+            assertThat(response.duplicated()).isFalse();
+        }
+    }
+
+    @Nested
+    class 블로그_개설_API {
 
         @Test
         void 블로그를_개설한다() {

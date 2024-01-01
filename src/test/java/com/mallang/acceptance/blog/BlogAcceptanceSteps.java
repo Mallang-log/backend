@@ -28,6 +28,14 @@ public class BlogAcceptanceSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 블로그_이름_중복_확인_요청(String 이름) {
+        return given()
+                .queryParam("blogName", 이름)
+                .get("/blogs/duplicate")
+                .then()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> 블로그_정보_조회_요청(String 블로그_이름) {
         return given()
                 .queryParam("blogName", 블로그_이름)
