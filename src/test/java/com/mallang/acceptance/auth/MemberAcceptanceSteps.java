@@ -35,7 +35,6 @@ public class MemberAcceptanceSteps {
         return given(세션)
                 .get("/members/logout")
                 .then()
-                .log().all()
                 .extract();
     }
 

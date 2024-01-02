@@ -38,4 +38,7 @@ public interface BlogQueryRepository extends JpaRepository<Blog, Long> {
     }
 
     Optional<Blog> findByOwner(Member owner);
+
+    @Query("SELECT COUNT(b) > 0 FROM Blog b WHERE b.name.value = :blogName")
+    boolean existsByName(@Param("blogName") String blogName);
 }
