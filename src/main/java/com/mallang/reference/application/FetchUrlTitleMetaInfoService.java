@@ -1,6 +1,6 @@
 package com.mallang.reference.application;
 
-import com.mallang.reference.domain.service.UrlTitleMetaInfoFetcher;
+import com.mallang.reference.domain.UrlTitleMetaInfoFetcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

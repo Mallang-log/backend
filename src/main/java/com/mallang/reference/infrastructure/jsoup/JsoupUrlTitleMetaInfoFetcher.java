@@ -1,6 +1,6 @@
 package com.mallang.reference.infrastructure.jsoup;
 
-import com.mallang.reference.domain.service.UrlTitleMetaInfoFetcher;
+import com.mallang.reference.domain.UrlTitleMetaInfoFetcher;
 import com.mallang.reference.exception.InvalidReferenceLinkUrlException;
 import com.mallang.reference.exception.NotFoundReferenceLinkMetaTitleException;
 import org.jsoup.Jsoup;
