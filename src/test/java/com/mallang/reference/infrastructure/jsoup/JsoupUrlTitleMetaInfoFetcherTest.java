@@ -6,7 +6,7 @@ import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import com.mallang.reference.domain.service.UrlTitleMetaInfoFetcher;
+import com.mallang.reference.domain.UrlTitleMetaInfoFetcher;
 import com.mallang.reference.exception.InvalidReferenceLinkUrlException;
 import com.mallang.reference.exception.NotFoundReferenceLinkMetaTitleException;
 import org.junit.jupiter.api.Disabled;

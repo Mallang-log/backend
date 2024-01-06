@@ -1,4 +1,4 @@
-package com.mallang.reference.domain.service;
+package com.mallang.reference.domain;
 
 public interface UrlTitleMetaInfoFetcher {
 

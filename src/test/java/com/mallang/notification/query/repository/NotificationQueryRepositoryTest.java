@@ -18,7 +18,6 @@ import com.mallang.post.domain.PostId;
 import com.mallang.post.query.repository.PostManageSearchDao.PostManageSearchDaoImpl;
 import com.mallang.post.query.repository.PostSearchDao.PostSearchDaoImpl;
 import com.mallang.post.query.repository.StaredPostDao.StaredPostDaoImpl;
-import com.mallang.reference.query.repository.ReferenceLinkSearchDao.ReferenceLinkSearchDaoImpl;
 import com.mallang.statistics.api.query.repository.BlogVisitStatisticManageDao.BlogVisitStatisticManageDaoImpl;
 import com.mallang.statistics.api.query.repository.BlogVisitStatisticSimpleDao.BlogVisitStatisticSimpleDaoImpl;
 import com.mallang.statistics.api.query.repository.PostViewStatisticDao.PostViewStatisticDaoImpl;
@@ -52,7 +51,6 @@ import org.springframework.data.domain.Sort;
                         BlogVisitStatisticSimpleDaoImpl.class,
                         PostManageSearchDaoImpl.class,
                         PostViewStatisticDaoImpl.class,
-                        ReferenceLinkSearchDaoImpl.class,
                         StaredPostDaoImpl.class,
                         SubscriberDaoImpl.class,
                         SubscribingBlogDaoImpl.class

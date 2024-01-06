@@ -1,7 +1,6 @@
 package com.mallang.reference.domain;
 
 import com.mallang.common.execption.MallangLogException;
-import com.mallang.reference.domain.service.UrlTitleMetaInfoFetcher;
 
 public class MockUrlTitleMetaInfoFetcher implements UrlTitleMetaInfoFetcher {
 
