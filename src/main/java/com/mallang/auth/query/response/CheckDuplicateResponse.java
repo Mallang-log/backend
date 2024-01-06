@@ -1,4 +1,4 @@
-package com.mallang.auth.presentation.response;
+package com.mallang.auth.query.response;
 
 public record CheckDuplicateResponse(
         boolean duplicated

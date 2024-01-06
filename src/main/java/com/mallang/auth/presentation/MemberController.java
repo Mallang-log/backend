@@ -6,9 +6,10 @@ import static org.springframework.http.HttpStatus.OK;
 import com.mallang.auth.application.BasicAuthService;
 import com.mallang.auth.presentation.request.BasicLoginRequest;
 import com.mallang.auth.presentation.request.BasicSignupRequest;
-import com.mallang.auth.presentation.response.CheckDuplicateResponse;
 import com.mallang.auth.presentation.support.Auth;
+import com.mallang.auth.query.BasicAuthQueryService;
 import com.mallang.auth.query.MemberQueryService;
+import com.mallang.auth.query.response.CheckDuplicateResponse;
 import com.mallang.auth.query.response.MemberResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final BasicAuthService basicAuthService;
+    private final BasicAuthQueryService basicAuthQueryService;
     private final MemberQueryService memberQueryService;
 
     @Value("${auth.session.ttl}")
@@ -42,7 +44,7 @@ public class MemberController {
     public ResponseEntity<CheckDuplicateResponse> checkDuplicate(
             @Param("username") String username
     ) {
-        boolean duplicated = basicAuthService.checkDuplicatedUsername(username);
+        boolean duplicated = basicAuthQueryService.checkDuplicatedUsername(username);
         return ResponseEntity.ok(new CheckDuplicateResponse(duplicated));
     }
 
