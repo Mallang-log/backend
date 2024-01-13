@@ -106,8 +106,7 @@ class PostManageAcceptanceTest extends AcceptanceTest {
             var 임시_글_생성_요청 = new CreateDraftRequest(
                     말랑_블로그_이름,
                     "첫 임시_글",
-                    "첫 임시_글 인트로", "첫 임시_글이네요.",
-                    "임시_글 썸네일 이름",
+                    "첫 임시_글이네요.",
                     Spring_카테고리_ID,
                     List.of("태그1", "태그2")
             );

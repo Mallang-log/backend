@@ -53,27 +53,23 @@ public class Draft extends CommonRootEntity<Long> {
     public Draft(
             Blog blog,
             String title,
-            String intro,
             String bodyText,
-            @Nullable String postThumbnailImageName,
             @Nullable PostCategory category,
             List<String> tags,
             Member writer
     ) {
         this.blog = blog;
-        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, writer);
+        this.content = new PostContent(title, bodyText, category, tags, writer);
         blog.validateOwner(writer);
     }
 
     public void update(
             String title,
-            String intro,
             String bodyText,
-            @Nullable String postThumbnailImageName,
             @Nullable PostCategory category,
             List<String> tags
     ) {
-        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, getWriter());
+        this.content = new PostContent(title, bodyText, category, tags, getWriter());
     }
 
     public void removeCategory() {
@@ -94,16 +90,8 @@ public class Draft extends CommonRootEntity<Long> {
         return content.getBodyText();
     }
 
-    public String getPostThumbnailImageName() {
-        return content.getPostThumbnailImageName();
-    }
-
     public PostCategory getCategory() {
         return content.getCategory();
-    }
-
-    public String getPostIntro() {
-        return content.getPostIntro();
     }
 
     public List<String> getTags() {

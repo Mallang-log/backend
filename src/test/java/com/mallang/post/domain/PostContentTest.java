@@ -32,41 +32,12 @@ class PostContentTest {
     private final PostCategory otherPostCategory = 루트_카테고리("Spring", otherMember, otherBlog);
 
     @Test
-    void 인트로가_없으면_본문에서_가져와_설정된다() {
-        // when
-        PostContent postContent = PostContent.builder()
-                .title("제목")
-                .bodyText("내용")
-                .writer(mallang)
-                .build();
-
-        // then
-        String postIntro = postContent.getPostIntro();
-        assertThat(postIntro).isEqualTo("내용");
-    }
-
-    @Test
-    void 인트로가_없을때_본문이_150자_이상이면_150자만_인트로로_설정된다() {
-        // when
-        PostContent postContent = PostContent.builder()
-                .title("제목")
-                .bodyText("1".repeat(151))
-                .writer(mallang)
-                .build();
-
-        // then
-        String postIntro = postContent.getPostIntro();
-        assertThat(postIntro.length()).isEqualTo(150);
-    }
-
-    @Test
     void 카테고리를_없앨_수_있다() {
         // given
         PostContent postContent = PostContent.builder()
                 .title("제목")
                 .bodyText("내용")
                 .writer(mallang)
-                .postIntro("intro")
                 .category(springPostCategory)
                 .build();
 
@@ -91,7 +62,6 @@ class PostContentTest {
                 PostContent.builder()
                         .writer(mallang)
                         .category(otherPostCategory)
-                        .postIntro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityPostCategoryException.class);
         }
@@ -101,7 +71,6 @@ class PostContentTest {
             // given
             PostContent taggedPost = PostContent.builder()
                     .title("제목")
-                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
@@ -117,7 +86,6 @@ class PostContentTest {
             // given
             PostContent taggedPost = PostContent.builder()
                     .title("제목")
-                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .build();
@@ -132,7 +100,6 @@ class PostContentTest {
             assertThatThrownBy(() ->
                     PostContent.builder()
                             .title("제목")
-                            .postIntro("intro")
                             .bodyText("내용")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
@@ -145,7 +112,6 @@ class PostContentTest {
             // when
             PostContent postContent = PostContent.builder()
                     .title("제목")
-                    .postIntro("intro")
                     .bodyText("내용")
                     .writer(mallang)
                     .category(jpaPostCategory)
@@ -154,35 +120,6 @@ class PostContentTest {
             // then
             assertThat(postContent.getCategory().getName()).isEqualTo("JPA");
         }
-
-        @Test
-        void 썸네일_사진_설정이_가능하다() {
-            // given
-            PostContent postContent = PostContent.builder()
-                    .title("제목")
-                    .postIntro("intro")
-                    .bodyText("내용")
-                    .postThumbnailImageName("thumbnail")
-                    .writer(mallang)
-                    .build();
-
-            // when & then
-            assertThat(postContent.getPostThumbnailImageName()).isEqualTo("thumbnail");
-        }
-
-        @Test
-        void 썸네일은_없어도_된다() {
-            // given
-            PostContent postContent = PostContent.builder()
-                    .title("제목")
-                    .postIntro("intro")
-                    .bodyText("내용")
-                    .writer(mallang)
-                    .build();
-
-            // when & then
-            assertThat(postContent.getPostThumbnailImageName()).isNull();
-        }
     }
 
     @Test
@@ -190,7 +127,6 @@ class PostContentTest {
         // given
         PostContent postContent = PostContent.builder()
                 .title("제목")
-                .postIntro("intro")
                 .bodyText("내용")
                 .writer(mallang)
                 .tags(List.of("태그1"))

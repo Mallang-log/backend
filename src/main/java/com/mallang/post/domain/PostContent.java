@@ -9,7 +9,6 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.util.ArrayList;
@@ -30,12 +29,6 @@ public class PostContent {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String bodyText;
 
-    @Column(nullable = true)
-    private String postThumbnailImageName;
-
-    @Embedded
-    private PostIntro postIntro;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "category_id", nullable = true)
     private PostCategory category;
@@ -50,28 +43,16 @@ public class PostContent {
     @Builder
     public PostContent(
             String title,
-            String postIntro,
             String bodyText,
-            @Nullable String postThumbnailImageName,
             @Nullable PostCategory category,
             List<String> tags,
             Member writer
     ) {
         this.title = title;
         this.bodyText = bodyText;
-        this.postThumbnailImageName = postThumbnailImageName;
         this.writer = writer;
-        setPostIntro(postIntro, bodyText);
         setPostCategory(category);
         setTags(tags);
-    }
-
-    private void setPostIntro(String postIntro, String bodyText) {
-        if (postIntro == null || postIntro.isBlank()) {
-            this.postIntro = new PostIntro(bodyText.substring(0, Math.min(150, bodyText.length())));
-            return;
-        }
-        this.postIntro = new PostIntro(postIntro);
     }
 
     private void setPostCategory(@Nullable PostCategory category) {
@@ -108,17 +89,11 @@ public class PostContent {
     public PostContent removeCategory() {
         return new PostContent(
                 getTitle(),
-                getPostIntro(),
                 getBodyText(),
-                getPostThumbnailImageName(),
                 null,
                 getTags(),
                 getWriter()
         );
-    }
-
-    public String getPostIntro() {
-        return postIntro.getIntro();
     }
 
     public List<String> getTags() {

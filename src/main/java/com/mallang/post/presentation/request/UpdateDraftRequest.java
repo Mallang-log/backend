@@ -6,9 +6,7 @@ import java.util.List;
 
 public record UpdateDraftRequest(
         String title,
-        @Nullable String intro,
         String bodyText,
-        @Nullable String postThumbnailImageName,
         @Nullable Long categoryId,
         List<String> tags
 ) {
@@ -18,8 +16,6 @@ public record UpdateDraftRequest(
                 .draftId(draftId)
                 .title(title)
                 .bodyText(bodyText)
-                .postThumbnailImageName(postThumbnailImageName)
-                .intro(intro)
                 .categoryId(categoryId)
                 .tags(tags)
                 .build();

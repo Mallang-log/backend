@@ -3,14 +3,12 @@ package com.mallang.post.query.response;
 import com.mallang.post.domain.PostCategory;
 import com.mallang.post.domain.PostContent;
 import com.mallang.post.domain.draft.Draft;
-import jakarta.annotation.Nullable;
 import java.util.List;
 
 public record DraftDetailResponse(
         Long draftId,
         String title,
         String bodyText,
-        @Nullable String postThumbnailImageName,
         CategoryResponse category,
         TagResponses tags
 ) {
@@ -19,7 +17,6 @@ public record DraftDetailResponse(
                 draft.getId(),
                 draft.getTitle(),
                 draft.getBodyText(),
-                draft.getPostThumbnailImageName(),
                 CategoryResponse.from(draft.getContent()),
                 TagResponses.from(draft.getContent())
         );
