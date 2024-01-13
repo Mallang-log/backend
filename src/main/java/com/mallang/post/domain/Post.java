@@ -11,6 +11,7 @@ import com.mallang.post.exception.NoAuthorityPostException;
 import com.mallang.post.exception.PostLikeCountNegativeException;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.AssociationOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -43,6 +44,12 @@ public class Post extends CommonRootEntity<PostId> {
     @AssociationOverride(name = "tags", joinTable = @JoinTable(name = "post_tags"))
     private PostContent content;
 
+    @Embedded
+    private PostIntro postIntro;
+
+    @Column(nullable = true)
+    private String postThumbnailImageName;
+
     private int likeCount = 0;
 
     @Builder
@@ -62,7 +69,9 @@ public class Post extends CommonRootEntity<PostId> {
         this.id = id;
         this.blog = blog;
         this.visibilityPolish = new PostVisibilityPolicy(visibility, password);
-        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, writer);
+        this.content = new PostContent(title, bodyText, category, tags, writer);
+        this.postThumbnailImageName = postThumbnailImageName;
+        setPostIntro(intro, bodyText);
         blog.validateOwner(writer);
     }
 
@@ -77,7 +86,17 @@ public class Post extends CommonRootEntity<PostId> {
             List<String> tags
     ) {
         this.visibilityPolish = new PostVisibilityPolicy(visibility, password);
-        this.content = new PostContent(title, intro, bodyText, postThumbnailImageName, category, tags, getWriter());
+        this.content = new PostContent(title, bodyText, category, tags, getWriter());
+        this.postThumbnailImageName = postThumbnailImageName;
+        setPostIntro(intro, bodyText);
+    }
+
+    private void setPostIntro(String postIntro, String bodyText) {
+        if (postIntro == null || postIntro.isBlank()) {
+            this.postIntro = new PostIntro(bodyText.substring(0, Math.min(150, bodyText.length())));
+            return;
+        }
+        this.postIntro = new PostIntro(postIntro);
     }
 
     public void delete() {
@@ -130,16 +149,12 @@ public class Post extends CommonRootEntity<PostId> {
         return content.getBodyText();
     }
 
-    public String getPostThumbnailImageName() {
-        return content.getPostThumbnailImageName();
-    }
-
     public PostCategory getCategory() {
         return content.getCategory();
     }
 
     public String getPostIntro() {
-        return content.getPostIntro();
+        return this.postIntro.getIntro();
     }
 
     public List<String> getTags() {

@@ -57,7 +57,6 @@ class DraftServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .categoryId(categoryId)
                     .tags(List.of("tag1", "tag2", "tag3"))
                     .build();
@@ -77,7 +76,6 @@ class DraftServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .build();
 
             // when
@@ -96,14 +94,12 @@ class DraftServiceTest extends ServiceTest {
                     .memberId(memberId)
                     .blogName(otherBlogName)
                     .title("임시_글 1")
-                    .intro("intro")
                     .bodyText("bodyText")
                     .build();
             CreateDraftCommand command2 = CreateDraftCommand.builder()
                     .memberId(otherMemberId)
                     .blogName(blogName)
                     .title("임시_글 1")
-                    .intro("intro")
                     .bodyText("bodyText")
                     .build();
 
@@ -124,7 +120,6 @@ class DraftServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .categoryId(1000L)
                     .build();
 
@@ -152,7 +147,6 @@ class DraftServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .categoryId(categoryId)
                     .build();
 
@@ -175,7 +169,6 @@ class DraftServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .tags(List.of("tag1", "tag2", "tag3"))
                     .categoryId(categoryId)
                     .build();
@@ -189,8 +182,7 @@ class DraftServiceTest extends ServiceTest {
                     memberId,
                     임시_글_ID,
                     "수정제목",
-                    "수정인트로", "수정내용",
-                    "수정썸네일",
+                    "수정내용",
                     null,
                     List.of("태그2")
             );
@@ -203,8 +195,6 @@ class DraftServiceTest extends ServiceTest {
                 Draft draft = draftRepository.getById(임시_글_ID);
                 assertThat(draft.getTitle()).isEqualTo("수정제목");
                 assertThat(draft.getBodyText()).isEqualTo("수정내용");
-                assertThat(draft.getPostThumbnailImageName()).isEqualTo("수정썸네일");
-                assertThat(draft.getPostIntro()).isEqualTo("수정인트로");
                 assertThat(draft.getCategory()).isNull();
                 assertThat(draft.getTags()).containsExactly("태그2");
             });
@@ -216,9 +206,10 @@ class DraftServiceTest extends ServiceTest {
             Long otherMemberId = 회원을_저장한다("동훈");
             UpdateDraftCommand command = new UpdateDraftCommand(
                     otherMemberId, 임시_글_ID,
-                    "수정제목", "수정인트로", "수정내용",
+                    "수정제목",
+                    "수정내용",
                     null,
-                    null, emptyList()
+                    emptyList()
             );
 
             // when & then
@@ -242,7 +233,6 @@ class DraftServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .tags(List.of("tag1", "tag2", "tag3"))
                     .build();
             임시_글_ID = draftService.create(command);

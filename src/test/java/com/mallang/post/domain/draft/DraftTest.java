@@ -43,13 +43,11 @@ class DraftTest {
         Draft draft1 = Draft.builder()
                 .blog(blog)
                 .writer(mallang)
-                .intro("intro")
                 .title("1234")
                 .build();
         Draft draft2 = Draft.builder()
                 .blog(blog)
                 .writer(mallang)
-                .intro("intro")
                 .title("5678")
                 .build();
         ReflectionTestUtils.setField(draft1, "id", 1L);
@@ -71,7 +69,6 @@ class DraftTest {
                 .blog(blog)
                 .title("제목")
                 .bodyText("내용")
-                .intro("intro")
                 .writer(mallang)
                 .category(springPostCategory)
                 .build();
@@ -93,14 +90,12 @@ class DraftTest {
                 Draft.builder()
                         .blog(otherBlog)
                         .writer(mallang)
-                        .intro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
             assertThatThrownBy(() -> {
                 Draft.builder()
                         .blog(blog)
                         .writer(otherMember)
-                        .intro("intro")
                         .build();
             }).isInstanceOf(NoAuthorityBlogException.class);
         }
@@ -112,7 +107,6 @@ class DraftTest {
                 Draft.builder()
                         .blog(blog)
                         .writer(mallang)
-                        .intro("intro")
                         .category(otherPostCategory)
                         .build();
             }).isInstanceOf(NoAuthorityPostCategoryException.class);
@@ -125,8 +119,6 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
-                    .intro("intro")
-                    .postThumbnailImageName("thumbnail")
                     .writer(mallang)
                     .tags(List.of("tag1", "tag2"))
                     .build();
@@ -135,7 +127,6 @@ class DraftTest {
             assertThat(taggedDraft.getBlog()).isEqualTo(blog);
             assertThat(taggedDraft.getTitle()).isEqualTo("제목");
             assertThat(taggedDraft.getBodyText()).isEqualTo("내용");
-            assertThat(taggedDraft.getPostIntro()).isEqualTo("intro");
             assertThat(taggedDraft.getWriter()).isEqualTo(mallang);
             assertThat(taggedDraft.getTags())
                     .containsExactly("tag1", "tag2");
@@ -148,7 +139,6 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
-                    .intro("intro")
                     .writer(mallang)
                     .build();
 
@@ -164,7 +154,6 @@ class DraftTest {
                             .blog(blog)
                             .title("제목")
                             .bodyText("내용")
-                            .intro("intro")
                             .writer(mallang)
                             .tags(List.of("태그1", "태그1"))
                             .build()
@@ -178,44 +167,12 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
-                    .intro("intro")
                     .writer(mallang)
                     .category(jpaPostCategory)
                     .build();
 
             // then
             assertThat(draft.getCategory().getName()).isEqualTo("JPA");
-        }
-
-        @Test
-        void 썸네일_사진_설정이_가능하다() {
-            // given
-            Draft draft = Draft.builder()
-                    .blog(blog)
-                    .title("제목")
-                    .bodyText("내용")
-                    .intro("intro")
-                    .postThumbnailImageName("thumbnail")
-                    .writer(mallang)
-                    .build();
-
-            // when & then
-            assertThat(draft.getPostThumbnailImageName()).isEqualTo("thumbnail");
-        }
-
-        @Test
-        void 썸네일은_없어도_된다() {
-            // given
-            Draft draft = Draft.builder()
-                    .blog(blog)
-                    .title("제목")
-                    .bodyText("내용")
-                    .intro("intro")
-                    .writer(mallang)
-                    .build();
-
-            // when & then
-            assertThat(draft.getPostThumbnailImageName()).isNull();
         }
     }
 
@@ -229,7 +186,6 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
-                    .intro("intro")
                     .writer(mallang)
                     .tags(List.of("태그1"))
                     .build();
@@ -237,8 +193,7 @@ class DraftTest {
             // when
             draft.update(
                     "수정제목",
-                    "수정인트로", "수정내용",
-                    "postThumbnailImageName",
+                    "수정내용",
                     null,
                     List.of("태그2")
             );
@@ -257,7 +212,6 @@ class DraftTest {
                     .blog(blog)
                     .title("제목")
                     .bodyText("내용")
-                    .intro("intro")
                     .writer(mallang)
                     .tags(List.of("태그1"))
                     .build();
@@ -266,8 +220,7 @@ class DraftTest {
             assertThatThrownBy(() -> {
                 draft.update(
                         "수정제목",
-                        "수정인트로", "수정내용",
-                        "postThumbnailImageName",
+                        "수정내용",
                         otherPostCategory,
                         Collections.emptyList()
                 );
@@ -283,7 +236,6 @@ class DraftTest {
                 .title("제목")
                 .bodyText("내용")
                 .writer(mallang)
-                .intro("intro")
                 .category(springPostCategory)
                 .build();
 

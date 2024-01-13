@@ -48,7 +48,6 @@ class DraftQueryServiceTest extends ServiceTest {
                 .blogName(blogName)
                 .title("임시 글 1")
                 .bodyText("bodyText")
-                .intro("intro")
                 .tags(List.of("tag1", "tag2", "tag3"))
                 .categoryId(categoryId)
                 .build();
@@ -59,7 +58,6 @@ class DraftQueryServiceTest extends ServiceTest {
                 .blogName(blogName)
                 .title("임시 글 2")
                 .bodyText("bodyText")
-                .intro("intro")
                 .build();
         임시_글_2_ID = draftService.create(임시_글_2_요청);
     }

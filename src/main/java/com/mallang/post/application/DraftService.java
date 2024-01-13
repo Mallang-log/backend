@@ -40,8 +40,7 @@ public class DraftService {
         draft.validateWriter(member);
         draft.update(
                 command.title(),
-                command.intro(), command.bodyText(),
-                command.postThumbnailImageName(),
+                command.bodyText(),
                 postCategory,
                 command.tags()
         );

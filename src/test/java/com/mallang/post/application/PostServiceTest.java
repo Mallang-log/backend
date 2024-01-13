@@ -214,7 +214,6 @@ class PostServiceTest extends ServiceTest {
                     .blogName(blogName)
                     .title("임시_글 1")
                     .bodyText("bodyText")
-                    .intro("intro")
                     .tags(List.of("tag1"))
                     .build();
             draftId = draftService.create(createDraftCommand);
