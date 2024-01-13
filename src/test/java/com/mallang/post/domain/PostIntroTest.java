@@ -18,13 +18,13 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 class PostIntroTest {
 
     @Test
-    void 길이는_1글자_이상_250_글자_이하여야_한다() {
+    void 길이는_1글자_이상_150_글자_이하여야_한다() {
         // when & then
         assertDoesNotThrow(() -> {
             new PostIntro("1");
         });
         assertDoesNotThrow(() -> {
-            new PostIntro("1".repeat(250));
+            new PostIntro("1".repeat(150));
         });
     }
 
@@ -38,9 +38,9 @@ class PostIntroTest {
     }
 
     @Test
-    void 길익가_250글자_초과라면_예외() {
+    void 길익가_150글자_초과라면_예외() {
         // given
-        String repeat = "1".repeat(251);
+        String repeat = "1".repeat(151);
 
         // when & then
         assertThatThrownBy(() -> {
