@@ -1,4 +1,7 @@
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s # default
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -28,6 +31,7 @@ server:
         max-age: 864000   # 10일 = 10 * 24 * 60 * 60 초
         http-only: true
         secure: false
+  shutdown: graceful
 
 #logging:
 #  level:
