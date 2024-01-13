@@ -6,7 +6,7 @@ import java.util.List;
 
 public record UpdateDraftRequest(
         String title,
-        String intro,
+        @Nullable String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
         @Nullable Long categoryId,

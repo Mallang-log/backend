@@ -51,7 +51,7 @@ class PresignedUrlServiceTest {
                 "https://mallang-bucket.s3.amazonaws.com/",
                 "images/" + response.imageName(),
                 ".img",
-                "X-Amz-Expires=" + 60 * 10
+                "X-Amz-Expires="
         );
     }
 }

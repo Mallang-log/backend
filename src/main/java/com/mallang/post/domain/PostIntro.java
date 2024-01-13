@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 public class PostIntro {
 
-    @Column(nullable = false, length = 250)
+    @Column(nullable = false, length = 150)
     private String intro;
 
     public PostIntro(String intro) {
@@ -26,7 +26,7 @@ public class PostIntro {
             throw new InvalidPostIntroLengthException();
         }
         int length = value.strip().length();
-        if (length < 1 || 250 < length) {
+        if (length < 1 || 150 < length) {
             throw new InvalidPostIntroLengthException();
         }
     }
