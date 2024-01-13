@@ -7,7 +7,7 @@ import java.util.List;
 public record CreateDraftRequest(
         String blogName,
         String title,
-        String intro,
+        @Nullable String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
         @Nullable Long categoryId,

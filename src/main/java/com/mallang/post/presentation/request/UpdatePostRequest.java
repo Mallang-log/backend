@@ -8,7 +8,7 @@ import java.util.List;
 public record UpdatePostRequest(
         String blogName,
         String title,
-        String intro,
+        @Nullable String intro,
         String bodyText,
         @Nullable String postThumbnailImageName,
         Visibility visibility,

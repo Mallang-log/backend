@@ -58,12 +58,20 @@ public class PostContent {
             Member writer
     ) {
         this.title = title;
-        this.postIntro = new PostIntro(postIntro);
         this.bodyText = bodyText;
         this.postThumbnailImageName = postThumbnailImageName;
         this.writer = writer;
+        setPostIntro(postIntro, bodyText);
         setPostCategory(category);
         setTags(tags);
+    }
+
+    private void setPostIntro(String postIntro, String bodyText) {
+        if (postIntro == null || postIntro.isBlank()) {
+            this.postIntro = new PostIntro(bodyText.substring(0, Math.min(150, bodyText.length())));
+            return;
+        }
+        this.postIntro = new PostIntro(postIntro);
     }
 
     private void setPostCategory(@Nullable PostCategory category) {

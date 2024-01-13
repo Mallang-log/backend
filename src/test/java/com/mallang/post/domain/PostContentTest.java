@@ -32,6 +32,34 @@ class PostContentTest {
     private final PostCategory otherPostCategory = 루트_카테고리("Spring", otherMember, otherBlog);
 
     @Test
+    void 인트로가_없으면_본문에서_가져와_설정된다() {
+        // when
+        PostContent postContent = PostContent.builder()
+                .title("제목")
+                .bodyText("내용")
+                .writer(mallang)
+                .build();
+
+        // then
+        String postIntro = postContent.getPostIntro();
+        assertThat(postIntro).isEqualTo("내용");
+    }
+
+    @Test
+    void 인트로가_없을때_본문이_150자_이상이면_150자만_인트로로_설정된다() {
+        // when
+        PostContent postContent = PostContent.builder()
+                .title("제목")
+                .bodyText("1".repeat(151))
+                .writer(mallang)
+                .build();
+
+        // then
+        String postIntro = postContent.getPostIntro();
+        assertThat(postIntro.length()).isEqualTo(150);
+    }
+
+    @Test
     void 카테고리를_없앨_수_있다() {
         // given
         PostContent postContent = PostContent.builder()
