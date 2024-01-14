@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class PostViewStatisticJobScheduler {
+public class PostViewStatisticJobSchedulerLegacy {
 
     public static final String EACH_HOUR_CRON = "0 0 * * * *";
     private final JobHistoryRecorder jobHistoryRecorder;
-    private final PostViewStatisticJob postViewStatisticJob;
+    private final PostViewStatisticJobLegacy postViewStatisticJobLegacy;
 
     @Scheduled(cron = EACH_HOUR_CRON)
     public void runTask() {
@@ -25,6 +25,6 @@ public class PostViewStatisticJobScheduler {
         LocalDateTime startInclude = now.minusHours(2);
         LocalDateTime endExclude = now.minusHours(1);
         jobHistoryRecorder.record(history,
-                () -> postViewStatisticJob.postViewsAggregationJob(startInclude, endExclude));
+                () -> postViewStatisticJobLegacy.postViewsAggregationJob(startInclude, endExclude));
     }
 }

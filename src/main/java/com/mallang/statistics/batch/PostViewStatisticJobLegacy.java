@@ -19,7 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @RequiredArgsConstructor
 @Component
-public class PostViewStatisticJob {
+public class PostViewStatisticJobLegacy {
 
     private final PostViewHistoryRepository postViewHistoryRepository;
     private final PostViewStatisticRepository postViewStatisticRepository;

@@ -2,6 +2,7 @@ package com.mallang.statistics.statistic.source;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -23,6 +24,8 @@ public class BlogVisitHistory extends CommonHistory {
     private String origin;
     private String ip;
 
+    private LocalDate date;
+
     @Builder
     public BlogVisitHistory(UUID uuid, String blogName, String origin, String ip, LocalDateTime createdDate) {
         super(createdDate);
@@ -30,5 +33,6 @@ public class BlogVisitHistory extends CommonHistory {
         this.blogName = blogName;
         this.origin = origin;
         this.ip = ip;
+        this.date = createdDate.toLocalDate();
     }
 }

@@ -5,12 +5,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
-#        use_sql_comments: true
-#        highlight_sql: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+  batch:
+    job:
+      enabled: false
 
 auth:
   oauth:
@@ -33,9 +36,10 @@ server:
         secure: false
   shutdown: graceful
 
-#logging:
-#  level:
-#    org.hibernate.orm.jdbc.bind: TRACE
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: TRACE
+
 
 # sample
 aws:

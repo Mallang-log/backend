@@ -21,12 +21,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@DisplayName("포스트 조회수 통계 작업 (PostViewStatisticJob) 은(는)")
+@DisplayName("포스트 조회수 통계 작업 (PostViewStatisticJobLegacy) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @ExtendWith(DataClearExtension.class)
 @SpringBootTest
-class PostViewStatisticJobTest {
+class PostViewStatisticJobLegacyTest {
 
     @Autowired
     private PostViewHistoryRepository postViewHistoryRepository;
@@ -35,7 +35,7 @@ class PostViewStatisticJobTest {
     private PostViewStatisticRepository postViewStatisticRepository;
 
     @Autowired
-    private PostViewStatisticJob postViewStatisticJob;
+    private PostViewStatisticJobLegacy postViewStatisticJobLegacy;
 
     private final PostId postId1 = new PostId(1L, 1L);
     private final PostId postId2 = new PostId(2L, 1L);
@@ -63,7 +63,7 @@ class PostViewStatisticJobTest {
         ));
 
         // when
-        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
+        postViewStatisticJobLegacy.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
 
         // then
         assertThat(postViewHistoryRepository.findAll().get(0).getId())
@@ -93,7 +93,7 @@ class PostViewStatisticJobTest {
                 ));
 
         // when
-        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
+        postViewStatisticJobLegacy.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_11시_0분);
 
         // then
         assertThat(postViewHistoryRepository.findById(시간_2000년_10월_4일_11시_0분_이력.getId())).isPresent();
@@ -105,7 +105,7 @@ class PostViewStatisticJobTest {
                 .isEqualTo(1);
 
         // when
-        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_11시_0분, 시간_2000년_10월_4일_12시_0분);
+        postViewStatisticJobLegacy.postViewsAggregationJob(시간_2000년_10월_4일_11시_0분, 시간_2000년_10월_4일_12시_0분);
 
         // then
         assertThat(postViewHistoryRepository.findById(시간_2000년_10월_4일_11시_0분_이력.getId())).isEmpty();
@@ -138,7 +138,7 @@ class PostViewStatisticJobTest {
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId2, 시간_2000년_10월_4일_10시_0분));
 
         // when
-        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2001년_10월_19일_20시_2분_0초_1나노초);
+        postViewStatisticJobLegacy.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2001년_10월_19일_20시_2분_0초_1나노초);
 
         // then
         assertThat(postViewHistoryRepository.findAll()).isEmpty();
@@ -178,7 +178,7 @@ class PostViewStatisticJobTest {
         LocalDateTime 시간_2000년_10월_4일_12시 = LocalDateTime.of(2000, 10, 4, 12, 0);
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_0분));
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_10시_59분));
-        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_12시);
+        postViewStatisticJobLegacy.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_12시);
         LocalDate 시간_2000년_10월_4일 = LocalDate.of(2000, 10, 4);
         Optional<PostViewStatistic> statistic = postViewStatisticRepository
                 .findByPostIdAndStatisticDate(postId1, 시간_2000년_10월_4일);
@@ -190,7 +190,7 @@ class PostViewStatisticJobTest {
 
         // when
         postViewHistoryRepository.save(new PostViewHistory(randomUUID(), postId1, 시간_2000년_10월_4일_11시_0분));
-        postViewStatisticJob.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_12시);
+        postViewStatisticJobLegacy.postViewsAggregationJob(시간_2000년_10월_4일_10시_0분, 시간_2000년_10월_4일_12시);
 
         // then
         assertThat(postViewHistoryRepository.findAll()).isEmpty();
