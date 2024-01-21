@@ -3,6 +3,7 @@ package com.mallang.statistics.statistic.source;
 import com.mallang.post.domain.PostId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -20,9 +21,12 @@ public class PostViewHistory extends CommonHistory {
     @Column(nullable = false)
     private PostId postId;
 
+    private LocalDate date;
+
     public PostViewHistory(UUID uuid, PostId postId, LocalDateTime createdDate) {
         super(createdDate);
         this.uuid = uuid;
         this.postId = postId;
+        this.date = createdDate.toLocalDate();
     }
 }

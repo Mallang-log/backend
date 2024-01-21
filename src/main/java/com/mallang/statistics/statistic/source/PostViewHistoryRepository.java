@@ -23,4 +23,11 @@ public interface PostViewHistoryRepository extends JpaRepository<PostViewHistory
     @Modifying
     @Query("DELETE FROM PostViewHistory h WHERE h.postId = :postId")
     void deleteAllByPostId(PostId postId);
+
+    @Modifying
+    @Query("DELETE FROM PostViewHistory h WHERE h.createdDate >= :startInclude AND h.createdDate < :endExclude")
+    void deleteWithCreatedDateBetweenIncludeStartAndExcludeEnd(
+            @Param("startInclude") LocalDateTime startInclude,
+            @Param("endExclude") LocalDateTime endExclude
+    );
 }
